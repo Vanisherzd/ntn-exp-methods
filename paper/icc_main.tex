@@ -10,17 +10,21 @@
 \usepackage{algpseudocode}
 \usepackage{etoolbox}
 \usepackage{enumitem}
-\setlist[itemize]{leftmargin=1.2em,itemsep=1pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{leftmargin=1.3em,itemsep=2.5pt,topsep=3pt,parsep=0pt}
 
-% Compact vertical spacing for a dense workshop paper (readability preserved)
-\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
-\setlength{\dbltextfloatsep}{7pt plus 2pt minus 2pt}
-\setlength{\floatsep}{6pt plus 2pt minus 2pt}
-\setlength{\intextsep}{6pt plus 2pt minus 2pt}
-\setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}
-\setlength{\belowdisplayskip}{3pt plus 1pt minus 1pt}
-\setlength{\abovedisplayshortskip}{2pt}
-\setlength{\belowdisplayshortskip}{2pt}
+% Moderate vertical spacing (readable, not over-compressed)
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{9pt plus 2pt minus 2pt}
+\setlength{\abovedisplayskip}{4pt plus 1pt minus 1pt}
+\setlength{\belowdisplayskip}{4pt plus 1pt minus 1pt}
+\setlength{\abovedisplayshortskip}{3pt}
+\setlength{\belowdisplayshortskip}{3pt}
+% Mild bibliography spacing (font unchanged, readable)
+\let\WLDthebibliography\thebibliography
+\renewcommand\thebibliography[1]{\WLDthebibliography{#1}%
+  \setlength{\itemsep}{1pt}\setlength{\parsep}{0pt}}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}
 
@@ -59,24 +63,19 @@
 % ── Abstract ─────────────────────────────────────────────────────────────────
 \begin{abstract}
 Direct-to-Satellite (D2S) IoT terminals must pre-compensate large LEO Doppler
-shifts before every LR-FHSS uplink from an on-board orbital prediction that is,
-in practice, a \emph{stale} Two-Line Element (TLE) set propagated open-loop by
-SGP4. A natural idea is to learn a data-driven residual correction on top of this
-physics baseline. We test that idea on real Space-Track TLE history for two
-BLACK~KITE LEO satellites (NORAD~66741, 68474) using strict chronological,
-leakage-free splits, and find that a learned Doppler residual model does
-\emph{not} improve over the open-loop SGP4 / stale-TLE baseline at any tested
-staleness (8--168~h), either target-specific or cross-satellite: the inter-TLE
-Doppler residual is essentially zero-mean and unpredictable. Rather than discard
-learning, we make it conditional. We introduce an \emph{Evidence Gate} that
-enables a learned corrector only when a chronological held-out validation window
-shows it beats the physics baseline by a margin~$\gamma$, and otherwise falls
-back to open-loop compensation. On the real BLACK~KITE data the gate correctly
-\emph{closes} (learning disabled). In a controlled synthetic stress study we
-characterise the regime in which the gate \emph{opens}: when a dominant
-systematic drift exists, the gated corrector reduces simulated frequency error,
-guard-band, and outage proxies, while a noise-dominated regime keeps the gate
-shut. All ``reference'' Doppler is model-derived (SGP4 from real TLE), not
+shifts before every LR-FHSS uplink from an on-board orbital prediction that is, in
+practice, a \emph{stale} TLE propagated open-loop by SGP4. A natural idea is to
+learn a residual correction on top of this physics baseline. On real Space-Track
+TLE history for two BLACK~KITE LEO satellites (NORAD~66741, 68474), with strict
+chronological leakage-free splits, a learned Doppler residual does \emph{not} beat
+the open-loop baseline at any tested staleness (8--168~h), target-specific or
+cross-satellite: the inter-TLE residual is near zero-mean and unpredictable. Rather
+than discard learning, we gate it. The \emph{Evidence Gate} enables a learned
+corrector only when a chronological held-out window beats the baseline by a
+margin~$\gamma$, else falls back to open-loop compensation. On the real data the
+gate \emph{closes}; in a controlled synthetic stress study it \emph{opens} under
+dominant systematic drift, reducing simulated frequency-error, guard, and outage
+proxies. All ``reference'' Doppler is model-derived (SGP4 from real TLE), not
 measured; no live-satellite, link-layer, or hardware-radiated result is claimed.
 \end{abstract}
 
@@ -154,75 +153,59 @@ This paper's primary contributions are:
 
 \begin{figure}[t]
     \centering
-    \resizebox{0.90\columnwidth}{!}{%
+    \resizebox{0.80\columnwidth}{!}{%
     \begin{tikzpicture}[
-        font=\footnotesize,
-        >=Latex,
-        block/.style={
-            draw,
-            rounded corners=3pt,
-            align=center,
-            minimum height=7.5mm,
-            inner sep=3pt,
-            fill=white
-        },
-        group/.style={
-            draw,
-            rounded corners=5pt,
-            inner sep=4.5pt,
-            fill=#1
-        },
-        arrow/.style={->, thick},
-        keyarrow/.style={->, line width=2.2pt, green!45!black}
+        font=\footnotesize, >=Latex, node distance=0pt,
+        blk/.style={draw, rounded corners=3pt, align=center, minimum height=7mm,
+                    inner sep=3pt, fill=white, minimum width=26mm},
+        io/.style={blk, fill=blue!8},
+        phys/.style={blk, fill=blue!12, minimum width=30mm},
+        ml/.style={blk, fill=orange!12, minimum width=34mm},
+        gate/.style={draw=green!45!black, very thick, rounded corners=4pt,
+                     align=center, fill=green!14, inner sep=4pt, minimum height=12mm,
+                     minimum width=72mm},
+        mux/.style={draw, thick, fill=yellow!22, align=center, minimum height=8mm,
+                    minimum width=72mm, rounded corners=2pt},
+        term/.style={draw, rounded corners=3pt, fill=gray!10, align=center,
+                     inner sep=3pt, minimum height=9mm, minimum width=78mm},
+        ar/.style={->, thick},
+        key/.style={->, line width=1.6pt, green!45!black}
     ]
 
-    % ===== Row 1: Prediction =====
-    \node[block, fill=blue!10, minimum width=14mm] (tle)  at (0.4,0)     {Stale\\TLE};
-    \node[block, minimum width=17mm]               (sgp4) at (2.9,0)     {SGP4\\open-loop};
-    \node[block, fill=blue!8, minimum width=20mm]  (fphys)at (6.2,0.55)  {$f_{\mathrm{phys}}(t)$ baseline};
-    \node[block, minimum width=20mm]               (fml)  at (6.2,-0.65) {$f_{\mathrm{ml}}=f_{\mathrm{phys}}+\hat r$};
+    \node[io] (in) at (0,9.0) {Stale TLE / onboard orbital state};
+    \node[phys] (sgp4) at (-2.3,7.4) {SGP4 physics\\$\to f_{\mathrm{phys}}(t)$};
+    \node[ml]   (res)  at ( 2.3,7.4) {Learned residual $\hat r(x_t)$\\$\to f_{\mathrm{ml}}=f_{\mathrm{phys}}+\hat r$};
 
-    % ===== Row 2: Evidence Gate =====
-    \node[block, fill=green!14, very thick, draw=green!45!black, minimum width=46mm]
-        (gate) at (4.1,-2.5) {Evidence Gate\\$G=\mathbf{1}[\,\mathrm{MAE}_{\mathrm{ml}}(V)<\gamma\,\mathrm{MAE}_{\mathrm{phys}}(V)\,]$};
+    \node[gate] (gate) at (0,5.6)
+        {\textbf{Evidence Gate}\\$G=\mathbf{1}\!\left[\mathrm{MAE}_{\mathrm{ml}}(V)<\gamma\,\mathrm{MAE}_{\mathrm{phys}}(V)\right]$\\[1pt]\scriptsize chronological held-out window $V$};
 
-    % ===== Row 3: Terminal control =====
-    \node[block, fill=orange!12, minimum width=22mm] (deploy) at (1.6,-4.5) {$\hat f=G f_{\mathrm{ml}}+(1{-}G)f_{\mathrm{phys}}$};
-    \node[block, fill=orange!12, minimum width=22mm] (proxy)  at (6.6,-4.5) {guard / outage /\\energy proxy};
+    \node[mux] (mux) at (0,4.0)
+        {Selector (MUX): $G{=}0\!\to\!f_{\mathrm{phys}}$,\quad $G{=}1\!\to\!f_{\mathrm{ml}}$};
 
-    % ===== Background group boxes =====
-    \begin{scope}[on background layer]
-        \node[group=blue!5,   fit=(tle)(sgp4)(fphys)(fml),
-              label={[font=\footnotesize\bfseries, anchor=south west]north west:Prediction (model-derived)}] (G1) {};
-        \node[group=green!7,  fit=(gate),
-              label={[font=\footnotesize\bfseries, anchor=south west]north west:Evidence Gate (held-out validation)}] (G2) {};
-        \node[group=orange!6, fit=(deploy)(proxy),
-              label={[font=\footnotesize\bfseries, anchor=south west]north west:Terminal-side LR-FHSS Control}] (G3) {};
-    \end{scope}
+    \node[blk, fill=green!8, minimum width=72mm] (out) at (0,2.7)
+        {$\hat f(t)=G f_{\mathrm{ml}}(t)+(1{-}G)f_{\mathrm{phys}}(t)$};
 
-    % ===== arrows =====
-    \draw[arrow] (tle) -- (sgp4);
-    \draw[arrow] (sgp4.east) -- (fphys.west);
-    \draw[arrow] (sgp4.east) -- (fml.west);
-    \draw[arrow] (fphys.south) -- (gate.north);
-    \draw[arrow] (fml.south)   -- (gate.north);
-    \draw[keyarrow] (gate.south) -- node[right, font=\footnotesize\bfseries, green!45!black, xshift=1mm]
-        {$G$} (deploy.north);
-    \draw[arrow] (deploy.east) -- (proxy.west);
+    \node[term] (term) at (0,1.2)
+        {\textbf{LR-FHSS terminal control}\\
+         Doppler pre-comp $\cdot$ guard $g$ $\cdot$ outage $\rho$ $\cdot$ overhead proxy};
 
-    % ===== Scope note =====
-    \node[font=\scriptsize\itshape, text=gray!70]
-        at ($(G3.south)+(0,-4mm)$)
-        {Software-only / model-derived; no measured Doppler, no live-satellite, no RF claim.};
+    \node[font=\scriptsize\itshape, text=gray!60, align=center] (note) at (0,0.0)
+        {software-only / model-derived; \texttt{reference\_is\_measured\_truth=false};\\
+         no measured Doppler, no live-satellite, no RF claim};
+
+    \draw[ar] (in.south) -- (sgp4.north);
+    \draw[ar] (in.south) -- (res.north);
+    \draw[ar] (sgp4.south) -- (gate.north);
+    \draw[ar] (res.south)  -- (gate.north);
+    \draw[key] (gate.south) -- node[right, font=\scriptsize\bfseries, green!45!black] {$G$} (mux.north);
+    \draw[ar] (mux.south) -- (out.north);
+    \draw[ar] (out.south) -- (term.north);
 
     \end{tikzpicture}}
-    \caption{Physics-first evidence-gated uplink control. The open-loop SGP4 /
-    stale-TLE Doppler $f_{\mathrm{phys}}$ is the default; a learned residual
-    corrector $f_{\mathrm{ml}}=f_{\mathrm{phys}}+\hat r$ is deployed only when the
-    Evidence Gate $G$ passes on a chronological held-out validation window. The
-    deployed prediction feeds LR-FHSS guard / outage / energy control proxies.
-    All Doppler is model-derived (SGP4 from real TLE);
-    \texttt{reference\_is\_measured\_truth=false}.}
+    \caption{Physics-first, fail-safe evidence-gated controller. The Evidence Gate
+    compares the SGP4 baseline and learned-residual MAE on a held-out window and
+    sets the selector bit $G$, deploying $\hat f$ (defaulting to physics unless the
+    learned branch proves itself). Software-only; no hardware path.}
     \label{fig:architecture}
 \end{figure}
 
@@ -231,61 +214,50 @@ This paper's primary contributions are:
 \label{sec:related}
 
 \subsection{LR-FHSS for Direct-to-Satellite IoT}
-LR-FHSS extends LoRaWAN for direct-to-satellite IoT by distributing transmit
-energy across a grid of narrow hopping bins, providing frequency diversity
-against the strong Doppler of LEO passes~\cite{semtech2023lrfhss,boquet2021lrfhss}.
-Link-level analyses quantify its behavior under LEO Doppler and large device
-populations~\cite{ullah2022lrfhss,hurn2023lrfhss}, and energy studies characterize
-the cost that headers, fragments, and idle margins impose on battery-powered
-devices~\cite{sanchez2024energy}. A substantial body of work then improves what
-happens \emph{after} a transmission exists: dedicated transceiver designs and
-implementations~\cite{jung2023lrfhss,jung2025lrfhss}, header replication with
-network coding~\cite{knop2024header}, asynchronous contention
-resolution~\cite{santana2024acrda}, message replication for
-reliability~\cite{rathi2024replication}, and probabilistic allocation of payload
-code rate and header copies~\cite{farhat2025probabilistic}; real-world packet
-traces further show that fragment recovery and demodulation are a dedicated
-software-receiver problem~\cite{bukhari2023lrfhss}. These works study an existing
-waveform's synchronization, detection, and delivery; the complementary
-terminal-side question---how prediction quality should shape Doppler
-pre-compensation \emph{before} transmission---is comparatively unexplored and is
-our focus.
+LR-FHSS extends LoRaWAN for direct-to-satellite IoT by spreading transmit energy
+across narrow hopping bins for Doppler diversity~\cite{semtech2023lrfhss,boquet2021lrfhss};
+link-level and energy analyses quantify its behaviour under LEO Doppler, large
+device populations, and header/fragment/idle
+overhead~\cite{ullah2022lrfhss,hurn2023lrfhss}. A substantial
+body of work then improves what happens \emph{after} a transmission exists---e.g.\
+transceiver design and packet-trace receiver
+studies~\cite{jung2023lrfhss,bukhari2023lrfhss}---i.e.\ synchronisation, detection,
+and delivery of an existing waveform. The complementary terminal-side
+question---how prediction quality should shape Doppler pre-compensation
+\emph{before} transmission---is comparatively unexplored and is our focus.
 
 \subsection{ML for LEO Orbit Prediction}
-Analytical TLE propagators such as
-SGP4/SDP4~\cite{hoots1980models,vallado2007fundamentals,vallado2006revisiting}
+Analytical TLE propagators (SGP4/SDP4~\cite{hoots1980models,vallado2007fundamentals})
 are deterministic and lightweight but accumulate timing and Doppler error with
-prediction horizon and TLE age. Machine-learning orbit work increasingly treats
-such a propagator as a physics anchor and learns corrections on top of it:
-Gaussian-process error correction~\cite{peng2019gp}, fusion of learned and
-classical predictions~\cite{peng2021fusion}, differentiable SGP4
-refinement~\cite{acciarini2025dsgp4}, physics-informed networks for satellite
-state estimation~\cite{varey2024pinn}, and learned LEO orbit prediction with
-exogenous variables~\cite{caldas2024leo}; see~\cite{caldas2024mlorbit} for a
-survey. The dominant objective there is trajectory accuracy, with correctors
-reported where they help. We instead ask the prior question for a terminal:
-whether learning a Doppler residual over a stale-TLE baseline is justified by
-held-out evidence \emph{at all}---and give a real-data case where it is not.
+prediction horizon and TLE age. ML orbit work increasingly treats such a
+propagator as a physics anchor and learns corrections on top---Gaussian-process
+correction, differentiable SGP4, and physics-informed
+estimators~\cite{peng2019gp,acciarini2025dsgp4,varey2024pinn} (see~\cite{caldas2024mlorbit}
+for a survey). The dominant objective there is trajectory accuracy; we instead ask
+the prior question for a terminal: whether learning a Doppler residual over a
+stale-TLE baseline is justified by held-out evidence \emph{at all}---and give a
+real-data case where it is not.
 
-\subsection{LEO D2S Doppler and Uplink Control}
-LEO non-terrestrial networking studies characterize the strong, time-varying
-Doppler of LEO passes and motivate pre-compensation and timing control at the
-terminal~\cite{3gpp2019tr38821,hurn2023lrfhss}, and uplink transmission-policy
-work for LoRa-based D2S IoT optimizes when and how a terminal transmits using
-pass geometry and link scores~\cite{alvarez2022uplink}. These policies typically
-assume a deterministic prediction or a fixed conservative margin; the decision of
-whether to trust a \emph{learned} correction is not itself treated as a gated,
-evidence-driven choice. We make that choice explicit and safe-by-default.
-
-\subsection{Gap and Positioning}
-Receiver-side LR-FHSS work and terminal-side prediction-aware control are
-complementary: the former recovers packets once transmitted, the latter decides
-how transmissions are configured. Receiver/transceiver studies expose reliability
-after transmission; D2S uplink policies expose a link score or pass window; and ML
-orbit work exposes a trajectory estimate or residual corrector. The piece this
-paper addresses is the transmitter-side decision under stale orbital
-information---when to deploy a learned Doppler residual correction and when to keep
-the physics default---bound to an explicit held-out evidence test.
+\subsection{Uplink Control and Positioning}
+LEO non-terrestrial studies characterize the strong, time-varying Doppler of LEO
+passes and motivate terminal pre-compensation and timing
+control~\cite{3gpp2019tr38821,hurn2023lrfhss}, and D2S uplink-policy work for
+LoRa-based IoT optimizes when and how a terminal transmits from pass geometry and
+link scores~\cite{alvarez2022uplink}; these policies assume a deterministic
+prediction or a fixed conservative margin and do not treat trusting a
+\emph{learned} correction as a gated, evidence-driven choice. Thus receiver-side
+LR-FHSS work, D2S uplink policy, and ML orbit prediction expose, respectively,
+post-transmission reliability, a link score or pass window, and a trajectory
+estimate or residual corrector. The piece this paper addresses is the
+transmitter-side decision under stale orbital information---when to deploy a
+learned Doppler residual correction and when to keep the physics default---bound
+to an explicit held-out evidence test, made explicit and safe-by-default. In
+short, the three lines of prior art are complementary to ours along one axis:
+receiver-side LR-FHSS work secures reliability \emph{after} transmission, D2S
+uplink policy chooses transmission timing from a link score or pass window, and ML
+orbit prediction improves the trajectory estimate---whereas we add the
+transmitter-side, evidence-gated decision of \emph{when} a learned Doppler
+correction should be trusted at all.
 
 % ── Background and System Model ───────────────────────────────────────────────
 \section{Background and System Model}
@@ -359,16 +331,14 @@ and the deployed corrector defaults to physics otherwise,
 \label{eq:deploy}
 \end{equation}
 
-\emph{Scope of the gate property (honest).} If $G=1$ then by construction
-$\mathrm{MAE}_{\mathrm{ml}}(V) < \gamma\,\mathrm{MAE}_{\mathrm{phys}}(V) \le
-\mathrm{MAE}_{\mathrm{phys}}(V)$, and if $G=0$ the deployed error equals the
-baseline; hence $\mathrm{MAE}_{\hat f}(V)\le \mathrm{MAE}_{\mathrm{phys}}(V)$
-\emph{on the validation window}. This is a validation-window property only, not a
-held-out or distribution-shift bound: a gate-opened learner can still underperform
-on unseen data under distribution shift. The threshold $\gamma$ trades safety
-(small $\gamma$, rarely opens) against opportunism ($\gamma\!\to\!1$, opens on any
-apparent gain, including noise); we therefore report the gate decision across
-$\gamma$ and validation-window size and make no net-improvement claim.
+\emph{Scope of the gate property (honest).} By construction
+$\mathrm{MAE}_{\hat f}(V)\le \mathrm{MAE}_{\mathrm{phys}}(V)$ \emph{on the
+validation window} (it equals the baseline when $G=0$ and is strictly below when
+$G=1$). This is a validation-window property only, not a held-out or
+distribution-shift bound: a gate-opened learner can still underperform on unseen
+data. The threshold $\gamma$ trades safety against opportunism; we report the
+decision across $\gamma$ and validation-window size and make no net-improvement
+claim.
 
 \subsection{Statistical Role of the Gate}
 \label{sec:stat}
@@ -384,20 +354,26 @@ frequency margin under the proxy of Sec.~\ref{sec:proxies}. The threshold
 $\gamma$ is the conservative control knob between the two: a smaller $\gamma$
 demands a wider proven margin, suppressing false opens at the cost of more missed
 opens, while $\gamma\!\to\!1$ is opportunistic and will open on small, possibly
-spurious validation gains. We use $\gamma=0.95$ as a conservative default, which
-on the real BLACK~KITE data keeps the gate closed and on the synthetic regimes
-opens only when the systematic margin is large (Sec.~\ref{sec:eval}). This framing
-is descriptive of the decision rule's behaviour; it is not a performance promise
-across deployment conditions.
+spurious validation gains. We use $\gamma=0.95$ as a conservative default, which on the real BLACK~KITE data
+keeps the gate closed and on the synthetic regimes opens only when the systematic
+margin is large (Sec.~\ref{sec:eval}).
+
+These error modes matter because the LEO D2S residual is unlikely to be stationary:
+changing drag, orbit-determination updates over different arcs, and other unexposed
+effects can shift it over time, so an offline-trained corrector may meet a
+different distribution at deployment. The gate then acts as an evidence-based
+circuit breaker---it re-checks the learned branch on a recent chronological window
+and reverts to SGP4 / stale-TLE physics whenever that window no longer supports the
+correction. The benefit is conditional and local: a validation-window decision
+rule, not a promise of improvement under arbitrary distribution shift.
 
 \subsection{LR-FHSS Guard / Outage / Energy Proxies}
 \label{sec:proxies}
-Residual frequency error is the natural cross-layer quantity linking orbital
-prediction to LR-FHSS terminal control: each hop occupies a narrow sub-channel,
-so the deployed prediction error $e(t)=D_{\mathrm{ref}}(t)-\hat f(t)$ directly
-sets how much frequency margin a transmission must reserve and how likely a hop is
-to fall outside its intended bin. From $e(t)$ we derive three control proxies used
-consistently across all experiments. The \emph{guard-band proxy}
+Residual frequency error links prediction to LR-FHSS control: since each hop
+occupies a narrow sub-channel, the deployed error $e(t)=D_{\mathrm{ref}}(t)-\hat
+f(t)$ sets the frequency margin to reserve and the chance a hop falls outside its
+bin. From $e(t)$ we derive three control proxies used consistently across all
+experiments. The \emph{guard-band proxy}
 $g = 2\,p_{99}(|e|)$ is a conservative frequency-margin proxy: twice the
 99th-percentile absolute error covers the bulk of the error distribution while
 remaining a percentile statistic rather than an absolute extremum. The
@@ -410,13 +386,24 @@ missed hops induce; a convenient dimensionless form is
 E_{\mathrm{proxy}} \;\propto\; \Big(1 + \alpha_g\,\tfrac{g}{B}\Big)\,(1 + \rho),
 \label{eq:eproxy}
 \end{equation}
-where $B$ is the hopping bandwidth and $\alpha_g\!\ge\!0$ weights reserved guard
-relative to retransmission pressure: the first factor charges for idle guard, the
-second for the airtime that frequency misses tend to provoke. Equation~\eqref{eq:eproxy}
-is an illustrative overhead \emph{proxy}, not a measured energy model and not a
-packet-delivery model. All three are control-layer proxies for terminal margin
-sizing; they are explicitly \emph{not} packet-error, bit-error, or link-budget
-measurements.
+where $B$ is the hopping bandwidth and $\alpha_g\!\ge\!0$ weights idle guard
+against retransmission pressure. Equation~\eqref{eq:eproxy} is an illustrative
+overhead \emph{proxy}, not a measured energy or packet-delivery model. All three
+are control-layer proxies for terminal margin sizing---explicitly \emph{not}
+packet-error, bit-error, or link-budget measurements.
+
+The proxies also motivate a \emph{pass-aware} guard. The Doppler rate
+$\dot f_D(t)$ varies strongly across a pass, peaking near closest approach, so a
+residual timing offset $\Delta t$ couples into a frequency error
+\begin{equation}
+\Delta f_D(t) \;\approx\; \dot f_D(t)\,\Delta t,
+\label{eq:ratecoupling}
+\end{equation}
+i.e.\ the same timing slack costs more frequency margin where the rate is high.
+This favours sizing the guard along the pass---wider near the high-rate portion,
+narrower where geometry is slow---rather than one fixed margin. We use
+Eq.~\eqref{eq:ratecoupling} as control-proxy motivation only and claim no
+timing-synchronisation or measured packet-recovery performance.
 
 \subsection{Datasets and Splits}
 \label{sec:data}
@@ -432,12 +419,14 @@ always available before the test reference epoch. The synthetic stress study
 (Sec.~\ref{sec:eval-stress}) is a controlled simulation and uses no Space-Track
 data.
 
-\emph{Deployment recipe.} At control time the terminal propagates the stale TLE to
-$f_{\mathrm{phys}}$, forms $f_{\mathrm{ml}}=f_{\mathrm{phys}}+\hat r(x_t)$,
-evaluates $\mathrm{MAE}_{\mathrm{phys}}(V),\mathrm{MAE}_{\mathrm{ml}}(V)$ on $V$,
-sets $G$ (Eq.~\eqref{eq:gate}) and deploys $\hat f$ (Eq.~\eqref{eq:deploy}), then
-sizes the guard from $g=2\,p_{99}(|e|)$. It needs no receiver feedback and is
-recomputed when a fresh TLE arrives.
+\emph{End-to-end procedure (compact).} At each control epoch the terminal:
+(1)~SGP4-propagates the stale TLE to $f_{\mathrm{phys}}(t)$ and forms
+$f_{\mathrm{ml}}(t)=f_{\mathrm{phys}}(t)+\hat r(x_t)$; (2)~evaluates
+$\mathrm{MAE}_{\mathrm{phys}}(V),\mathrm{MAE}_{\mathrm{ml}}(V)$ on the chronological
+window $V$; (3)~sets $G$ by Eq.~\eqref{eq:gate} and deploys $\hat f$ by
+Eq.~\eqref{eq:deploy}; and (4)~sizes the guard from $g=2\,p_{99}(|e|)$. It needs no
+receiver feedback and is recomputed whenever a fresh TLE arrives, so the gate
+tracks the most recent on-board evidence.
 
 % ── Evaluation ────────────────────────────────────────────────────────────────
 \section{Evaluation}
@@ -445,16 +434,14 @@ recomputed when a fresh TLE arrives.
 
 \subsection{Experimental Setup}
 Doppler is computed with python-SGP4 at 868~MHz for the representative ground
-station of Sec.~\ref{sec:baseline}. The 868~MHz carrier is used as a
-representative value for Doppler scaling and reproducibility; the controller is
-frequency-parametric (Eq.~\eqref{eq:doppler}), so the same formulation applies at
-other carriers by rescaling $f_c$, and no deployment-specific regulatory
-assumption is made here. Learned candidates are ridge, random forest,
-gradient boosting, and a small MLP; the learned model is selected on the
-chronological validation segment and the gate is evaluated once on the held-out
-test segment. A window is counted as supported only if the validation-selected
-learned model beats the zero-residual stale-TLE baseline on held-out test MAE by
-a clear margin and also improves RMSE. All results in this section are
+station of Sec.~\ref{sec:baseline}. The 868~MHz carrier is representative for
+Doppler scaling and reproducibility; the controller is frequency-parametric
+(Eq.~\eqref{eq:doppler}) and applies at other carriers by rescaling $f_c$, with no
+regulatory assumption. Learned candidates are ridge, random forest,
+gradient boosting, and a small MLP, selected on the chronological validation
+segment with the gate evaluated once on the held-out test segment; a window counts
+as supported only if the selected model beats the zero-residual baseline on
+held-out MAE by a clear margin and also improves RMSE. All results here are
 software-only and model-derived; no hardware, RF, UART, replay, or measured
 Doppler is involved.
 
@@ -471,26 +458,26 @@ inter-TLE refresh ($\sim$6~h median) leaves little to correct at short staleness
 and BK1 manoeuvre/orbit-determination outliers make cross-satellite transfer
 actively harmful. This is the paper's central real-data finding: on these
 satellites, learning does not help, and the safe physics default is correct.
+Fig.~\ref{fig:bkres} visualises this: panel~(a) plots held-out MAE vs.\ staleness
+with the learned curve \emph{above} the baseline throughout, and panel~(b) shows
+the relative degradation $\Delta\%$ staying negative at every staleness, for both
+the target-specific and cross-satellite settings.
 
-The near-zero-mean, low-structure residual is \emph{consistent with} the way
-successive TLE solutions are produced. The inter-TLE Doppler residual may arise
-from orbit-determination updates between fits, drag-model mismatch over the
-propagation gap, tracking/fit noise, and occasional maneuver or bad-fit events;
-these effects are largely idiosyncratic to each fit and are not exposed as
-predictable terminal-side features in our input set (TLE age, epoch gap, stale
-Doppler, orbital phase, and stale elements). We therefore read the negative
-result as evidence that, for these satellites and features, the residual carries
-little learnable signal---not as a claim about the optimality of any propagator.
-Read constructively, this is a rigorous real-data case showing why always-on
-residual learning is unsafe for a terminal that cannot verify the correction
-before transmitting, and therefore why an evidence gate---rather than an
-unconditional learned corrector---is the appropriate design. We call this a
-\emph{weakly structured inter-TLE residual} for these satellites and features; we
-do not assume it is white for all satellites, since other objects, longer
-staleness, or richer features could expose learnable structure---precisely the
-case the gate is built to admit when evidence supports it.
+This is \emph{consistent with} how the data is produced: SGP4 is a lightweight
+analytical propagator fitted through TLE mean elements, and successive Space-Track
+TLEs reflect orbit-determination updates over different observation arcs, so the
+inter-TLE residual may mix model-fit artifacts, drag-model mismatch, tracking/fit
+noise, and occasional maneuver-like or bad-fit events. From the terminal-feature
+perspective these appear weakly structured and near zero-mean, so a regressor may
+fit validation noise rather than a stable correction---without asserting that one
+mechanism dominates, that the residual is white for every satellite, or that the
+propagator is globally best. Read constructively, it is a rigorous real-data case
+for why always-on residual learning is unsafe when a terminal cannot verify a
+correction before transmitting, and hence why an evidence gate is the appropriate
+design; richer features or longer staleness could still expose learnable structure,
+precisely the case the gate is built to admit.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering
 \small
 \caption{Real BLACK~KITE held-out test MAE [Hz @ 868~MHz]: validation-selected
@@ -516,6 +503,17 @@ BK1$\to$BK2 & 48\,h & 2.4092 & 2.8458 & $-18.1$ & closed \\
 \end{tabular}
 \end{table}
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.96\columnwidth]{figures/fig_bk_residual.pdf}
+    \caption{Real BLACK~KITE negative result (software-only, model-derived; no
+    measured Doppler). (a)~Held-out MAE vs.\ staleness: learned lies \emph{above}
+    baseline for BK1 and BK1$\rightarrow$BK2. (b)~Relative degradation $\Delta\%$ is
+    negative throughout, so the gate closes everywhere. Reported test statistics; no
+    per-sample distribution claimed.}
+    \label{fig:bkres}
+\end{figure}
+
 \subsection{Controlled Synthetic Stress: When the Gate Opens}
 \label{sec:eval-stress}
 To characterise the gate mechanism we run a controlled synthetic simulation
@@ -526,24 +524,16 @@ behaviour. Table~\ref{tab:stress} summarises three regimes. In the
 noise-dominated \texttt{fresh\_low\_residual} regime---which matches the real
 BLACK~KITE residual structure---the learned model cannot beat the baseline and
 the gate closes. In the \texttt{extreme\_systematic} regime a dominant learnable
-drift exists; the learned model cuts test MAE from $1859$ to $100$~Hz, the
-guard-band proxy from $14{,}120$ to $950$~Hz, and the outage proxy from $0.814$
-to $0.008$, and the gate opens. The \texttt{moderate\_staleness} regime is
-marginal: the learned model is only $\sim$5\% better on test, so at the
-recommended $\gamma=0.95$ the gate stays closed, trading a small missed
-opportunity for not enabling a learner that has not decisively proven itself.
+drift exists, the learned model sharply cuts test MAE, guard-band, and outage
+(Table~\ref{tab:stress}), and the gate opens. The \texttt{moderate\_staleness}
+regime is marginal: the learned model is only $\sim$5\% better on test, so at
+$\gamma=0.95$ the gate stays closed rather than enable an unproven learner. The
+systematic-regime guard reduction is an energy/overhead \emph{proxy} from the
+deployed frequency error---not a measured power saving, gateway search-window, or
+link-layer result---and appears only in this synthetic regime, absent from the real
+BLACK~KITE data.
 
-Interpreted through the proxy model, reducing the guard-band proxy from
-$\approx 14.1$~kHz to $\approx 950$~Hz in the systematic regime corresponds to a
-much smaller frequency margin the terminal would have to reserve, which under the
-proxy can translate into lower conservative margin and overhead in terminal-side
-control. We stress that this is an energy/overhead \emph{proxy} derived from the
-deployed frequency error, not a measured power saving, a gateway receiver
-search-window measurement, or a link-layer result; and that this benefit appears
-only in the controlled synthetic regime, which the real BLACK~KITE data does not
-exhibit.
-
-\begin{table}[t]
+\begin{table}[tb]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
@@ -565,99 +555,70 @@ extreme  & 1859.30 & 99.75 & open & 14120$\to$950 & 0.814$\to$0.008 \\
 
 \subsection{Threshold and Validation-Window Sensitivity}
 \label{sec:eval-sens}
-Table~\ref{tab:gamma} sweeps the gate decision over $\gamma$ and over the
-validation-window size. The two decisive regimes are insensitive to both: the
-noise-dominated regime stays closed for every $\gamma\in[0.90,1.00]$ and every
-validation size from $100$ to $3000$, and the strongly-systematic regime stays
-open throughout. The threshold only matters at the boundary: the marginal regime
-flips closed$\to$open between $\gamma=0.95$ and $\gamma=0.99$. Very small
-validation windows ($n\!\approx\!100$) can mis-decide \emph{near} the threshold,
-which is a property of any held-out estimate, not of the gate rule; the decision
-is stable once the window is not tiny. The real BK1/BK2 validation segments are
-well above this danger zone and sit deep in the noise-dominated regime, so the
-real-data gate decision (closed) is unambiguous. We adopt $\gamma=0.95$ as a
-conservative default.
+Fig.~\ref{fig:gate} plots, against the threshold $\gamma$, the gate decision (top)
+and the resulting deployed MAE (bottom) for the three regimes. The two decisive
+regimes are insensitive to $\gamma$: the noise-dominated regime stays closed and
+the strongly-systematic regime stays open across $\gamma\in[0.90,1.00]$. Only the
+marginal regime is threshold-sensitive, flipping closed$\to$open between
+$\gamma=0.95$ and $0.99$. A validation-window sweep gives the same decisions across
+$n\in\{100,300,1000,3000\}$; only very small windows ($n\!\approx\!100$) can
+mis-decide near the threshold. The real BK1/BK2 validation segments sit deep in the
+noise-dominated regime, so the real-data decision (closed) is unambiguous; we adopt
+$\gamma=0.95$.
 
-\begin{table}[t]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\caption{Synthetic gate decision vs.\ threshold $\gamma$ (validation $n=3000$) and
-vs.\ validation size (at the regime extremes). ``OPEN'' enables the learned
-corrector.}
-\label{tab:gamma}
-\begin{tabular}{lcccc}
-\toprule
-Regime / window & $\gamma{=}.90$ & $\gamma{=}.95$ & $\gamma{=}.99$ & $\gamma{=}1.0$ \\
-\midrule
-fresh, $n{=}3000$    & closed & closed & closed & closed \\
-moderate, $n{=}3000$ & closed & closed & OPEN & OPEN \\
-extreme, $n{=}3000$  & OPEN & OPEN & OPEN & OPEN \\
-\midrule
-fresh, any $n$   & closed & closed & closed & closed \\
-extreme, any $n$ & OPEN & OPEN & OPEN & OPEN \\
-\bottomrule
-\end{tabular}
-\par\vspace{2pt}\raggedright\footnotesize\textit{``any $n$'': stable across
-validation size $n\in\{100,300,1000,3000\}$.}
-\end{table}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.74\columnwidth]{figures/fig_gate_behavior.pdf}
+    \caption{Evidence-gate behaviour vs.\ $\gamma$ (controlled synthetic study, NOT
+    real BLACK~KITE evidence). Top: gate decision; bottom: deployed MAE (log; dashed
+    = systematic gate-closed baseline). Closed on the noise-dominated regime
+    (real-like), open on the systematic regime; $\gamma$ matters only at the margin.}
+    \label{fig:gate}
+\end{figure}
 
-\subsection{Implications for Terminal Control}
+\subsection{Implications and Design Rules}
 \label{sec:implications}
-Reading Tables~\ref{tab:bk}--\ref{tab:gamma} together yields a consistent control
-rule. In noise-dominated regimes---which the real BLACK~KITE data exhibits---the
-gate closes and the correct terminal action is to keep the open-loop SGP4 /
-stale-TLE baseline; an always-on learner would add noise to the
-pre-compensation (the false-open mode of Sec.~\ref{sec:stat}). In the systematic
-synthetic regime the gate opens and the learned branch shrinks the guard-band
-proxy from $\approx 14.1$~kHz to $\approx 950$~Hz and the outage proxy from
-$0.814$ to $0.008$, so a terminal that has logged such evidence can reserve a
-much smaller frequency margin. The moderate regime is exactly where the threshold
-matters: a $\sim$5\% validation gain is not enough to open at $\gamma=0.95$,
-deferring to physics rather than acting on a marginal signal. The
-validation-window sweep shows the decision is statistically reliable once the
-window is not tiny, so the gate's reliability is itself a function of how much
-chronological evidence the terminal has accumulated. The control behaviour is
-therefore data-dependent by construction: the same controller keeps physics where
-learning is unjustified and admits learning only where the evidence is strong.
+Reading Table~\ref{tab:bk}, Fig.~\ref{fig:gate}, and Table~\ref{tab:stress}
+together yields a consistent rule. In
+noise-dominated regimes---which the real BLACK~KITE data exhibits---the gate closes
+and the terminal keeps the open-loop SGP4 / stale-TLE baseline; an always-on
+learner would only add noise (the false-open mode of Sec.~\ref{sec:stat}). In the
+systematic synthetic regime the gate opens and the learned branch shrinks the
+guard-band proxy from $\approx 14.1$~kHz to $\approx 950$~Hz and the outage proxy
+from $0.814$ to $0.008$, so a terminal with logged evidence can reserve a much
+smaller margin. The moderate regime shows why the threshold matters: a $\sim$5\%
+validation gain does not open at $\gamma=0.95$. Because the gate's reliability
+grows with the amount of accumulated chronological evidence (the validation-window
+sweep), the controller is data-dependent by construction.
 
-\subsection{Design Implications}
-\label{sec:design}
-Three practical rules follow. First, for terminals with fresh or frequently
-refreshed TLEs---as in both BLACK~KITE feeds ($\sim$6~h refresh)---the open-loop
-SGP4 prediction is already hard to beat, and a learned residual should not be
-deployed unconditionally. Second, for stale or systematically biased deployments
-the residual \emph{may} carry learnable structure, but it should be enabled only
-after chronological validation demonstrates that structure, never by default.
-Third, the controller should be deployed with evidence logging and explicit gate
-decisions, so that the learned branch is auditable and reversible rather than
-always-on. These are practical design rules grounded in the present software-only
-study, not a universal performance claim.
+These observations translate into concrete design rules. In a \emph{fresh /
+frequently refreshed} TLE regime---both BLACK~KITE feeds refresh on a $\sim$6~h
+cadence---the open-loop prediction is already accurate and a learned residual
+should not be deployed unconditionally; in a \emph{stale or biased} regime the
+residual \emph{may} be learnable, but only after a validation window clears the
+margin $\gamma$; and in the \emph{moderate} regime $\gamma$ is the explicit
+conservatism knob, with reliability growing with the validation-window size
+(Sec.~\ref{sec:eval-sens}). The terminal should therefore treat the gate as an
+auditable control component, logging per control epoch the decision $G$ and
+$\gamma$, the validation MAE pair $(\mathrm{MAE}_{\mathrm{phys}}(V),\mathrm{MAE}_{\mathrm{ml}}(V))$
+with $|V|$, and the stale-TLE age---keeping the learned branch reversible and the
+``when to learn'' decision reproducible. These are practical rules from a
+software-only study, not a universal performance claim.
 
 % ── Limitations and Future Work ──────────────────────────────────────────────
 \section{Limitations and Future Work}
 \label{sec:limits}
 
-This study is software-only and model-derived; we state its scope explicitly.
-\begin{itemize}
-\item \emph{Model-derived reference only.} All ``reference'' Doppler is SGP4 from
-  real TLE (\texttt{reference\_is\_measured\_truth=false}); there is no measured
-  Doppler truth.
-\item \emph{No live or link-layer results.} No live-satellite contact or tracking,
-  no standards-compliant LR-FHSS decoding, and no packet-error rate (PER),
-  bit-error rate (BER), cyclic redundancy check (CRC), packet-delivery ratio
-  (PDR), or gateway acknowledgement.
-\item \emph{Negative result is not universal.} The real-data finding holds for two
-  BLACK~KITE satellites and our feature set; it is not a claim for all satellites
-  or all staleness/feature regimes.
-\item \emph{Synthetic benefit is not real evidence.} The positive learning result
-  appears only in a controlled simulation (Sec.~\ref{sec:eval-stress}) and must
-  not be read as real-satellite evidence.
-\item \emph{Gate scope.} The Evidence Gate provides a validation-window property
-  (Sec.~\ref{sec:gate}), not a held-out or distribution-shift safety property.
-\item \emph{Proxies only.} Guard, outage, and energy are control proxies, not
-  link-budget or packet-delivery measurements.
-\end{itemize}
+This study is software-only and model-derived. All ``reference'' Doppler is SGP4
+from real TLE (\texttt{reference\_is\_measured\_truth=false})---there is no measured
+Doppler truth, no live-satellite contact, no standards-compliant LR-FHSS decoding,
+and no packet-error rate (PER), bit-error rate (BER), cyclic redundancy check
+(CRC), packet-delivery ratio (PDR), or gateway acknowledgement. The negative result
+holds for two BLACK~KITE satellites and our feature set, not universally; the
+positive learning result is synthetic only (Sec.~\ref{sec:eval-stress}); the gate
+provides a validation-window property (Sec.~\ref{sec:gate}), not a held-out or
+distribution-shift safety property; and guard/outage/energy are control proxies,
+not link-budget or packet-delivery measurements.
 
 \emph{Hardware-in-the-loop attempt.} A supervised Mac conducted hardware-in-the-loop
 attempt was carried out and \emph{halted as inconclusive}: the physical bench
@@ -665,28 +626,35 @@ lacked an SMA/u.FL conducted RF path and a fixed attenuator between the LR1121
 transmit output and the USRP~B210 receive input (the boards were only co-located,
 with a LoRa antenna unsuitable as conducted evidence), so a TX-ON capture was not
 distinguishable from the TX-OFF baseline. We therefore claim \emph{no} conducted
-RF signal presence and no hardware validation from this attempt. A valid future
-run requires a proper cabled path---LR1121 RF output $\rightarrow$ coax
-$\rightarrow$ fixed attenuator $\rightarrow$ B210 RX---after which an IQ-level
-TX-ON/OFF signal-presence diagnostic (and, separately, a gateway-class decoded
-receiver for any link-layer metric) becomes possible. Closing this conducted-IQ
-and receiver-in-the-loop gap is the primary future work.
+RF signal presence and no hardware validation from this attempt; the requirements
+for a valid future run are set out next, and closing this conducted-IQ and
+receiver-in-the-loop gap is the primary future work.
+
+\emph{Future conducted-HIL roadmap.} A valid conducted bench needs three setup
+conditions: (i)~a \emph{conducted RF loop}---LR1121 RF output via u.FL/SMA coax
+into the B210 RX, with no radiated LoRa antenna as evidence; (ii)~\emph{calibrated
+attenuation}---a fixed $50\,\Omega$ attenuator keeping the B210 input in its linear
+region to avoid ADC clipping; and (iii)~\emph{clock/CFO discipline}---a shared
+reference or explicit CFO estimation, since independent oscillators can mimic
+frequency structure. Evidence should then be reported at three separated levels:
+L1, IQ-level TX-ON/OFF signal presence (DC/LO/image excluded); L2, hop-structure /
+residual-CFO / occupancy \emph{proxies} (not decoding); and L3, gateway-class
+decoded packet-level metrics. None is performed or claimed here; the roadmap states
+only what a future hardware study would need to move from model-derived to measured
+results.
 
 % ── Conclusion ────────────────────────────────────────────────────────────────
 \section{Conclusion}
 \label{sec:conclusion}
 
 We presented a physics-first, evidence-gated controller for transmitter-side
-LR-FHSS Doppler pre-compensation under stale orbital information: open-loop SGP4 /
-stale-TLE prediction is the safe default, and a learned residual is deployed only
-when a chronological held-out window shows it beats the baseline by a margin. On
-real BLACK~KITE TLE history the learned correction never beats the baseline, so
-the gate closes; in a controlled synthetic study the gate opens and shrinks
-simulated frequency-error, guard, and outage proxies only when a dominant
-systematic drift exists. The outcome is a safe-by-default controller whose learned
-component is enabled only on validation evidence. All results are software-only and
-model-derived; closing the conducted-IQ and receiver-in-the-loop gap with a
-properly cabled, attenuated bench is future work.
+LR-FHSS Doppler pre-compensation under stale orbital information: open-loop SGP4 is
+the safe default, and a learned residual is deployed only when a chronological
+held-out window beats the baseline by a margin. On real BLACK~KITE TLE history the
+learned correction never beats the baseline (gate closes); in a controlled
+synthetic study it opens only under dominant systematic drift. All results are
+software-only and model-derived; closing the conducted-IQ and receiver-in-the-loop
+gap on a properly cabled, attenuated bench is future work.
 
 % ── References ───────────────────────────────────────────────────────────────
 \bibliographystyle{IEEEtran}

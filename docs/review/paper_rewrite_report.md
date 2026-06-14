@@ -240,3 +240,246 @@ PDR, or gateway acknowledgement"). No "guarantee", "worst-case",
 **Confirmations (densification):** no hardware/RF/UART/TX/capture command run
 (edit + grep + tectonic + pdfinfo only); `dataraw/` untouched; paper remains
 software-only / model-derived. Not committed.
+
+---
+
+## Final body expansion and page-fill pass
+
+Added the requested reviewer-style depth in claim-safe form and re-fit the paper to
+**6 pages** with references ending on page 6 and page 6 substantially filled
+(\~9.6k chars).
+
+**Paragraphs added:**
+- §IV-B *Statistical Role of the Gate* — OOD / non-stationarity paragraph: residual
+  may be non-stationary (drag, OD updates, fit changes); gate acts as an
+  evidence-based circuit breaker reverting to physics when recent validation no
+  longer supports learning; explicitly a validation-window rule, not a guarantee.
+- §IV-C proxies — Doppler-rate/timing-offset coupling
+  $\Delta f_D\approx\dot f_D\,\Delta t$ (Eq.) motivating pass-aware guard sizing;
+  control-proxy only, no timing-sync/packet claims.
+- §V-B — deeper SGP4/TLE interpretation (SGP4 fitted through mean elements;
+  successive TLEs are OD updates over different arcs; residual mixes fit
+  artifacts/drag mismatch/tracking noise/maneuver-like events; weakly structured
+  from the terminal-feature view; regressor may fit validation noise). Conservative
+  wording; no station-keeping-as-fact, no white-noise-for-all, no SGP4-optimality.
+- §VI — *Future conducted-HIL roadmap*: (i) conducted RF loop (coax, no radiated
+  LoRa antenna), (ii) calibrated $50\,\Omega$ attenuation (linear region, no ADC
+  clipping), (iii) clock/CFO discipline; IQ-level vs link-layer evidence separated;
+  link-layer needs a gateway-class decoder. Explicitly not performed/claimed.
+
+**Layout adjustments:** merged §V-E+§V-F into one *Implications and Design Rules*
+subsection; merged two overlapping §V-B interpretation paragraphs; merged the two
+trailing Related-Work subsections; tightened `enumitem`/float/display spacing;
+shrank Fig.~1 geometry (resizebox 0.82, rows tighter); loosened float specifiers to
+`[tb]`; tightened bibliography inter-item spacing (font unchanged); removed the
+long 3GPP URL from `refs.bib`; trimmed numerous verbose sentences. No table or
+result removed in this pass (positioning table and algorithm float had been
+removed earlier); Fig.~1 keeps no hardware path.
+
+**Compile:** `tectonic paper/icc_main.tex` $\to$ success; `pdfinfo` **Pages: 6**;
+references end on page 6; page 6 \~9.6k chars (substantially filled). One cosmetic
+4.8 pt overfull hbox (BK table); no undefined citations; no errors.
+
+**Grep audit:** 4 matches, all explicit non-claims (Fig.~1 note; §V-C "not a
+measured power saving, gateway search-window, or link-layer result"; Limitations
+"no … PER, BER, CRC, PDR, or gateway acknowledgement"). No guarantee / worst-case /
+hardware-validated / station-keeping-caused / battery-or-power-saving / SGP4-optimal
+claim. **Zero overclaims.**
+
+**Confirmations (final expansion):** no hardware/RF/UART/TX/capture command run
+(edit + grep + tectonic + pdfinfo only); `dataraw/` untouched; paper remains
+software-only / trace-driven / model-derived. Not committed.
+
+---
+
+## Extended full-content draft pass
+
+Reversed the earlier over-compression: produced a full-content working draft where
+the body fills page 6 and references continue onto page 7 (7 pages total, which is
+acceptable for this draft stage).
+
+**Restored elements:**
+- Positioning table (Table~\ref{tab:related}) re-added to Related Work §II-C.
+- Algorithm~1 (\texttt{alg:control}) restored in the method (8-line gated-control
+  procedure) replacing the one-line deployment recipe.
+- 3GPP reference URL restored in `paper/refs.bib`.
+- Loosened the over-tight layout: `enumitem` itemsep 1pt$\to$2.5pt; float/display
+  spacing relaxed (\~6pt$\to$9pt, display 3pt$\to$4pt); removed the bibliography
+  inter-item compaction hack.
+
+**Figure 1 redesign:** replaced the flat 3-row diagram with a clean
+double-column (`figure*`) left-to-right fail-safe architecture: input (stale TLE /
+onboard state) $\to$ parallel SGP4 physics baseline ($f_{\mathrm{phys}}$) and
+learned residual branch ($f_{\mathrm{ml}}=f_{\mathrm{phys}}+\hat r$) $\to$ large
+highlighted \emph{Evidence Gate} ($G=\mathbf{1}[\mathrm{MAE}_{\mathrm{ml}}(V)<\gamma\,\mathrm{MAE}_{\mathrm{phys}}(V)]$,
+dashed validation-MAE inputs) $\to$ explicit \emph{Selector (MUX)} routing
+$G{=}0\!\to\!f_{\mathrm{phys}}$, $G{=}1\!\to\!f_{\mathrm{ml}}$ with output
+$\hat f=Gf_{\mathrm{ml}}+(1-G)f_{\mathrm{phys}}$ $\to$ LR-FHSS terminal control
+(Doppler pre-comp, guard/outage/overhead proxies). Bottom scope note; no hardware
+path. Wrapped in `\resizebox{\textwidth}` to fit the double column cleanly.
+
+**New / expanded technical content:**
+- §IV-B OOD / non-stationarity circuit-breaker paragraph (drag, OD updates,
+  observation-arc/fit changes; gate re-checks recent validation and reverts to
+  physics; explicitly a validation-window rule, not a distribution-shift guarantee).
+- §IV-C Doppler-rate/timing coupling $\Delta f_D\approx\dot f_D\,\Delta t$ $\to$
+  pass-aware guard motivation (proxy only).
+- §V-B SGP4/TLE fitting-artifact interpretation (mean-element fits, OD over
+  different arcs, weakly-structured residual, regressor may fit validation noise);
+  conservative ``may/consistent with''; no station-keeping-as-fact, no
+  white-for-all, no SGP4-optimality.
+- §V-E expanded into a fuller systems design-rules discussion + an explicit
+  deployment-logging itemize (gate $G$ and $\gamma$; validation MAE pair and $|V|$;
+  stale-TLE age / epoch gap).
+- §VI roadmap expanded into setup requirements (conducted RF loop; calibrated
+  $50\,\Omega$ attenuation; clock/CFO discipline) and three separated evidence
+  levels (L1 signal presence, L2 structure/CFO proxy, L3 gateway-class link-layer);
+  none performed/claimed.
+
+**Compile / layout:** `tectonic` success; \textbf{7 pages}; body text fills page 6;
+Conclusion and References on page 7 (References start page 7). Figure-width overflow
+fixed; no serious ($>$15 pt) overfull; no undefined citations.
+
+**Grep audit:** matches are all non-claims (Fig.~1 note; §V-C ``not a measured
+power saving, gateway search-window, or link-layer result''; Limitations ``no …
+PER, BER, CRC, PDR, or gateway acknowledgement'') or the word ``per'' inside
+``per regime''/``per control epoch''. No guarantee / worst-case / hardware-validated
+/ station-keeping-caused / SGP4-optimal / battery-power-saving claim. **Zero
+overclaims.**
+
+**Confirmations (extended draft):** no hardware/RF/UART/TX/capture command run
+(edit + grep + tectonic + pdfinfo only); `dataraw/` untouched; paper remains
+software-only / trace-driven / model-derived. Not committed.
+
+---
+
+## Data-visualization pass (3 figures)
+
+Added two data figures generated \emph{only} from existing repo artifacts (no new
+experiment, no invented numbers) and kept the redesigned architecture figure, for
+**3 figures + 3 tables** total.
+
+**Figures:**
+- \textbf{Fig.~1} (architecture, `figure*`): kept the double-column fail-safe
+  design (stale TLE $\to$ physics/learned paths $\to$ Evidence Gate $\to$ MUX
+  selector $\to$ LR-FHSS control); no hardware path.
+- \textbf{Fig.~2} (`figure*`, `figures/fig_bk_residual.pdf`): (a) empirical CDF of
+  BK1 SGP4/stale-TLE $|$residual$|$ at 8/48/168~h from the \emph{reported}
+  held-out percentiles, with $F_{\mathrm{tol}}=500$~Hz; (b) baseline-vs-learned
+  held-out MAE vs.\ staleness (BK1 and BK1$\to$BK2) showing learned $>$ baseline
+  everywhere.
+- \textbf{Fig.~3} (`figures/fig_gate_behavior.pdf`): gate decision (top) and
+  deployed MAE (bottom) vs.\ $\gamma$ for noise-dominated/moderate/systematic
+  regimes; replaces the former $\gamma$-sensitivity table.
+
+**Data provenance:** all figure numbers are hardcoded from
+`docs/review/black_kite_1_target_specific_residual_experiment.md` (BK1 residual
+percentiles), `docs/review/bk_negative_result_compact.{md,csv}` (MAE), and
+`docs/review/gate_stress_compact.{md,csv}` + `evidence_gate_stress_experiment.md`
+($\gamma$ sweep). Generator: `paper/figures/generate_evidence_gate_figures.py`
+(`matplotlib`, software-only). `reference_is_measured_truth=false`.
+
+**Tables:** kept Table~\ref{tab:related} (positioning), Table~\ref{tab:bk} (real
+negative result), Table~\ref{tab:stress} (synthetic stress); the $\gamma$
+sensitivity table was \emph{converted to Fig.~3}.
+
+**Compile / pages:** `tectonic` success; no undefined citations; no serious
+overfull. \textbf{8 pages} total: body + Conclusion through page~7, references
+spill onto page~8 (\~3k chars). This exceeds the 6-page ideal because the
+explicitly-requested 3 figures + 3 tables + expanded §IV--§VI text genuinely need
+$\sim$7--8 pages; per the ``prioritize content/figure quality, report honestly''
+guidance it is left extended. Reaching 6 pages would require removing a figure or a
+table or cutting the §V--§VI expansions.
+
+**Grep audit:** matches are all non-claims (Fig.~1/§V-C/Limitations disclaimers) or
+the token ``per''. No genuine overclaim.
+
+**Confirmations (data-viz):** figures generated by `matplotlib` from existing
+artifact numbers; no hardware/RF/UART/TX/capture; `dataraw/` untouched; paper
+remains software-only / model-derived. Not committed.
+
+---
+
+## Six-page visualization repair pass
+
+Repaired layout toward a submission-style version: **3 figures + 2 tables + inline
+algorithm**.
+
+- \textbf{Fig.~1 redesign}: single-column (\texttt{figure}, not \texttt{figure*})
+  \emph{vertical} fail-safe stack: stale TLE $\to$ {SGP4 $f_{\mathrm{phys}}$ |
+  learned $f_{\mathrm{ml}}$} $\to$ highlighted Evidence Gate $\to$ MUX selector
+  ($G{=}0\!\to\!f_{\mathrm{phys}}$, $G{=}1\!\to\!f_{\mathrm{ml}}$) $\to$ output
+  $\hat f$ $\to$ LR-FHSS terminal control; bottom scope note; no hardware path.
+- \textbf{Fig.~2 decision}: checked for raw residual samples --- \emph{none exist}
+  (artifacts hold only summary percentiles + MAE; the only sample-level CSVs are
+  hardware CFO timeseries, off-limits). So Fig.~2 is the \textbf{safer single-column
+  plot}, NOT an empirical CDF: (a)~held-out MAE vs.\ staleness, baseline vs.\
+  learned; (b)~relative degradation $\Delta\%$ (all $<0$). Caption states
+  software-only / model-derived / no measured Doppler / no per-sample distribution.
+- \textbf{Fig.~3 kept}: single-column gate-behaviour (gate decision + deployed MAE
+  vs.\ $\gamma$); it \emph{replaces} the former $\gamma$-sensitivity table.
+- \textbf{Tables}: removed the positioning table (now a Related-Work paragraph) and
+  the $\gamma$ table (now Fig.~3). Kept \textbf{Table~I} (real BK negative result)
+  and \textbf{Table~II} (synthetic stress) --- 2 compact tables.
+- \textbf{Algorithm}: compacted, then converted to a compact inline 4-step
+  paragraph to reclaim float space (sanctioned by the "convert if too tall" rule).
+- Trimmed repetition in §V-C/§V-E/§VI and limitations (bulleted limitations $\to$
+  one compact paragraph).
+
+\textbf{Compile / pages}: `tectonic` success; no undefined citations; no serious
+overfull. \textbf{7 pages}: body + Conclusion fit \emph{within page 6};
+references (23 entries) spill onto page 7 ($\sim$1.5 columns). Strict 6-pages-incl.-
+references is not reachable while keeping all 3 figures + 2 tables + the expanded
+§IV--§VI text, because the figure/table floats strand $\sim$1.5 columns that the
+trailing bibliography cannot backfill. Reaching strict 6 would require dropping one
+figure/table or removing $\sim$6 citations (a scholarship choice left to the
+authors).
+
+\textbf{Grep audit}: all matches are non-claims (Fig.~1/2 notes, §V-C disclaimer,
+Limitations PER/BER/CRC/PDR/gateway non-claim) or the token ``per''. Zero
+overclaims.
+
+\textbf{Confirmations (6-page repair):} no hardware/RF/UART/TX/capture (matplotlib
++ tectonic + pdfinfo only); `dataraw/` untouched; paper remains software-only /
+model-derived. Not committed.
+
+---
+
+## Strict six-page submission compression pass
+
+Produced a strict **6-page** version with references ending on page 6, keeping all
+3 figures and both core tables.
+
+- \textbf{References reduced 23 $\to$ 14} (cited). Dropped 9 less-central entries
+  (vallado2006revisiting; jung2025lrfhss, knop2024header, santana2024acrda,
+  rathi2024replication, farhat2025probabilistic; peng2021fusion, caldas2024leo;
+  sanchez2024energy) and removed the long 3GPP URL. Kept SGP4 (hoots,
+  vallado2007), Semtech + LR-FHSS overview (semtech2023, boquet2021), D2S analysis
+  (ullah2022, hurn2023), transceiver + trace (jung2023, bukhari2023), uplink policy
+  (alvarez2022), ML orbit (peng2019, acciarini2025, varey2024, caldas2024 survey),
+  and 3GPP NTN.
+- \textbf{Related Work prose compressed}: dense 6-cite receiver list $\to$ one
+  representative cite-pair; ML-orbit list condensed; no paragraph cites $>3$ works.
+- \textbf{Abstract} shortened ($\sim$25 words).
+- \textbf{Fig.~1} caption cut to 4 lines; figure kept single-column compact
+  switch/MUX style (no \texttt{figure*}, no hardware path).
+- \textbf{Fig.~2/3 captions} cut to 2--4 lines each.
+- \textbf{Limitations} one compact paragraph; \textbf{HIL roadmap} one compact
+  paragraph (no itemize); all non-claims retained (no measured Doppler, no live
+  satellite, no PER/BER/CRC/PDR/gateway ACK, no hardware validation, HIL missing
+  conducted path/attenuator).
+- \textbf{Design rules} one paragraph, logging itemize $\to$ inline; the procedure
+  is the inline 4-step recipe (algorithm float already removed).
+
+\textbf{Compile / pages}: `tectonic` success; \textbf{6 pages}; references end on
+page~6 (no page~7); no undefined citations; no serious ($>$15~pt) overfull. Kept
+3 figures (architecture, BK negative, gate behaviour) + 2 tables (real BK,
+synthetic stress).
+
+\textbf{Grep audit}: all matches are non-claims (Fig.~1/2 notes, §V-C disclaimer,
+Limitations PER/BER/CRC/PDR/gateway non-claim) or the token ``per''. Zero
+overclaims.
+
+\textbf{Confirmations (strict-6):} no hardware/RF/UART/TX/capture (tectonic +
+pdfinfo only); `dataraw/` untouched; paper remains software-only / model-derived.
+Not committed.
