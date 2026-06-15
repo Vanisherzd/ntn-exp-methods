@@ -483,3 +483,161 @@ overclaims.
 \textbf{Confirmations (strict-6):} no hardware/RF/UART/TX/capture (tectonic +
 pdfinfo only); `dataraw/` untouched; paper remains software-only / model-derived.
 Not committed.
+
+---
+
+## Final microscopic review pass
+
+Minimal must-fix edits only; no restructure, no figure add/remove. Stayed strict
+**6 pages**, references on page 6.
+
+- \textbf{Author block}: left unchanged (placeholder ``Author~1 / Example
+  University''). \emph{Reported as a submission blocker} unless the target CFP is
+  double-blind with a correct anonymous format --- not auto-fixed per instruction.
+- \textbf{Fig.~1}: left structurally unchanged (single-column vertical
+  gate$\to$selector); layout-risk of further TikZ surgery judged high near the
+  6-page boundary, so only verified it still renders cleanly.
+- \textbf{Sign convention (Fig.~2 / Table~I)}: switched from negative $\Delta\%$ to
+  positive \emph{Degradation}\,$\%=100(\mathrm{ML}-\mathrm{base})/\mathrm{base}$
+  (positive = learned worse). Regenerated `fig_bk_residual.pdf` from the existing
+  compact artifact numbers; updated Table~I header/values, Fig.~2(b) axis/title,
+  captions, and §V-B text. No data invented.
+- \textbf{Eq.~(9) defense}: added a compact §IV-C sentence stating the reported
+  guard $g$ is a scalar pass-aggregated $p_{99}$ proxy and Eq.~(9) only motivates
+  future pass-aware allocation, not a dynamic guard in our experiments.
+- \textbf{Model-to-model limitation}: added a compact §V-B sentence noting both
+  $D_{\mathrm{ref}}$ and $f_{\mathrm{phys}}$ are SGP4 propagations, so the residual
+  is model-to-model inter-TLE, not a measured RF-channel residual.
+- \textbf{Tone-down}: ``the safe physics default is correct'' $\to$ ``preferred by
+  held-out evidence''; ``matches the real BLACK~KITE residual structure'' $\to$
+  ``resembles the low-structure behaviour observed in real BLACK~KITE residuals''.
+- \textbf{Abstract}: ``hardware-radiated result'' $\to$ ``RF/hardware result''.
+- \textbf{Page-budget offsets}: the two added sentences pushed to 7 pages; offset by
+  tightening §IV-B/§V-D/§V-E/§VI/conclusion and dropping one further citation
+  (boquet2021lrfhss; \textbf{14$\to$13 cited}), and fixing two table/caption
+  overfulls. Both added must-fix sentences were \emph{kept} (in compressed form).
+
+\textbf{Compile / pages}: `tectonic` success; \textbf{6 pages}; references end on
+page~6; no undefined citations; no serious ($>$15~pt) overfull. Kept 3 figures + 2
+tables; 13 references.
+
+\textbf{Grep audit}: all matches are non-claims (Fig.~1/2 notes, §V-C disclaimer,
+Limitations PER/BER/CRC/PDR/gateway non-claim) or the token ``per''. Zero
+overclaims.
+
+\textbf{Author placeholder}: still present --- submission blocker pending human
+author info / venue anonymity decision.
+
+\textbf{Confirmations (microscopic):} no hardware/RF/UART/TX/capture (matplotlib +
+tectonic + pdfinfo only); `dataraw/` untouched; paper remains software-only /
+model-derived. Not committed.
+
+---
+
+## Final pre-submission harsh-review fixes
+
+Minimal must-fix edits; strict **6 pages**, references end on page 6.
+
+- \textbf{Fig.~1 placement}: the figure previously floated to the top of page~2 and
+  interrupted the Introduction contribution list. Moved its source to the start of
+  §IV (Method) and added a text reference (Fig.~\ref). Verified: contributions now
+  sit wholly on page~1, Fig.~1 renders at the top of page~3, no bullet is split.
+- \textbf{Fig.~1 orphan-$G$ cleanup}: the gate$\to$selector control signal is now a
+  single labelled arrow ``control bit $G$'' with a white-backed midway label
+  attached to the arrow (no detached $G$); single-column, no \texttt{figure*}, no
+  hardware path.
+- \textbf{Validation-window causality}: added one sentence in §IV (Datasets/Splits)
+  --- the validation window uses only completed TLE-refresh intervals whose newer
+  TLE arrived before the next deployment decision, so the gate is causal w.r.t.\
+  the subsequent control epoch.
+- \textbf{$F_{\mathrm{tol}}$ rationale}: compressed into the §IV-C outage-proxy
+  sentence --- $F_{\mathrm{tol}}=500$~Hz is a representative sub-kHz frequency-miss
+  tolerance for comparing control policies, \emph{not} a standard-compliant decoding
+  threshold.
+- \textbf{Reference count consistency}: the PDF bibliography is \textbf{[1]--[13]};
+  the count is \textbf{23 $\to$ 13} (a page-neutral swap restored Boquet~2021 by
+  dropping the less-central Varey/PINN citation; total stays 13). Earlier sections
+  of this report that said ``$\to$14'' refer to an intermediate state; the final
+  PDF has 13.
+- \textbf{Conclusion wording}: ``safe default'' $\to$ ``conservative default''.
+- \textbf{Author block}: unchanged placeholder; a \texttt{TODO(SUBMISSION BLOCKER)}
+  comment was added above it. \emph{Remains a submission blocker} until real
+  author/affiliation info is supplied (or the venue's double-blind anonymous format
+  is applied).
+
+\textbf{Compile / pages}: `tectonic` success; \textbf{6 pages}; references end on
+page~6; no undefined citations; no serious ($>$15~pt) overfull; 3 figures + 2
+tables + 13 references.
+
+\textbf{Grep audit}: all matches are non-claims (Fig.~1/2 notes, §V-C disclaimer,
+Limitations PER/BER/CRC/PDR/gateway non-claim) or the token ``per''. Zero
+overclaims.
+
+\textbf{Confirmations (harsh-review):} no hardware/RF/UART/TX/capture (tectonic +
+pdfinfo + pdftoppm only); `dataraw/` untouched; paper remains software-only /
+model-derived. Author placeholder still a blocker. Not committed.
+
+---
+
+## Final content-only technical cleanup
+
+Internal wording fixes only; no restructure; strict **6 pages**, references end on
+page~6; \textbf{13 active references} ([1]--[13]).
+
+- \textbf{``truth'' wording removed}: Introduction
+  ``stale-TLE$\to$truth Doppler residual'' $\to$ ``residual between a stale-TLE
+  prediction and a later-TLE model-derived reference''. No ``truth Doppler''
+  remains.
+- \textbf{``unpredictable'' softened}: abstract $\to$ ``near zero-mean and not
+  learnably improved by the tested residual models''; introduction $\to$ ``near
+  zero-mean and weakly predictable from the terminal-side features tested here''.
+  No physical-impossibility claim.
+- \textbf{Maneuver certainty softened}: ``pairs with a manoeuvre/bad-fit outlier''
+  $\to$ ``an outlier or bad-fit candidate''; ``BK1 manoeuvre/orbit-determination
+  outliers'' $\to$ ``BK1 outlier or bad-fit candidates'' (the existing
+  ``maneuver-like or bad-fit events'' was already safe).
+- \textbf{Proxy wording fixed (§V-C)}: ``cuts test MAE, guard-band, and outage''
+  $\to$ ``cuts test MAE and the guard/outage proxies''.
+- \textbf{Table~I interpretation sentence (§V-B)}: added (kept) --- even the 168~h
+  BK1 baseline MAE is only 26.9~Hz, small against the $F_{\mathrm{tol}}=500$~Hz
+  proxy, so the learner must improve an already small model-derived residual where
+  slight generalization noise loses the held-out comparison. Offset by compressing
+  §V-B / §V-E / conclusion to hold 6 pages.
+- \textbf{Reference-count consistency}: the final PDF bibliography is
+  \textbf{[1]--[13]}; the active count is \textbf{13} (not 14, not 23). Earlier
+  ``$\to$14'' / ``$\to$23'' notes refer to intermediate states.
+- Kept all prior good fixes: positive Degrad.\% convention; Eq.~(9) static-$p_{99}$
+  guard defense; model-to-model inter-TLE limitation; validation-window causality;
+  no RF/hardware claim; Fig.~1 at §IV (not splitting the contribution list).
+
+\textbf{Compile / pages}: `tectonic` success; \textbf{6 pages}; references end on
+page~6; no undefined citations; no serious ($>$15~pt) overfull; 3 figures + 2
+tables + 13 references.
+
+\textbf{Grep audit}: all matches are non-claims (Fig.~1/2 notes, §V-C disclaimer,
+Limitations PER/BER/CRC/PDR/gateway non-claim) or the token ``per''. No ``truth
+Doppler'', ``unpredictable'', ``manoeuvre'', ``near-perfect'', or ``physical
+limit''. Zero overclaims.
+
+\textbf{Confirmations (content cleanup):} no hardware/RF/UART/TX/capture (tectonic
++ pdfinfo only); `dataraw/` untouched; paper remains software-only / model-derived.
+Author placeholder still a blocker. Not committed.
+
+---
+
+## Final Fig. 1 artifact fix
+
+- \textbf{Label removed from Gate-to-MUX arrow}: the labeled draw
+  `\draw[key] (gate.south) -- node[...]{control bit $G$} (mux.north);` (whose
+  white-filled label rendered as a green horizontal block) was replaced with a
+  plain arrow `\draw[key] (gate.south) -- (mux.north);`. $G$ is still defined in
+  the Evidence Gate box, stated in the MUX box ($G{=}0\!\to\!f_{\mathrm{phys}}$,
+  $G{=}1\!\to\!f_{\mathrm{ml}}$), and in the caption; no information lost.
+- \textbf{Visual confirmation}: rendered page~3 --- the green block/artifact is
+  gone; the Gate$\to$MUX connection is a clean control arrow.
+- \textbf{Page count}: 6 pages; references end on page~6.
+- \textbf{Compile}: `tectonic` success; no undefined citations; no serious overfull.
+- \textbf{Grep}: matches are all non-claims (Fig.~1/2 notes, §V-C disclaimer,
+  Limitations PER/BER/CRC/PDR/gateway non-claim) or the token ``per''. Zero
+  overclaims.
+- No hardware/RF command run; `dataraw/` untouched. Not committed.

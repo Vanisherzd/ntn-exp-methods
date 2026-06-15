@@ -28,11 +28,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 stale_bk1 = [8, 24, 48, 72, 96, 168]
 mae_base_bk1 = [0.2430, 0.8161, 1.9433, 4.8947, 10.1153, 26.9243]
 mae_ml_bk1   = [0.3501, 0.9109, 2.8608, 5.9092, 11.7663, 45.2629]
-dpct_bk1     = [-44.1, -11.6, -47.2, -20.7, -16.3, -68.1]
+# Degradation % = 100*(MAE_learned - MAE_baseline)/MAE_baseline; positive = worse.
+dpct_bk1     = [44.1, 11.6, 47.2, 20.7, 16.3, 68.1]
 stale_x = [8, 24, 48]
 mae_base_x = [0.1877, 0.4969, 2.4092]
 mae_ml_x   = [0.3261, 1.8639, 2.8458]
-dpct_x     = [-73.7, -275.1, -18.1]
+dpct_x     = [73.7, 275.1, 18.1]
 
 fig, (axa, axb) = plt.subplots(2, 1, figsize=(3.45, 3.7), sharex=True)
 
@@ -51,14 +52,14 @@ axa.set_title("(a) learned never beats baseline", fontsize=8)
 axa.legend(fontsize=6.0, loc="upper left", ncol=1)
 axa.grid(True, which="both", ls=":", alpha=0.4)
 
-# (b) Delta% vs staleness (negative = worse)
+# (b) degradation % vs staleness (positive = learned worse)
 axb.axhline(0, color="0.5", lw=0.8)
 axb.plot(stale_bk1, dpct_bk1, "s-", color="#d62728", lw=1.5, ms=4, label="BK1")
 axb.plot(stale_x, dpct_x, "v:", color="#8c564b", lw=1.3, ms=4, label="BK1$\\to$BK2")
 axb.set_xscale("log")
 axb.set_xlabel("stale-TLE age [h]", fontsize=8)
-axb.set_ylabel("learned $\\Delta$\\% vs baseline", fontsize=8)
-axb.set_title("(b) relative degradation (all $<0$)", fontsize=8)
+axb.set_ylabel("degradation vs baseline [\\%]", fontsize=8)
+axb.set_title("(b) degradation (all $>0$)", fontsize=8)
 axb.set_xticks(stale_bk1)
 axb.set_xticklabels([str(s) for s in stale_bk1], fontsize=7)
 axb.legend(fontsize=6.5, loc="lower left")
