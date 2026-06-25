@@ -1,0 +1,31 @@
+[36m[01m      -------------------------------------------------------------------
+[39;49m[0m[36m[01m                        STM32CubeProgrammer v2.21.0                  
+[39;49m[0m[36m[01m      -------------------------------------------------------------------
+
+[39;49m[0m[90mST-LINK SN  : 066CFF3031454D3043073845
+[39;49m[0m[90mST-LINK FW  : V2J33M25
+[39;49m[0m[90mBoard       : NUCLEO-L476RG 
+[39;49m[0m[90mVoltage     : 3.27V
+[39;49m[0m[90mSWD freq    : 4000 KHz
+[39;49m[0m[90mConnect mode: Under Reset
+[39;49m[0m[90mReset mode  : Hardware reset
+[39;49m[0m[90mDevice ID   : 0x415
+[39;49m[0m[90mRevision ID : Rev 4
+[39;49m[0m[39;49m[0m[39;49mDevice name : STM32L4x1/STM32L475xx/STM32L476xx/STM32L486xx
+[39;49m[0m[39;49mFlash size  : 1 MBytes
+[39;49m[0m[39;49mDevice type : MCU
+[39;49m[0m[39;49mDevice CPU  : Cortex-M4
+[39;49m[0m[39;49mBL Version  : 0x92
+[39;49m[0m[39;49mDebug in Low Power mode enabled
+[39;49m[0m[39;49m
+[39;49m[0m[39;49m
+UPLOADING ...
+[39;49m[0m[39;49m  File          : hardware_conducted_iq/board_inventory/board_B_flash_dump_20260626_001321/board_B_flash_dump.bin
+[39;49m[0m[39;49m  Size          : 1048576 Bytes
+[39;49m[0m[39;49m  Address:      : 0x8000000
+[39;49m[0m[39;49mRead progress:
+[39;49m[0m[00;32m[==================================================] 100% [39;49m[39;49m[0m[39;49m[0m[39;49m
+
+[39;49m[0m[00;32mData read successfully
+[39;49m[0m[39;49mTime elapsed during read operation is: 00:00:07.260
+[39;49m[0m[39;49m[0m

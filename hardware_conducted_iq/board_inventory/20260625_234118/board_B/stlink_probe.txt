@@ -1,0 +1,11 @@
+$ st-info --probe
+st-info: not installed
+
+$ STM32_Programmer_CLI -l
+STM32_Programmer_CLI: not installed
+
+$ pyocd list
+pyocd: not installed
+
+$ openocd probe
+openocd: not installed

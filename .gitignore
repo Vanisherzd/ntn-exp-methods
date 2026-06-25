@@ -58,6 +58,9 @@ validation_runs/
 *.fc32
 *.cfile
 *.sigmf-data
+hardware_conducted_iq/**/*.npy
+hardware_conducted_iq/**/*.fc32
+hardware_conducted_iq/**/*.cfile
 
 # OTA IQ replay raw captures (large; keep local). Curated CSV/JSON/figures stay tracked.
 hardware/ota_iq/runs/**/*.npy
@@ -122,3 +125,9 @@ dataraw/
 *.env
 .env.spacetrack
 
+# Flash dumps (raw board images; never commit)
+hardware_conducted_iq/board_inventory/**/board_*_flash_dump*.bin
+hardware_conducted_iq/board_inventory/**/*.bin
+# Firmware build artifacts
+build/
+firmware_patches/**/build/

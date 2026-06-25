@@ -1,0 +1,1 @@
+/Applications/STMicroelectronics/STM32Cube/STM32CubeProgrammer/STM32CubeProgrammer.app/Contents/Resources/bin/STM32_Programmer_CLI -c port=SWD sn=066CFF3031454D3043073845 mode=UR --upload 0x08000000 0x100000 hardware_conducted_iq/board_inventory/board_B_flash_dump_20260626_001321/board_B_flash_dump.bin

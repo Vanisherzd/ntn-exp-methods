@@ -1,0 +1,2 @@
+No flash dump available.
+Reason: no read-only STM32 probe utility installed.

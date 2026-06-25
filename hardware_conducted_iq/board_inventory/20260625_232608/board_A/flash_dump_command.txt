@@ -1,0 +1,2 @@
+No read-only flash dump command executed.
+Reason: st-flash, openocd, STM32_Programmer_CLI, and pyocd are not installed on this machine.

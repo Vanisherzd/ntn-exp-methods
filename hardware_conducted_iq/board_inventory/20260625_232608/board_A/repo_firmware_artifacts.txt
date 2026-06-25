@@ -1,0 +1,105 @@
+# Repo Firmware Artifacts
+
+## Binary / build artifacts
+- No `.bin`, `.elf`, `.hex`, `Makefile`, `CMakeLists.txt`, or `platformio.ini` firmware build artifacts were found in the repo.
+
+## Relevant config / log artifacts
+
+### semtech_validation/lr1121_tx_config_example.json
+sha256: 51030b9db6e1a8b17a456670600096841770c7a07338f31145c3e7d22af78eac
+contains:
+2:  "center_frequency_hz": 923200000,
+3:  "tx_power_dbm": 0,
+10:  "lrfhss_mode": true,
+
+### local_archive/validation_runs/20260609T135342Z/dryrun_001/tx_uart.log
+sha256: 53a11732c50d193814bd77751ffd92fe4f209e367ce3c00138f66ceccf1bb3e3
+key lines:
+2:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+3:Packet sent!
+5:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+6:Packet sent!
+8:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+9:Packet sent!
+11:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+12:Packet sent!
+14:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+15:Packet sent!
+17:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+18:Packet sent!
+20:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+21:Packet sent!
+23:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+24:Packet sent!
+26:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+27:Packet sent!
+29:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+30:Packet sent!
+32:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+33:Packet sent!
+35:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+36:Packet sent!
+38:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+39:Packet sent!
+41:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+42:Packet sent!
+44:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+45:Packet sent!
+47:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+48:Packet sent!
+50:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+51:Packet sent!
+53:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+54:Packet sent!
+56:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+57:Packet sent!
+59:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+60:Packet sent!
+
+### local_archive/validation_runs/20260609T135342Z/hw_dryrun_001/tx_uart.log
+sha256: b6b7643e1245a98430fb16642e478e3fa8cfe33d21bfcaf49382dcc1b5bc28b7
+key lines:
+2:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+3:Packet sent!
+5:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+6:Packet sent!
+8:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+9:Packet sent!
+11:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+12:Packet sent!
+14:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+15:Packet sent!
+17:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+18:Packet sent!
+20:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+21:Packet sent!
+23:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+24:Packet sent!
+26:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+27:Packet sent!
+29:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+30:Packet sent!
+32:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+33:Packet sent!
+35:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+36:Packet sent!
+38:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+39:Packet sent!
+41:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+42:Packet sent!
+44:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+45:Packet sent!
+47:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+48:Packet sent!
+50:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+51:Packet sent!
+53:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+54:Packet sent!
+56:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+57:Packet sent!
+59:RF=868000000 Hz, PWR=10.0 dBm, payload_len=12
+60:Packet sent!
+
+## Match conclusion
+- No flashable board firmware image in the repo to compare against Board A.
+- No board_A_flash_dump.bin available because no read-only STM32 dump tool is installed.
