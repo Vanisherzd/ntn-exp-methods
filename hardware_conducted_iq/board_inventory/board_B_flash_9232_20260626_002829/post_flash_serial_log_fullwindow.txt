@@ -1,0 +1,81 @@
+Candidate serial ports:
+- /dev/cu.usbmodem1303 | desc='STM32 STLink' | hwid='USB VID:PID=0483:374B SER=066CFF3031454D3043073845 LOCATION=0-1.3' | manufacturer='STMicroelectronics'
+- /dev/cu.Bluetooth-Incoming-Port | desc='n/a' | hwid='n/a' | manufacturer=None
+- /dev/cu.debug-console | desc='n/a' | hwid='n/a' | manufacturer=None
+
+Selected port: /dev/cu.usbmodem1303
+Duration per baud attempt: 55.0s
+
+## Baud 115200
+bytes_received=2504
+printable_ratio=1.000
+--- BEGIN LOG ---
+BURST 36 t=43689 freq_hz=923200000 pwr_dbm=-17
+BURST 37 t=44870 freq_hz=923200000 pwr_dbm=-17
+BURST 38 t=46051 freq_hz=923200000 pwr_dbm=-17
+TX_DONE 47430 bursts=39 elapsed_ms=46052
+DET_TX_SELFTEST_COMPLETE
+RDY
+RDY
+RDY
+BOARD_ID NUCLEO-L476RG SN=066CFF3031454D3043073845
+FIRMWARE_NAME lr1121_det_tx_9232_lowpower
+FIRMWARE_VERSION 0.1.0
+CONFIGURED_FREQUENCY_HZ 923200000
+TX_POWER_DBM -17
+TX_MODE LR_FHSS_BURST_LOOP
+TX_WINDOW_S 45
+WARNING conducted-only, no antenna, no OTA, attenuator >=50dB inline
+INIT beginLRFHSS code 0
+DET_TX_READY
+TX_START 1378
+BURST 0 t=1181 freq_hz=923200000 pwr_dbm=-17
+BURST 1 t=2362 freq_hz=923200000 pwr_dbm=-17
+BURST 2 t=3543 freq_hz=923200000 pwr_dbm=-17
+BURST 3 t=4724 freq_hz=923200000 pwr_dbm=-17
+BURST 4 t=5905 freq_hz=923200000 pwr_dbm=-17
+BURST 5 t=7086 freq_hz=923200000 pwr_dbm=-17
+BURST 6 t=8267 freq_hz=923200000 pwr_dbm=-17
+BURST 7 t=9448 freq_hz=923200000 pwr_dbm=-17
+BURST 8 t=10630 freq_hz=923200000 pwr_dbm=-17
+BURST 9 t=11811 freq_hz=923200000 pwr_dbm=-17
+BURST 10 t=12992 freq_hz=923200000 pwr_dbm=-17
+BURST 11 t=14173 freq_hz=923200000 pwr_dbm=-17
+BURST 12 t=15354 freq_hz=923200000 pwr_dbm=-17
+BURST 13 t=16534 freq_hz=923200000 pwr_dbm=-17
+BURST 14 t=17715 freq_hz=923200000 pwr_dbm=-17
+BURST 15 t=18896 freq_hz=923200000 pwr_dbm=-17
+BURST 16 t=20077 freq_hz=923200000 pwr_dbm=-17
+BURST 17 t=21257 freq_hz=923200000 pwr_dbm=-17
+BURST 18 t=22438 freq_hz=923200000 pwr_dbm=-17
+BURST 19 t=23619 freq_hz=923200000 pwr_dbm=-17
+BURST 20 t=24800 freq_hz=923200000 pwr_dbm=-17
+BURST 21 t=25981 freq_hz=923200000 pwr_dbm=-17
+BURST 22 t=27161 freq_hz=923200000 pwr_dbm=-17
+BURST 23 t=28342 freq_hz=923200000 pwr_dbm=-17
+BURST 24 t=29523 freq_hz=923200000 pwr_dbm=-17
+BURST 25 t=30704 freq_hz=923200000 pwr_dbm=-17
+BURST 26 t=31885 freq_hz=923200000 pwr_dbm=-17
+BURST 27 t=33066 freq_hz=923200000 pwr_dbm=-17
+BURST 28 t=34246 freq_hz=923200000 pwr_dbm=-17
+BURST 29 t=35427 freq_hz=923200000 pwr_dbm=-17
+BURST 30 t=36608 freq_hz=923200000 pwr_dbm=-17
+BURST 31 t=37789 freq_hz=923200000 pwr_dbm=-17
+BURST 32 t=38970 freq_hz=923200000 pwr_dbm=-17
+BURST 33 t=40151 freq_hz=923200000 pwr_dbm=-17
+BURST 34 t=41331 freq_hz=923200000 pwr_dbm=-17
+BURST 35 t=42512 freq_hz=923200000 pwr_dbm=-17
+BURST 36 t=43693 freq_hz=923200000 pwr_dbm=-17
+BURST 37 t=44874 freq_hz=923200000 pwr_dbm=-17
+BURST 38 t=46055 freq_hz=923200000 pwr_dbm=-17
+TX_DONE 47433 bursts=39 elapsed_ms=46055
+DET_TX_SELFTEST_COMPLETE
+RDY
+RDY
+RDY
+--- END LOG ---
+
+## Best attempt
+best_baud=115200
+bytes_received=2504
+printable_ratio=1.000

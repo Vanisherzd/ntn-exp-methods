@@ -10,63 +10,61 @@
 
 ---
 
-## 1. Slide 9 — concise honest status (paste-ready)
+## 1. Slide 9 — "Conducted IQ bring-up result" (paste-ready)
 
-> Hardware bring-up has moved to the conducted-IQ stage. The receiver path is
-> internally validated: the USRP RX chain and the spectrum-analyzer path were
-> verified end-to-end on the receive side. Across the conducted captures taken so
-> far — at 60 dB and 50 dB attenuation, with RX gains of 0/10/20, plus a debug
-> scan at 922.0 / 923.2 / 924.4 MHz — no LR1121 transmit emission was observed:
-> no TX-ON step, no clipping, and no saturation. The remaining blocker is on the
-> board side, in deterministic TX / firmware control, not in the USRP or analyzer
-> measurement chain. Serial readback from Board B shows its current firmware is
-> configured at 868 MHz / 10 dBm, i.e. not the intended Taiwan 923.2 MHz at the
-> lowest TX power; Board A's firmware is unresolved and the board is currently
-> disconnected. No firmware source tree exists in the repository, so the
-> provenance of the 868 MHz / 10 dBm image is external and unknown.
+> **Conducted IQ bring-up result**
+> - Board B reflashed from the 868 MHz stock demo to a deterministic 923.2 MHz / -17 dBm conducted-TX firmware (serial-verified: configured frequency + power, TX_START → 39 LR-FHSS bursts → TX_DONE).
+> - TX-ON is clearly visible over TX-OFF: **+41.13 dB** on the canonical run; **41.25 ± 0.36 dB** across four repeat captures; **43.76 dB** on a 2 MS/s overflow-sanity control.
+> - Peak near **923.238 MHz** (within the LR-FHSS hop grid); after masking the DC/LO artifact, TX-ON stays 41 dB above TX-OFF at a real hop bin — the signal is the board, not the artifact.
+> - Negative control: pre-reflash 868 MHz firmware gave ~0.5 dB (not visible) with the same RX chain — the earlier null was a board frequency mismatch, not a receiver fault.
+> - No clipping or saturation in any run.
+> - **Claim boundary:** conducted IQ only; no packet decoding, PER/PDR/CRC/gateway ACK, OTA, or live-satellite validation.
+> - **Future work:** packet-level conducted PER/PDR and authorized OTA validation are left for future work.
 
 ## 2. Paper — limitations / future-work note (paste-ready)
 
 > We report receiver-side and conducted-IQ bring-up results only; we do not claim
-> over-the-air or live-satellite validation. The USRP receive chain and the
-> spectrum-analyzer path were validated internally, confirming that the
-> measurement and capture infrastructure operates correctly. However, no LR1121
-> transmit emission was detected in any conducted capture taken to date (60 dB and
-> 50 dB attenuation; RX gains 0/10/20; a debug scan at 922.0, 923.2, and
-> 924.4 MHz), with no TX-ON transition, clipping, or saturation present in the
-> recorded IQ. We attribute this to a board-side limitation in deterministic TX
-> and firmware control rather than to the receive measurement chain. Serial
-> inspection confirms that the available board firmware is set to 868 MHz / 10 dBm
-> rather than the intended 923.2 MHz Taiwan configuration at minimum TX power, and
-> no firmware source tree or flashing/control path is present in the repository,
-> leaving the image provenance external and unverified. Establishing a
-> repeatable, board-side deterministic TX path — and confirming the configured
-> frequency and power on the live board — is the prerequisite for any subsequent
-> transmit-side or end-to-end RF measurement, and is left to future work.
+> over-the-air, packet-level, or live-satellite validation. The USRP receive chain
+> and spectrum-analyzer path were validated internally. We then built and flashed a
+> deterministic LR1121 transmit firmware on the NUCLEO-L476RG board, configured for
+> the 923.2 MHz Taiwan channel at the lowest available TX power (-17 dBm, Low-Power
+> PA); serial readback confirmed the configured frequency and power and a complete
+> transmit window. A conducted capture over a 50 dB attenuated coaxial path (no
+> antenna) into a USRP B210 resolved a TX-ON emission approximately 41 dB above the
+> TX-OFF noise floor, peaking within the LR-FHSS hop grid of the target channel,
+> with no clipping or saturation. We emphasize that this is conducted IQ-level
+> spectral evidence of a controlled transmission, not a decoded-packet, PER/PDR, or
+> end-to-end link result. An earlier set of conducted captures saw no emission
+> because the board then ran a stock 868 MHz firmware, roughly 55 MHz outside the
+> analyzed 923 MHz span; reflashing to the 923.2 MHz configuration resolves this.
+> Packet-level decoding, link metrics, and any over-the-air or satellite
+> measurement remain future work.
 
 ## 3. Status matrix — validated vs. blocked
 
-**Validated (receiver-side / infrastructure only)**
+**Validated / achieved**
 - USRP RX chain: internally validated.
 - Spectrum-analyzer path: internally validated.
-- Conducted-IQ capture workflow: operational (TX-ON/TX-OFF spectrum check,
-  waterfall check, receiver-chain debug).
-- Conducted-IQ bring-up: started.
+- Conducted-IQ capture workflow: operational.
+- Deterministic LR1121 TX firmware: built, flashed (Board B), serial-verified at
+  923.2 MHz / -17 dBm (TX_START → 39 LR-FHSS bursts → TX_DONE, INIT code 0).
+- Conducted IQ-level TX-ON evidence: TX-ON visible, +41.13 dB over TX-OFF noise,
+  peak ~923.24 MHz, no clipping/saturation (run `20260626_003643_gain20_50db`).
 
-**Blocked / unresolved (board-side)**
-- Deterministic LR1121 TX / firmware control: in progress, not reproducible from
-  the repo.
-- LR1121 TX emission in conducted captures: not observed (60 dB & 50 dB attn;
-  gains 0/10/20; debug scan 922.0 / 923.2 / 924.4 MHz) — no TX-ON, no clipping,
-  no saturation.
-- Board B firmware config: serial readback = 868 MHz / 10 dBm (NOT Taiwan
-  923.2 MHz / lowest TX power). ST-LINK SN 066CFF3031454D3043073845.
+**Open / future work**
 - Board A firmware: unresolved; board currently disconnected.
   ST-LINK SN 0670FF3234584D3043215150.
-- Firmware provenance: no source tree in repo; 868 MHz / 10 dBm image is
-  external / unknown origin.
+- Packet-level decode, PER/PDR/CRC, link metrics: not attempted.
+- OTA / satellite measurement: not attempted.
+- Minor: one USRP USB overflow (dropped samples) at 4 MS/s during capture —
+  benign for the TX-ON/TX-OFF spectral result; tighten streaming for sample-exact
+  work.
 
 **Explicitly NOT claimed**
-- No RF validation completed.
+- No RF validation completed (in the link-layer sense).
 - No packet decode, no PER / PDR / CRC.
 - No gateway ACK, no satellite / OTA / live-satellite link.
+
+(Board B identity: ST-LINK SN 066CFF3031454D3043073845. Firmware now
+`lr1121_det_tx_9232_lowpower` 0.1.0, replacing the prior stock 868 MHz / 10 dBm
+SWDM001 demo.)

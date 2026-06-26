@@ -2,7 +2,61 @@
 
 **Date:** 2026-06-26
 **Scope:** Resolve board-side firmware/control to create a deterministic LR1121 conducted TX at 923.200 MHz, lowest TX power, conducted-only.
-**Status:** Receiver chain validated. No RF TX observed yet. **Unblock path now PREPARED and build-verified** (flash still gated, not executed).
+**Status:** Board B **flashed + serial-verified + conducted-IQ-capture confirmed** for deterministic 923.2 MHz / -17 dBm conducted TX (2026-06-26). First **visible TX-ON** at the target frequency (+41 dB over noise floor). Conducted IQ-level evidence only — no link/packet/OTA/satellite claims.
+
+---
+
+## UPDATE 2026-06-26 (session 3 — FLASH DONE, serial verification PASSED)
+
+**Step 0 — commit:** `11d6725` "hardware: add LR1121 conducted IQ bring-up tooling and Board B firmware inventory" (reports/scripts/recovered firmware/patches/board_inventory text + .gitignore; no raw .bin/.npy).
+
+**Step 1 — compile:** `arduino-cli` → `build/lr1121_det_tx_9232_lowpower.ino.bin` (44.7 KB, 0 errors).
+
+**Step 2 — flash Board B: SUCCESS + VERIFIED.**
+- STM32CubeProgrammer v2.21.0, SWD, pinned SN `066CFF3031454D3043073845`, `mode=UR --download 0x08000000 --verify`.
+- Download-flow sector erase [0 22] only (no mass erase, no option-byte change). "Download verified successfully."
+- Log: `hardware_conducted_iq/board_inventory/board_B_flash_9232_20260626_002829/flash_log.txt`
+
+**Step 3 — post-flash serial verification: PASSED (all required evidence).**
+```
+BOARD_ID NUCLEO-L476RG SN=066CFF3031454D3043073845
+FIRMWARE_NAME lr1121_det_tx_9232_lowpower
+FIRMWARE_VERSION 0.1.0
+CONFIGURED_FREQUENCY_HZ 923200000
+TX_POWER_DBM -17
+TX_MODE LR_FHSS_BURST_LOOP
+WARNING conducted-only, no antenna, no OTA, attenuator >=50dB inline
+INIT beginLRFHSS code 0
+TX_START 1378 ... BURST 0..38 (freq_hz=923200000 pwr_dbm=-17) ... TX_DONE 47433 bursts=39 elapsed_ms=46055
+DET_TX_SELFTEST_COMPLETE
+```
+- Logs: `board_B_flash_9232_20260626_002829/post_flash_serial_log.txt` (boot+TX_START+20 bursts) and `post_flash_serial_log_fullwindow.txt` (full window incl. TX_DONE, 39 bursts).
+- Board B is now configured at 923.2 MHz / -17 dBm and `beginLRFHSS` returns 0 (LR1121 accepts -17 dBm on the LP PA). The earlier caveat (RadioLib might clamp -17) is **resolved — accepted**.
+
+**Step 4 — conducted IQ capture: DONE — TX-ON VISIBLE.**
+- Operator confirmed the conducted RF path: `LR1121 RF → 30 dB → 20 dB → SMA coax → USRP B210 RX2 A`, no antenna, 50 dB inline.
+- USRP B210 (serial 8000304, UHD 4.10) via `rx_samples_to_file` fallback (pyuhd absent).
+- TX timing automated via `--tx-control command`: noise window with firmware idle, then serial `S` triggers the 45 s LR-FHSS window aligned to the ON capture.
+- Run dir: `hardware_conducted_iq/20260626_003643_gain20_50db/` (freq 923.2 MHz, gain 20, attn 50 dB, rate 4 MS/s, off 10 s / on 45 s).
+
+Result (conducted IQ-level only):
+| metric | value |
+|---|---|
+| TX-ON visible | **True** |
+| TX-ON − TX-OFF | **41.13 dB** (noise −69.46 → peak −27.54 dB) |
+| peak frequency | 923238085.94 Hz (offset +38.09 kHz from center, within LR-FHSS hop grid) |
+| noise peak offset | −488 Hz (FFT bin, no signal) |
+| clipping / saturation / artifact warnings | False / False / False |
+| usable for conducted IQ-level evidence | True |
+| CFO / hop-center proxy candidate | True |
+
+Artifacts: `psd_noise.png`, `psd_txon.png`, `maxhold_txon_vs_noise.png`, `waterfall_txon.png`, `signal_detection_summary.json`, `EXPERIMENT_REPORT.md`, `capture_metadata.json`. Raw `.npy` (noise 305 MB, txon 1.37 GB) are gitignored.
+
+This empirically confirms the root-cause fix: the prior 868 MHz firmware was ~55 MHz off the 923 MHz capture band (no signal); the reflashed 923.2 MHz firmware produces a clear conducted TX-ON at the target. Minor: USRP logged one USB overflow (dropped samples) at 4 MS/s — benign, TX-ON still clearly resolved.
+
+**Allowed framing:** conducted IQ-level capture, TX-ON/TX-OFF spectrum evidence, waterfall evidence, CFO/hop-center proxy candidate. **Not claimed:** packet decode, PER/PDR/CRC, gateway ACK, link/OTA/satellite validation.
+
+---
 
 ---
 
