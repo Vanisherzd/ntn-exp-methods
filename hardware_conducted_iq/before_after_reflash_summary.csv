@@ -1,0 +1,3 @@
+phase,firmware,capture_freq_hz,run_dir,txon_minus_noise_db,txon_visible,note
+before_reflash,stock SWDM001 868 MHz / 10 dBm,923200000,20260625_223023_gain20_50db,0.482,False,"board TX at 868 MHz, ~55 MHz outside 923 MHz capture span"
+after_reflash,lr1121_det_tx_9232_lowpower 923.2 MHz / -17 dBm,923200000,20260626_003643_gain20_50db,41.13,True,"board TX at 923.2 MHz, inside capture span; clear TX-ON"

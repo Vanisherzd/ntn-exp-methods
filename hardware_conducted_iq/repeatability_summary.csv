@@ -1,0 +1,5 @@
+label,run_dir,txon_minus_noise_db,peak_frequency_hz,peak_offset_hz,max_abs_iq,clipping_warning,saturation_warning,txon_visible,overflow_count
+canonical_reference,20260626_003643_gain20_50db,41.13,923238085.9375,38085.938,0.002888,False,False,True,1
+repeat_1,20260626_010100_gain20_50db,40.741,923238085.9375,38085.938,0.003263,False,False,True,1
+repeat_2,20260626_011318_gain20_50db,41.416,923466113.28125,266113.281,0.002829,False,False,True,1
+repeat_3,20260626_012205_gain20_50db,41.709,923466113.28125,266113.281,0.003276,False,False,True,1
