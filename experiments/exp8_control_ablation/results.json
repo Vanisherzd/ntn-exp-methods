@@ -1,0 +1,103 @@
+{
+  "_reproducibility": {
+    "generated_at": "2026-06-27T14:13:21Z",
+    "validation_type": "simulation_proxy",
+    "script": "experiments/exp8_control_ablation/run_control_ablation.py",
+    "model": "experiments/paper1_proxy_model.py",
+    "f_tol_hz": 500.0,
+    "base_guard_s": 0.03,
+    "k_sigma": 3.0,
+    "pass_duration_s": 240.0,
+    "limitations": "Software-only coverage proxy. timing/freq miss are analytic Gaussian-coverage probabilities, NOT measured LR-FHSS packet outcomes. timing_freq_pgrl is the gate-open synthetic regime; on real BLACK KITE the gate closes and PGRL does not beat SGP4."
+  },
+  "experiment": "exp8_control_ablation",
+  "config_definitions": {
+    "no_control": {
+      "timing_adaptive": false,
+      "sigma_t_key": "sgp4_only",
+      "sigma_f_key": "no_comp"
+    },
+    "timing_only": {
+      "timing_adaptive": true,
+      "sigma_t_key": "sgp4_only",
+      "sigma_f_key": "no_comp"
+    },
+    "frequency_only": {
+      "timing_adaptive": false,
+      "sigma_t_key": "sgp4_only",
+      "sigma_f_key": "sgp4_comp"
+    },
+    "timing_frequency": {
+      "timing_adaptive": true,
+      "sigma_t_key": "sgp4_only",
+      "sigma_f_key": "sgp4_comp"
+    },
+    "timing_freq_pgrl": {
+      "timing_adaptive": true,
+      "sigma_t_key": "pgrl_uncert",
+      "sigma_f_key": "pgrl_comp"
+    }
+  },
+  "results": {
+    "no_control": {
+      "sigma_t_s": 1.5,
+      "sigma_f_hz": 20000.0,
+      "guard_s": 0.03,
+      "timing_miss": 0.984043372566196,
+      "freq_miss": 0.9800549636095239,
+      "miss_rate": 0.9996817444851636,
+      "success_rate": 0.0003182555148364894,
+      "guard_overhead": 0.000125,
+      "energy_per_burst_j": 0.00819177286301916,
+      "energy_per_success_j": 25.739610096710685
+    },
+    "timing_only": {
+      "sigma_t_s": 1.5,
+      "sigma_f_hz": 20000.0,
+      "guard_s": 4.53,
+      "timing_miss": 0.002527746855344626,
+      "freq_miss": 0.9800549636095239,
+      "miss_rate": 0.9801053796125397,
+      "success_rate": 0.01989462038746031,
+      "guard_overhead": 0.018875,
+      "energy_per_burst_j": 0.18639177286301917,
+      "energy_per_success_j": 9.368953477519126
+    },
+    "frequency_only": {
+      "sigma_t_s": 1.5,
+      "sigma_f_hz": 2500.0,
+      "guard_s": 0.03,
+      "timing_miss": 0.984043372566196,
+      "freq_miss": 0.8414805811217939,
+      "miss_rate": 0.9974705646919374,
+      "success_rate": 0.00252943530806265,
+      "guard_overhead": 0.000125,
+      "energy_per_burst_j": 0.00819177286301916,
+      "energy_per_success_j": 3.2385777319181246
+    },
+    "timing_frequency": {
+      "sigma_t_s": 1.5,
+      "sigma_f_hz": 2500.0,
+      "guard_s": 4.53,
+      "timing_miss": 0.002527746855344626,
+      "freq_miss": 0.8414805811217939,
+      "miss_rate": 0.8418812780843743,
+      "success_rate": 0.15811872191562565,
+      "guard_overhead": 0.018875,
+      "energy_per_burst_j": 0.18639177286301917,
+      "energy_per_success_j": 1.1788090025321631
+    },
+    "timing_freq_pgrl": {
+      "sigma_t_s": 0.016,
+      "sigma_f_hz": 300.0,
+      "guard_s": 0.078,
+      "timing_miss": 1.0880845511263004e-06,
+      "freq_miss": 0.0955807045456294,
+      "miss_rate": 0.09558168863029248,
+      "success_rate": 0.9044183113697075,
+      "guard_overhead": 0.000325,
+      "energy_per_burst_j": 0.010092572863019159,
+      "energy_per_success_j": 0.011159186779107044
+    }
+  }
+}
