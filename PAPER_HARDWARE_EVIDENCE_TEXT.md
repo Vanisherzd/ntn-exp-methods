@@ -45,6 +45,33 @@
 > packet-decode, PER/PDR/CRC, link-layer, over-the-air, or satellite claim. Packet
 > recovery and link metrics remain future work.
 
+## Evidence types (what we are allowed to show)
+
+The committed hardware evidence is strictly **measurement-path** evidence:
+
+1. **Conducted IQ-level measurement-path evidence.** Board B → 50 dB attenuated
+   coax → USRP B210 (no antenna). Verifies the capture/analysis path end to end.
+2. **TX-ON / TX-OFF spectrum evidence.** Paired captures; TX-ON emission ~41 dB
+   above the TX-OFF noise floor in the analyzed span, with no clipping/saturation.
+3. **Waterfall evidence.** Time–frequency (spectrogram/waterfall) of the TX-ON
+   capture shows the LR-FHSS burst structure hopping within the target channel's
+   grid over the transmit window — qualitative, not a decoded hop sequence.
+4. **CFO / hop-center proxy candidate.** The per-burst spectral peaks land at
+   hop-grid bin offsets near 923.2 MHz and are reported as a CFO / hop-center
+   *proxy candidate* only.
+
+## Claim vocabulary — permitted vs forbidden
+
+**Permitted wording:** "conducted IQ-level measurement-path evidence",
+"TX-ON/TX-OFF spectrum evidence", "waterfall / spectrogram evidence",
+"CFO / hop-center proxy candidate", "controlled transmission",
+"serial-verified configured frequency and power", "no clipping or saturation".
+
+**Forbidden wording (do NOT claim):** packet decoding · PER / PDR · CRC ·
+gateway ACK · link-layer success · OTA / over-the-air · live-satellite or
+end-to-end satellite link · "full RF validation" / "RF validation completed".
+Every hardware sentence must stay at or below the IQ-spectral ceiling.
+
 ## Future work (paste-ready)
 
 > Packet-level conducted PER/PDR and authorized OTA validation are left for future work.

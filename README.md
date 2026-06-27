@@ -63,6 +63,37 @@ Regenerate the final paper figures with:
 python paper/figures/generate_evidence_gate_figures.py
 ```
 
+## Paper 1 gap-closure analyses (software-only)
+
+Three software-only analyses extend the control story. Regenerate with:
+
+```bash
+source .venv/bin/activate
+python experiments/exp7_timing_sensitivity/run_timing_sensitivity.py  # timing-offset / TLE-age sensitivity
+python experiments/exp8_control_ablation/run_control_ablation.py      # timing/frequency/PGRL ablation
+python experiments/exp9_pgrl_footprint/run_footprint.py              # PGRL embedded footprint
+```
+
+Shared constants live in `experiments/paper1_proxy_model.py` (consistent with
+exp2/exp3). All three emit `results.json` + `_reproducibility`/`limitations`.
+TX-window hit/miss are analytic guard-coverage / hop-bin-tolerance proxies, **not**
+measured LR-FHSS packet outcomes. Paste-ready text and figure plan:
+`PAPER1_REVISED_CORE_TEXT.md`, `PAPER1_WORKSHOP_FIGURE_PLAN.md`,
+`PAPER1_FINAL_CHECKLIST.md`; staleness methodology in
+`docs/TLE_AGING_METHODOLOGY.md`.
+
+## Hardware evidence reproducibility (Paper 1)
+
+Paper 1 hardware evidence can be reproduced by reflashing the archived
+deterministic LR1121 923.2 MHz firmware and rerunning the conducted IQ scripts.
+The physical board is **not** required to currently hold the Paper-1 firmware
+(it may be reflashed for Paper 2 / Paper 3 work); reproduction relies on the
+committed firmware source, build/flash README, serial logs, reports, and figures.
+The evidence ceiling is conducted IQ-level measurement-path / TX-ON–TX-OFF
+spectrum / waterfall / CFO–hop-center proxy candidate — no packet decode, PER/PDR/
+CRC, gateway ACK, OTA, or live-satellite claim. See
+`PAPER_HARDWARE_EVIDENCE_TEXT.md` and `VALIDATION_STATUS_FOR_SLIDES.md`.
+
 ## Claim boundary
 
 The final manuscript is a software-only, model-derived study. Legacy hardware experiments and raw run artifacts are intentionally excluded from this submission-scope branch to avoid implying hardware evidence that the paper does not claim.

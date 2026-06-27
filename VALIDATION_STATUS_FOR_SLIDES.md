@@ -68,3 +68,34 @@
 (Board B identity: ST-LINK SN 066CFF3031454D3043073845. Firmware now
 `lr1121_det_tx_9232_lowpower` 0.1.0, replacing the prior stock 868 MHz / 10 dBm
 SWDM001 demo.)
+
+---
+
+## 4. Software gap closure — slide status (paste-ready)
+
+> **Software-only control analyses (no hardware involved)**
+> - **Timing-offset sensitivity (exp7):** residual timing σ_t and TLE staleness
+>   (8–168 h) sized the guard and the per-burst energy; energy per successful
+>   burst rises ~10 mJ → ~246 mJ as σ_t grows 16 ms → 2 s, while the 3σ-guard miss
+>   rate stays ≈0.3%. Stale timing is paid in reserved guard energy.
+> - **Timing / frequency / PGRL ablation (exp8):** joint success climbs
+>   no-control 0.03% → SGP4 timing+frequency 15.8% → +PGRL **90.4%**; energy per
+>   successful burst falls **25.7 J → 11.2 mJ** (~100× over SGP4 timing+freq).
+> - **PGRL footprint (exp9):** **333,720** params, **0.66 MFLOP/inference**,
+>   **≈326 KB** int8 Flash, **<1 KB** RAM; offline-trained, **endpoint
+>   inference-only**; MCU-class feasible when sufficient Flash is available (no
+>   M0-class claim without on-device validation). Estimated inference ≈ **6.4%** of
+>   one LR-FHSS burst's TX draw (≈0.3% per pass) — bounded, and outweighed by
+>   avoiding missed/repeated transmissions. MCU energy is an estimate, not measured.
+> - **Claim boundary:** these are software-only guard-coverage / hop-bin-tolerance
+>   proxies, **not** measured LR-FHSS packet outcomes. The PGRL separation is the
+>   gate-open synthetic regime; the real-data headline remains the BLACK KITE
+>   negative result (the evidence gate closes — learning does not beat SGP4).
+
+## 5. Reproducibility note (Paper 1 hardware)
+
+> Paper 1 hardware evidence can be reproduced by reflashing the archived
+> deterministic LR1121 923.2 MHz firmware and rerunning the conducted IQ scripts.
+> The physical board is **not** required to currently hold the Paper-1 firmware;
+> reproduction relies on the committed firmware source, build/flash README, serial
+> logs, reports, and figures. The board may be reflashed for Paper 2 / Paper 3.
