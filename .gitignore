@@ -16,6 +16,9 @@ htmlcov/
 
 # Data and model weights
 outputs/
+# Regenerable build artifacts & scratch (slides PDF render, temp PNG tiles)
+output/
+tmp/
 data/tle/*.npz
 data/tle/*.txt
 !data/tle/.gitkeep
@@ -49,6 +52,9 @@ payload_results_realizations/live_usrp/
 *.blg
 *.log
 *.out
+*.nav
+*.snm
+*.toc
 paper/*.pdf
 
 # Packet-validation run outputs (regenerable; do not commit)
