@@ -271,7 +271,7 @@ elements). All Doppler is computed at 868~MHz for a representative ground statio
     \draw[learn] (stale.south) -- ++(0,-0.45) -| (cand.140);
     \draw[learn] (hist) -- (cand);
     \draw[learn] (cand) -- (gate);
-    \draw[gatec] (gate.north) -- node[right, font=\tiny, text=green!40!black] {$G$} (sel.south);
+    \draw[gatec] (gate.north) -- (sel.south);
     \draw[sig] (sel.east) -- ++(0.35,0) |- (out.170);
     \draw[sig] (out) -- (mcu);
     \draw[sig] (mcu) -- (modem);
@@ -674,7 +674,9 @@ BLACK~KITE satellites and our feature set, not universally; the positive learnin
 result is synthetic only; the gate gives a validation-window property, not a
 distribution-shift bound; the proxies of Sec.~\ref{sec:eval-endpoint} are control
 proxies, not link-budget measurements; and the MCU latency/energy figures are
-estimates. The hardware evidence of Sec.~\ref{sec:hw} is conducted IQ-level
+estimates. Cross-satellite generalization remains the main limitation; evaluating
+the gate as a constellation-scale safeguard is future work. The hardware evidence
+of Sec.~\ref{sec:hw} is conducted IQ-level
 measurement-path evidence, not link-layer validation: no packets were decoded,
 and no over-the-air or satellite path was exercised. Packet-level
 conducted PER/PDR against a reference receiver and authorized over-the-air

@@ -209,8 +209,8 @@
 \begin{frame}[plain]
   \vspace{0.12cm}
   \begin{center}
-    {\Large\bfseries Evidence-Gated Timing/Frequency Control}\\[2pt]
-    {\Large\bfseries for LR-FHSS Direct-to-Satellite IoT}
+    {\Large\bfseries Evidence-Gated Timing/Frequency Control for}\\[2pt]
+    {\Large\bfseries LR-FHSS Direct-to-Satellite IoT}
   \end{center}
   \vspace{0.18cm}
   \begin{center}
@@ -246,11 +246,51 @@
   \takeaway{A learned residual is not automatically deployable.}
 \end{frame}
 
-\begin{frame}{Physics-First Framework}
+\begin{frame}{Final Paper Architecture}
+  \vspace{0.18cm}
   \begin{center}
-    \includegraphics[width=0.99\linewidth,height=0.70\textheight,keepaspectratio]{slide_figures/fig_physics_first_architecture.pdf}
+  \begin{tikzpicture}[
+    font=\scriptsize,
+    >=Latex,
+    box/.style={draw=ScopeGray!55, fill=white, rounded corners=3pt,
+      align=center, minimum height=0.72cm, inner xsep=5pt, inner ysep=4pt},
+    phys/.style={draw=PhysicsBlue, fill=BlueFill},
+    ml/.style={draw=MLOrange, fill=OrangeFill},
+    gate/.style={draw=GateGreen, fill=GreenFill},
+    outbox/.style={draw=ScopeGray!70, fill=GrayFill},
+    arr/.style={->, line width=1.0pt, draw=ScopeGray!80},
+    parr/.style={->, line width=1.2pt, draw=PhysicsBlue},
+    marr/.style={->, line width=1.0pt, draw=MLOrange, dashed},
+    garr/.style={->, line width=1.2pt, draw=GateGreen}
+  ]
+    \node[box, phys] (track) at (0,2.0) {Space-Track\\TLE};
+    \node[box, phys] (stale) at (2.15,2.0) {Stale onboard\\TLE};
+    \node[box, phys] (sgp4) at (4.35,2.0) {SGP4 physics\\baseline};
+    \node[box, outbox] (sel) at (6.55,2.0) {Selector};
+    \node[box, outbox, minimum width=2.35cm] (guard) at (9.25,2.75) {TX timing\\guard};
+    \node[box, outbox, minimum width=2.35cm] (hop) at (9.25,1.85) {Hop-bin\\margin};
+    \node[box, outbox, minimum width=2.35cm] (energy) at (9.25,0.95) {Energy\\policy};
+
+    \node[box, ml] (hist) at (2.15,0.62) {Residual history\\validation $V$};
+    \node[box, ml] (cand) at (4.35,0.62) {Learned residual\\candidate};
+    \node[box, gate] (egate) at (6.55,0.62) {\textbf{Evidence}\\\textbf{Gate}};
+
+    \draw[arr] (track) -- (stale);
+    \draw[parr] (stale) -- (sgp4);
+    \draw[parr] (sgp4) -- node[above, font=\tiny, text=PhysicsBlue] {default} (sel);
+    \draw[arr] (sel.east) -- ++(0.62,0) |- (guard.west);
+    \draw[arr] (sel.east) -- ++(0.62,0) |- (hop.west);
+    \draw[arr] (sel.east) -- ++(0.62,0) |- (energy.west);
+    \draw[marr] (stale.south) |- (hist.west);
+    \draw[marr] (hist) -- (cand);
+    \draw[marr] (cand) -- (egate);
+    \draw[garr] (egate.north) -- node[right, font=\tiny, text=GateGreen] {open/close} (sel.south);
+
+    \node[align=center, text=ScopeGray, font=\tiny] at (5.3,-0.12)
+      {Endpoint decides margins before TX; ML is optional and gated.};
+  \end{tikzpicture}
   \end{center}
-  \takeaway{Physics remains connected; ML must pass through the gate.}
+  \takeaway{Space-Track/TLE feeds the physics baseline; evidence decides whether ML reaches endpoint outputs.}
 \end{frame}
 
 \begin{frame}{Evidence Gate Decision Rule}
@@ -279,18 +319,18 @@
 
 \begin{frame}{Real BLACK KITE Negative Result}
   \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.86\textwidth}
+    \column{0.82\textwidth}
     \begin{center}
-      \includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
     \end{center}
 
-    \column{0.14\textwidth}
-    \vspace{0.92cm}
-    \infocard{ScopeGray}{GrayFill}{0.84\linewidth}{\tiny
+    \column{0.18\textwidth}
+    \vspace{0.76cm}
+    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\scriptsize
       \textbf{Result}\\
       ML residual never beats SGP4.
     }\\[0.16cm]
-    \infocard{ScopeGray}{GrayFill}{0.84\linewidth}{\tiny
+    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\scriptsize
       \textbf{Implication}\\
       always-on ML is not justified.
     }
@@ -298,22 +338,46 @@
   \takeaway{Real BLACK KITE data does not support always-on ML.}
 \end{frame}
 
-\begin{frame}{Negative Evidence Becomes Fallback}
+\begin{frame}{Real Evidence: Gate Closed}
+  \vspace{0.20cm}
   \begin{center}
-    \includegraphics[width=0.98\linewidth,height=0.68\textheight,keepaspectratio]{slide_figures/fig_gate_counterfactual.pdf}
+  \begin{tikzpicture}[
+    font=\small,
+    >=Latex,
+    card/.style={rounded corners=4pt, minimum height=1.35cm, align=center,
+      inner xsep=8pt, inner ysep=8pt, line width=1pt},
+    arrow/.style={->, line width=1.25pt, draw=ScopeGray!80}
+  ]
+    \node[card, draw=UnsafeRed, fill=RedFill, minimum width=3.15cm] (evidence) at (0,1.1)
+      {\textbf{Held-out evidence}\\[3pt]\normalsize ML MAE $>$ SGP4\\real BLACK KITE};
+    \node[card, draw=GateGreen, fill=GreenFill, minimum width=2.75cm] (gate) at (4.15,1.1)
+      {\textbf{Evidence Gate}\\[3pt]\Large CLOSED};
+    \node[card, draw=PhysicsBlue, fill=BlueFill, minimum width=3.25cm] (deploy) at (8.35,1.1)
+      {\textbf{Deploy}\\[3pt]\normalsize SGP4 baseline\\timing/frequency margins};
+
+    \node[card, draw=MLOrange!70, fill=OrangeFill, minimum width=2.75cm] (ml) at (4.15,-1.05)
+      {\textbf{ML path}\\[3pt]\normalsize not deployed};
+
+    \draw[arrow] (evidence) -- (gate);
+    \draw[arrow] (gate) -- (deploy);
+    \draw[->, line width=1.0pt, draw=MLOrange, dashed] (evidence.south east) to[out=-20,in=180] (ml.west);
+    \draw[-{Latex[length=2mm]}, line width=1.2pt, draw=UnsafeRed] (ml.east) to[out=0,in=-110] (gate.south);
+  \end{tikzpicture}
   \end{center}
-  \takeaway{Negative evidence becomes a safe fallback decision.}
+  \scopefooter{Real TLE/SGP4 model-derived result; no measured Doppler, packet, or link-layer validation.}
+  \takeaway{Negative evidence is actionable: keep the physics baseline.}
 \end{frame}
 
-\begin{frame}{Synthetic Sanity Check}
+\begin{frame}{Synthetic Stress: Software-Only Sanity Check}
   \begin{columns}[T,totalwidth=\textwidth]
     \column{0.73\textwidth}
     \begin{center}
-      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{figures/fig_gate_behavior_talk.pdf}
+      \includegraphics[width=\linewidth,height=0.64\textheight,keepaspectratio]{figures/fig_gate_behavior_talk.pdf}
     \end{center}
 
     \column{0.27\textwidth}
-    \vspace{0.52cm}
+    \vspace{0.28cm}
+    {\scriptsize
     \renewcommand{\arraystretch}{1.18}
     \begin{tabular}{p{0.68\linewidth}p{0.20\linewidth}}
       \toprule
@@ -323,53 +387,82 @@
       Weak/moderate systematic & \textcolor{UnsafeRed}{closed} \\
       Strong systematic & \textcolor{GateGreen}{open} \\
       \bottomrule
-    \end{tabular}\\[0.16cm]
-    {\tiny\color{ScopeGray}\parbox{0.94\linewidth}{Software-only sanity check; no hardware or live-link validation.}}
+    \end{tabular}}\\[0.12cm]
+    {\tiny\color{ScopeGray}\parbox{0.94\linewidth}{Software-only synthetic sanity check; not a real BLACK KITE improvement and not hardware or live-link validation.}}
   \end{columns}
   \takeaway{The gate is conservative, not permanently closed.}
 \end{frame}
 
-\begin{frame}{Timing Sensitivity (software-only proxy)}
+\begin{frame}{Timing Sensitivity (proxy, not packet result)}
   \begin{center}
     \includegraphics[width=0.90\linewidth,height=0.56\textheight,keepaspectratio]{slide_figures/fig_timing_sensitivity_talk.pdf}
   \end{center}
-  \scopefooter{Guard-coverage proxy from committed \texttt{exp7} results --- analytic $\Pr[|\delta t|>g_t]$, not a measured packet outcome.}
-  \takeaway{Stale-TLE timing error is paid in guard energy (${\sim}10\!\to\!{\sim}246$ mJ per successful burst), not in misses.}
+  \scopefooter{Software-only guard-coverage proxy --- analytic $\Pr[|\delta t|>g_t]$, not packet/PER/PDR/CRC evidence.}
+  \takeaway{Stale-TLE timing uncertainty increases guard energy; this is a control proxy.}
 \end{frame}
 
-\begin{frame}{Timing / Frequency / PGRL Ablation (software-only proxy)}
+\begin{frame}{Timing / Frequency Ablation (proxy, not packet result)}
   \begin{center}
     \includegraphics[width=0.90\linewidth,height=0.56\textheight,keepaspectratio]{slide_figures/fig_control_ablation_talk.pdf}
   \end{center}
-  \scopefooter{Coverage proxies from committed \texttt{exp8} results. \textbf{PGRL bar = gate-open \emph{synthetic} regime}; on real BLACK KITE the gate closes.}
-  \takeaway{Joint timing+frequency control moves proxy success $0.03\%\!\to\!90.4\%$, energy per success $25.7\,\mathrm{J}\!\to\!11.2$ mJ.}
+  \scopefooter{Software-only coverage proxies. \textbf{Learned bar = controlled gate-open synthetic regime}; on real BLACK KITE the gate closes.}
+  \takeaway{Joint timing+frequency control improves the synthetic gate-open proxy only.}
 \end{frame}
 
-\begin{frame}{Conducted IQ-Level Evidence (923.2 MHz)}
+\begin{frame}{Conducted-IQ Sanity Check (Table IV Boundary)}
   \begin{columns}[T,totalwidth=\textwidth]
+    \column{0.31\textwidth}
+    {\small\bfseries Conducted setup}\\[0.08cm]
+    \begin{center}
+      \includegraphics[width=0.96\linewidth,height=0.34\textheight,keepaspectratio]{slide_figures/fig_conducted_iq_setup.pdf}
+    \end{center}
+    {\scriptsize\color{ScopeGray}LR1121/NUCLEO $\to$ 50 dB attenuated coax $\to$ USRP B210 RX2 A. No antenna.}
+
+    \column{0.35\textwidth}
+    {\small\bfseries Sanity checklist}\\[0.10cm]
+    {\scriptsize
+    \renewcommand{\arraystretch}{1.22}
+    \begin{tabular}{@{}p{\linewidth}@{}}
+      \textcolor{GateGreen}{\checkmark} 923.2 MHz / $-17$ dBm TX\\
+      \textcolor{GateGreen}{\checkmark} TX\_START $\to$ TX\_DONE\\
+      \textcolor{GateGreen}{\checkmark} TX-ON $41.25\pm0.36$ dB\\
+      \textcolor{GateGreen}{\checkmark} 2 MS/s sanity: 43.76 dB\\
+      \textcolor{ScopeGray}{$\circ$} DC/LO artifacts masked\\
+    \end{tabular}}
+
     \column{0.34\textwidth}
-    \vspace{0.20cm}
-    \infocard{PhysicsBlue}{BlueFill}{0.94\linewidth}{\scriptsize
-      \textbf{Setup}\\
-      deterministic LR1121 firmware, 923.2 MHz / $-17$ dBm\\
-      serial-verified: TX\_START $\to$ 39 bursts $\to$ TX\_DONE\\
-      50 dB attenuated coax $\to$ USRP B210, no antenna
-    }\\[0.14cm]
-    \infocard{GateGreen}{GreenFill}{0.94\linewidth}{\scriptsize
-      \textbf{Result}\\
-      TX-ON $\mathbf{41.25\pm0.36}$ dB over TX-OFF (4 runs)\\
-      2 MS/s control: 43.76 dB\\
-      artifact-masked: 41.1 dB at a real hop bin\\
-      before/after control: ${\sim}0.5$ dB $\to$ 41.1 dB\\
-      no clipping / saturation
+    {\small\bfseries Supporting trace}\\[0.08cm]
+    \begin{center}
+      \includegraphics[width=0.98\linewidth,height=0.42\textheight,keepaspectratio]{figures_final/fig_hw_conducted_iq_txon_txoff.png}
+    \end{center}
+    {\scriptsize\color{ScopeGray}Spectrum supports measurement-path visibility only.}
+  \end{columns}
+\scopefooter{\textbf{Claim boundary:} conducted IQ-level only; no packet/PER/PDR/CRC/gateway ACK/OTA/live-satellite or link-layer validation.}
+\end{frame}
+
+\begin{frame}{Main Limitation: Cross-Satellite Generalization}
+  \vspace{0.08cm}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \column{0.52\textwidth}
+    \infocard{UnsafeRed}{RedFill}{0.94\linewidth}{\small
+      \textbf{Current real-data result}\\[2pt]
+      BLACK KITE-1/2 only. This is a real-data negative control, not proof of constellation-wide generalization.
+    }\\[0.16cm]
+    \infocard{GateGreen}{GreenFill}{0.94\linewidth}{\small
+      \textbf{Why this supports the story}\\[2pt]
+      Limited transfer is exactly why always-on ML is unsafe. The Evidence Gate should be tested next as a cross-satellite safety mechanism.
     }
 
-    \column{0.66\textwidth}
-    \begin{center}
-      \includegraphics[width=0.99\linewidth,height=0.62\textheight,keepaspectratio]{figures_final/fig_hw_conducted_iq_txon_txoff.png}
-    \end{center}
+    \column{0.42\textwidth}
+    \infocard{PhysicsBlue}{BlueFill}{0.94\linewidth}{\small
+      \textbf{Next software campaign}\\[4pt]
+      1. Multi-satellite TLE stress test\\
+      2. Cross-satellite transfer heatmap\\
+      3. Gate open/close statistics\\
+      4. Failure taxonomy
+    }
   \end{columns}
-  \scopefooter{\textbf{Claim boundary:} conducted IQ-level evidence only --- no packet decoding, no PER/PDR/CRC, no gateway ACK, no OTA, no live-satellite validation.}
+  \scopefooter{Frame method as local chronological deploy/no-deploy validation, not train-once-deploy-everywhere generalization.}
 \end{frame}
 
 \begin{frame}{Contributions}
@@ -379,32 +472,32 @@
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
       \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
       \includegraphics[height=0.34cm]{assets_external/tabler/world.pdf}\\[5pt]
-      {\textbf{1. Physics-first control}}\\[-1pt]
-      SGP4 remains default.}
+      {\textbf{1. Evidence-gated}\\\textbf{endpoint control}}\\[-1pt]
+      Deploy/no-deploy trust test.}
     }
 
     \column{0.24\textwidth}
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
       \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
       \includegraphics[height=0.34cm]{assets_external/tabler/alert-triangle.pdf}\\[5pt]
-      {\textbf{2. Real-data negative result}}\\[-1pt]
-      ML does not always help.}
+      {\textbf{2. Real negative +}\\\textbf{synthetic open}}\\[-1pt]
+      Gate closes on BLACK KITE.}
     }
 
     \column{0.24\textwidth}
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
       \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
       \includegraphics[height=0.34cm]{assets_external/tabler/shield-check.pdf}\\[5pt]
-      {\textbf{3. Evidence-gated deployment}}\\[-1pt]
-      Trust requires validation.}
+      {\textbf{3. Timing/frequency}\\\textbf{endpoint proxies}}\\[-1pt]
+      Guard, hop-bin, energy policy.}
     }
 
     \column{0.24\textwidth}
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
       \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
       \includegraphics[height=0.34cm]{assets_external/tabler/cpu.pdf}\\[5pt]
-      {\textbf{4. Conducted IQ-level evidence}}\\[-1pt]
-      Measurement path verified; no link-layer overclaim.}
+      {\textbf{4. Bounded}\\\textbf{conducted-IQ evidence}}\\[-1pt]
+      Measurement path only.}
     }
   \end{columns}
   \vspace{0.52cm}
