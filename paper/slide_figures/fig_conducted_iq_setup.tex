@@ -1,0 +1,40 @@
+\documentclass[tikz,border=6pt]{standalone}
+\input{talk_figure_common.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth]
+  \useasboundingbox (0,0) rectangle (11.8,5.35);
+
+  \fill[GrayFill, rounded corners=4pt] (1.05,2.65) rectangle (4.85,5.05);
+  \node[font=\bfseries\small, anchor=west] at (1.28,4.78) {Conducted TX source};
+  \IfFileExists{../../hardware/photos/nucleo_lr1131_board.png}{%
+    \node[anchor=center] at (2.95,3.72) {\includegraphics[width=3.15cm,height=1.72cm,keepaspectratio]{../../hardware/photos/nucleo_lr1131_board.png}};
+  }{%
+    \node at (2.95,3.72) {\boardplaceholder[0.66]};
+  }
+  \node[note, align=center] at (2.95,2.9) {NUCLEO-L476RG +\\LR1131DVK1TxKS board};
+
+  \node[font=\bfseries\small, anchor=west] at (0.88,1.98) {Conducted RF / IQ path};
+  \node[physbox, minimum width=1.55cm, minimum height=0.74cm] (rf) at (1.75,1.08) {\textbf{LR1131 RF}};
+  \node[mlbox, minimum width=1.05cm, minimum height=0.74cm] (pad1) at (3.85,1.08) {\textbf{30 dB}};
+  \node[mlbox, minimum width=1.05cm, minimum height=0.74cm] (pad2) at (5.35,1.08) {\textbf{20 dB}};
+  \node[physbox, minimum width=1.45cm, minimum height=0.74cm] (coax) at (6.95,1.08) {\textbf{SMA coax}};
+  \node[physbox, minimum width=2.45cm, minimum height=0.92cm] (usrp) at (9.65,1.08) {\chipicon[0.48]\hspace{0.2em}\textbf{USRP B210 RX2}};
+  \fill[GreenFill, rounded corners=4pt] (10.28,2.65) rectangle (11.75,5.05);
+  \node[font=\bfseries\small] at (11.02,4.78) {IQ capture};
+  \node[anchor=center] at (11.02,3.84) {\includegraphics[width=0.96cm,height=1.34cm,keepaspectratio]{../../hardware/captures/auto_sweep_20260604_011519/cap_868000000_txrx_comparison.png}};
+  \node[smallstrong, text=GateGreen, align=center] at (11.02,2.8) {CFO /\\hop-center\\proxy};
+
+  \draw[softarrow, line width=1.7pt] (2.58,1.08) -- (3.1,1.08);
+  \draw[softarrow, line width=1.7pt] (4.38,1.08) -- (4.82,1.08);
+  \draw[softarrow, line width=1.7pt] (5.88,1.08) -- (6.2,1.08);
+  \draw[softarrow, line width=1.7pt] (7.78,1.08) -- (8.18,1.08);
+  \draw[softarrow, line width=1.7pt] (10.98,1.08) -- (11.18,1.08);
+
+  \node[note] at (1.75,0.5) {RF port};
+  \node[note] at (3.85,0.5) {30 dB pad};
+  \node[note] at (5.35,0.5) {20 dB pad};
+  \node[note] at (6.95,0.5) {coax};
+  \node[note] at (9.65,0.5) {RX2 input};
+
+\end{tikzpicture}
+\end{document}

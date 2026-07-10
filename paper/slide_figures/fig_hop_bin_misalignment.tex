@@ -1,0 +1,38 @@
+\documentclass[tikz,border=6pt]{standalone}
+\input{talk_figure_common.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth]
+  \useasboundingbox (0,0) rectangle (13.2,4.55);
+
+  \node[smallstrong, text=ScopeGray] at (2.15,4.28) {stale TLE};
+  \draw[softarrow] (2.75,4.28) -- (4.15,4.28);
+  \node[smallstrong, text=ScopeGray] at (5.45,4.28) {Doppler prediction error};
+  \draw[softarrow] (6.95,4.28) -- (8.35,4.28);
+  \node[smallstrong, text=ScopeGray] at (10.2,4.28) {wrong pre-compensation};
+
+  \fill[GrayFill] (0.45,2.15) rectangle (12.75,3.4);
+  \fill[GrayFill] (0.45,0.45) rectangle (12.75,1.7);
+
+  \node[toplabel] at (1.8,3.72) {Correct compensation};
+  \node[toplabel, text=UnsafeRed] at (2.15,2.02) {Stale-TLE compensation};
+
+  \foreach \x in {3.0,4.2,5.4,6.6,7.8,9.0,10.2,11.4} {
+    \draw[PhysicsBlue!60, line width=0.9pt] (\x,2.28) -- (\x,3.27);
+    \draw[PhysicsBlue!60, line width=0.9pt] (\x,0.58) -- (\x,1.57);
+  }
+  \draw[Ink, line width=1.0pt] (2.2,2.78) -- (12.2,2.78);
+  \draw[Ink, line width=1.0pt] (2.2,1.08) -- (12.2,1.08);
+
+  \draw[GateGreen, line width=2.2pt] (6.6,2.05) -- (6.6,3.52);
+  \fill[GateGreen] (6.6,2.78) circle (0.07);
+  \node[smallstrong, text=GateGreen] at (9.65,3.08) {aligned in bin};
+
+  \draw[UnsafeRed, line width=2.2pt] (7.45,0.35) -- (7.45,1.82);
+  \fill[UnsafeRed] (7.45,1.08) circle (0.07);
+  \draw[warnarrow] (9.1,1.42) -- (7.72,1.18);
+  \node[smallstrong, text=UnsafeRed] at (9.82,1.62) {shifted};
+
+  \node[note, align=center] at (1.0,2.78) {correct};
+  \node[note, align=center] at (1.0,1.08) {wrong};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,37 @@
+\documentclass[tikz,border=6pt]{standalone}
+\input{talk_figure_common.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth]
+  \useasboundingbox (0,0) rectangle (13.2,4.45);
+
+  \fill[RedFill, rounded corners=6pt] (0.35,0.55) rectangle (6.15,4.0);
+  \fill[GreenFill, rounded corners=6pt] (7.05,0.55) rectangle (12.85,4.0);
+  \draw[Ink!20, dashed] (6.6,0.38) -- (6.6,4.15);
+
+  \node[font=\bfseries\Large, text=UnsafeRed] at (3.25,3.55) {Without gate};
+  \node[font=\bfseries\Large, text=GateGreen] at (9.95,3.55) {With gate};
+
+  \node at (1.15,2.45) {\nnicon[0.72]};
+  \node[smallstrong, text=MLOrange] at (1.15,1.78) {ML correction};
+  \node at (5.15,2.45) {\chipicon[0.62]};
+  \node[smallstrong, text=PhysicsBlue] at (5.15,1.78) {terminal};
+  \draw[mlarrow] (1.92,2.45) -- (4.2,2.45);
+  \node[smallstrong, text=UnsafeRed] at (3.25,3.0) {always-on ML deployed};
+  \node[note, align=center] at (3.25,1.52) {BK1 168 h\\SGP4 baseline: \textbf{26.9 Hz}\\ML correction: \textbf{45.3 Hz}};
+  \node[align=center, font=\bfseries\small] at (3.25,0.67) {worse predictor\\reaches terminal};
+
+  \node at (7.95,2.45) {\nnicon[0.72]};
+  \node[smallstrong, text=MLOrange] at (7.95,1.78) {ML candidate};
+  \node at (9.7,2.45) {\shieldicon[0.8]};
+  \node[smallstrong, text=GateGreen] at (9.7,1.78) {Evidence Gate};
+  \node at (11.75,2.45) {\chipicon[0.62]};
+  \node[smallstrong, text=PhysicsBlue] at (11.75,1.78) {terminal};
+  \draw[mldash] (8.72,2.45) -- (9.12,2.45);
+  \draw[UnsafeRed, line width=2.0pt] (9.42,2.77) -- (9.98,2.13);
+  \draw[UnsafeRed, line width=2.0pt] (9.98,2.77) -- (9.42,2.13);
+  \draw[physarrow] (9.98,2.45) -- (11.0,2.45);
+  \node[smallstrong, text=GateGreen] at (9.85,3.0) {validation fails, $G=0$};
+  \node[note, align=center] at (9.95,1.52) {ML path blocked\\fallback to SGP4};
+  \node[align=center, font=\bfseries\small] at (9.95,0.67) {negative evidence becomes\\safe fallback};
+\end{tikzpicture}
+\end{document}

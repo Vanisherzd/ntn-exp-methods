@@ -1,0 +1,31 @@
+\documentclass[tikz,border=6pt]{standalone}
+\input{talk_figure_common.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth]
+  \useasboundingbox (0,0) rectangle (15.3,4.9);
+
+  \node at (1.15,2.95) {\includegraphics[width=1.0cm]{../assets_external/tabler/database.pdf}};
+  \node at (2.35,2.95) {\includegraphics[width=0.96cm]{../assets_external/tabler/satellite.pdf}};
+  \node[strong, align=center] at (1.75,1.95) {TLE /\\Space-Track};
+
+  \node at (6.2,2.95) {\includegraphics[width=1.42cm]{../assets_external/tabler/world.pdf}};
+  \node[strong, align=center] at (6.2,1.95) {SGP4 physics\\default};
+
+  \node at (13.7,2.95) {\includegraphics[width=1.08cm]{../assets_external/tabler/cpu.pdf}};
+  \node[strong, align=center] at (13.7,1.95) {LR-FHSS\\terminal};
+
+  \draw[physarrow] (3.15,2.95) -- (4.8,2.95);
+  \draw[physarrow] (7.55,2.95) -- (12.0,2.95);
+  \node[smallstrong, text=PhysicsBlue] at (9.8,3.33) {default deployed path};
+
+  \node at (6.2,0.95) {\includegraphics[width=1.0cm]{../assets_external/tabler/brain.pdf}};
+  \node[mlbox, minimum width=2.9cm, minimum height=0.86cm] (ml) at (7.85,0.95) {\textbf{ML residual candidate}};
+
+  \node at (10.75,0.95) {\includegraphics[width=0.94cm]{../assets_external/tabler/shield-check.pdf}};
+  \node[gatebox, minimum width=2.35cm, minimum height=0.86cm] (gate) at (11.95,0.95) {\textbf{\color{GateGreen}Evidence Gate}};
+
+  \draw[mldash] (9.32,0.95) -- (10.0,0.95);
+  \draw[gatearrow] (12.72,1.38) -- (12.72,2.35) -- (12.18,2.35) -- (12.18,2.95);
+  \node[note] at (11.95,0.34) {enabled only if validated};
+\end{tikzpicture}
+\end{document}

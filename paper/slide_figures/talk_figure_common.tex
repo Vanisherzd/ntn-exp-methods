@@ -1,0 +1,157 @@
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{helvet}
+\usepackage{xcolor}
+\usepackage{tikz}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usetikzlibrary{
+  arrows.meta,
+  calc,
+  positioning,
+  shapes.geometric,
+  shapes.symbols
+}
+
+\definecolor{PhysicsBlue}{HTML}{1F4E79}
+\definecolor{MLOrange}{HTML}{C46A1A}
+\definecolor{GateGreen}{HTML}{2E7D32}
+\definecolor{UnsafeRed}{HTML}{B23A3A}
+\definecolor{ScopeGray}{HTML}{666666}
+\definecolor{Ink}{HTML}{1F2937}
+\definecolor{BlueFill}{HTML}{EDF3F8}
+\definecolor{OrangeFill}{HTML}{FBF1E6}
+\definecolor{GreenFill}{HTML}{EAF4EA}
+\definecolor{RedFill}{HTML}{F8ECEC}
+\definecolor{GrayFill}{HTML}{F2F2F2}
+
+\tikzset{
+  comp/.style={
+    draw=Ink!30,
+    fill=white,
+    rounded corners=2.5pt,
+    line width=0.85pt,
+    inner xsep=8pt,
+    inner ysep=7pt,
+    align=center
+  },
+  physbox/.style={comp, draw=PhysicsBlue!55},
+  mlbox/.style={comp, draw=MLOrange!60},
+  gatebox/.style={comp, draw=GateGreen!60},
+  scopebox/.style={comp, draw=ScopeGray!45, fill=GrayFill},
+  region/.style={rounded corners=5pt, line width=0.6pt},
+  physarrow/.style={PhysicsBlue, line width=2.6pt, -{Stealth[length=6pt,width=7pt]}},
+  mlarrow/.style={MLOrange, line width=1.55pt, -{Stealth[length=5pt,width=6pt]}},
+  mldash/.style={MLOrange, line width=1.45pt, dashed, -{Stealth[length=5pt,width=6pt]}},
+  gatearrow/.style={GateGreen, line width=1.55pt, -{Stealth[length=5pt,width=6pt]}},
+  softarrow/.style={Ink!65, line width=1.0pt, -{Stealth[length=4pt,width=5pt]}},
+  warnarrow/.style={UnsafeRed, line width=1.4pt, -{Stealth[length=5pt,width=6pt]}},
+  note/.style={font=\scriptsize, text=ScopeGray},
+  toplabel/.style={font=\bfseries\small, text=Ink},
+  strong/.style={font=\bfseries, text=Ink},
+  smallstrong/.style={font=\bfseries\scriptsize, text=Ink}
+}
+
+\newcommand{\dbicon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[PhysicsBlue!18, draw=PhysicsBlue, line width=0.9pt] (0,0.82) ellipse (0.95 and 0.26);
+  \fill[BlueFill, draw=PhysicsBlue, line width=0.9pt]
+    (-0.95,0.82) -- (-0.95,-0.55)
+    arc (180:360:0.95 and 0.26) -- (0.95,0.82)
+    arc (0:180:0.95 and 0.26);
+  \draw[PhysicsBlue, line width=0.9pt] (0,0.16) ellipse (0.95 and 0.26);
+  \draw[PhysicsBlue, line width=0.9pt] (0,-0.55) ellipse (0.95 and 0.26);
+\end{tikzpicture}}
+
+\newcommand{\saticon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[MLOrange!18, draw=MLOrange, line width=0.9pt] (-1.1,0.1) rectangle (-0.2,0.48);
+  \fill[MLOrange!18, draw=MLOrange, line width=0.9pt] (0.68,0.1) rectangle (1.58,0.48);
+  \fill[ScopeGray!28, draw=Ink, line width=0.9pt] (0,0) rectangle (0.48,0.58);
+  \draw[Ink, line width=0.95pt] (0.24,0.58) -- (0.9,1.05);
+  \fill[PhysicsBlue!18, draw=PhysicsBlue, line width=0.9pt] (0.9,1.05) circle (0.14);
+  \draw[Ink, line width=0.9pt] (-0.2,0.29) -- (0,0.29);
+  \draw[Ink, line width=0.9pt] (0.48,0.29) -- (0.68,0.29);
+\end{tikzpicture}}
+
+\newcommand{\earthorbiticon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[PhysicsBlue!18, draw=PhysicsBlue, line width=0.9pt] (0,0) circle (0.62);
+  \draw[PhysicsBlue!60, line width=1.15pt] (0,0) ellipse (1.6 and 0.72);
+  \draw[PhysicsBlue!35, dashed, line width=0.9pt] (0,0) ellipse (1.1 and 1.55);
+  \fill[MLOrange, draw=MLOrange] (1.48,0.0) circle (0.12);
+  \fill[PhysicsBlue!60] (-0.18,0.18) circle (0.12);
+  \fill[PhysicsBlue!40] (0.2,-0.1) circle (0.08);
+\end{tikzpicture}}
+
+\newcommand{\nnicon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \foreach \y in {0.0,0.5,1.0} \fill[OrangeFill, draw=MLOrange, line width=0.9pt] (0,\y) circle (0.12);
+  \foreach \y in {0.2,0.8} \fill[OrangeFill, draw=MLOrange, line width=0.9pt] (0.92,\y) circle (0.12);
+  \foreach \y in {0.0,0.5,1.0} \fill[OrangeFill, draw=MLOrange, line width=0.9pt] (1.85,\y) circle (0.12);
+  \foreach \a in {0.0,0.5,1.0} \foreach \b in {0.2,0.8} \draw[MLOrange!80, line width=0.75pt] (0,\a) -- (0.92,\b);
+  \foreach \a in {0.2,0.8} \foreach \b in {0.0,0.5,1.0} \draw[MLOrange!80, line width=0.75pt] (0.92,\a) -- (1.85,\b);
+\end{tikzpicture}}
+
+\newcommand{\shieldicon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[GreenFill, draw=GateGreen, line width=1pt]
+    (0,1.0) -- (0.72,0.82) -- (0.62,0.12) -- (0.36,-0.24) -- (0.1,0.12) -- cycle;
+  \draw[GateGreen, line width=1.15pt] (0.18,0.38) -- (0.31,0.22) -- (0.55,0.62);
+\end{tikzpicture}}
+
+\newcommand{\warningicon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[RedFill, draw=UnsafeRed, line width=1pt] (0,0) -- (0.8,1.35) -- (-0.8,1.35) -- cycle;
+  \draw[UnsafeRed, line width=1.2pt] (0,0.42) -- (0,0.95);
+  \fill[UnsafeRed] (0,0.2) circle (0.07);
+\end{tikzpicture}}
+
+\newcommand{\selectoricon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \draw[Ink, line width=1.1pt] (0,0.45) -- (2.2,0.45);
+  \draw[Ink, line width=1.1pt] (0,-0.25) -- (2.2,-0.25);
+  \draw[Ink, line width=1.2pt] (0.28,0.45) -- (1.45,-0.25);
+  \fill[Ink] (0.28,0.45) circle (0.08);
+  \fill[Ink] (1.45,-0.25) circle (0.08);
+\end{tikzpicture}}
+
+\newcommand{\terminalicon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[BlueFill, draw=PhysicsBlue, line width=1pt] (0,0) rectangle (1.24,0.88);
+  \draw[PhysicsBlue, line width=1.15pt] (0.62,0.88) -- (0.62,1.42);
+  \draw[PhysicsBlue, line width=1.15pt] (0.62,1.42) -- (0.25,1.82);
+  \draw[PhysicsBlue, line width=1.15pt] (0.62,1.42) -- (0.99,1.82);
+  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:160:0.42);
+  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:20:0.42);
+  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:170:0.65);
+  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:10:0.65);
+\end{tikzpicture}}
+
+\newcommand{\chipicon}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[BlueFill, draw=PhysicsBlue, line width=1pt] (0,0) rectangle (1.2,1.2);
+  \foreach \x in {0.18,0.42,0.66,0.9} {
+    \draw[PhysicsBlue] (\x,1.2) -- (\x,1.45);
+    \draw[PhysicsBlue] (\x,0) -- (\x,-0.25);
+    \draw[PhysicsBlue] (0,\x) -- (-0.25,\x);
+    \draw[PhysicsBlue] (1.2,\x) -- (1.45,\x);
+  }
+  \draw[PhysicsBlue, line width=0.95pt] (0.28,0.28) rectangle (0.92,0.92);
+\end{tikzpicture}}
+
+\newcommand{\boardplaceholder}[1][1]{%
+\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
+  \fill[gray!8, draw=ScopeGray!60, rounded corners=0.14cm, line width=0.95pt] (0,0) rectangle (4.2,2.65);
+  \fill[PhysicsBlue!12, draw=PhysicsBlue!55, rounded corners=0.1cm] (0.35,0.38) rectangle (2.2,2.2);
+  \fill[MLOrange!14, draw=MLOrange!65, rounded corners=0.1cm] (2.45,0.68) rectangle (3.78,1.98);
+  \foreach \x in {0.55,0.82,...,1.97} {
+    \draw[PhysicsBlue!60] (\x,2.2) -- (\x,2.42);
+    \draw[PhysicsBlue!60] (\x,0.38) -- (\x,0.16);
+  }
+  \foreach \x in {2.6,2.84,...,3.63} {
+    \draw[MLOrange!70] (\x,1.98) -- (\x,2.18);
+    \draw[MLOrange!70] (\x,0.68) -- (\x,0.48);
+  }
+\end{tikzpicture}}
