@@ -6,7 +6,7 @@
 @techreport{hoots1980models,
   author      = {Hoots, Felix R. and Roehrich, Ronald L.},
   title       = {Models for Propagation of {NORAD} Element Sets},
-  institution = {Aerospace Defense Center},
+  institution = {Aerospace Defense Command},
   year        = {1980},
   month       = dec,
   number      = {SPACETRACK Report No. 3},
@@ -44,7 +44,6 @@
   title       = {{AN1200.64: LR-FHSS System Performance}},
   institution = {Semtech Corporation},
   year        = {2022},
-  url         = {https://www.mouser.com/pdfDocs/AN1200-64_LR-FHSS_system_performance_V1_2.pdf},
 }
 
 @misc{swdm001,
@@ -102,7 +101,10 @@
   author  = {Ullah, Muhammad Asad and Pasolini, Gianni and Mikhaylov, Konstantin and Alves, Hirley},
   title   = {Understanding the Limits of {LoRa} Direct-to-Satellite: The {Doppler} Perspectives},
   journal = {IEEE Open Journal of the Communications Society},
-  year    = {2023},
+  volume  = {5},
+  pages   = {51--63},
+  year    = {2024},
+  doi     = {10.1109/OJCOMS.2023.3337004},
 }
 
 % --- LR-FHSS receiver, transceiver, synchronization, and reliability -----------
@@ -216,6 +218,10 @@
 }
 
 % --- Added for ICC revision (LR-FHSS receiver complexity + ML orbit prediction)
+% NOTE: a published version exists in ACM Trans. Sensor Networks
+% (DOI 10.1145/3694971; reportedly vol. 20, no. 6, Art. 117, 2024) but the ACM
+% page could not be machine-verified (HTTP 403). arXiv version kept; upgrade
+% after human confirmation of the ToSN volume/issue/article metadata.
 @misc{bukhari2023lrfhss,
   author       = {Bukhari, Jumana and Zhang, Zhenghao},
   title        = {Understanding Long Range-Frequency Hopping Spread Spectrum ({LR-FHSS}) with Real-World Packet Traces},
