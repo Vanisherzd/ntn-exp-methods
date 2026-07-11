@@ -50,17 +50,16 @@
 \title{Evidence-Gated Residual Learning for LR-FHSS Direct-to-Satellite IoT Endpoint Control}
 
 \author{
-\IEEEauthorblockN{Anonymous Author 1}
-\IEEEauthorblockA{Affiliation omitted for double-blind review\\
-Email omitted}
-\and
-\IEEEauthorblockN{Anonymous Author 2}
-\IEEEauthorblockA{Affiliation omitted for double-blind review\\
-Email omitted}
-\and
-\IEEEauthorblockN{Anonymous Author 3}
-\IEEEauthorblockA{Affiliation omitted for double-blind review\\
-Email omitted}
+\IEEEauthorblockN{
+\begin{tabular}{ccc}
+Anonymous Author 1 & Anonymous Author 2 & Anonymous Author 3
+\end{tabular}}
+\IEEEauthorblockA{
+\begin{tabular}{ccc}
+\begin{tabular}{c}Affiliation omitted for\\double-blind review\\Email omitted\end{tabular} &
+\begin{tabular}{c}Affiliation omitted for\\double-blind review\\Email omitted\end{tabular} &
+\begin{tabular}{c}Affiliation omitted for\\double-blind review\\Email omitted\end{tabular}
+\end{tabular}}
 }
 
 \maketitle
@@ -136,7 +135,7 @@ must therefore be \emph{earned} on held-out evidence, formalised as the
 \emph{Evidence Gate}: a learned corrector deploys only when a chronological
 held-out validation window shows it beats the physics baseline by a margin.
 
-This paper is intentionally conservative: it does not argue that residual learning improves current BLACK~KITE operation. Instead, it asks whether a terminal should ever deploy such learning without local chronological evidence, and shows that for the available BLACK~KITE history the answer is no.
+This paper is intentionally conservative: it does not argue that residual learning improves current BLACK~KITE operation. Instead, it asks whether a terminal should ever deploy such learning without local chronological evidence, and shows that for the available BLACK~KITE history the answer is no. The finding is that BLACK~KITE-like inter-TLE residuals are already small enough that always-learn is unsafe, so the gate should be read as a deployment audit rule.
 
 \emph{Related work.} Prior art clusters into three layers, none of which contains
 our decision problem. (i)~\emph{Link/capacity/energy} analyses quantify aggregate
@@ -454,6 +453,9 @@ $F_{\mathrm{tol}}=500$~Hz. This small residual scale is the finding: for BLACK
 KITE there is little useful signal for always-on residual ML, so learning can
 only add generalization noise. The negative result is therefore a warning
 against deploying residual ML by default, not a failed improvement result.
+The right endpoint action is not to tune a larger learner against weak signal,
+but to refuse unsupported learning; that refusal is the deployable policy
+lesson.
 
 The result is consistent with how the data arises: successive Space-Track TLEs
 reflect orbit-determination updates over different observation arcs, so the
@@ -648,8 +650,8 @@ margin. The strongest real result is negative: on BLACK~KITE TLE history the
 learned correction never beats the baseline, so the gate closes and the terminal
 keeps the conservative fallback. The controlled synthetic result is a mechanism
 check showing that the same rule can open under dominant systematic evidence,
-not a real-data improvement claim. The Evidence Gate is therefore most useful as an audit rule rather than as a guaranteed improvement mechanism: on BLACK~KITE it chooses the same action as never-learn, but this is precisely the safe action because it prevents an always-learn policy from increasing the residual. In a deployed terminal, the learned branch must repeatedly re-earn deployment on fresh chronological evidence. Deploy a learned residual only after a validation window clears $\gamma$; keep the decision auditable
-(log $G$, $\gamma$, the validation MAE pair, $|V|$, TLE age); and let the
+not a real-data improvement claim. The Evidence Gate is therefore most useful as an audit rule rather than as a guaranteed improvement mechanism: on BLACK~KITE it chooses the same action as never-learn, but this is precisely the safe action because it prevents an always-learn policy from increasing the residual. In a deployed terminal, learned residual branches should remain quarantined until they repeatedly re-earn deployment on fresh chronological evidence. Deploy a learned residual only after a validation window clears $\gamma$; keep the decision auditable
+(log $G$, $\gamma$, the validation MAE pair, $|V|$, TLE age, and the stale-TLE age distribution); and let the
 selected prediction and uncertainty size the endpoint margins of
 Eqs.~\eqref{eq:guard}--\eqref{eq:esucc}.
 
