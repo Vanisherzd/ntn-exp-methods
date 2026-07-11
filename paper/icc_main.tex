@@ -9,6 +9,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{etoolbox}
+\hypersetup{hidelinks}
 \usepackage{enumitem}
 \setlist[itemize]{leftmargin=1.3em,itemsep=2.5pt,topsep=3pt,parsep=0pt}
 
@@ -59,7 +60,9 @@
 \begin{abstract}
 Direct-to-Satellite (D2S) IoT terminals must pre-compensate large LEO Doppler
 shifts before every LR-FHSS uplink from an on-board orbital prediction that is, in
-practice, a \emph{stale} TLE propagated open-loop by SGP4. We study the
+practice, a \emph{stale} TLE propagated open-loop by SGP4. The primary
+contribution is a real-data negative finding: on current BLACK~KITE TLE
+history, residual learning is not justified. We study the
 pre-transmission endpoint decision: when should a learned inter-TLE residual be
 trusted to modify the physics baseline, and when should the terminal keep
 open-loop compensation? On real Space-Track TLE history for two BLACK~KITE LEO
@@ -68,7 +71,8 @@ learned inter-TLE residual does \emph{not} beat SGP4 at any tested staleness (8-
 target-specific or cross-satellite. The proposed \emph{Evidence Gate} therefore
 enables a learned corrector only when a chronological held-out window beats the
 baseline by a margin~$\gamma$; otherwise it falls back to SGP4. On the real data
-the gate \emph{closes}. A controlled synthetic stress test illustrates the
+the gate \emph{closes}, so deployment is equivalent to never learning. A
+controlled synthetic stress test illustrates the
 complementary mechanism: the gate opens only when a dominant systematic residual
 exists. Software-only proxies illustrate how timing/frequency uncertainty affects
 guard and energy budgets. All ``reference'' Doppler is model-derived (SGP4 from
@@ -78,7 +82,7 @@ result is claimed.
 
 \begin{IEEEkeywords}
 Direct-to-Satellite IoT, LR-FHSS, endpoint control, timing uncertainty, stale TLE,
-SGP4, Doppler residual, conservative learning gate, LEO satellite
+SGP4, inter-TLE residual, conservative learning gate, LEO satellite
 \end{IEEEkeywords}
 
 % ── Introduction ─────────────────────────────────────────────────────────────
@@ -146,22 +150,19 @@ Unlike receiver-side LR-FHSS studies and orbit-accuracy learning, we study the
 trustworthy enough to size timing/frequency/energy margins, or should the
 terminal retain the SGP4 physics default? Contributions:
 \begin{itemize}
-  \item \emph{Evidence-gated residual learning under stale orbital information:}
-  a pre-transmission deploy/no-deploy trust test
-  (Eqs.~\eqref{eq:gate}--\eqref{eq:deploy}) with causal chronological windows;
-  no distribution-shift guarantee is claimed.
-  \item \emph{Real-data negative control plus controlled synthetic mechanism
-  check:} on BLACK~KITE TLE history (8--168~h, strict splits) the learned
-  inter-TLE residual never beats SGP4, so the gate closes; a synthetic systematic regime
-  opens the same rule (Tables~\ref{tab:bk}--\ref{tab:gate},
-  \ref{tab:policy}, Fig.~\ref{fig:gateev}); no real-data improvement from
-  learning is claimed.
-  \item \emph{Endpoint-budget proxy model plus conservative limitations:} the
-  coverage-proxy chain (Eqs.~\eqref{eq:guard}--\eqref{eq:esucc}) links
-  timing/frequency uncertainty to guard, hop-bin margin, and energy per
-  successful burst (Fig.~\ref{fig:proxies}); the artifact package indexes
-  scripts and compact CSVs, but no packet, link-layer, or OTA validation is
-  claimed.
+\item \emph{Real-data negative finding:} on BLACK~KITE TLE history
+(8--168~h, strict splits), learned inter-TLE residuals never beat SGP4;
+always-learn is unsafe and the gate closes (Table~\ref{tab:bk},
+Fig.~\ref{fig:gateev}).
+\item \emph{Evidence-gated deploy/no-deploy rule:} a chronological
+validation-window test rejects unsupported learning on real data and opens only
+under controlled systematic synthetic evidence (Eqs.~\eqref{eq:gate}--\eqref{eq:deploy},
+Tables~\ref{tab:gate}, \ref{tab:policy}); no distribution-shift guarantee is
+claimed.
+\item \emph{Endpoint-budget software proxy:}
+Eqs.~\eqref{eq:guard}--\eqref{eq:esucc} connect timing/frequency uncertainty
+to guard and energy proxies (Fig.~\ref{fig:proxies}); these are software-only
+control proxies, not packet or link validation.
 \end{itemize}
 
 % ── System Model ──────────────────────────────────────────────────────────────
@@ -283,8 +284,8 @@ elements). All Doppler is computed at 868~MHz for a representative ground statio
     stale orbital information to predict pass timing and Doppler, evaluates
     whether a learned residual is supported by a chronological validation window,
     and selects timing/frequency/energy margins for LR-FHSS uplink. The learned
-    branch is optional and gated; the default deployment action is the SGP4
-    physics baseline.}
+    branch is optional and gated; on the real BLACK~KITE data in this paper the
+    gate closes, so the deployed policy is the SGP4 physics baseline.}
     \label{fig:architecture}
 \end{figure*}
 
@@ -413,17 +414,23 @@ whenever a fresh TLE arrives.
 \label{sec:eval}
 
 \subsection{Experimental Setup}
+\emph{Evaluation scope.} C1 is the real BLACK~KITE inter-TLE negative control;
+C2 is the controlled synthetic gate-open mechanism check; C3 is the
+software-only endpoint proxy study; C4 is artifact-level reproducibility for
+scripts and compact summaries. C1--C3 are model-derived software evaluations,
+not RF, packet, or over-the-air measurements.
+
 \emph{Carrier convention.} Software Doppler and control metrics are reported at
 an 868~MHz carrier (python-SGP4, ground station of Sec.~\ref{sec:baseline}),
 matching common LR-FHSS D2S evaluation settings; the controller is
 frequency-parametric (Eq.~\eqref{eq:doppler}) and residuals scale linearly with
-$f_c$. Learned candidates are ridge, random forest, gradient boosting, and a small MLP, selected
-on the chronological validation segment with the gate evaluated once on the
-held-out test segment; a window counts as supported only if the selected model
-beats the zero-residual baseline on held-out MAE by a clear margin and also
-improves RMSE. All results in Secs.~\ref{sec:eval-real}--\ref{sec:eval-endpoint}
-are software-only and model-derived; no hardware, RF, UART, replay, or measured
-Doppler is involved.
+$f_c$. Learned candidates are ridge regression, random forest, gradient
+boosting, and a small MLP, selected on the chronological validation segment with
+the gate evaluated once on the held-out test segment. A window is supported only
+if the selected model beats the zero-residual baseline on held-out MAE by the
+gate margin ($\gamma=0.95$) and also improves RMSE. All results in
+Secs.~\ref{sec:eval-real}--\ref{sec:eval-endpoint} are software-only and
+model-derived; no hardware, RF, UART, replay, or measured Doppler is involved.
 
 \subsection{Real BLACK~KITE Negative Result}
 \label{sec:eval-real}
@@ -432,6 +439,8 @@ the validation-selected learned model against the zero-residual stale-TLE
 baseline: the learned inter-TLE residual is worse at \emph{every} tested
 staleness, both target-specific (BK1, 8--168~h) and cross-satellite
 (BK1$\rightarrow$BK2), so the gate of Eq.~\eqref{eq:gate} closes in all cases.
+Thus, for the real BLACK~KITE rows, the deployed Evidence-Gate policy is exactly
+the never-learn/SGP4 policy; its value is rejecting always-on learning.
 Even at 168~h the BK1 inter-TLE baseline MAE is only 26.9~Hz---small against
 $F_{\mathrm{tol}}=500$~Hz. This small residual scale is the finding: for BLACK
 KITE there is little useful signal for always-on residual ML, so learning can
@@ -456,25 +465,31 @@ software carrier, learned inter-TLE residual vs.\ zero-residual stale-TLE baseli
 Values are model-derived from TLE/SGP4 and scale linearly with carrier
 frequency; no measured Doppler is used
 (\texttt{reference\_is\_measured\_truth=false}). The gate closes in every row
-because the learned inter-TLE residual is worse than the physics baseline.}
+because the learned inter-TLE residual is worse than the physics baseline. For
+BK1 target rows, $n$ is train/validation/test samples after rejecting TLE pairs
+with any $|r|>1500$~Hz; the compact cross-transfer artifact did not preserve
+per-split counts. $n$ counts 24 in-pass samples per accepted TLE pair; samples
+are temporally correlated.}
 \label{tab:bk}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{llccr c}
+\setlength{\tabcolsep}{2pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llrccrcc}
 \toprule
-Setting & Stale & Base & Learned & Degr.\% & Gate \\
+Setting & Stale & $n_{\mathrm{tr/va/te}}$ & Base & Learned & Degr.\% & Rej. & Gate \\
 \midrule
-BK1 target & 8\,h   & 0.2430 & 0.3501 & $44.1$ & closed \\
-BK1 target & 24\,h  & 0.8161 & 0.9109 & $11.6$ & closed \\
-BK1 target & 48\,h  & 1.9433 & 2.8608 & $47.2$ & closed \\
-BK1 target & 72\,h  & 4.8947 & 5.9092 & $20.7$ & closed \\
-BK1 target & 96\,h  & 10.1153& 11.7663& $16.3$ & closed \\
-BK1 target & 168\,h & 26.9243& 45.2629& $68.1$ & closed \\
+BK1 target & 8\,h   & 2712/2520/1968 & 0.2430 & 0.3501 & $44.1$ & 0  & closed \\
+BK1 target & 24\,h  & 3240/3144/2376 & 0.8161 & 0.9109 & $11.6$ & 6  & closed \\
+BK1 target & 48\,h  & 2928/3144/2520 & 1.9433 & 2.8608 & $47.2$ & 5  & closed \\
+BK1 target & 72\,h  & 2736/3168/2640 & 4.8947 & 5.9092 & $20.7$ & 11 & closed \\
+BK1 target & 96\,h  & 2688/3168/2616 & 10.1153& 11.7663& $16.3$ & 13 & closed \\
+BK1 target & 168\,h & 2448/3168/2640 & 26.9243& 45.2629& $68.1$ & 19 & closed \\
 \midrule
-BK1$\to$BK2 & 8\,h  & 0.1877 & 0.3261 & $73.7$ & closed \\
-BK1$\to$BK2 & 24\,h & 0.4969 & 1.8639 & $275.1$& closed \\
-BK1$\to$BK2 & 48\,h & 2.4092 & 2.8458 & $18.1$ & closed \\
+BK1$\to$BK2 & 8\,h  & -- & 0.1877 & 0.3261 & $73.7$ & -- & closed \\
+BK1$\to$BK2 & 24\,h & -- & 0.4969 & 1.8639 & $275.1$& -- & closed \\
+BK1$\to$BK2 & 48\,h & -- & 2.4092 & 2.8458 & $18.1$ & -- & closed \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 \begin{figure*}[!t]
@@ -573,54 +588,45 @@ Gate threshold; window & $\gamma=0.95$; chronological $V$ \\
 
 \begin{table}[!t]
 \centering
-\tiny
+\scriptsize
 \caption{Policy comparison across real and controlled regimes.}
 \label{tab:policy}
-\setlength{\tabcolsep}{1.5pt}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}lllll@{}}
+\begingroup
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.88}
+\begin{tabular}{@{}p{0.24\columnwidth}p{0.18\columnwidth}p{0.22\columnwidth}p{0.24\columnwidth}@{}}
 \toprule
-Regime & Always learn & Never learn / SGP4 & Gate & Interpretation \\
+Regime & Always learn & Never learn & Evidence Gate \\
 \midrule
-BLACK~KITE & learned worse & SGP4 & closed & unsafe ML rejected \\
-Synth.\ noise & no gain & SGP4 & closed & no open \\
-Synth.\ marginal & gain $<\gamma$ & SGP4 & closed & weak evidence blocked \\
-Synth.\ systematic & helps & misses opportunity & \textbf{open} & opens only with held-out evidence \\
+BK real & worse & SGP4 & closed (=SGP4) \\
+Synth.\ noise & no gain & SGP4 & closed \\
+Synth.\ marginal & gain $<\gamma$ & SGP4 & closed \\
+Synth.\ syst. & helps & misses opp. & \textbf{open} \\
 \bottomrule
 \end{tabular}
-}
+\endgroup
+\vspace{-5pt}
 \end{table}
 
 \subsection{Endpoint-Control Proxies}
 \label{sec:eval-endpoint}
-Two control-proxy studies instantiate the coverage-proxy chain of
-Eqs.~\eqref{eq:guard}--\eqref{eq:esucc} with the parameters of
-Table~\ref{tab:params}---coverage proxies rather than measured packet outcomes.
+Two control-proxy studies instantiate Eqs.~\eqref{eq:guard}--\eqref{eq:esucc}
+with Table~\ref{tab:params} parameters; they are coverage proxies, not measured
+packet outcomes.
 
 \emph{Timing uncertainty is paid as guard energy}
 (Fig.~\ref{fig:proxies}(a,b)): sweeping $\sigma_t$ from 16~ms to 2~s under the
 $3\sigma$ guard keeps the miss proxy near the $3\sigma$ floor ($\approx$0.3\%)
-but inflates guard overhead from 0.03\% to $\sim$2.5\% of the pass and energy per
-successful burst from $\sim$10~mJ to $\sim$246~mJ; open-loop SGP4 staleness
-($\sim$1.5~km/day along-track over orbital speed) places TLE age 8~h at
-$\sigma_t\!\approx\!0.07$~s and 168~h at $\sigma_t\!\approx\!1.4$~s on this curve.
+but inflates guard overhead from 0.03\% to $\sim$2.5\% of the pass and the
+energy proxy from $\sim$10~mJ to $\sim$246~mJ; SGP4 8/168~h markers lie on this
+curve.
 
 \emph{Software-only proxy ablation illustrates coupled timing/frequency margins}
 (Fig.~\ref{fig:proxies}(c,d)): the synthetic ablation is an illustrative
-stress-proxy, using a deliberately larger baseline frequency-error scale than
-Table~\ref{tab:bk} to exercise the policy; it should not be read as a BLACK~KITE
-deployment outcome. The detailed proxy values are shown in Fig.~\ref{fig:proxies};
-on the real data the gate stays closed and the controller equals the baseline
+stress-proxy using a deliberately larger baseline frequency-error scale than
+Table~\ref{tab:bk}; it is not a BLACK~KITE deployment outcome. On the real data,
+the gate stays closed and the controller equals the baseline
 (Sec.~\ref{sec:eval-real}).
-
-\emph{The predictor footprint is bounded, inference-only, and MCU-class when
-Flash suffices}: 333\,720 parameters, 332\,288 MACs ($\approx$0.66~MFLOP) per
-inference, $\approx$326~KB int8 Flash, $<$1~KB working RAM (no claim for
-M0-class nodes without on-device validation; Flash-feasible on mid-range
-MCU-class devices, not ultra-minimal nodes). Training is offline; the endpoint
-runs one inference per pass, estimated at $\sim$12.5~ms / $\sim$1.07~mJ on a
-Cortex-M4F-class core---$\approx$6.4\% of one burst's transmit draw,
-$\approx$0.3\% per 20-burst pass; an estimate, not an on-device measurement.
 
 % ── Conclusion and Limitations ────────────────────────────────────────────────
 \section{Conclusion and Limitations}
@@ -649,11 +655,10 @@ or gateway acknowledgement. The negative result holds for two
 BLACK~KITE satellites and our feature set, not universally; the positive learning
 result is synthetic only; the gate gives a validation-window property, not a
 distribution-shift bound; the proxies of Sec.~\ref{sec:eval-endpoint} are control
-proxies, not link-budget measurements; and the MCU latency/energy figures are
-estimates. Cross-satellite generalization is the main limitation and the primary
-target of the next software campaign. Packet-level conducted PER/PDR against a
-reference receiver and authorized over-the-air measurement are future work, in
-that order.
+proxies, not link-budget measurements. Cross-satellite generalization is the
+main limitation and the primary target of the next software campaign.
+Packet-level conducted PER/PDR against a reference receiver and authorized
+over-the-air measurement are future work, in that order.
 
 % ── References ───────────────────────────────────────────────────────────────
 \bibliographystyle{IEEEtran}
