@@ -83,13 +83,13 @@
 \newcommand{\infocard}[4]{%
   \begin{tikzpicture}
     \node[
-      draw=#1!35,
-      fill=#2,
-      rounded corners=3pt,
-      line width=0.8pt,
-      inner xsep=8pt,
-      inner ysep=6pt
-    ] {\parbox{#3}{#4}};
+    draw=#1!35,
+    fill=#2,
+    rounded corners=3pt,
+    line width=0.8pt,
+    inner xsep=4pt,
+    inner ysep=6pt
+  ] {\parbox{#3}{#4}};
   \end{tikzpicture}
 }
 
@@ -209,8 +209,8 @@
 \begin{frame}[plain]
   \vspace{0.12cm}
   \begin{center}
-    {\Large\bfseries Evidence-Gated Timing/Frequency Control for}\\[2pt]
-    {\Large\bfseries LR-FHSS Direct-to-Satellite IoT}
+    {\Large\bfseries Evidence-Gated Residual Learning for}\\[2pt]
+    {\Large\bfseries LR-FHSS Direct-to-Satellite IoT Endpoint Control}
   \end{center}
   \vspace{0.18cm}
   \begin{center}
@@ -218,7 +218,7 @@
   \end{center}
   \begin{center}
     {\large\bfseries Physics first. Evidence decides ML.}\\[2pt]
-    {\scriptsize\color{ScopeGray}Software-only, model-derived study; no RF, packet, or live-satellite validation is claimed.}
+    {\scriptsize\color{ScopeGray}Current version: workshop/advisor-review draft. Software-only, model-derived study; no RF, packet, or live-satellite validation is claimed.}
   \end{center}
 \end{frame}
 
@@ -294,13 +294,13 @@
 \end{frame}
 
 \begin{frame}{Evidence Gate Decision Rule}
-  \vspace{0.35cm}
+  \vspace{0.22cm}
   \begin{center}
     {\Large$\displaystyle G = \mathbf{1}\!\left[\mathrm{MAE}_{\mathrm{ML}}(V) < \gamma\,\mathrm{MAE}_{\mathrm{phys}}(V)\right]$}
   \end{center}
-  \vspace{0.28cm}
+  \vspace{0.16cm}
   \begin{center}
-    \renewcommand{\arraystretch}{1.28}
+    \renewcommand{\arraystretch}{1.18}
     \begin{tabular}{p{0.34\linewidth}p{0.20\linewidth}p{0.28\linewidth}}
       \toprule
       \textbf{Condition} & \textbf{Decision} & \textbf{Deployed output} \\
@@ -310,29 +310,50 @@
       \bottomrule
     \end{tabular}
   \end{center}
-  \vspace{0.12cm}
+  \vspace{0.04cm}
   \begin{center}
     {\scriptsize\color{Ink!70}$V$: held-out validation window \hspace{1.5em} $\gamma$: required improvement margin}
   \end{center}
   \takeaway{If uncertain, close the gate.}
 \end{frame}
 
-\begin{frame}{Real BLACK KITE Negative Result}
+\begin{frame}{Policy Comparison}
+  \vspace{0.08cm}
+  \begin{center}
+  {\scriptsize
+  \setlength{\tabcolsep}{2pt}
+  \renewcommand{\arraystretch}{1.18}
+  \begin{tabular}{p{0.20\linewidth}p{0.20\linewidth}p{0.16\linewidth}p{0.12\linewidth}p{0.16\linewidth}}
+    \toprule
+    \textbf{Regime} & \textbf{Always learn} & \textbf{Never learn} & \textbf{Gate} & \textbf{Meaning} \\
+    \midrule
+    BLACK KITE real TLE & worse than SGP4 & SGP4 selected & \textcolor{UnsafeRed}{closed} & unsafe ML rejected \\
+    Synthetic noise & no supported gain & SGP4 selected & \textcolor{UnsafeRed}{closed} & avoids weak evidence \\
+    Synthetic marginal & gain below $\gamma$ & SGP4 selected & \textcolor{UnsafeRed}{closed} & conservative boundary \\
+    Synthetic systematic & MAE 1859.3$\to$99.8 Hz & misses learnable signal & \textcolor{GateGreen}{open} & opens on evidence \\
+    \bottomrule
+  \end{tabular}}
+  \end{center}
+  \scopefooter{The gate is a selector between always-learn and never-learn policies, not an always-closed rule.}
+  \takeaway{Real result closes the gate; controlled systematic evidence opens it.}
+\end{frame}
+
+\begin{frame}{Strongest Real Result: Negative Control}
   \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.82\textwidth}
+    \column{0.80\textwidth}
     \begin{center}
-      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
     \end{center}
 
-    \column{0.18\textwidth}
-    \vspace{0.76cm}
-    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\scriptsize
+    \column{0.20\textwidth}
+    \vspace{0.42cm}
+    \infocard{ScopeGray}{GrayFill}{0.86\linewidth}{\scriptsize
       \textbf{Result}\\
-      ML residual never beats SGP4.
-    }\\[0.16cm]
-    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\scriptsize
+      ML does not beat SGP4.
+    }\\[0.10cm]
+    \infocard{ScopeGray}{GrayFill}{0.86\linewidth}{\scriptsize
       \textbf{Implication}\\
-      always-on ML is not justified.
+      Always-on ML is unsafe.
     }
   \end{columns}
   \takeaway{Real BLACK KITE data does not support always-on ML.}
@@ -368,18 +389,19 @@
   \takeaway{Negative evidence is actionable: keep the physics baseline.}
 \end{frame}
 
-\begin{frame}{Synthetic Stress: Software-Only Sanity Check}
+\begin{frame}{Synthetic Mechanism Check (software-only)}
   \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.73\textwidth}
+    \column{0.72\textwidth}
     \begin{center}
-      \includegraphics[width=\linewidth,height=0.64\textheight,keepaspectratio]{figures/fig_gate_behavior_talk.pdf}
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{figures/fig_gate_behavior_talk.pdf}
     \end{center}
 
-    \column{0.27\textwidth}
-    \vspace{0.28cm}
+    \column{0.28\textwidth}
+    \vspace{0.18cm}
     {\scriptsize
-    \renewcommand{\arraystretch}{1.18}
-    \begin{tabular}{p{0.68\linewidth}p{0.20\linewidth}}
+    \setlength{\tabcolsep}{2pt}
+    \renewcommand{\arraystretch}{1.08}
+    \begin{tabular}{p{0.62\linewidth}p{0.22\linewidth}}
       \toprule
       \textbf{Regime} & \textbf{Gate} \\
       \midrule
@@ -388,7 +410,7 @@
       Strong systematic & \textcolor{GateGreen}{open} \\
       \bottomrule
     \end{tabular}}\\[0.12cm]
-    {\tiny\color{ScopeGray}\parbox{0.94\linewidth}{Software-only synthetic sanity check; not a real BLACK KITE improvement and not hardware or live-link validation.}}
+    {\tiny\color{ScopeGray}\parbox{0.90\linewidth}{Software-only mechanism check; not real BLACK KITE improvement, hardware validation, or live-link validation.}}
   \end{columns}
   \takeaway{The gate is conservative, not permanently closed.}
 \end{frame}
@@ -405,11 +427,11 @@
   \begin{center}
     \includegraphics[width=0.90\linewidth,height=0.56\textheight,keepaspectratio]{slide_figures/fig_control_ablation_talk.pdf}
   \end{center}
-  \scopefooter{Software-only coverage proxies. \textbf{Learned bar = controlled gate-open synthetic regime}; on real BLACK KITE the gate closes.}
+  \scopefooter{Software-only coverage proxies. \textbf{Learned bar = controlled gate-open synthetic regime}; not BLACK KITE residual scale.}
   \takeaway{Joint timing+frequency control improves the synthetic gate-open proxy only.}
 \end{frame}
 
-\begin{frame}{Conducted-IQ Sanity Check (Table IV Boundary)}
+\begin{frame}{Artifact Sanity Only: Conducted-IQ}
   \begin{columns}[T,totalwidth=\textwidth]
     \column{0.31\textwidth}
     {\small\bfseries Conducted setup}\\[0.08cm]
@@ -437,70 +459,62 @@
     \end{center}
     {\scriptsize\color{ScopeGray}Spectrum supports measurement-path visibility only.}
   \end{columns}
-\scopefooter{\textbf{Claim boundary:} conducted IQ-level only; no packet/PER/PDR/CRC/gateway ACK/OTA/live-satellite or link-layer validation.}
+\scopefooter{\textbf{Artifact only, not a paper contribution:} conducted IQ-level only; no algorithm, packet/PER/PDR/CRC/gateway ACK/OTA/live-satellite, or link-layer validation.}
 \end{frame}
 
 \begin{frame}{Main Limitation: Cross-Satellite Generalization}
-  \vspace{0.08cm}
+  \vspace{0.02cm}
   \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.52\textwidth}
-    \infocard{UnsafeRed}{RedFill}{0.94\linewidth}{\small
+    \column{0.50\textwidth}
+    \infocard{UnsafeRed}{RedFill}{0.90\linewidth}{\scriptsize
       \textbf{Current real-data result}\\[2pt]
-      BLACK KITE-1/2 only. This is a real-data negative control, not proof of constellation-wide generalization.
-    }\\[0.16cm]
-    \infocard{GateGreen}{GreenFill}{0.94\linewidth}{\small
-      \textbf{Why this supports the story}\\[2pt]
-      Limited transfer is exactly why always-on ML is unsafe. The Evidence Gate should be tested next as a cross-satellite safety mechanism.
+      BLACK KITE-1/2 only: a negative control, not constellation-wide proof.
+    }\\[0.10cm]
+    \infocard{GateGreen}{GreenFill}{0.90\linewidth}{\scriptsize
+      \textbf{Why it matters}\\[2pt]
+      Limited transfer is why always-on ML is unsafe; test the gate next under cross-satellite shift.
     }
 
-    \column{0.42\textwidth}
-    \infocard{PhysicsBlue}{BlueFill}{0.94\linewidth}{\small
-      \textbf{Next software campaign}\\[4pt]
+    \column{0.44\textwidth}
+    \infocard{PhysicsBlue}{BlueFill}{0.90\linewidth}{\scriptsize
+      \textbf{Next software campaign}\\[3pt]
       1. Multi-satellite TLE stress test\\
-      2. Cross-satellite transfer heatmap\\
+      2. Transfer heatmap\\
       3. Gate open/close statistics\\
       4. Failure taxonomy
     }
   \end{columns}
-  \scopefooter{Frame method as local chronological deploy/no-deploy validation, not train-once-deploy-everywhere generalization.}
+  \scopefooter{Method is local chronological deploy/no-deploy validation, not train-once-deploy-everywhere generalization.}
 \end{frame}
 
 \begin{frame}{Contributions}
-  \vspace{0.22cm}
+  \vspace{0.12cm}
   \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.24\textwidth}
+    \column{0.31\textwidth}
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
-      \includegraphics[height=0.34cm]{assets_external/tabler/world.pdf}\\[5pt]
+      \parbox[c][1.82cm][c]{0.82\linewidth}{\centering
+      \includegraphics[height=0.30cm]{assets_external/tabler/world.pdf}\\[4pt]
       {\textbf{1. Evidence-gated}\\\textbf{endpoint control}}\\[-1pt]
       Deploy/no-deploy trust test.}
     }
 
-    \column{0.24\textwidth}
+    \column{0.31\textwidth}
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
-      \includegraphics[height=0.34cm]{assets_external/tabler/alert-triangle.pdf}\\[5pt]
-      {\textbf{2. Real negative +}\\\textbf{synthetic open}}\\[-1pt]
+      \parbox[c][1.82cm][c]{0.82\linewidth}{\centering
+      \includegraphics[height=0.30cm]{assets_external/tabler/alert-triangle.pdf}\\[4pt]
+      {\textbf{2. Real negative}\\\textbf{+ synthetic check}}\\[-1pt]
       Gate closes on BLACK KITE.}
     }
 
-    \column{0.24\textwidth}
+    \column{0.31\textwidth}
     \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
-      \includegraphics[height=0.34cm]{assets_external/tabler/shield-check.pdf}\\[5pt]
-      {\textbf{3. Timing/frequency}\\\textbf{endpoint proxies}}\\[-1pt]
-      Guard, hop-bin, energy policy.}
-    }
-
-    \column{0.24\textwidth}
-    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][2.05cm][c]{0.88\linewidth}{\centering
-      \includegraphics[height=0.34cm]{assets_external/tabler/cpu.pdf}\\[5pt]
-      {\textbf{4. Bounded}\\\textbf{conducted-IQ evidence}}\\[-1pt]
-      Measurement path only.}
+      \parbox[c][1.82cm][c]{0.82\linewidth}{\centering
+      \includegraphics[height=0.30cm]{assets_external/tabler/shield-check.pdf}\\[4pt]
+      {\textbf{3. Endpoint proxies}\\\textbf{+ limitations}}\\[-1pt]
+      Guard, hop-bin, energy; artifact package.}
     }
   \end{columns}
-  \vspace{0.52cm}
+  \vspace{0.34cm}
   \begin{center}
     {\Large\bfseries Do not trust ML by default.}\\[2pt]
     {\Large\bfseries Let evidence decide deployment.}
