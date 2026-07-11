@@ -114,7 +114,7 @@ airtime and energy that a battery-powered, unattended node cannot recover.
 
 The terminal must size these margins \emph{before} transmitting, using only the
 orbital information it holds on board---in practice a \emph{stale} TLE propagated
-open-loop by SGP4/SDP4~\cite{vallado2007fundamentals}. This is the deployable
+open-loop by SGP4/SDP4~\cite{hoots1980models}. This is the deployable
 physics baseline. We transform classical PHY-layer Doppler compensation into
 timing- and frequency-uncertainty-aware endpoint control for LR-FHSS D2S IoT under
 stale orbital information and low-power constraints: prediction uncertainty is not
@@ -136,15 +136,14 @@ must therefore be \emph{earned} on held-out evidence, formalised as the
 \emph{Evidence Gate}: a learned corrector deploys only when a chronological
 held-out validation window shows it beats the physics baseline by a margin.
 
-\emph{Related work.} Prior art clusters into four layers, none of which contains
+This paper is intentionally conservative: it does not argue that residual learning improves current BLACK~KITE operation. Instead, it asks whether a terminal should ever deploy such learning without local chronological evidence, and shows that for the available BLACK~KITE history the answer is no.
+
+\emph{Related work.} Prior art clusters into three layers, none of which contains
 our decision problem. (i)~\emph{Link/capacity/energy} analyses quantify aggregate
 LR-FHSS reliability and transmission cost under LEO Doppler and
-load~\cite{semtech2023lrfhss,boquet2021lrfhss,ullah2022lrfhss,hurn2023lrfhss}.
-(ii)~\emph{Receiver-side} work---transceiver design~\cite{jung2023lrfhss} and
-real-world packet-trace studies~\cite{bukhari2023lrfhss}---recovers packets
-\emph{after} a transmission exists. (iii)~\emph{NTN synchronisation} estimates
+load~\cite{semtech2023lrfhss,ullah2022lrfhss,hurn2023lrfhss}. (ii)~\emph{NTN synchronisation} estimates
 timing advance and ToA/CFO, largely at the receiver or random-access
-layer~\cite{3gpp2019tr38821}. (iv)~\emph{Orbit-learning} corrects
+layer~\cite{3gpp2019tr38821}. (iii)~\emph{Orbit-learning} corrects
 SGP4/SDP4~\cite{hoots1980models} trajectories---GP
 correction~\cite{peng2019gp}, differentiable SGP4~\cite{acciarini2025dsgp4},
 survey~\cite{caldas2024mlorbit}---targeting trajectory accuracy, while D2S
@@ -649,9 +648,7 @@ margin. The strongest real result is negative: on BLACK~KITE TLE history the
 learned correction never beats the baseline, so the gate closes and the terminal
 keeps the conservative fallback. The controlled synthetic result is a mechanism
 check showing that the same rule can open under dominant systematic evidence,
-not a real-data improvement claim. The Evidence Gate is therefore useful as a
-conservative safeguard against unsupported learning: deploy a learned residual
-only after a validation window clears $\gamma$; keep the decision auditable
+not a real-data improvement claim. The Evidence Gate is therefore most useful as an audit rule rather than as a guaranteed improvement mechanism: on BLACK~KITE it chooses the same action as never-learn, but this is precisely the safe action because it prevents an always-learn policy from increasing the residual. In a deployed terminal, the learned branch must repeatedly re-earn deployment on fresh chronological evidence. Deploy a learned residual only after a validation window clears $\gamma$; keep the decision auditable
 (log $G$, $\gamma$, the validation MAE pair, $|V|$, TLE age); and let the
 selected prediction and uncertainty size the endpoint margins of
 Eqs.~\eqref{eq:guard}--\eqref{eq:esucc}.
@@ -662,10 +659,7 @@ artifacts index compact CSV summaries, regeneration scripts, frozen
 tables/figures, and the compile-only NUCLEO footprint artifact; these artifacts
 support auditability, not hardware or link validation. The next software
 campaign is a multi-satellite generalization matrix with residual-learnability
-analysis. Practical RF endpoints may be dominated by oscillator offset,
-receiver synchronization, and channel effects; this paper isolates the
-TLE-driven inter-TLE component and does not claim that it is the dominant RF
-error source.
+analysis. This separates orbital uncertainty from other endpoint RF errors. Oscillator offset, receiver synchronization, and channel effects may dominate the absolute RF residual; our experiments isolate only the TLE-driven component observable from public orbital data. A practical stack should combine this gate with oscillator calibration and a tail-aware deployment loss.
 
 \label{sec:limits}
 All control results are software-only and model-derived
