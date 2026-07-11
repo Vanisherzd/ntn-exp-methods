@@ -50,8 +50,17 @@
 \title{Evidence-Gated Residual Learning for LR-FHSS Direct-to-Satellite IoT Endpoint Control}
 
 \author{
-  \IEEEauthorblockN{Anonymous Authors}
-  \IEEEauthorblockA{Affiliations omitted for double-blind review}
+\IEEEauthorblockN{Anonymous Author 1}
+\IEEEauthorblockA{Affiliation omitted for double-blind review\\
+Email omitted}
+\and
+\IEEEauthorblockN{Anonymous Author 2}
+\IEEEauthorblockA{Affiliation omitted for double-blind review\\
+Email omitted}
+\and
+\IEEEauthorblockN{Anonymous Author 3}
+\IEEEauthorblockA{Affiliation omitted for double-blind review\\
+Email omitted}
 }
 
 \maketitle
@@ -555,8 +564,8 @@ adopt $\gamma=0.95$.
     \caption{Endpoint-control proxies (software-only coverage proxies, not
     measured packet outcomes). (a,b)~Timing sensitivity under the adaptive
     $3\sigma$ guard; markers: SGP4 open-loop staleness (TLE 24/168~h).
-    (c,d)~Control ablation (log axes); controlled \mbox{*gate}-open
-    \emph{synthetic} regime
+(c,d)~Control ablation (log axes); PGRL* denotes the controlled gate-open
+\emph{synthetic} regime
     (real gate closes, Sec.~\ref{sec:eval-real}).}
     \label{fig:proxies}
 \end{figure*}
@@ -647,6 +656,17 @@ only after a validation window clears $\gamma$; keep the decision auditable
 selected prediction and uncertainty size the endpoint margins of
 Eqs.~\eqref{eq:guard}--\eqref{eq:esucc}.
 
+Practically, for BLACK~KITE-like TLE-only residuals the safe endpoint policy is
+SGP4/never-learn unless held-out evidence proves otherwise. Reproducibility
+artifacts index compact CSV summaries, regeneration scripts, frozen
+tables/figures, and the compile-only NUCLEO footprint artifact; these artifacts
+support auditability, not hardware or link validation. The next software
+campaign is a multi-satellite generalization matrix with residual-learnability
+analysis. Practical RF endpoints may be dominated by oscillator offset,
+receiver synchronization, and channel effects; this paper isolates the
+TLE-driven inter-TLE component and does not claim that it is the dominant RF
+error source.
+
 \label{sec:limits}
 All control results are software-only and model-derived
 (\texttt{reference\_is\_measured\_truth=false}): no measured Doppler truth,
@@ -655,8 +675,8 @@ or gateway acknowledgement. The negative result holds for two
 BLACK~KITE satellites and our feature set, not universally; the positive learning
 result is synthetic only; the gate gives a validation-window property, not a
 distribution-shift bound; the proxies of Sec.~\ref{sec:eval-endpoint} are control
-proxies, not link-budget measurements. Cross-satellite generalization is the
-main limitation and the primary target of the next software campaign.
+proxies, not link-budget measurements. Tail-aware or cost-aware gates based on
+p99 error, guard cost, or outage proxy are left for future work.
 Packet-level conducted PER/PDR against a reference receiver and authorized
 over-the-air measurement are future work, in that order.
 

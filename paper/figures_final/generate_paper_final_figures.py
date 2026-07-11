@@ -192,61 +192,69 @@ def gate_evidence_figure(path: str):
     gate sanity check. Numbers verbatim from committed CSVs."""
     fs = 8
     plt.rcParams.update({"font.size": fs})
-    fig, axes = plt.subplots(2, 2, figsize=(7.1, 3.6))
+    fig, axes = plt.subplots(2, 2, figsize=(7.1, 3.85))
 
     # (a) real: held-out MAE vs staleness
     ax = axes[0, 0]
-    ax.plot(BK_STALE, BK_BASE, "o-", color=C_PHYS, lw=1.5, ms=4, label="baseline (BK1)")
-    ax.plot(BK_STALE, BK_ML, "s--", color=C_BAD, lw=1.5, ms=4, label="learned (BK1)")
-    ax.plot(BKX_STALE, BKX_BASE, "^:", color=C_PHYS, lw=1.0, ms=4, alpha=0.65,
-            label=r"baseline (BK1$\to$BK2)")
-    ax.plot(BKX_STALE, BKX_ML, "v:", color=C_BAD, lw=1.0, ms=4, alpha=0.65,
-            label=r"learned (BK1$\to$BK2)")
+    real_handles = [
+        ax.plot(BK_STALE, BK_BASE, "o-", color=C_PHYS, lw=1.5, ms=4,
+                label="baseline (BK1)")[0],
+        ax.plot(BK_STALE, BK_ML, "s--", color=C_BAD, lw=1.5, ms=4,
+                label="learned (BK1)")[0],
+        ax.plot(BKX_STALE, BKX_BASE, "^:", color=C_PHYS, lw=1.0, ms=4, alpha=0.65,
+                label=r"baseline (BK1$\to$BK2)")[0],
+        ax.plot(BKX_STALE, BKX_ML, "v:", color=C_BAD, lw=1.0, ms=4, alpha=0.65,
+                label=r"learned (BK1$\to$BK2)")[0],
+    ]
     ax.set_yscale("log")
     ax.set_xscale("log"); ax.set_xticks(BK_STALE)
     ax.set_xticklabels([str(s) for s in BK_STALE], fontsize=fs - 1)
     ax.set_xlabel("stale-TLE age [h]")
     ax.set_ylabel("held-out MAE [Hz] (log)")
-    ax.legend(fontsize=fs - 2, loc="upper left", frameon=False)
     ax.grid(True, which="major", ls=":", alpha=0.35)
     ax.set_title("(a) Real-data held-out MAE", fontsize=fs)
-    ax.annotate("real BLACK KITE", xy=(0.97, 0.05), xycoords="axes fraction",
-                ha="right", fontsize=fs - 2, color=C_GRAY, style="italic")
+    ax.text(0.97, 0.05, "real BLACK KITE", transform=ax.transAxes,
+            ha="right", va="bottom", fontsize=fs - 2, color=C_GRAY,
+            style="italic",
+            bbox=dict(fc="white", ec="none", alpha=0.65, pad=1.0))
 
     # (b) real: degradation, all positive → gate closes
     ax = axes[0, 1]
     ax.axhline(0, color="0.5", lw=0.8)
-    ax.plot(BK_STALE, BK_DPCT, "s-", color=C_BAD, lw=1.5, ms=4, label="BK1")
-    ax.plot(BKX_STALE, BKX_DPCT, "v:", color=C_BAD, lw=1.2, ms=4, alpha=0.65,
-            label=r"BK1$\to$BK2")
+    ax.plot(BK_STALE, BK_DPCT, "s-", color=C_BAD, lw=1.5, ms=4)
+    ax.plot(BKX_STALE, BKX_DPCT, "v:", color=C_BAD, lw=1.2, ms=4, alpha=0.65)
     ax.set_xscale("log"); ax.set_xticks(BK_STALE)
     ax.set_xticklabels([str(s) for s in BK_STALE], fontsize=fs - 1)
     ax.set_xlabel("stale-TLE age [h]")
     ax.set_ylabel("degradation [%]")
-    ax.legend(fontsize=fs - 2, loc="upper left", frameon=False)
     ax.grid(True, ls=":", alpha=0.35)
     ax.set_title("(b) Real-data degradation", fontsize=fs)
-    ax.annotate("real BLACK KITE", xy=(0.75, 0.88), xycoords="axes fraction",
-                ha="center", fontsize=fs - 2, color=C_GRAY, style="italic")
+    ax.text(0.97, 0.05, "real BLACK KITE", transform=ax.transAxes,
+            ha="right", va="bottom", fontsize=fs - 2, color=C_GRAY,
+            style="italic",
+            bbox=dict(fc="white", ec="none", alpha=0.65, pad=1.0))
 
     # (c) synthetic: gate decision vs gamma
     ax = axes[1, 0]
-    ax.step(GAMMA, GATE_EXTREME, where="mid", marker="o", ms=4, lw=1.6,
-            color=C_GATE, label="systematic")
-    ax.step(GAMMA, GATE_MODERATE, where="mid", marker="s", ms=4, lw=1.6,
-            color=C_ML, label="moderate")
-    ax.step(GAMMA, GATE_FRESH, where="mid", marker="^", ms=4, lw=1.6,
-            color=C_PHYS, label="noise-dom. (real-like)")
+    synth_handles = [
+        ax.step(GAMMA, GATE_EXTREME, where="mid", marker="o", ms=4, lw=1.6,
+                color=C_GATE, label="systematic")[0],
+        ax.step(GAMMA, GATE_MODERATE, where="mid", marker="s", ms=4, lw=1.6,
+                color=C_ML, label="moderate")[0],
+        ax.step(GAMMA, GATE_FRESH, where="mid", marker="^", ms=4, lw=1.6,
+                color=C_PHYS, label="noise-dom. (real-like)")[0],
+    ]
     ax.set_yticks([0, 1]); ax.set_yticklabels(["closed", "open"], fontsize=fs - 1)
     ax.set_ylim(-0.3, 1.3)
     ax.set_xticks([0.90, 0.95, 1.00])
     ax.set_xlabel(r"gate threshold $\gamma$")
     ax.set_ylabel("gate decision")
-    ax.legend(fontsize=fs - 2, loc="center left", frameon=False)
     ax.grid(True, ls=":", alpha=0.35)
     ax.set_title("(c) Synthetic gate decision", fontsize=fs)
-    ax.annotate("synthetic sanity check", xy=(0.97, 0.05), xycoords="axes fraction",
-                ha="right", fontsize=fs - 2, color=C_GRAY, style="italic")
+    ax.text(0.05, 0.43, "synthetic sanity check", transform=ax.transAxes,
+            ha="left", va="center", fontsize=fs - 2, color=C_GRAY,
+            style="italic",
+            bbox=dict(fc="white", ec="none", alpha=0.65, pad=1.0))
 
     # (d) synthetic: deployed MAE vs gamma
     ax = axes[1, 1]
@@ -254,19 +262,27 @@ def gate_evidence_figure(path: str):
     ax.plot(GAMMA, DEP_MODERATE, "s-", color=C_ML, lw=1.5, ms=4, label="moderate")
     ax.plot(GAMMA, DEP_FRESH, "^-", color=C_PHYS, lw=1.5, ms=4, label="noise-dom.")
     ax.axhline(BASE_EXTREME, color=C_GATE, ls="--", lw=0.9, alpha=0.6)
-    ax.text(0.902, BASE_EXTREME * 0.5, "systematic baseline (gate-closed)",
-            fontsize=fs - 2, color=C_GATE)
+    ax.text(0.03, 0.78, "systematic baseline\n(gate closed)",
+            transform=ax.transAxes, fontsize=fs - 2, color=C_GATE,
+            bbox=dict(fc="white", ec="none", alpha=0.65, pad=1.0))
     ax.set_yscale("log")
     ax.set_xticks([0.90, 0.95, 1.00])
     ax.set_xlabel(r"gate threshold $\gamma$")
     ax.set_ylabel("deployed MAE [Hz] (log)")
-    ax.legend(fontsize=fs - 2, loc="center right", frameon=False)
     ax.grid(True, which="major", ls=":", alpha=0.35)
     ax.set_title("(d) Synthetic deployed MAE", fontsize=fs)
-    ax.annotate("synthetic sanity check", xy=(0.5, 0.16), xycoords="axes fraction",
-                ha="center", fontsize=fs - 2, color=C_GRAY, style="italic")
+    ax.text(0.56, 0.62, "synthetic sanity check", transform=ax.transAxes,
+            ha="left", va="center", fontsize=fs - 2, color=C_GRAY,
+            style="italic",
+            bbox=dict(fc="white", ec="none", alpha=0.65, pad=1.0))
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0.0, 0.08, 1.0, 0.92), h_pad=1.0, w_pad=1.1)
+    fig.legend(handles=real_handles, loc="upper center", bbox_to_anchor=(0.5, 1.0),
+               ncol=4, fontsize=fs - 2.2, frameon=False, handlelength=1.4,
+               columnspacing=0.9)
+    fig.legend(handles=synth_handles, loc="lower center", bbox_to_anchor=(0.5, 0.0),
+               ncol=3, fontsize=fs - 2.2, frameon=False, handlelength=1.4,
+               columnspacing=1.0)
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
@@ -276,7 +292,7 @@ def endpoint_proxies_figure(path: str):
     fs = 8
     plt.rcParams.update({"font.size": fs, "axes.titlesize": fs - 0.5,
                          "xtick.labelsize": fs - 0.5, "ytick.labelsize": fs - 0.5})
-    fig, axes = plt.subplots(2, 2, figsize=(7.1, 3.6))
+    fig, axes = plt.subplots(2, 2, figsize=(7.1, 3.85))
 
     sweep = EXP7["residual_offset_sweep"]
     sg   = np.array([r["sigma_t_s"] for r in sweep])
@@ -285,11 +301,14 @@ def endpoint_proxies_figure(path: str):
     eps  = np.array([r["energy_per_success_j"] for r in sweep]) * 1e3
 
     ax = axes[0, 0]
-    ax.semilogx(sg, miss, "-", color=C_BAD, lw=1.8, label="TX-window miss")
-    ax.semilogx(sg, ovh, "--", color=C_PHYS, lw=1.8, label="guard overhead")
+    proxy_handles = [
+        ax.semilogx(sg, miss, "-", color=C_BAD, lw=1.8,
+                    label="TX-window miss")[0],
+        ax.semilogx(sg, ovh, "--", color=C_PHYS, lw=1.8,
+                    label="guard overhead")[0],
+    ]
     ax.set_xlabel(r"residual timing offset $\sigma_t$ [s]")
     ax.set_ylabel("[%]")
-    ax.legend(fontsize=fs - 2, loc="upper left", frameon=False)
     ax.grid(True, ls=":", alpha=0.35)
     ax.set_title("(a) coverage vs. timing offset", fontsize=fs)
 
@@ -300,20 +319,21 @@ def endpoint_proxies_figure(path: str):
         "pgrl_uncert": (C_ML, "^", "learned (gate-open synth.)"),
     }.items():
         cfg = EXP7["named_configs"][name]
-        ax.plot(cfg["sigma_t_s"], cfg["energy_per_success_j"] * 1e3, m,
-                color=c, ms=6, label=lab, zorder=5)
+        proxy_handles.append(ax.plot(
+            cfg["sigma_t_s"], cfg["energy_per_success_j"] * 1e3, m,
+            color=c, ms=6, label=lab, zorder=5)[0])
     for row in EXP7["tle_age_sweep"]:
         if row["tle_age_h"] in (24, 168):
             s = row["sgp4"]["sigma_t_s"]
             e = row["sgp4"]["energy_per_success_j"] * 1e3
-            dx, dy = (0.30, 0.42) if row["tle_age_h"] == 168 else (0.22, 2.2)
+            offset = (-10, -11) if row["tle_age_h"] == 168 else (5, 7)
+            ha = "right" if row["tle_age_h"] == 168 else "left"
             ax.annotate(f'TLE {row["tle_age_h"]} h', xy=(s, e),
-                        xytext=(s * dx, e * dy), fontsize=fs - 2, color=C_GRAY,
-                        arrowprops=dict(arrowstyle="->", color=C_GRAY, lw=0.7))
+                        xytext=offset, textcoords="offset points",
+                        ha=ha, fontsize=fs - 2, color=C_GRAY)
             ax.plot(s, e, "o", color=C_GRAY, ms=4)
     ax.set_xlabel(r"residual timing offset $\sigma_t$ [s]")
     ax.set_ylabel("energy / success [mJ] (log)")
-    ax.legend(fontsize=fs - 2, loc="lower right", frameon=False)
     ax.grid(True, which="major", ls=":", alpha=0.35)
     ax.set_title("(b) energy vs. timing offset", fontsize=fs)
 
@@ -326,26 +346,29 @@ def endpoint_proxies_figure(path: str):
 
     ax = axes[1, 0]
     ax.bar(x, succ, color=colors)
-    ax.set_yscale("log"); ax.set_ylim(top=max(succ) * 6)
+    ax.set_yscale("log"); ax.set_ylim(top=max(succ) * 8)
     ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=fs - 1)
     ax.set_ylabel("joint success [%] (log)")
     for xi, v in zip(x, succ):
-        ax.text(xi, v * 1.3, f"{v:.2g}%", ha="center", fontsize=fs - 2)
+        ax.text(xi, v * 1.2, f"{v:.2g}%", ha="center", fontsize=fs - 2)
     ax.grid(True, axis="y", which="major", ls=":", alpha=0.35)
     ax.set_title("(c) ablation: success proxy", fontsize=fs)
 
     ax = axes[1, 1]
     ax.bar(x, epsb, color=colors)
-    ax.set_yscale("log"); ax.set_ylim(top=max(epsb) * 6)
+    ax.set_yscale("log"); ax.set_ylim(top=max(epsb) * 8)
     ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=fs - 1)
     ax.set_ylabel("energy / success [mJ] (log)")
     for xi, v in zip(x, epsb):
-        ax.text(xi, v * 1.3, f"{v:,.0f}" if v >= 100 else f"{v:.1f}",
+        ax.text(xi, v * 1.2, f"{v:,.0f}" if v >= 100 else f"{v:.1f}",
                 ha="center", fontsize=fs - 2)
     ax.grid(True, axis="y", which="major", ls=":", alpha=0.35)
     ax.set_title("(d) ablation: energy proxy", fontsize=fs)
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.92), h_pad=1.0, w_pad=1.1)
+    fig.legend(handles=proxy_handles, loc="upper center", bbox_to_anchor=(0.5, 1.0),
+               ncol=4, fontsize=fs - 2.2, frameon=False, handlelength=1.4,
+               columnspacing=0.9)
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
