@@ -1,524 +1,477 @@
 \documentclass[aspectratio=169,10pt]{beamer}
 
-\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{amsmath, amssymb, bm}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,bm}
 \usepackage{booktabs}
-\usepackage{xcolor}
-\usepackage{tikz}
 \usepackage{graphicx}
-\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{xcolor}
 \usepackage{helvet}
-\usepackage{hyperref}
-\usepackage{ifthen}
 \usepackage{lmodern}
+\usepackage{ragged2e}
 \usefonttheme{professionalfonts}
 \renewcommand{\familydefault}{\sfdefault}
 
-\usetikzlibrary{
-  arrows.meta,
-  backgrounds,
-  calc,
-  decorations.pathreplacing,
-  positioning,
-  shapes.geometric,
-  shapes.symbols,
-  shadows.blur
-}
+\usetikzlibrary{arrows.meta,calc,decorations.pathreplacing,positioning}
 
+\definecolor{Navy}{HTML}{163A5F}
 \definecolor{PhysicsBlue}{HTML}{1F4E79}
-\definecolor{MLOrange}{HTML}{C46A1A}
-\definecolor{GateGreen}{HTML}{2E7D32}
-\definecolor{UnsafeRed}{HTML}{B23A3A}
-\definecolor{ScopeGray}{HTML}{666666}
-\definecolor{Ink}{HTML}{1F2937}
-\definecolor{BlueFill}{HTML}{EDF3F8}
-\definecolor{OrangeFill}{HTML}{FBF1E6}
-\definecolor{GreenFill}{HTML}{EAF4EA}
-\definecolor{RedFill}{HTML}{F8ECEC}
-\definecolor{GrayFill}{HTML}{F2F2F2}
-\definecolor{Canvas}{HTML}{FFFFFF}
+\definecolor{MLOrange}{HTML}{B86118}
+\definecolor{GateGreen}{HTML}{2F6F3E}
+\definecolor{HarmRed}{HTML}{A23A35}
+\definecolor{TextInk}{HTML}{202733}
+\definecolor{MutedGray}{HTML}{666D78}
+\definecolor{LineGray}{HTML}{C8CDD4}
+\definecolor{SoftBlue}{HTML}{EEF4FA}
+\definecolor{SoftOrange}{HTML}{F9EFE6}
+\definecolor{SoftGreen}{HTML}{EAF4EE}
+\definecolor{SoftRed}{HTML}{F8ECEA}
+\definecolor{SoftGray}{HTML}{F4F5F7}
 
-\setbeamercolor{background canvas}{bg=Canvas}
-\setbeamercolor{normal text}{fg=Ink}
-\setbeamercolor{frametitle}{fg=Ink,bg=Canvas}
-\setbeamercolor{title}{fg=Ink}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=TextInk}
+\setbeamercolor{frametitle}{fg=Navy,bg=white}
+\setbeamercolor{title}{fg=Navy}
 \setbeamertemplate{navigation symbols}{}
-\setbeamersize{text margin left=0.45cm,text margin right=0.45cm}
-\setbeamertemplate{footline}{
-  \hfill
-  \raisebox{0.15cm}{\color{ScopeGray}\scriptsize\insertframenumber}
-  \hspace{0.35cm}
+\setbeamersize{text margin left=0.70cm,text margin right=0.70cm}
+\setbeamertemplate{footline}{%
+  \hfill{\color{MutedGray}\scriptsize\insertframenumber}\hspace{0.45cm}\vspace{0.18cm}
 }
-\setbeamertemplate{frametitle}{
+\setbeamertemplate{frametitle}{%
   \vspace{0.18cm}
-  \begin{beamercolorbox}[wd=\textwidth,sep=0pt]{frametitle}
-    {\large\bfseries\insertframetitle}
-  \end{beamercolorbox}
-  \vspace{0.08cm}
-  {\color{PhysicsBlue!60}\rule{\textwidth}{1.1pt}}
+  {\Large\bfseries\insertframetitle}\par
+  \vspace{0.07cm}
+  {\color{LineGray}\rule{\textwidth}{0.6pt}}
+  \vspace{-0.04cm}
 }
 
+\newcommand{\smallnote}[1]{\vspace{0.05cm}{\scriptsize\color{MutedGray}#1}}
 \newcommand{\takeaway}[1]{%
-  \vspace{0.06cm}
-  \begin{center}
-    {\color{ScopeGray!70}\rule{0.92\linewidth}{0.45pt}}\\[-1pt]
-    {\scriptsize\textbf{Takeaway:} #1}
-  \end{center}
+  \vfill
+  {\color{LineGray}\rule{\textwidth}{0.5pt}}\par
+  \vspace{0.04cm}
+  {\footnotesize\bfseries #1}
 }
-
-\newcommand{\scopefooter}[1]{%
-  \begin{center}
+\newcommand{\plainbox}[4]{%
   \begin{tikzpicture}
     \node[
-      fill=GrayFill,
-      rounded corners=8pt,
-      inner xsep=8pt,
-      inner ysep=5pt
-    ] {\parbox{0.94\linewidth}{\centering\scriptsize\color{ScopeGray}#1}};
+      draw=#1,
+      fill=#2,
+      line width=0.75pt,
+      inner xsep=4pt,
+      inner ysep=5pt,
+      align=left
+    ] {\parbox{#3}{#4}};
   \end{tikzpicture}
-  \end{center}
 }
-
-\newcommand{\infocard}[4]{%
+\newcommand{\policycol}[4]{%
   \begin{tikzpicture}
     \node[
-    draw=#1!35,
-    fill=#2,
-    rounded corners=3pt,
-    line width=0.8pt,
-    inner xsep=4pt,
-    inner ysep=6pt
-  ] {\parbox{#3}{#4}};
+      draw=#1,
+      fill=#2,
+      line width=0.85pt,
+      minimum width=0.93\linewidth,
+      minimum height=3.72cm,
+      inner xsep=7pt,
+      inner ysep=8pt,
+      align=left
+    ] {\parbox{0.86\linewidth}{\centering\normalsize\bfseries #3\par\vspace{0.16cm}\RaggedRight\small #4}};
   \end{tikzpicture}
 }
-
-\newcommand{\dbicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[PhysicsBlue!18, draw=PhysicsBlue, line width=0.9pt] (0,0.82) ellipse (0.95 and 0.26);
-  \fill[BlueFill, draw=PhysicsBlue, line width=0.9pt]
-    (-0.95,0.82) -- (-0.95,-0.55)
-    arc (180:360:0.95 and 0.26) -- (0.95,0.82)
-    arc (0:180:0.95 and 0.26);
-  \draw[PhysicsBlue, line width=0.9pt] (0,0.16) ellipse (0.95 and 0.26);
-  \draw[PhysicsBlue, line width=0.9pt] (0,-0.55) ellipse (0.95 and 0.26);
-\end{tikzpicture}}
-
-\newcommand{\saticon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[MLOrange!18, draw=MLOrange, line width=0.9pt] (-1.1,0.1) rectangle (-0.2,0.48);
-  \fill[MLOrange!18, draw=MLOrange, line width=0.9pt] (0.68,0.1) rectangle (1.58,0.48);
-  \fill[ScopeGray!28, draw=Ink, line width=0.9pt] (0,0) rectangle (0.48,0.58);
-  \draw[Ink, line width=0.95pt] (0.24,0.58) -- (0.9,1.05);
-  \fill[PhysicsBlue!18, draw=PhysicsBlue, line width=0.9pt] (0.9,1.05) circle (0.14);
-  \draw[Ink, line width=0.9pt] (-0.2,0.29) -- (0,0.29);
-  \draw[Ink, line width=0.9pt] (0.48,0.29) -- (0.68,0.29);
-\end{tikzpicture}}
-
-\newcommand{\earthorbiticon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[PhysicsBlue!18, draw=PhysicsBlue, line width=0.9pt] (0,0) circle (0.62);
-  \draw[PhysicsBlue!60, line width=1.2pt] (0,0) ellipse (1.6 and 0.72);
-  \draw[PhysicsBlue!35, dashed, line width=0.9pt] (0,0) ellipse (1.1 and 1.55);
-  \fill[MLOrange, draw=MLOrange] (1.48,0.0) circle (0.12);
-  \fill[PhysicsBlue!60] (-0.18,0.18) circle (0.12);
-  \fill[PhysicsBlue!40] (0.2,-0.1) circle (0.08);
-\end{tikzpicture}}
-
-\newcommand{\nnicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \foreach \y in {0.0,0.5,1.0} \fill[OrangeFill, draw=MLOrange, line width=0.9pt] (0,\y) circle (0.12);
-  \foreach \y in {0.2,0.8} \fill[OrangeFill, draw=MLOrange, line width=0.9pt] (0.92,\y) circle (0.12);
-  \foreach \y in {0.0,0.5,1.0} \fill[OrangeFill, draw=MLOrange, line width=0.9pt] (1.85,\y) circle (0.12);
-  \foreach \a in {0.0,0.5,1.0} \foreach \b in {0.2,0.8} \draw[MLOrange!80, line width=0.75pt] (0,\a) -- (0.92,\b);
-  \foreach \a in {0.2,0.8} \foreach \b in {0.0,0.5,1.0} \draw[MLOrange!80, line width=0.75pt] (0.92,\a) -- (1.85,\b);
-\end{tikzpicture}}
-
-\newcommand{\shieldicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[GreenFill, draw=GateGreen, line width=1pt]
-    (0,1.0) -- (0.72,0.82) -- (0.62,0.12) -- (0.36,-0.24) -- (0.1,0.12) -- cycle;
-  \draw[GateGreen, line width=1.15pt] (0.18,0.38) -- (0.31,0.22) -- (0.55,0.62);
-\end{tikzpicture}}
-
-\newcommand{\warningicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[RedFill, draw=UnsafeRed, line width=1pt] (0,0) -- (0.8,1.35) -- (-0.8,1.35) -- cycle;
-  \draw[UnsafeRed, line width=1.2pt] (0,0.42) -- (0,0.95);
-  \fill[UnsafeRed] (0,0.2) circle (0.07);
-\end{tikzpicture}}
-
-\newcommand{\selectoricon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \draw[Ink, line width=1.1pt] (0,0.45) -- (2.2,0.45);
-  \draw[Ink, line width=1.1pt] (0,-0.25) -- (2.2,-0.25);
-  \draw[Ink, line width=1.2pt] (0.28,0.45) -- (1.45,-0.25);
-  \fill[Ink] (0.28,0.45) circle (0.08);
-  \fill[Ink] (1.45,-0.25) circle (0.08);
-\end{tikzpicture}}
-
-\newcommand{\terminalicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[BlueFill, draw=PhysicsBlue, line width=1pt] (0,0) rectangle (1.24,0.88);
-  \draw[PhysicsBlue, line width=1.15pt] (0.62,0.88) -- (0.62,1.42);
-  \draw[PhysicsBlue, line width=1.15pt] (0.62,1.42) -- (0.25,1.82);
-  \draw[PhysicsBlue, line width=1.15pt] (0.62,1.42) -- (0.99,1.82);
-  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:160:0.42);
-  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:20:0.42);
-  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:170:0.65);
-  \draw[PhysicsBlue, line width=0.95pt] (0.62,1.42) arc (90:10:0.65);
-\end{tikzpicture}}
-
-\newcommand{\chipicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[BlueFill, draw=PhysicsBlue, line width=1pt] (0,0) rectangle (1.2,1.2);
-  \foreach \x in {0.18,0.42,0.66,0.9} {
-    \draw[PhysicsBlue] (\x,1.2) -- (\x,1.45);
-    \draw[PhysicsBlue] (\x,0) -- (\x,-0.25);
-    \draw[PhysicsBlue] (0,\x) -- (-0.25,\x);
-    \draw[PhysicsBlue] (1.2,\x) -- (1.45,\x);
-  }
-  \draw[PhysicsBlue, line width=0.95pt] (0.28,0.28) rectangle (0.92,0.92);
-\end{tikzpicture}}
-
-\newcommand{\boundaryicon}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \draw[ScopeGray, dashed, line width=1pt] (0,0) rectangle (1.4,1.05);
-  \draw[ScopeGray, line width=1pt] (0.2,0.22) -- (1.2,0.22);
-  \draw[ScopeGray, line width=1pt] (0.2,0.53) -- (1.2,0.53);
-  \draw[ScopeGray, line width=1pt] (0.2,0.84) -- (0.95,0.84);
-\end{tikzpicture}}
-
-\newcommand{\boardplaceholder}[1][1]{%
-\begin{tikzpicture}[scale=#1, baseline=-0.6ex]
-  \fill[gray!8, draw=ScopeGray!60, rounded corners=0.14cm, line width=0.95pt] (0,0) rectangle (4.2,2.65);
-  \fill[PhysicsBlue!12, draw=PhysicsBlue!55, rounded corners=0.1cm] (0.35,0.38) rectangle (2.2,2.2);
-  \fill[MLOrange!14, draw=MLOrange!65, rounded corners=0.1cm] (2.45,0.68) rectangle (3.78,1.98);
-  \foreach \x in {0.55,0.82,...,1.97} {
-    \draw[PhysicsBlue!60] (\x,2.2) -- (\x,2.42);
-    \draw[PhysicsBlue!60] (\x,0.38) -- (\x,0.16);
-  }
-  \foreach \x in {2.6,2.84,...,3.63} {
-    \draw[MLOrange!70] (\x,1.98) -- (\x,2.18);
-    \draw[MLOrange!70] (\x,0.68) -- (\x,0.48);
-  }
-\end{tikzpicture}}
 
 \begin{document}
 
+% Main slide 1
 \begin{frame}[plain]
-  \vspace{0.12cm}
+  \vspace{0.42cm}
   \begin{center}
-    {\Large\bfseries Evidence-Gated Residual Learning for}\\[2pt]
-    {\Large\bfseries LR-FHSS Direct-to-Satellite IoT Endpoint Control}
-  \end{center}
-  \vspace{0.18cm}
-  \begin{center}
-    \includegraphics[width=0.96\linewidth,height=0.53\textheight,keepaspectratio]{slide_figures/fig_talk_overview.pdf}
-  \end{center}
-  \begin{center}
-    {\large\bfseries Physics first. Evidence decides ML.}\\[2pt]
-    {\scriptsize\color{ScopeGray}Current version: workshop/advisor-review draft. Software-only, model-derived study; no RF, packet, or live-satellite validation is claimed.}
+    {\LARGE\bfseries Evidence-Gated Residual Learning}\\[2pt]
+    {\LARGE\bfseries for LR-FHSS Direct-to-Satellite IoT Endpoint Control}\\[0.22cm]
+    {\large A real-data negative result on BLACK KITE TLE histories}\\[0.38cm]
+    {\normalsize Anonymous Author 1 \quad Anonymous Author 2 \quad Anonymous Author 3}\\[0.06cm]
+    {\small Affiliation omitted for double-blind review}\\
+    {\small Email omitted}\\[0.32cm]
+    {\scriptsize Advisor review / workshop draft}\\[0.42cm]
+    {\Large\bfseries Residual ML must earn deployment; the real evidence retains SGP4.}
   \end{center}
 \end{frame}
 
-\begin{frame}{Doppler Pre-compensation Risk}
-  \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.24\textwidth}
-    \vspace{0.42cm}
-    {\small\bfseries Time-varying Doppler.}\\[0.34cm]
-    {\small\bfseries Narrow LR-FHSS bins.}\\[0.34cm]
-    {\small\bfseries TX window \emph{and} hop bin both uncertain.}\\[0.34cm]
-    {\small\bfseries Decision before TX.}
+% Main slide 2
+\begin{frame}{Motivation and System Problem}
+\begin{columns}[T,onlytextwidth]
+    \column{0.58\textwidth}
+    \begin{tikzpicture}[
+      scale=0.82,
+      transform shape,
+      font=\small,
+      >=Latex,
+      stagebox/.style={draw=PhysicsBlue,fill=SoftBlue,line width=0.8pt,minimum width=2.55cm,minimum height=0.85cm,align=center},
+      outbox/.style={draw=GateGreen,fill=SoftGreen,line width=0.8pt,minimum width=2.55cm,minimum height=0.85cm,align=center},
+      arr/.style={->,line width=1.0pt,draw=MutedGray}
+    ]
+      \node[stagebox] (tle) at (0,2.0) {Stale onboard\\TLE};
+      \node[stagebox] (sgp4) at (3.2,2.0) {SGP4 timing /\\Doppler prediction};
+      \node[outbox] (margin) at (6.4,2.0) {Endpoint\\margins};
+      \node[stagebox,minimum width=2.25cm] (time) at (5.0,0.42) {Timing guard};
+      \node[stagebox,minimum width=2.25cm] (freq) at (7.8,0.42) {Frequency\\margin};
+      \draw[arr] (tle) -- (sgp4);
+      \draw[arr] (sgp4) -- (margin);
+      \draw[arr] (margin.south) |- (time.east);
+      \draw[arr] (margin.south) |- (freq.west);
+      \draw[decorate,decoration={brace,amplitude=4pt},draw=MutedGray]
+        (4.04,-0.20) -- node[below=5pt,align=center,text=MutedGray] {\scriptsize chosen before transmission} (8.80,-0.20);
+    \end{tikzpicture}
 
-    \column{0.76\textwidth}
-    \begin{center}
-      \includegraphics[width=\linewidth,height=0.68\textheight,keepaspectratio]{slide_figures/fig_hop_bin_misalignment.pdf}
-    \end{center}
+    \vspace{0.32cm}
+    {\large\bfseries Endpoint question}\\[2pt]
+    {\normalsize Should a resource-constrained terminal deploy a learned inter-TLE residual correction over its available SGP4 baseline?}
+
+    \column{0.38\textwidth}
+    \plainbox{PhysicsBlue}{SoftBlue}{0.88\linewidth}{\normalsize
+      The endpoint has orbital metadata, not a link outcome.
+      It must size timing and frequency margins before the burst.}\\[0.20cm]
+    \plainbox{MutedGray}{SoftGray}{0.88\linewidth}{\small
+      Context: LR-FHSS direct-to-satellite operation couples orbital prediction error to endpoint resource choices.}
   \end{columns}
-  \takeaway{Doppler-only is incomplete: stale orbital information is a joint timing- and frequency-control risk before transmission.}
+  \takeaway{The control decision is pre-transmission: stale TLE to prediction to endpoint margins.}
+  \smallnote{Selected context: Semtech AN1200.64; Ullah et al., OJ-COMS 2024.}
 \end{frame}
 
-\begin{frame}{Dangerous Intuition}
-  \begin{center}
-    \includegraphics[width=0.98\linewidth,height=0.72\textheight,keepaspectratio]{slide_figures/fig_training_deployment_shift.pdf}
-  \end{center}
-  \takeaway{A learned residual is not automatically deployable.}
-\end{frame}
-
-\begin{frame}{Final Paper Architecture}
-  \vspace{0.18cm}
-  \begin{center}
-  \begin{tikzpicture}[
-    font=\scriptsize,
-    >=Latex,
-    box/.style={draw=ScopeGray!55, fill=white, rounded corners=3pt,
-      align=center, minimum height=0.72cm, inner xsep=5pt, inner ysep=4pt},
-    phys/.style={draw=PhysicsBlue, fill=BlueFill},
-    ml/.style={draw=MLOrange, fill=OrangeFill},
-    gate/.style={draw=GateGreen, fill=GreenFill},
-    outbox/.style={draw=ScopeGray!70, fill=GrayFill},
-    arr/.style={->, line width=1.0pt, draw=ScopeGray!80},
-    parr/.style={->, line width=1.2pt, draw=PhysicsBlue},
-    marr/.style={->, line width=1.0pt, draw=MLOrange, dashed},
-    garr/.style={->, line width=1.2pt, draw=GateGreen}
-  ]
-    \node[box, phys] (track) at (0,2.0) {Space-Track\\TLE};
-    \node[box, phys] (stale) at (2.15,2.0) {Stale onboard\\TLE};
-    \node[box, phys] (sgp4) at (4.35,2.0) {SGP4 physics\\baseline};
-    \node[box, outbox] (sel) at (6.55,2.0) {Selector};
-    \node[box, outbox, minimum width=2.35cm] (guard) at (9.25,2.75) {TX timing\\guard};
-    \node[box, outbox, minimum width=2.35cm] (hop) at (9.25,1.85) {Hop-bin\\margin};
-    \node[box, outbox, minimum width=2.35cm] (energy) at (9.25,0.95) {Energy\\policy};
-
-    \node[box, ml] (hist) at (2.15,0.62) {Residual history\\validation $V$};
-    \node[box, ml] (cand) at (4.35,0.62) {Learned residual\\candidate};
-    \node[box, gate] (egate) at (6.55,0.62) {\textbf{Evidence}\\\textbf{Gate}};
-
-    \draw[arr] (track) -- (stale);
-    \draw[parr] (stale) -- (sgp4);
-    \draw[parr] (sgp4) -- node[above, font=\tiny, text=PhysicsBlue] {default} (sel);
-    \draw[arr] (sel.east) -- ++(0.62,0) |- (guard.west);
-    \draw[arr] (sel.east) -- ++(0.62,0) |- (hop.west);
-    \draw[arr] (sel.east) -- ++(0.62,0) |- (energy.west);
-    \draw[marr] (stale.south) |- (hist.west);
-    \draw[marr] (hist) -- (cand);
-    \draw[marr] (cand) -- (egate);
-    \draw[garr] (egate.north) -- node[right, font=\tiny, text=GateGreen] {open/close} (sel.south);
-
-    \node[align=center, text=ScopeGray, font=\tiny] at (5.3,-0.12)
-      {Endpoint decides margins before TX; ML is optional and gated.};
-  \end{tikzpicture}
-  \end{center}
-  \takeaway{Space-Track/TLE feeds the physics baseline; evidence decides whether ML reaches endpoint outputs.}
-\end{frame}
-
-\begin{frame}{Evidence Gate Decision Rule}
-  \vspace{0.22cm}
-  \begin{center}
-    {\Large$\displaystyle G = \mathbf{1}\!\left[\mathrm{MAE}_{\mathrm{ML}}(V) < \gamma\,\mathrm{MAE}_{\mathrm{phys}}(V)\right]$}
-  \end{center}
-  \vspace{0.16cm}
-  \begin{center}
-    \renewcommand{\arraystretch}{1.18}
-    \begin{tabular}{p{0.34\linewidth}p{0.20\linewidth}p{0.28\linewidth}}
-      \toprule
-      \textbf{Condition} & \textbf{Decision} & \textbf{Deployed output} \\
-      \midrule
-      no clear validation gain & Gate closed & SGP4 baseline \\
-      validated gain & Gate open & ML correction \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-  \vspace{0.04cm}
-  \begin{center}
-    {\scriptsize\color{Ink!70}$V$: held-out validation window \hspace{1.5em} $\gamma$: required improvement margin}
-  \end{center}
-  \takeaway{If uncertain, close the gate.}
-\end{frame}
-
-\begin{frame}{Policy Comparison}
-  \vspace{0.08cm}
-  \begin{center}
-  {\scriptsize
-  \setlength{\tabcolsep}{2pt}
-  \renewcommand{\arraystretch}{1.18}
-  \begin{tabular}{p{0.20\linewidth}p{0.20\linewidth}p{0.16\linewidth}p{0.12\linewidth}p{0.16\linewidth}}
-    \toprule
-    \textbf{Regime} & \textbf{Always learn} & \textbf{Never learn} & \textbf{Gate} & \textbf{Meaning} \\
-    \midrule
-    BLACK KITE real TLE & worse than SGP4 & SGP4 selected & \textcolor{UnsafeRed}{closed} & unsafe ML rejected \\
-    Synthetic noise & no supported gain & SGP4 selected & \textcolor{UnsafeRed}{closed} & avoids weak evidence \\
-    Synthetic marginal & gain below $\gamma$ & SGP4 selected & \textcolor{UnsafeRed}{closed} & conservative boundary \\
-    Synthetic systematic & MAE 1859.3$\to$99.8 Hz & misses learnable signal & \textcolor{GateGreen}{open} & opens on evidence \\
-    \bottomrule
-  \end{tabular}}
-  \end{center}
-  \scopefooter{The gate is a selector between always-learn and never-learn policies, not an always-closed rule.}
-  \takeaway{Real result closes the gate; controlled systematic evidence opens it.}
-\end{frame}
-
-\begin{frame}{Strongest Real Result: Negative Control}
-  \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.80\textwidth}
-    \begin{center}
-      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
-    \end{center}
-
-    \column{0.20\textwidth}
-    \vspace{0.42cm}
-    \infocard{ScopeGray}{GrayFill}{0.86\linewidth}{\scriptsize
-      \textbf{Result}\\
-      ML does not beat SGP4.
-    }\\[0.10cm]
-    \infocard{ScopeGray}{GrayFill}{0.86\linewidth}{\scriptsize
-      \textbf{Implication}\\
-      Always-on ML is unsafe.
-    }
-  \end{columns}
-  \takeaway{Real BLACK KITE data does not support always-on ML.}
-\end{frame}
-
-\begin{frame}{Real Evidence: Gate Closed}
-  \vspace{0.20cm}
-  \begin{center}
-  \begin{tikzpicture}[
-    font=\small,
-    >=Latex,
-    card/.style={rounded corners=4pt, minimum height=1.35cm, align=center,
-      inner xsep=8pt, inner ysep=8pt, line width=1pt},
-    arrow/.style={->, line width=1.25pt, draw=ScopeGray!80}
-  ]
-    \node[card, draw=UnsafeRed, fill=RedFill, minimum width=3.15cm] (evidence) at (0,1.1)
-      {\textbf{Held-out evidence}\\[3pt]\normalsize ML MAE $>$ SGP4\\real BLACK KITE};
-    \node[card, draw=GateGreen, fill=GreenFill, minimum width=2.75cm] (gate) at (4.15,1.1)
-      {\textbf{Evidence Gate}\\[3pt]\Large CLOSED};
-    \node[card, draw=PhysicsBlue, fill=BlueFill, minimum width=3.25cm] (deploy) at (8.35,1.1)
-      {\textbf{Deploy}\\[3pt]\normalsize SGP4 baseline\\timing/frequency margins};
-
-    \node[card, draw=MLOrange!70, fill=OrangeFill, minimum width=2.75cm] (ml) at (4.15,-1.05)
-      {\textbf{ML path}\\[3pt]\normalsize not deployed};
-
-    \draw[arrow] (evidence) -- (gate);
-    \draw[arrow] (gate) -- (deploy);
-    \draw[->, line width=1.0pt, draw=MLOrange, dashed] (evidence.south east) to[out=-20,in=180] (ml.west);
-    \draw[-{Latex[length=2mm]}, line width=1.2pt, draw=UnsafeRed] (ml.east) to[out=0,in=-110] (gate.south);
-  \end{tikzpicture}
-  \end{center}
-  \scopefooter{Real TLE/SGP4 model-derived result; no measured Doppler, packet, or link-layer validation.}
-  \takeaway{Negative evidence is actionable: keep the physics baseline.}
-\end{frame}
-
-\begin{frame}{Synthetic Mechanism Check (software-only)}
-  \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.72\textwidth}
-    \begin{center}
-      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{figures/fig_gate_behavior_talk.pdf}
-    \end{center}
-
-    \column{0.28\textwidth}
-    \vspace{0.18cm}
-    {\scriptsize
-    \setlength{\tabcolsep}{2pt}
-    \renewcommand{\arraystretch}{1.08}
-    \begin{tabular}{p{0.62\linewidth}p{0.22\linewidth}}
-      \toprule
-      \textbf{Regime} & \textbf{Gate} \\
-      \midrule
-      Noise-dominated & \textcolor{UnsafeRed}{closed} \\
-      Weak/moderate systematic & \textcolor{UnsafeRed}{closed} \\
-      Strong systematic & \textcolor{GateGreen}{open} \\
-      \bottomrule
-    \end{tabular}}\\[0.12cm]
-    {\tiny\color{ScopeGray}\parbox{0.90\linewidth}{Software-only mechanism check; not real BLACK KITE improvement, hardware validation, or live-link validation.}}
-  \end{columns}
-  \takeaway{The gate is conservative, not permanently closed.}
-\end{frame}
-
-\begin{frame}{Timing Sensitivity (proxy, not packet result)}
-  \begin{center}
-    \includegraphics[width=0.90\linewidth,height=0.56\textheight,keepaspectratio]{slide_figures/fig_timing_sensitivity_talk.pdf}
-  \end{center}
-  \scopefooter{Software-only guard-coverage proxy --- analytic $\Pr[|\delta t|>g_t]$, not packet/PER/PDR/CRC evidence.}
-  \takeaway{Stale-TLE timing uncertainty increases guard energy; this is a control proxy.}
-\end{frame}
-
-\begin{frame}{Timing / Frequency Ablation (proxy, not packet result)}
-  \begin{center}
-    \includegraphics[width=0.90\linewidth,height=0.56\textheight,keepaspectratio]{slide_figures/fig_control_ablation_talk.pdf}
-  \end{center}
-  \scopefooter{Software-only coverage proxies. \textbf{Learned bar = controlled gate-open synthetic regime}; not BLACK KITE residual scale.}
-  \takeaway{Joint timing+frequency control improves the synthetic gate-open proxy only.}
-\end{frame}
-
-\begin{frame}{Artifact Sanity Only: Conducted-IQ}
-  \begin{columns}[T,totalwidth=\textwidth]
+% Main slide 3
+\begin{frame}{Research Gap}
+  \vspace{0.06cm}
+\begin{columns}[T,onlytextwidth]
     \column{0.31\textwidth}
-    {\small\bfseries Conducted setup}\\[0.08cm]
-    \begin{center}
-      \includegraphics[width=0.96\linewidth,height=0.34\textheight,keepaspectratio]{slide_figures/fig_conducted_iq_setup.pdf}
-    \end{center}
-    {\scriptsize\color{ScopeGray}LR1121/NUCLEO $\to$ 50 dB attenuated coax $\to$ USRP B210 RX2 A. No antenna.}
-
-    \column{0.35\textwidth}
-    {\small\bfseries Sanity checklist}\\[0.10cm]
-    {\scriptsize
-    \renewcommand{\arraystretch}{1.22}
-    \begin{tabular}{@{}p{\linewidth}@{}}
-      \textcolor{GateGreen}{\checkmark} 923.2 MHz / $-17$ dBm TX\\
-      \textcolor{GateGreen}{\checkmark} TX\_START $\to$ TX\_DONE\\
-      \textcolor{GateGreen}{\checkmark} TX-ON $41.25\pm0.36$ dB\\
-      \textcolor{GateGreen}{\checkmark} 2 MS/s sanity: 43.76 dB\\
-      \textcolor{ScopeGray}{$\circ$} DC/LO artifacts masked\\
-    \end{tabular}}
-
-    \column{0.34\textwidth}
-    {\small\bfseries Supporting trace}\\[0.08cm]
-    \begin{center}
-      \includegraphics[width=0.98\linewidth,height=0.42\textheight,keepaspectratio]{figures_final/fig_hw_conducted_iq_txon_txoff.png}
-    \end{center}
-    {\scriptsize\color{ScopeGray}Spectrum supports measurement-path visibility only.}
-  \end{columns}
-\scopefooter{\textbf{Artifact only, not a paper contribution:} conducted IQ-level only; no algorithm, packet/PER/PDR/CRC/gateway ACK/OTA/live-satellite, or link-layer validation.}
-\end{frame}
-
-\begin{frame}{Main Limitation: Cross-Satellite Generalization}
-  \vspace{0.02cm}
-  \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.50\textwidth}
-    \infocard{UnsafeRed}{RedFill}{0.90\linewidth}{\scriptsize
-      \textbf{Current real-data result}\\[2pt]
-      BLACK KITE-1/2 only: a negative control, not constellation-wide proof.
-    }\\[0.10cm]
-    \infocard{GateGreen}{GreenFill}{0.90\linewidth}{\scriptsize
-      \textbf{Why it matters}\\[2pt]
-      Limited transfer is why always-on ML is unsafe; test the gate next under cross-satellite shift.
-    }
-
-    \column{0.44\textwidth}
-    \infocard{PhysicsBlue}{BlueFill}{0.90\linewidth}{\scriptsize
-      \textbf{Next software campaign}\\[3pt]
-      1. Multi-satellite TLE stress test\\
-      2. Transfer heatmap\\
-      3. Gate open/close statistics\\
-      4. Failure taxonomy
-    }
-  \end{columns}
-  \scopefooter{Method is local chronological deploy/no-deploy validation, not train-once-deploy-everywhere generalization.}
-\end{frame}
-
-\begin{frame}{Contributions}
-  \vspace{0.12cm}
-  \begin{columns}[T,totalwidth=\textwidth]
-    \column{0.31\textwidth}
-    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][1.82cm][c]{0.82\linewidth}{\centering
-      \includegraphics[height=0.30cm]{assets_external/tabler/world.pdf}\\[4pt]
-      {\textbf{1. Evidence-gated}\\\textbf{endpoint control}}\\[-1pt]
-      Deploy/no-deploy trust test.}
-    }
+    {\bfseries LR-FHSS link / capacity}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[3pt]
+    {\small Reliability, coverage, collision, and direct-to-satellite capacity studies.}\\[6pt]
+    {\scriptsize\color{MutedGray}Semtech AN1200.64; Ullah WCL; LoRa D2S uplink policies}
 
     \column{0.31\textwidth}
-    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][1.82cm][c]{0.82\linewidth}{\centering
-      \includegraphics[height=0.30cm]{assets_external/tabler/alert-triangle.pdf}\\[4pt]
-      {\textbf{2. Real negative}\\\textbf{+ synthetic check}}\\[-1pt]
-      Gate closes on BLACK KITE.}
-    }
+    {\bfseries NTN synchronization}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[3pt]
+    {\small Receiver-side synchronization and NTN mobility robustness.}\\[6pt]
+    {\scriptsize\color{MutedGray}3GPP TR 38.821; Ullah OJ-COMS}
 
     \column{0.31\textwidth}
-    \infocard{ScopeGray}{GrayFill}{0.90\linewidth}{\centering\scriptsize
-      \parbox[c][1.82cm][c]{0.82\linewidth}{\centering
-      \includegraphics[height=0.30cm]{assets_external/tabler/shield-check.pdf}\\[4pt]
-      {\textbf{3. Endpoint proxies}\\\textbf{+ limitations}}\\[-1pt]
-      Guard, hop-bin, energy; artifact package.}
-    }
+    {\bfseries Orbit / physics-ML correction}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[3pt]
+    {\small SGP4, orbit prediction, differentiable propagation, and residual modeling.}\\[6pt]
+    {\scriptsize\color{MutedGray}Hoots-Roehrich; Peng et al.; differentiable SGP4; ML orbit survey}
   \end{columns}
   \vspace{0.34cm}
+  \plainbox{Navy}{white}{0.94\linewidth}{\normalsize
+    \textbf{Gap.} Prior work predicts, receives, or schedules; it does not decide whether a resource-constrained endpoint should deploy learned inter-TLE correction over its available SGP4 baseline.}
+  \takeaway{The missing object is a deployment rule, not another predictor leaderboard.}
+\end{frame}
+
+% Main slide 4
+\begin{frame}{Hypothesis and Failure Risk}
+\begin{columns}[T,onlytextwidth]
+    \column{0.58\textwidth}
+    \begin{tikzpicture}[
+      scale=0.94,
+      transform shape,
+      font=\small,
+      >=Latex,
+      phase/.style={draw=MutedGray,fill=white,line width=0.8pt,minimum width=2.35cm,minimum height=0.80cm,align=center},
+      arr/.style={->,line width=1.0pt,draw=MutedGray}
+    ]
+      \node[phase] (train) at (0,2.2) {Train\\older epochs};
+      \node[phase] (valid) at (3.0,2.2) {Validate\\chronologically};
+      \node[phase] (deploy) at (6.0,2.2) {Deploy\\future interval};
+      \draw[arr] (train) -- (valid);
+      \draw[arr] (valid) -- (deploy);
+      \draw[decorate,decoration={brace,amplitude=4pt},draw=MLOrange]
+        (-1.05,1.50) -- node[below=5pt,text=MLOrange] {\scriptsize domain shift risk} (7.05,1.50);
+
+      \draw[PhysicsBlue,line width=1.1pt] (-0.6,0.35) .. controls (0.5,0.62) and (1.3,0.20) .. (2.0,0.45);
+      \draw[MLOrange,line width=1.1pt,dashed] (-0.6,-0.12) .. controls (0.4,0.25) and (1.4,-0.25) .. (2.0,0.05);
+      \node[align=left,text=MutedGray] at (0.72,-0.68) {\scriptsize training fit can look plausible};
+
+      \draw[PhysicsBlue,line width=1.1pt] (4.0,0.36) .. controls (4.8,0.25) and (5.6,0.32) .. (6.5,0.24);
+      \draw[MLOrange,line width=1.1pt,dashed] (4.0,-0.05) .. controls (4.7,0.56) and (5.7,-0.35) .. (6.5,0.42);
+      \node[align=left,text=HarmRed] at (5.35,-0.68) {\scriptsize deployment can be worse};
+    \end{tikzpicture}
+
+    \column{0.34\textwidth}
+    {\bfseries Hypothesis}\\[3pt]
+    {\normalsize Residuals may be learnable.}\\[0.30cm]
+    {\bfseries Failure risk}\\[3pt]
+    {\normalsize Chronological shift can make always-on ML worse than SGP4.}\\[0.30cm]
+    \plainbox{HarmRed}{SoftRed}{0.92\linewidth}{\small
+      A plausible learner remains unsafe until it wins on held-out chronological evidence.}
+  \end{columns}
+  \takeaway{Learning enters as an untrusted candidate.}
+\end{frame}
+
+% Main slide 5
+\begin{frame}{Method: Evidence Gate}
+  \vspace{0.10cm}
   \begin{center}
-    {\Large\bfseries Do not trust ML by default.}\\[2pt]
-    {\Large\bfseries Let evidence decide deployment.}
+    {\LARGE$\displaystyle
+      G=\mathbf{1}\!\left[
+      \mathrm{MAE}_{\mathrm{ml}}(V)
+      < \gamma\,\mathrm{MAE}_{\mathrm{phys}}(V)
+      \right]$}
   \end{center}
+  \vspace{0.18cm}
+\begin{columns}[T,onlytextwidth]
+    \column{0.54\textwidth}
+    \begin{tikzpicture}[
+      scale=0.86,
+      transform shape,
+      font=\small,
+      train/.style={draw=PhysicsBlue,fill=SoftBlue,line width=0.8pt,minimum height=0.75cm,align=center},
+      valid/.style={draw=GateGreen,fill=SoftGreen,line width=0.8pt,minimum height=0.75cm,align=center},
+      test/.style={draw=MLOrange,fill=SoftOrange,line width=0.8pt,minimum height=0.75cm,align=center},
+      >=Latex
+    ]
+      \node[train,minimum width=2.6cm] (tr) at (0,0) {train};
+      \node[valid,minimum width=2.1cm,right=0pt of tr] (va) {validation $V$};
+      \node[test,minimum width=2.4cm,right=0pt of va] (te) {test/deploy};
+      \draw[->,line width=1.0pt,draw=MutedGray] (-1.6,-0.62) -- (4.9,-0.62)
+        node[right,text=MutedGray] {\scriptsize time};
+      \node[align=center,text=MutedGray] at (0,-1.15) {\scriptsize chronological split; no future TLE leakage};
+    \end{tikzpicture}
+
+    \column{0.42\textwidth}
+    {\bfseries What $\gamma$ does}\\[3pt]
+    {\small Smaller $\gamma$ demands a clearer held-out gain. It reduces false-open risk at the cost of missed-open opportunities.}\\[0.25cm]
+    \plainbox{GateGreen}{SoftGreen}{0.90\linewidth}{\small
+      Audit rule, not a new predictor. The deployable baseline remains SGP4 unless the learner earns the branch.}
+  \end{columns}
+  \takeaway{The rule decides whether learned correction may deploy over the available baseline.}
+\end{frame}
+
+% Main slide 6
+\begin{frame}{Experimental Protocol}
+\begin{columns}[T,onlytextwidth]
+    \column{0.50\textwidth}
+    \begin{tikzpicture}[
+      font=\small,
+      >=Latex,
+      item/.style={draw=PhysicsBlue,fill=SoftBlue,line width=0.8pt,minimum width=4.8cm,minimum height=0.70cm,align=left,inner xsep=7pt},
+      arr/.style={->,line width=0.9pt,draw=MutedGray}
+    ]
+      \node[item] (a) at (0,2.8) {BLACK KITE-1: 415 TLE records};
+      \node[item] (b) at (0,1.95) {BLACK KITE-2: 184 TLE records};
+      \node[item] (c) at (0,1.10) {Staleness grid: 8--168 h};
+      \node[item] (d) at (0,0.25) {24 in-pass samples per accepted TLE pair};
+      \node[item] (e) at (0,-0.60) {Reject pair if any $|r|>1500$ Hz};
+      \draw[arr] (a) -- (b);
+      \draw[arr] (b) -- (c);
+      \draw[arr] (c) -- (d);
+      \draw[arr] (d) -- (e);
+    \end{tikzpicture}
+
+    \column{0.46\textwidth}
+    {\bfseries Chronological split}\\[0.08cm]
+    \begin{tikzpicture}[
+      font=\small,
+      tr/.style={draw=PhysicsBlue,fill=SoftBlue,line width=0.8pt,minimum height=0.74cm,align=center},
+      va/.style={draw=GateGreen,fill=SoftGreen,line width=0.8pt,minimum height=0.74cm,align=center},
+      te/.style={draw=MLOrange,fill=SoftOrange,line width=0.8pt,minimum height=0.74cm,align=center}
+    ]
+      \node[tr,minimum width=3.0cm] (tr) at (0,0) {60\% train};
+      \node[va,minimum width=1.6cm,right=0pt of tr] (va) {20\% val};
+      \node[te,minimum width=1.6cm,right=0pt of va] (te) {20\% test};
+    \end{tikzpicture}
+
+    \vspace{0.30cm}
+    {\bfseries Reference boundary}\\[3pt]
+    {\small \texttt{reference\_is\_measured\_truth=false}. All real results are model-derived inter-TLE residuals.}\\[0.28cm]
+    {\bfseries Candidate models}\\[3pt]
+    {\small Ridge, random forest, gradient boosting, and small MLP selected on validation.}
+  \end{columns}
+  \takeaway{The real-data protocol tests deployable chronological utility, not measured Doppler truth.}
+\end{frame}
+
+% Main slide 7
+\begin{frame}{Main Real Result}
+  \vspace{-0.07cm}
+  \begin{center}
+    \includegraphics[width=0.99\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
+  \end{center}
+  \vspace{-0.32cm}
+  {\small\bfseries Learned residual correction is worse at every tested staleness; at 168 h, SGP4 is 26.9 Hz versus 45.3 Hz learned. Gate closed: deploy SGP4 / never-learn.}
+\end{frame}
+
+% Main slide 8
+\begin{frame}{Why a Closed Gate Matters}
+  \vspace{0.04cm}
+\begin{columns}[T,onlytextwidth]
+    \column{0.31\textwidth}
+    \policycol{HarmRed}{SoftRed}{Always learn}{Deploys the learned residual branch by default.\par\vspace{0.20cm}On real BLACK KITE, this increases residual error.}
+
+    \column{0.31\textwidth}
+    \policycol{PhysicsBlue}{SoftBlue}{Never learn}{Retains the SGP4 stale-TLE baseline.\par\vspace{0.20cm}On real BLACK KITE, this is the selected safe output.}
+
+    \column{0.31\textwidth}
+    \policycol{GateGreen}{SoftGreen}{Evidence Gate}{Tests the learned branch on a chronological validation window.\par\vspace{0.20cm}On real BLACK KITE, it chooses the same output as never-learn.}
+  \end{columns}
+  \takeaway{Gate value here is auditability: it blocks unsupported always-on ML, not guaranteed improvement.}
+\end{frame}
+
+% Main slide 9
+\begin{frame}{Controlled Synthetic Mechanism Check}
+\begin{columns}[T,onlytextwidth]
+    \column{0.54\textwidth}
+    \begin{tikzpicture}[
+      scale=0.78,
+      transform shape,
+      font=\small,
+      y=0.82cm,
+      >=Latex,
+      bar/.style={minimum height=0.44cm,anchor=west},
+      axis/.style={draw=MutedGray,line width=0.75pt}
+    ]
+      \draw[axis] (0,0) -- (6.0,0);
+      \draw[axis] (0,0) -- (0,3.1);
+      \node[anchor=east] at (-0.10,2.55) {dominant systematic};
+      \node[anchor=east] at (-0.10,1.60) {marginal gain};
+      \node[anchor=east] at (-0.10,0.65) {noise dominated};
+      \node[bar,fill=GateGreen!75,minimum width=4.6cm] at (0,2.34) {};
+      \node[bar,fill=HarmRed!65,minimum width=2.25cm] at (0,1.39) {};
+      \node[bar,fill=HarmRed!65,minimum width=1.25cm] at (0,0.44) {};
+      \draw[dashed,draw=MutedGray,line width=0.9pt] (3.20,0.05) -- (3.20,3.0);
+      \node[rotate=90,anchor=south,text=MutedGray] at (3.28,1.52) {\scriptsize threshold};
+      \node[anchor=west,text=GateGreen] at (4.75,2.56) {\bfseries open};
+      \node[anchor=west,text=HarmRed] at (2.42,1.61) {\bfseries closed};
+      \node[anchor=west,text=HarmRed] at (1.42,0.66) {\bfseries closed};
+      \node[anchor=west,text=MutedGray] at (0,-0.34) {\scriptsize validation evidence strength};
+    \end{tikzpicture}
+
+    \column{0.38\textwidth}
+    \plainbox{Navy}{white}{0.92\linewidth}{\small
+      \textbf{Controlled software-only check.}\\[3pt]
+      Synthetic cases open only when a dominant systematic residual is present.}\\[0.25cm]
+    {\small
+      Noise dominated: closed.\\[3pt]
+      Marginal gain below $\gamma$: closed.\\[3pt]
+      Dominant systematic residual: open.}
+  \end{columns}
+  \takeaway{Synthetic evidence checks mechanism only.}
+\end{frame}
+
+% Main slide 10
+\begin{frame}{Endpoint Implications}
+\begin{columns}[T,onlytextwidth]
+    \column{0.62\textwidth}
+    \begin{tikzpicture}[
+      font=\small,
+      >=Latex,
+      proxybox/.style={draw=PhysicsBlue,fill=SoftBlue,line width=0.8pt,minimum width=2.45cm,minimum height=0.82cm,align=center},
+      proxygreen/.style={draw=GateGreen,fill=SoftGreen,line width=0.8pt,minimum width=2.45cm,minimum height=0.82cm,align=center},
+      arr/.style={->,line width=1.1pt,draw=MutedGray}
+    ]
+      \node[proxybox] (u) at (0,1.5) {Timing / frequency\\uncertainty};
+      \node[proxybox] (g) at (3.0,1.5) {Guard and\\frequency margin};
+      \node[proxygreen] (e) at (6.0,1.5) {Energy\\proxy};
+      \draw[arr] (u) -- (g);
+      \draw[arr] (g) -- (e);
+      \node[align=center,text=MutedGray] at (3.0,0.25) {\small coverage equations map residual uncertainty\\to software resource proxies};
+    \end{tikzpicture}
+
+    \vspace{0.28cm}
+    \plainbox{HarmRed}{SoftRed}{0.90\linewidth}{\normalsize
+      Software-only control proxy; not a packet result.}
+
+    \column{0.34\textwidth}
+    {\bfseries Design implication}\\[3pt]
+    {\small A learner that does not win the gate should not consume extra guard, frequency margin, or energy budget.}\\[0.30cm]
+    {\bfseries Audit implication}\\[3pt]
+    {\small The deployed policy must record why the learned branch was allowed or blocked.}
+  \end{columns}
+  \takeaway{The proxy connects residual evidence to endpoint budget pressure without field-result evidence.}
+\end{frame}
+
+% Main slide 11
+\begin{frame}{Limitations and Next Campaign}
+\begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+    {\bfseries Current limitations}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[5pt]
+    {\normalsize
+    \begin{itemize}
+      \item Two BLACK KITE satellites
+      \item Model-derived reference only; no measured Doppler truth
+      \item Oscillator and channel effects may dominate practical endpoints
+      \item MAE gate is not tail-aware
+    \end{itemize}}
+
+    \column{0.47\textwidth}
+    {\bfseries Next software campaign}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[5pt]
+    {\normalsize
+    \begin{itemize}
+      \item Multi-satellite TLE stress matrix
+      \item Residual autocorrelation and learnability analysis
+      \item Stronger baselines
+      \item Tail-aware or cost-aware gate
+    \end{itemize}}
+  \end{columns}
+  \takeaway{Broader deployment value requires broader chronological evidence and a loss beyond MAE.}
+\end{frame}
+
+% Main slide 12
+\begin{frame}{Contributions and Takeaway}
+  \vspace{0.05cm}
+  \begin{enumerate}
+    \setlength{\itemsep}{0.34cm}
+    \item \textbf{Real-data negative finding.} On BLACK KITE TLE history, learned inter-TLE residual correction never beats SGP4 at tested staleness values.
+    \item \textbf{Chronological evidence-gated deploy/no-deploy rule.} On real BLACK KITE data, the gate closes and deployment equals SGP4 / never-learn.
+    \item \textbf{Software-only endpoint proxy with explicit limits.} Timing, frequency, and energy figures are coverage proxies, not packet or field results.
+  \end{enumerate}
+  \vspace{0.35cm}
+  \begin{center}
+    {\Large\bfseries Do not trust residual ML by default.}\\[4pt]
+    {\Large\bfseries Let chronological evidence decide deployment.}
+  \end{center}
+\end{frame}
+
+\appendix
+
+% Backup slide 1
+\begin{frame}{Backup: Endpoint Proxy Ablation}
+  \begin{center}
+    \includegraphics[width=0.80\linewidth,height=0.50\textheight,keepaspectratio]{slide_figures/fig_control_ablation_talk.pdf}
+  \end{center}
+  \plainbox{Navy}{white}{0.88\linewidth}{\scriptsize
+    Detailed software-only proxy ablation. The orange PGRL* branch denotes the controlled gate-open synthetic case, not a BLACK KITE improvement.}
+\end{frame}
+
+% Backup slide 2
+\begin{frame}{Backup: Counts and Gate Sensitivity}
+\begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+    {\bfseries Experimental counts}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[4pt]
+    {\small
+    \begin{tabular}{@{}ll@{}}
+      \toprule
+      BLACK KITE-1 & 415 TLE records \\
+      BLACK KITE-2 & 184 TLE records \\
+      Samples & 24 per accepted pair \\
+      Split & chronological 60/20/20 \\
+      Staleness & 8--168 h \\
+      Reject rule & any $|r|>1500$ Hz \\
+      \bottomrule
+    \end{tabular}}
+
+    \column{0.47\textwidth}
+    {\bfseries Gate interpretation}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[4pt]
+    {\small
+    \begin{itemize}
+      \item Lower $\gamma$ demands larger validation gain.
+      \item False-open risk: deploying a harmful learned branch.
+      \item Missed-open risk: retaining SGP4 despite real systematic gain.
+      \item Real BLACK KITE rows close under the tested settings.
+    \end{itemize}}
+  \end{columns}
+  \takeaway{The sensitivity question is policy conservatism, not predictor novelty.}
 \end{frame}
 
 \end{document}
