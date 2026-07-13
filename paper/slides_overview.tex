@@ -62,7 +62,7 @@
       inner xsep=4pt,
       inner ysep=5pt,
       align=left
-    ] {\parbox{#3}{#4}};
+    ] {\parbox{#3}{\hyphenpenalty=10000\exhyphenpenalty=10000\emergencystretch=1em #4}};
   \end{tikzpicture}
 }
 \newcommand{\policycol}[4]{%
@@ -76,7 +76,7 @@
       inner xsep=7pt,
       inner ysep=8pt,
       align=left
-    ] {\parbox{0.86\linewidth}{\centering\normalsize\bfseries #3\par\vspace{0.16cm}\RaggedRight\small #4}};
+    ] {\parbox{0.86\linewidth}{\hyphenpenalty=10000\exhyphenpenalty=10000\emergencystretch=1em\centering\normalsize\bfseries #3\par\vspace{0.16cm}\RaggedRight\small #4}};
   \end{tikzpicture}
 }
 
@@ -132,7 +132,7 @@
       The endpoint has orbital metadata, not a link outcome.
       It must size timing and frequency margins before the burst.}\\[0.20cm]
     \plainbox{MutedGray}{SoftGray}{0.88\linewidth}{\small
-      Context: LR-FHSS direct-to-satellite operation couples orbital prediction error to endpoint resource choices.}
+      Context: LR-FHSS direct-to-\linebreak satellite operation couples orbital prediction error to endpoint resource choices.}
   \end{columns}
   \takeaway{The control decision is pre-transmission: stale TLE to prediction to endpoint margins.}
   \smallnote{Selected context: Semtech AN1200.64; Ullah et al., OJ-COMS 2024.}
@@ -201,7 +201,7 @@
     {\bfseries Failure risk}\\[3pt]
     {\normalsize Chronological shift can make always-on ML worse than SGP4.}\\[0.30cm]
     \plainbox{HarmRed}{SoftRed}{0.92\linewidth}{\small
-      A plausible learner remains unsafe until it wins on held-out chronological evidence.}
+      A plausible learner remains unsafe until it wins on held-out \mbox{chronological} evidence.}
   \end{columns}
   \takeaway{Learning enters as an untrusted candidate.}
 \end{frame}
@@ -290,12 +290,12 @@
 
 % Main slide 7
 \begin{frame}{Main Real Result}
-  \vspace{-0.07cm}
+  \vspace{-0.25cm}
   \begin{center}
-    \includegraphics[width=0.99\linewidth,height=0.69\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
+    \includegraphics[width=0.99\linewidth,height=0.72\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
   \end{center}
-  \vspace{-0.32cm}
-  {\small\bfseries Learned residual correction is worse at every tested staleness; at 168 h, SGP4 is 26.9 Hz versus 45.3 Hz learned. Gate closed: deploy SGP4 / never-learn.}
+  \vspace{-0.40cm}
+  {\footnotesize\bfseries Learned correction is worse at every tested staleness. At 168 h: SGP4 26.9 Hz versus 45.3 Hz learned; gate closed, deploy SGP4 / never-learn.}
 \end{frame}
 
 % Main slide 8
@@ -303,13 +303,13 @@
   \vspace{0.04cm}
 \begin{columns}[T,onlytextwidth]
     \column{0.31\textwidth}
-    \policycol{HarmRed}{SoftRed}{Always learn}{Deploys the learned residual branch by default.\par\vspace{0.20cm}On real BLACK KITE, this increases residual error.}
+    \policycol{HarmRed}{SoftRed}{Always learn}{Deploys the learned branch by default.\par\vspace{0.20cm}On BLACK KITE, this increases residual error.}
 
     \column{0.31\textwidth}
-    \policycol{PhysicsBlue}{SoftBlue}{Never learn}{Retains the SGP4 stale-TLE baseline.\par\vspace{0.20cm}On real BLACK KITE, this is the selected safe output.}
+    \policycol{PhysicsBlue}{SoftBlue}{Never learn}{Retains the SGP4 stale-TLE baseline.\par\vspace{0.20cm}On BLACK KITE, this is the selected safe output.}
 
     \column{0.31\textwidth}
-    \policycol{GateGreen}{SoftGreen}{Evidence Gate}{Tests the learned branch on a chronological validation window.\par\vspace{0.20cm}On real BLACK KITE, it chooses the same output as never-learn.}
+    \policycol{GateGreen}{SoftGreen}{Evidence Gate}{Tests the learned branch on chronological validation.\par\vspace{0.20cm}On BLACK KITE, it chooses the same output as never-learn.}
   \end{columns}
   \takeaway{Gate value here is auditability: it blocks unsupported always-on ML, not guaranteed improvement.}
 \end{frame}
@@ -336,10 +336,10 @@
       \node[bar,fill=HarmRed!65,minimum width=2.25cm] at (0,1.39) {};
       \node[bar,fill=HarmRed!65,minimum width=1.25cm] at (0,0.44) {};
       \draw[dashed,draw=MutedGray,line width=0.9pt] (3.20,0.05) -- (3.20,3.0);
-      \node[rotate=90,anchor=south,text=MutedGray] at (3.28,1.52) {\scriptsize threshold};
+      \node[rotate=90,anchor=south,text=MutedGray] at (3.72,1.52) {\scriptsize threshold};
       \node[anchor=west,text=GateGreen] at (4.75,2.56) {\bfseries open};
-      \node[anchor=west,text=HarmRed] at (2.42,1.61) {\bfseries closed};
-      \node[anchor=west,text=HarmRed] at (1.42,0.66) {\bfseries closed};
+      \node[anchor=west,text=HarmRed] at (2.18,1.61) {\bfseries closed};
+      \node[anchor=west,text=HarmRed] at (1.30,0.66) {\bfseries closed};
       \node[anchor=west,text=MutedGray] at (0,-0.34) {\scriptsize validation evidence strength};
     \end{tikzpicture}
 
