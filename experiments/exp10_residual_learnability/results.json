@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "scope": "software-only model-derived inter-TLE residual diagnostics",
+    "reference_is_measured_truth": false,
+    "source": "docs/review/black_kite_1_target_specific_residual_experiment.md",
+    "sample_level_arrays_available": false,
+    "temporal_correlation_note": "24 in-pass samples are temporally correlated."
+  },
+  "bk1_target_specific": [
+    {
+      "staleness_h": 8,
+      "n_test_samples": 1968,
+      "mean_hz": 0.004,
+      "std_hz": 0.419,
+      "p50_abs_hz": 0.136,
+      "p90_abs_hz": 0.575,
+      "p99_abs_hz": 1.658,
+      "max_abs_hz": 3.217
+    },
+    {
+      "staleness_h": 24,
+      "n_test_samples": 2376,
+      "mean_hz": -0.006,
+      "std_hz": 1.413,
+      "p50_abs_hz": 0.458,
+      "p90_abs_hz": 1.815,
+      "p99_abs_hz": 5.401,
+      "max_abs_hz": 12.961
+    },
+    {
+      "staleness_h": 48,
+      "n_test_samples": 2520,
+      "mean_hz": -0.003,
+      "std_hz": 3.252,
+      "p50_abs_hz": 1.219,
+      "p90_abs_hz": 4.323,
+      "p99_abs_hz": 12.563,
+      "max_abs_hz": 41.941
+    },
+    {
+      "staleness_h": 72,
+      "n_test_samples": 2640,
+      "mean_hz": 0.018,
+      "std_hz": 8.473,
+      "p50_abs_hz": 2.982,
+      "p90_abs_hz": 11.02,
+      "p99_abs_hz": 33.25,
+      "max_abs_hz": 98.635
+    },
+    {
+      "staleness_h": 96,
+      "n_test_samples": 2616,
+      "mean_hz": -0.081,
+      "std_hz": 19.455,
+      "p50_abs_hz": 5.606,
+      "p90_abs_hz": 22.434,
+      "p99_abs_hz": 79.681,
+      "max_abs_hz": 257.543
+    },
+    {
+      "staleness_h": 168,
+      "n_test_samples": 2640,
+      "mean_hz": 0.035,
+      "std_hz": 45.383,
+      "p50_abs_hz": 15.874,
+      "p90_abs_hz": 57.607,
+      "p99_abs_hz": 191.26,
+      "max_abs_hz": 519.419
+    }
+  ],
+  "bk1_to_bk2_transfer_summary": [
+    {
+      "staleness_h": 8.0,
+      "baseline_mae_hz": 0.1877,
+      "learned_mae_hz": 0.3261,
+      "selected_model": "mlp",
+      "gate_decision_mae": "closed"
+    },
+    {
+      "staleness_h": 24.0,
+      "baseline_mae_hz": 0.4969,
+      "learned_mae_hz": 1.8639,
+      "selected_model": "mlp",
+      "gate_decision_mae": "closed"
+    },
+    {
+      "staleness_h": 48.0,
+      "baseline_mae_hz": 2.4092,
+      "learned_mae_hz": 2.8458,
+      "selected_model": "ridge",
+      "gate_decision_mae": "closed"
+    }
+  ],
+  "unavailable_diagnostics": [
+    "residual sign stability",
+    "sample-level autocorrelation",
+    "cross-pair autocorrelation",
+    "train/validation/test distribution statistics",
+    "baseline-vs-learned residual distributions",
+    "residual PSD"
+  ]
+}

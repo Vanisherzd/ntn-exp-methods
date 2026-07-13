@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "scope": "software-only gate-variant audit",
+    "reference_is_measured_truth": false,
+    "real_source": "docs/review/bk_negative_result_compact.csv",
+    "synthetic_source": "docs/review/gate_stress_compact.csv",
+    "synthetic_is_mechanism_check_only": true
+  },
+  "real_black_kite": [
+    {
+      "regime": "real_BK1",
+      "staleness_h": 8,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "unavailable",
+      "outage_proxy_gate": "unavailable",
+      "reason": "learned per-sample predictions and validation tails are absent"
+    },
+    {
+      "regime": "real_BK1",
+      "staleness_h": 24,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "unavailable",
+      "outage_proxy_gate": "unavailable",
+      "reason": "learned per-sample predictions and validation tails are absent"
+    },
+    {
+      "regime": "real_BK1",
+      "staleness_h": 48,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "unavailable",
+      "outage_proxy_gate": "unavailable",
+      "reason": "learned per-sample predictions and validation tails are absent"
+    },
+    {
+      "regime": "real_BK1",
+      "staleness_h": 72,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "unavailable",
+      "outage_proxy_gate": "unavailable",
+      "reason": "learned per-sample predictions and validation tails are absent"
+    },
+    {
+      "regime": "real_BK1",
+      "staleness_h": 96,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "unavailable",
+      "outage_proxy_gate": "unavailable",
+      "reason": "learned per-sample predictions and validation tails are absent"
+    },
+    {
+      "regime": "real_BK1",
+      "staleness_h": 168,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "unavailable",
+      "outage_proxy_gate": "unavailable",
+      "reason": "learned per-sample predictions and validation tails are absent"
+    }
+  ],
+  "synthetic_mechanism": [
+    {
+      "regime": "synthetic_fresh_low_residual",
+      "staleness_h": null,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "proxy_only",
+      "outage_proxy_gate": "proxy_only",
+      "reason": "summary contains guard/outage proxy ordering, not validation p95/p99 sequences"
+    },
+    {
+      "regime": "synthetic_moderate_staleness",
+      "staleness_h": null,
+      "mae_gate": "closed",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "proxy_only",
+      "outage_proxy_gate": "proxy_only",
+      "reason": "summary contains guard/outage proxy ordering, not validation p95/p99 sequences"
+    },
+    {
+      "regime": "synthetic_extreme_systematic",
+      "staleness_h": null,
+      "mae_gate": "open",
+      "p95_gate": "unavailable",
+      "p99_gate": "unavailable",
+      "guard_cost_gate": "proxy_only",
+      "outage_proxy_gate": "proxy_only",
+      "reason": "summary contains guard/outage proxy ordering, not validation p95/p99 sequences"
+    }
+  ],
+  "gate_definitions": {
+    "mae": "reported current gate decision",
+    "p95": "requires validation p95 learned and baseline errors; unavailable",
+    "p99": "requires validation p99 learned and baseline errors; unavailable",
+    "guard_cost": "2*p99(|e|); proxy ordering only where summary guard values exist",
+    "outage": "Pr(|e| > F_tol); proxy ordering only where summary outage values exist"
+  }
+}

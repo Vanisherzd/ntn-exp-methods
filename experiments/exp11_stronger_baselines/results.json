@@ -1,0 +1,97 @@
+{
+  "metadata": {
+    "scope": "software-only summary-level baseline comparison",
+    "reference_is_measured_truth": false,
+    "source": "docs/review/black_kite_1_target_specific_residual_experiment.md",
+    "same_chronological_split": true,
+    "per_model_validation_metrics_available": false,
+    "per_model_tail_predictions_available": false
+  },
+  "rows": [
+    {
+      "staleness_h": 8,
+      "zero_baseline": 0.243,
+      "median_bias": 0.2438,
+      "ridge": 2.4941,
+      "random_forest": 1.8807,
+      "grad_boost": 4.3976,
+      "mlp": 0.3501,
+      "selected": 0.3501,
+      "selected_model": "mlp_gpu",
+      "reported_gate_mae": "closed",
+      "p95_abs_error_hz": null,
+      "p99_abs_error_hz": null
+    },
+    {
+      "staleness_h": 24,
+      "zero_baseline": 0.8161,
+      "median_bias": 0.825,
+      "ridge": 4.0449,
+      "random_forest": 15.8441,
+      "grad_boost": 20.6578,
+      "mlp": 0.9109,
+      "selected": 0.9109,
+      "selected_model": "mlp_gpu",
+      "reported_gate_mae": "closed",
+      "p95_abs_error_hz": null,
+      "p99_abs_error_hz": null
+    },
+    {
+      "staleness_h": 48,
+      "zero_baseline": 1.9433,
+      "median_bias": 1.9576,
+      "ridge": 14.1854,
+      "random_forest": 21.3059,
+      "grad_boost": 19.9189,
+      "mlp": 2.8608,
+      "selected": 2.8608,
+      "selected_model": "mlp_gpu",
+      "reported_gate_mae": "closed",
+      "p95_abs_error_hz": null,
+      "p99_abs_error_hz": null
+    },
+    {
+      "staleness_h": 72,
+      "zero_baseline": 4.8947,
+      "median_bias": 4.9404,
+      "ridge": 5.9092,
+      "random_forest": 12.7209,
+      "grad_boost": 15.2894,
+      "mlp": 9.3962,
+      "selected": 5.9092,
+      "selected_model": "ridge",
+      "reported_gate_mae": "closed",
+      "p95_abs_error_hz": null,
+      "p99_abs_error_hz": null
+    },
+    {
+      "staleness_h": 96,
+      "zero_baseline": 10.1153,
+      "median_bias": 10.132,
+      "ridge": 11.7663,
+      "random_forest": 120.5161,
+      "grad_boost": 156.5905,
+      "mlp": 22.037,
+      "selected": 11.7663,
+      "selected_model": "ridge",
+      "reported_gate_mae": "closed",
+      "p95_abs_error_hz": null,
+      "p99_abs_error_hz": null
+    },
+    {
+      "staleness_h": 168,
+      "zero_baseline": 26.9243,
+      "median_bias": 30.2474,
+      "ridge": 45.2629,
+      "random_forest": 62.6705,
+      "grad_boost": 227.7139,
+      "mlp": 89.3023,
+      "selected": 45.2629,
+      "selected_model": "ridge",
+      "reported_gate_mae": "closed",
+      "p95_abs_error_hz": null,
+      "p99_abs_error_hz": null
+    }
+  ],
+  "interpretation": "All reported selected learned models remain worse than zero-residual SGP4 at every BK1 staleness row; this is not a fresh retraining run."
+}

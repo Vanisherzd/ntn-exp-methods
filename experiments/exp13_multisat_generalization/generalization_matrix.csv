@@ -1,0 +1,10 @@
+train_source,deploy_target,staleness_h,baseline_mae_hz,learned_mae_hz,degradation_pct,gate_decision,p95_abs_error_hz,p99_abs_error_hz,n_pairs,reject_count,status
+BK1,BK1,8,0.2430,0.3501,44.074,closed,,,,,summary_only
+BK1,BK1,24,0.8161,0.9109,11.616,closed,,,,,summary_only
+BK1,BK1,48,1.9433,2.8608,47.214,closed,,,,,summary_only
+BK1,BK1,72,4.8947,5.9092,20.727,closed,,,,,summary_only
+BK1,BK1,96,10.1153,11.7663,16.322,closed,,,,,summary_only
+BK1,BK1,168,26.9243,45.2629,68.112,closed,,,,,summary_only
+BK1,BK2,8,0.1877,0.3261,73.735,closed,,,,,summary_only
+BK1,BK2,24,0.4969,1.8639,275.106,closed,,,,,summary_only
+BK1,BK2,48,2.4092,2.8458,18.122,closed,,,,,summary_only

@@ -1,0 +1,10 @@
+regime,staleness_h,mae_gate,p95_gate,p99_gate,guard_cost_gate,outage_proxy_gate,reason
+real_BK1,8,closed,unavailable,unavailable,unavailable,unavailable,learned per-sample predictions and validation tails are absent
+real_BK1,24,closed,unavailable,unavailable,unavailable,unavailable,learned per-sample predictions and validation tails are absent
+real_BK1,48,closed,unavailable,unavailable,unavailable,unavailable,learned per-sample predictions and validation tails are absent
+real_BK1,72,closed,unavailable,unavailable,unavailable,unavailable,learned per-sample predictions and validation tails are absent
+real_BK1,96,closed,unavailable,unavailable,unavailable,unavailable,learned per-sample predictions and validation tails are absent
+real_BK1,168,closed,unavailable,unavailable,unavailable,unavailable,learned per-sample predictions and validation tails are absent
+synthetic_fresh_low_residual,,closed,unavailable,unavailable,proxy_only,proxy_only,"summary contains guard/outage proxy ordering, not validation p95/p99 sequences"
+synthetic_moderate_staleness,,closed,unavailable,unavailable,proxy_only,proxy_only,"summary contains guard/outage proxy ordering, not validation p95/p99 sequences"
+synthetic_extreme_systematic,,open,unavailable,unavailable,proxy_only,proxy_only,"summary contains guard/outage proxy ordering, not validation p95/p99 sequences"

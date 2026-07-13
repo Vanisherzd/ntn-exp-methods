@@ -1,0 +1,7 @@
+staleness_h,selected_model,zero_baseline,median_bias,ridge,random_forest,grad_boost,mlp,selected,reported_gate_mae,p95_abs_error_hz,p99_abs_error_hz
+8,mlp_gpu,0.243,0.2438,2.4941,1.8807,4.3976,0.3501,0.3501,closed,,
+24,mlp_gpu,0.8161,0.825,4.0449,15.8441,20.6578,0.9109,0.9109,closed,,
+48,mlp_gpu,1.9433,1.9576,14.1854,21.3059,19.9189,2.8608,2.8608,closed,,
+72,ridge,4.8947,4.9404,5.9092,12.7209,15.2894,9.3962,5.9092,closed,,
+96,ridge,10.1153,10.132,11.7663,120.5161,156.5905,22.037,11.7663,closed,,
+168,ridge,26.9243,30.2474,45.2629,62.6705,227.7139,89.3023,45.2629,closed,,
