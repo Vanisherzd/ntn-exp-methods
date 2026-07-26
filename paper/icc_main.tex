@@ -42,12 +42,10 @@
 \setcounter{dbltopnumber}{3}
 \setcounter{totalnumber}{4}
 
-\hyphenation{LEO-PGRL-LRFHSS}
-
 \begin{document}
 
 % ── Title ────────────────────────────────────────────────────────────────────
-\title{Evidence-Gated Residual Learning for LR-FHSS Direct-to-Satellite IoT Endpoint Control}
+\title{When Not to Learn: Evidence-Gated Residuals for LR-FHSS D2S IoT}
 
 \author{
 \IEEEauthorblockN{
@@ -75,10 +73,11 @@ pre-transmission endpoint decision: when should a learned inter-TLE residual be
 trusted to modify the physics baseline, and when should the terminal keep
 open-loop compensation? On real Space-Track TLE history for two BLACK~KITE LEO
 satellites (NORAD~66741, 68474), with strict chronological leakage-free splits, a
-learned inter-TLE residual does \emph{not} beat SGP4 at any tested staleness (8--168~h),
-target-specific or cross-satellite. The proposed \emph{Evidence Gate} therefore
-enables a learned corrector only when a chronological held-out window beats the
-baseline by a margin~$\gamma$; otherwise it falls back to SGP4. On the real data
+learned inter-TLE residual does \emph{not} beat SGP4 in any reported
+target-specific point estimate (8--168~h), and limited BK1$\to$BK2 transfer
+checks give the same closed-gate decision. The proposed \emph{Evidence Gate} therefore
+enables a learned corrector only when a chronological validation window beats
+the baseline by a margin~$\gamma$; otherwise it falls back to SGP4. On the real data
 the gate \emph{closes}, so deployment is equivalent to never learning. A
 controlled synthetic stress test illustrates the
 complementary mechanism: the gate opens only when a dominant systematic residual
@@ -128,14 +127,17 @@ correction on top of the physics prediction, and when is the safe physics
 default the right choice?}
 
 We expose a gap in the naive ``always learn'' answer: on real TLE history for two
-BLACK~KITE satellites, a learned inter-TLE residual corrector does not beat the open-loop
-SGP4 / stale-TLE baseline at any tested staleness---an always-on learner would, if
-anything, \emph{increase} the frequency error it is meant to reduce. Learning
-must therefore be \emph{earned} on held-out evidence, formalised as the
+BLACK~KITE satellites, a learned inter-TLE residual corrector does not beat the
+open-loop SGP4 / stale-TLE baseline in any reported row---an always-on learner
+would, if anything, \emph{increase} the frequency error it is meant to reduce.
+Learning must therefore be \emph{earned} on held-out evidence, formalised as the
 \emph{Evidence Gate}: a learned corrector deploys only when a chronological
-held-out validation window shows it beats the physics baseline by a margin.
-
-This paper is intentionally conservative: it does not argue that residual learning improves current BLACK~KITE operation. Instead, it asks whether a terminal should ever deploy such learning without local chronological evidence, and shows that for the available BLACK~KITE history the answer is no. The contribution is therefore not a stronger residual predictor, but a falsification-oriented endpoint policy: before a terminal spends guard, frequency margin, or energy on learned residual compensation, the learned branch must demonstrate chronological utility over the deployable SGP4 baseline. The BLACK~KITE result is useful precisely because residual learning can be plausible as a hypothesis yet still fail the deployment test.
+validation window shows it beats the physics baseline by a margin. The paper is
+intentionally conservative: it does not argue that residual learning improves
+current BLACK~KITE operation, but asks whether a terminal should deploy it
+without local chronological evidence---and for the available history the answer
+is no. The contribution is a falsification-oriented endpoint policy rather than a
+stronger predictor.
 
 \emph{Related work.} Prior art clusters into three layers, none of which contains
 our decision problem. (i)~\emph{Link/capacity/energy} analyses quantify aggregate
@@ -158,18 +160,19 @@ trustworthy enough to size timing/frequency/energy margins, or should the
 terminal retain the SGP4 physics default? Contributions:
 \begin{itemize}
 \item \emph{Real-data negative finding:} on BLACK~KITE TLE history
-(8--168~h, strict splits), learned inter-TLE residuals never beat SGP4;
-always-learn is unsafe and the gate closes (Table~\ref{tab:bk},
+(8--168~h, strict splits), the reported learned inter-TLE point estimates are
+worse in every row; always-learn is unsafe and the gate closes (Table~\ref{tab:bk},
 Fig.~\ref{fig:gateev}).
 \item \emph{Evidence-gated deploy/no-deploy rule:} a chronological
 validation-window test rejects unsupported learning on real data and opens only
 under controlled systematic synthetic evidence (Eqs.~\eqref{eq:gate}--\eqref{eq:deploy},
 Tables~\ref{tab:gate}, \ref{tab:policy}); no distribution-shift guarantee is
 claimed.
-\item \emph{Endpoint-budget software proxy:}
-Eqs.~\eqref{eq:guard}--\eqref{eq:esucc} connect timing/frequency uncertainty
-to guard and energy proxies (Fig.~\ref{fig:proxies}); these are software-only
-control proxies, not packet or link validation.
+\item \emph{Illustrative endpoint-budget proxy (secondary):}
+Eqs.~\eqref{eq:guard}--\eqref{eq:esucc} map timing/frequency uncertainty to
+guard and energy proxies (Fig.~\ref{fig:proxies}) only to show how residual
+evidence would pressure endpoint resources; software-only control proxies, not
+packet or link validation.
 \end{itemize}
 
 % ── System Model ──────────────────────────────────────────────────────────────
@@ -194,6 +197,11 @@ where $\hat{f}_D$ is the predicted Doppler and $f_{\mathrm{osc}}$ is the termina
 oscillator offset. We model reliable hop reception as $|f_{\mathrm{res}}|$ staying
 small relative to a fixed frequency tolerance $F_{\mathrm{tol}}$; this is a control
 proxy, not a standard-compliant receiver model.
+Equation~\eqref{eq:residual_cfo} separates the orbital-prediction term from
+endpoint RF errors. Oscillator offset, receiver synchronisation, and channel
+effects can dominate the absolute RF residual; this paper isolates only the
+TLE-driven inter-TLE component and does not claim it is the dominant RF error
+source.
 
 \subsection{Stale-TLE Open-Loop Baseline and the Learned Residual}
 \label{sec:baseline}
@@ -204,10 +212,10 @@ this can be improved, we define a model-derived \emph{reference} Doppler
 $D_{\mathrm{ref}}(t)$ as the SGP4 propagation of a \emph{later} TLE for the same
 satellite at the same UTC. We emphasise that
 \texttt{reference\_is\_measured\_truth = false}: $D_{\mathrm{ref}}$ is a newer
-TLE solution, not an RF measurement of satellite Doppler. This residual is not
-over-the-air Doppler error; it is the residual observable to a TLE-only terminal
-by comparing stale and later TLE propagations. The quantity a learner
-would have to predict is the inter-TLE residual
+TLE solution, not an RF or over-the-air measurement of satellite Doppler---the
+residual is what a TLE-only terminal observes by comparing stale and later TLE
+propagations. The quantity a learner would have to predict is the inter-TLE
+residual
 \begin{equation}
 r(t) = D_{\mathrm{ref}}(t) - f_{\mathrm{phys}}(t),
 \label{eq:residual}
@@ -390,8 +398,7 @@ E_{\mathrm{succ}} = E_{\mathrm{att}}/S.
 \label{eq:esucc}
 \end{equation}
 Equation~\eqref{eq:guard} explains the Fig.~\ref{fig:proxies} shape: the
-adaptive guard pins $P_t$ near the $k$-sigma floor
-($\operatorname{erfc}(3/\sqrt{2})\!\approx\!0.3\%$) while $g_t$---and hence
+adaptive guard pins $P_t$ near the $k$-sigma floor while $g_t$---and hence
 $E_{\mathrm{att}}$---grows linearly with $\sigma_t$, so timing uncertainty is
 paid in guard energy rather than misses. The timing-only sweep
 (Fig.~\ref{fig:proxies}(a,b)) uses $S=1-P_t$; the ablation
@@ -407,35 +414,39 @@ propagated open-loop, and compared to the reference at 24 UTC samples over one
 orbital period; a pair is rejected if any sample has $|r|>1500$~Hz. Splits are
 chronological by reference epoch (60/20/20 train/validation/test), and the
 validation window uses only completed TLE-refresh intervals whose newer TLE
-arrived before the next deployment decision, so the gate is causal. Compact CSV
+arrived before the next deployment decision, so the gate is causal. The negative
+finding is thus conditional on accepted non-outlier inter-TLE pairs under this
+$|r|>1500$~Hz screening; rejected high-residual pairs are treated as non-nominal
+and left for a maneuver/outlier-focused extension. Compact CSV
 summaries and regeneration commands are indexed in the artifact manifest. The
 synthetic stress study (Sec.~\ref{sec:eval-stress}) is a controlled simulation,
-no Space-Track data.
-
-At each control epoch the terminal re-evaluates Eqs.~\eqref{eq:gate}--\eqref{eq:deploy}
-on $V$ and re-sizes $g=2\,p_{99}(|e|)$---no receiver feedback, recomputed
-whenever a fresh TLE arrives.
+no Space-Track data. At each control epoch the terminal re-evaluates
+Eqs.~\eqref{eq:gate}--\eqref{eq:deploy} on $V$ and re-sizes $g=2\,p_{99}(|e|)$
+whenever a fresh TLE arrives; there is no receiver feedback.
 
 % ── Evaluation ────────────────────────────────────────────────────────────────
 \section{Evaluation}
 \label{sec:eval}
 
 \subsection{Experimental Setup}
-\emph{Evaluation scope.} C1 is the real BLACK~KITE inter-TLE negative control;
-C2 is the controlled synthetic gate-open mechanism check; C3 is the
-software-only endpoint proxy study; C4 is artifact-level reproducibility for
-scripts and compact summaries. C1--C3 are model-derived software evaluations,
-not RF, packet, or over-the-air measurements.
+\emph{Evaluation scope.} The evaluation covers the real BLACK~KITE inter-TLE
+negative control, the controlled synthetic gate-open mechanism check, the
+software-only endpoint proxy study, and artifact-level reproducibility; all are
+model-derived software evaluations, not RF, packet, or over-the-air
+measurements.
 
 \emph{Carrier convention.} Software Doppler and control metrics are reported at
 an 868~MHz carrier (python-SGP4, ground station of Sec.~\ref{sec:baseline}),
 matching common LR-FHSS D2S evaluation settings; the controller is
 frequency-parametric (Eq.~\eqref{eq:doppler}) and residuals scale linearly with
 $f_c$. Learned candidates are ridge regression, random forest, gradient
-boosting, and a small MLP, selected on the chronological validation segment with
-the gate evaluated once on the held-out test segment. A window is supported only
-if the selected model beats the zero-residual baseline on held-out MAE by the
-gate margin ($\gamma=0.95$) and also improves RMSE. All results in
+boosting, and a small MLP. Training fits the candidates; the model family and
+the gate decision are fixed on the chronological validation segment; the
+held-out test segment reports the consequence of that pre-decided policy and
+never decides the gate. A window is supported only if the selected model beats
+the zero-residual baseline on \emph{validation} MAE by the gate margin
+($\gamma=0.95$); RMSE is a corroborating diagnostic, not part of
+Eq.~\eqref{eq:gate}. All results in
 Secs.~\ref{sec:eval-real}--\ref{sec:eval-endpoint} are software-only and
 model-derived; no hardware, RF, UART, replay, or measured Doppler is involved.
 
@@ -443,21 +454,27 @@ model-derived; no hardware, RF, UART, replay, or measured Doppler is involved.
 \label{sec:eval-real}
 Table~\ref{tab:bk} and Fig.~\ref{fig:gateev}(a,b) report the held-out test MAE of
 the validation-selected learned model against the zero-residual stale-TLE
-baseline: the learned inter-TLE residual is worse at \emph{every} tested
-staleness, both target-specific (BK1, 8--168~h) and cross-satellite
-(BK1$\rightarrow$BK2), so the gate of Eq.~\eqref{eq:gate} closes in all cases.
+baseline: the reported point estimates place the learned inter-TLE residual
+above the baseline in \emph{every} row, target-specific (BK1, 8--168~h) and in
+the limited BK1$\rightarrow$BK2 transfer checks, and the validation-decided gate
+of Eq.~\eqref{eq:gate} closes in all cases; these are point estimates under the
+leakage-free protocol of Sec.~\ref{sec:data}, not pair-clustered inference.
 Thus, for the real BLACK~KITE rows, the deployed Evidence-Gate policy is exactly
 the never-learn/SGP4 policy; its value is rejecting always-on learning.
 Even at 168~h the BK1 inter-TLE baseline MAE is only 26.9~Hz---small against
-$F_{\mathrm{tol}}=500$~Hz. This small residual scale is the finding: for BLACK
-KITE there is little useful signal for always-on residual ML, so learning can
-only add generalization noise. The negative result is therefore a warning
-against deploying residual ML by default, not a failed improvement result.
-This changes the role of learning in the endpoint stack. A residual learner
-should not be treated as a default enhancement module; it is an untrusted
-candidate whose deployment burden is higher than the SGP4 baseline. The gate
-protects the terminal from converting validation noise into additional guard,
-frequency margin, or retransmission pressure.
+$F_{\mathrm{tol}}=500$~Hz---so for BLACK KITE there is little useful signal for
+always-on residual ML and learning can only add generalization noise. Because the
+168~h baseline (26.9~Hz) and learned (45.3~Hz) errors both sit far below that
+representative tolerance, the row is not an outage or energy-saving comparison;
+its role is diagnostic. At the observed BLACK~KITE residual scale a learned
+correction has no justified endpoint-budget role, so the deployable policy is
+refusal unless future validation evidence changes---the ``when not to learn''
+case. The gate keeps validation noise from becoming extra guard, frequency
+margin, or retransmission pressure.
+Artifact diagnostics over
+lightweight bias and baseline variants (median bias, ridge, RF, GBR, small MLP)
+did not change the real-data decision---SGP4 stays selected and the MAE gate
+stays closed---and are summary-level, not a universal-unlearnability claim.
 
 The result is consistent with how the data arises: successive Space-Track TLEs
 reflect orbit-determination updates over different observation arcs, so the
@@ -465,9 +482,8 @@ inter-TLE residual mixes fit artifacts, drag mismatch, tracking noise, and
 maneuver-like events---near zero-mean from the terminal-feature perspective, so
 a regressor fits validation noise rather than a stable correction; richer
 features or longer staleness could still expose learnable structure, precisely
-the case the gate admits. Both $D_{\mathrm{ref}}$ and $f_{\mathrm{phys}}$ are
-SGP4 propagations: a model-to-model inter-TLE residual, not a measured
-RF-channel residual.
+the case the gate admits. Both are SGP4 propagations---a model-to-model
+inter-TLE residual, not a measured RF-channel one (Sec.~\ref{sec:baseline}).
 
 \begin{table}[tb]
 \centering
@@ -476,11 +492,13 @@ RF-channel residual.
 software carrier, learned inter-TLE residual vs.\ zero-residual stale-TLE baseline.
 Values are model-derived from TLE/SGP4 and scale linearly with carrier
 frequency; no measured Doppler is used
-(\texttt{reference\_is\_measured\_truth=false}). The gate closes in every row
-because the learned inter-TLE residual is worse than the physics baseline. For
+(\texttt{reference\_is\_measured\_truth=false}). The gate is decided on the
+validation segment and closes in every row; the test columns report the
+consequence of that decision. For
 BK1 target rows, $n$ is train/validation/test samples after rejecting TLE pairs
 with any $|r|>1500$~Hz; the compact cross-transfer artifact did not preserve
-per-split counts. $n$ counts 24 in-pass samples per accepted TLE pair; samples
+per-split counts. $n$ counts 24 in-pass samples per accepted TLE pair, so the
+independent TLE-pair count is about $n/24$ per split and samples within a pair
 are temporally correlated.}
 \label{tab:bk}
 \setlength{\tabcolsep}{2pt}
@@ -539,7 +557,7 @@ control), open only under evidenced systematic residual (synthetic).}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{lll}
 \toprule
-Regime & Held-out evidence ($\gamma{=}0.95$) & Gate \\
+Regime & Validation evidence ($\gamma{=}0.95$) & Gate \\
 \midrule
 BLACK~KITE (real) & learned worse, 8--168~h & closed \\
 Synth.\ noise-dom. & no learnable structure & closed \\
@@ -567,9 +585,9 @@ adopt $\gamma=0.95$.
     \caption{Endpoint-control proxies (software-only coverage proxies, not
     measured packet outcomes). (a,b)~Timing sensitivity under the adaptive
     $3\sigma$ guard; markers: SGP4 open-loop staleness (TLE 24/168~h).
-(c,d)~Control ablation (log axes); PGRL* denotes the controlled gate-open
-\emph{synthetic} regime
-    (real gate closes, Sec.~\ref{sec:eval-real}).}
+(c,d)~Control ablation (log axes); the \texttt{+synth.} bar is the controlled
+    gate-open \emph{synthetic} branch, not a BLACK~KITE outcome
+    (the real gate closes, Sec.~\ref{sec:eval-real}).}
     \label{fig:proxies}
 \end{figure*}
 \begin{table}[tb]
@@ -636,31 +654,29 @@ curve.
 \emph{Software-only proxy ablation illustrates coupled timing/frequency margins}
 (Fig.~\ref{fig:proxies}(c,d)): the synthetic ablation is an illustrative
 stress-proxy using a deliberately larger baseline frequency-error scale than
-Table~\ref{tab:bk}; it is not a BLACK~KITE deployment outcome. On the real data,
-the gate stays closed and the controller equals the baseline
-(Sec.~\ref{sec:eval-real}).
+Table~\ref{tab:bk}; it is not a BLACK~KITE deployment outcome, where the gate
+stays closed and the controller equals the baseline (Sec.~\ref{sec:eval-real}).
 
 % ── Conclusion and Limitations ────────────────────────────────────────────────
 \section{Conclusion and Limitations}
 \label{sec:conclusion}
 
-We recast PHY-layer Doppler compensation as timing- and
-frequency-uncertainty-aware endpoint control for LR-FHSS D2S IoT under stale
-orbital information: open-loop SGP4 is the default, and a learned residual is
-deployed only when a chronological held-out window beats the baseline by a
-margin. The strongest real result is negative: on BLACK~KITE TLE history the
-learned correction never beats the baseline, so the gate closes and the terminal
-keeps the conservative fallback. The controlled synthetic result is a mechanism
-check showing that the same rule can open under dominant systematic evidence,
-not a real-data improvement claim. The Evidence Gate is therefore most useful as an audit rule rather than as a guaranteed improvement mechanism: on BLACK~KITE it chooses the same action as never-learn, but this is precisely the safe action because it prevents an always-learn policy from increasing the residual. In a deployed terminal, learned residual branches should remain quarantined until they repeatedly re-earn deployment on fresh chronological evidence. For implementation, the terminal-side audit record should include the stale-TLE identifier, refresh time, validation interval, baseline MAE, learned MAE, $\gamma$, $G$, and the resulting guard/frequency policy. Such logs make failed passes diagnosable and prevent silent always-on ML deployment.
+We recast PHY-layer Doppler compensation as uncertainty-aware endpoint control
+under stale orbital information: SGP4 is the default, and a learned residual
+deploys only when a chronological validation window beats it by a margin. The
+strongest real result is negative: on BLACK~KITE TLE history the
+learned correction is worse in every reported row, so the gate closes and the
+terminal keeps the conservative fallback. The synthetic result is a mechanism
+check, not a real-data improvement claim. The Evidence Gate is therefore an audit rule rather than a guaranteed improvement mechanism: on BLACK~KITE it chooses the same action as never-learn, which is the safe action. For implementation, the terminal-side audit record should include the stale-TLE identifier, refresh time, validation interval, baseline MAE, learned MAE, $\gamma$, $G$, and the resulting guard/frequency policy. Such logs make failed passes diagnosable and prevent silent always-on ML deployment.
 
 Practically, for BLACK~KITE-like TLE-only residuals the safe endpoint policy is
 SGP4/never-learn unless held-out evidence proves otherwise. Reproducibility
-artifacts index compact CSV summaries, regeneration scripts, frozen
-tables/figures, and the compile-only NUCLEO footprint artifact; these artifacts
-support auditability, not hardware or link validation. The next software
+artifacts (compact CSV summaries, regeneration scripts, frozen tables/figures,
+the compile-only NUCLEO footprint) support auditability, not hardware or link
+validation. The next software
 campaign is a multi-satellite generalization matrix with residual-learnability
-analysis. This separates orbital uncertainty from other endpoint RF errors. Oscillator offset, receiver synchronization, and channel effects may dominate the absolute RF residual; our experiments isolate only the TLE-driven component observable from public orbital data. A practical stack should combine this gate with oscillator calibration and a tail-aware deployment loss.
+analysis; as noted in Sec.~\ref{sec:system}, a practical stack should combine
+the gate with oscillator calibration and a tail-aware deployment loss.
 
 \label{sec:limits}
 All control results are software-only and model-derived
@@ -670,10 +686,9 @@ or gateway acknowledgement. The negative result holds for two
 BLACK~KITE satellites and our feature set, not universally; the positive learning
 result is synthetic only; the gate gives a validation-window property, not a
 distribution-shift bound; the proxies of Sec.~\ref{sec:eval-endpoint} are control
-proxies, not link-budget measurements. Tail-aware or cost-aware gates based on
-p99 error, guard cost, or outage proxy are left for future work.
-Packet-level conducted PER/PDR against a reference receiver and authorized
-over-the-air measurement are future work, in that order.
+proxies, not link-budget measurements. Tail-aware or cost-aware gates (p99 error, guard
+cost, outage proxy), and packet-level then authorized over-the-air measurement,
+are future work.
 
 % ── References ───────────────────────────────────────────────────────────────
 \bibliographystyle{IEEEtran}

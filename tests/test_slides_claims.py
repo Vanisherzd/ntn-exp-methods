@@ -31,7 +31,7 @@ def _normalized_pdf_text(path: Path) -> str:
     return " ".join(_pdf_text(path).split())
 
 
-def test_pdf_has_twelve_main_slides_and_two_backups() -> None:
+def test_pdf_has_twelve_main_slides_and_four_backups() -> None:
     result = subprocess.run(
         ["pdfinfo", str(SLIDE_PDF)],
         check=True,
@@ -39,7 +39,7 @@ def test_pdf_has_twelve_main_slides_and_two_backups() -> None:
         text=True,
     )
 
-    assert re.search(r"^Pages:\s+14$", result.stdout, flags=re.MULTILINE) is not None
+    assert re.search(r"^Pages:\s+16$", result.stdout, flags=re.MULTILINE) is not None
 
 
 def test_no_logo_or_conducted_iq_content_is_referenced() -> None:
@@ -102,6 +102,13 @@ def test_required_claim_boundaries_are_present() -> None:
         "Controlled software-only check.",
         "Software-only control proxy; not a packet result.",
         "not a BLACK KITE improvement",
+        "The real MAE gate remains closed in every reported row.",
+        "no new generalization claim",
+        "the test segment only reports consequences",
+        "not pair-clustered inference",
+        "left for a maneuver/outlier extension",
+        "The synthetic gate-open case is a mechanism check,"
+        " not a real-data improvement.",
     )
 
     for fragment in required_fragments:
@@ -112,8 +119,8 @@ def test_main_contribution_order_begins_with_real_negative_finding() -> None:
     source = _read(SLIDE_TEX)
     ordered_markers = (
         r"\item \textbf{Real-data negative finding.}",
-        r"\item \textbf{Chronological evidence-gated deploy/no-deploy rule.}",
-        r"\item \textbf{Software-only endpoint proxy with explicit limits.}",
+        r"\item \textbf{Evidence-gated deploy/refuse audit rule.}",
+        r"\item \textbf{Secondary: illustrative endpoint-budget proxy.}",
     )
     positions = [source.index(marker) for marker in ordered_markers]
 

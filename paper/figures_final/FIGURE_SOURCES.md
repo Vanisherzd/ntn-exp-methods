@@ -31,7 +31,7 @@
 
 ## Style / color semantics (all generated figures)
 
-SGP4/physics = dark blue `#1F4E79` · learned/PGRL = muted orange `#C46A1A` ·
+SGP4/physics = dark blue `#1F4E79` · learned candidate branch = muted orange `#C46A1A` ·
 gate/safe = dark green `#2E7D32` · unsafe/degradation = dark red `#B23A3A` ·
 limitation/scope = gray `#666666`. Sparse dotted grids; no verbose in-plot
 titles; log axes marked "(log)" in axis labels.

@@ -16,7 +16,8 @@ Outputs (talk, 16:9 friendly, large fonts, deck color scheme):
   paper/slide_figures/fig_control_ablation_talk.pdf
 
 Scope: software-only guard-coverage / hop-bin-tolerance proxies — NOT measured
-LR-FHSS packet outcomes. PGRL bars = gate-open synthetic regime.
+LR-FHSS packet outcomes. The `+synth.` bars are the controlled
+gate-open synthetic branch, not a BLACK KITE outcome.
 """
 from __future__ import annotations
 
@@ -34,7 +35,7 @@ SLIDE_DIR = os.path.join(REPO, "paper", "slide_figures")
 
 # Deck color scheme (slides_overview.tex)
 C_PHYS  = "#1F4E79"   # physics / SGP4 — dark blue
-C_ML    = "#C46A1A"   # ML / PGRL candidate — muted orange
+C_ML    = "#C46A1A"   # learned candidate branch — muted orange
 C_GATE  = "#2E7D32"   # gate / fallback — dark green
 C_BAD   = "#B23A3A"   # failure / unsafe — dark red
 C_GRAY  = "#666666"   # limitations / scope — gray
@@ -51,7 +52,7 @@ ABLATION_LABEL = {
     "timing_only": "timing\nonly",
     "frequency_only": "freq.\nonly",
     "timing_frequency": "timing\n+freq.",
-    "timing_freq_pgrl": "timing+freq.\n+PGRL*",
+    "timing_freq_pgrl": "timing+freq.\n+synth.",
 }
 ABLATION_COLOR = {
     "no_control": C_GRAY,
@@ -87,7 +88,7 @@ def timing_figure(path: str, talk: bool = False):
     ax2.loglog(sg, eps, "-", color=C_GATE, lw=2)
     marker_cfg = {
         "sgp4_only": (C_PHYS, "s", "SGP4 open-loop"),
-        "pgrl_uncert": (C_ML, "^", "PGRL (gate-open synth.)"),
+        "pgrl_uncert": (C_ML, "^", "learned (gate-open synth.)"),
     }
     for name, (c, m, lab) in marker_cfg.items():
         cfg = EXP7["named_configs"][name]
@@ -121,7 +122,7 @@ ABLATION_LABEL_TALK = {
     "timing_only": "timing",
     "frequency_only": "freq.",
     "timing_frequency": "t+f",
-    "timing_freq_pgrl": "t+f+PGRL*",
+    "timing_freq_pgrl": "t+f+synth.",
 }
 
 

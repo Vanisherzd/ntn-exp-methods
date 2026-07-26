@@ -86,14 +86,14 @@
 \begin{frame}[plain]
   \vspace{0.42cm}
   \begin{center}
-    {\LARGE\bfseries Evidence-Gated Residual Learning}\\[2pt]
-    {\LARGE\bfseries for LR-FHSS Direct-to-Satellite IoT Endpoint Control}\\[0.22cm]
-    {\large A real-data negative result on BLACK KITE TLE histories}\\[0.38cm]
+    {\LARGE\bfseries When Not to Learn:}\\[2pt]
+    {\LARGE\bfseries Evidence-Gated Residuals for LR-FHSS D2S IoT}\\[0.26cm]
+    {\Large\bfseries\color{Navy} A real-data negative result on BLACK KITE TLE histories}\\[0.34cm]
     {\normalsize Anonymous Author 1 \quad Anonymous Author 2 \quad Anonymous Author 3}\\[0.06cm]
     {\small Affiliation omitted for double-blind review}\\
     {\small Email omitted}\\[0.32cm]
     {\scriptsize Advisor review / workshop draft}\\[0.42cm]
-    {\Large\bfseries Residual ML must earn deployment; the real evidence retains SGP4.}
+    {\Large\bfseries Residual ML must earn deployment; real evidence retains SGP4.}
   \end{center}
 \end{frame}
 
@@ -236,9 +236,13 @@
       \node[align=center,text=MutedGray] at (0,-1.15) {\scriptsize chronological split; no future TLE leakage};
     \end{tikzpicture}
 
+    \vspace{0.30cm}
+    {\scriptsize\color{MutedGray} Training fits the candidates. $G$ is fixed on validation; the test segment only reports consequences. MAE is the gate loss; RMSE is a diagnostic, not part of the rule.}
+
     \column{0.42\textwidth}
     {\bfseries What $\gamma$ does}\\[3pt]
-    {\small Smaller $\gamma$ demands a clearer held-out gain. It reduces false-open risk at the cost of missed-open opportunities.}\\[0.25cm]
+    {\small Smaller $\gamma$ demands a clearer held-out gain. It reduces false-open risk at the cost of missed-open opportunities.}\\[0.10cm]
+    \smallnote{$\gamma = 0.95$ in all experiments.}\\[0.20cm]
     \plainbox{GateGreen}{SoftGreen}{0.90\linewidth}{\small
       Audit rule, not a new predictor. The deployable baseline remains SGP4 unless the learner earns the branch.}
   \end{columns}
@@ -266,6 +270,9 @@
       \draw[arr] (d) -- (e);
     \end{tikzpicture}
 
+    \vspace{0.34cm}
+    {\scriptsize\color{MutedGray} The real claim is conditional on accepted non-outlier pairs; $|r|>1500$ Hz pairs are excluded and left for a maneuver/outlier extension.}
+
     \column{0.46\textwidth}
     {\bfseries Chronological split}\\[0.08cm]
     \begin{tikzpicture}[
@@ -292,10 +299,11 @@
 \begin{frame}{Main Real Result}
   \vspace{-0.25cm}
   \begin{center}
-    \includegraphics[width=0.99\linewidth,height=0.72\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
+    \includegraphics[width=0.99\linewidth,height=0.66\textheight,keepaspectratio]{figures/fig_bk_residual_talk.pdf}
   \end{center}
-  \vspace{-0.40cm}
-  {\footnotesize\bfseries Learned correction is worse at every tested staleness. At 168 h: SGP4 26.9 Hz versus 45.3 Hz learned; gate closed, deploy SGP4 / never-learn.}
+  \vspace{-0.46cm}
+  {\footnotesize\bfseries All reported BLACK KITE point estimates close the gate; deploy SGP4 / never-learn.}\\[1pt]
+  {\scriptsize\color{MutedGray} Reported point estimates are worse in every row; BK1 degradation 11.6\%--68.1\%. Cross-satellite rows (up to 275.1\%) are a limited transfer check; per-split counts were not preserved. Point estimates under the leakage-free protocol; not pair-clustered inference.}
 \end{frame}
 
 % Main slide 8
@@ -311,6 +319,11 @@
     \column{0.31\textwidth}
     \policycol{GateGreen}{SoftGreen}{Evidence Gate}{Tests the learned branch on chronological validation.\par\vspace{0.20cm}On BLACK KITE, it chooses the same output as never-learn.}
   \end{columns}
+  \vspace{0.22cm}
+  \begin{center}
+    \plainbox{Navy}{white}{0.93\linewidth}{\small
+      At BK1 168 h, 26.9 $\to$ 45.3 Hz is still $\ll F_{\mathrm{tol}} = 500$ Hz: this is a refusal/audit result, not an energy-win claim.}
+  \end{center}
   \takeaway{Gate value here is auditability: it blocks unsupported always-on ML, not guaranteed improvement.}
 \end{frame}
 
@@ -375,8 +388,9 @@
     \end{tikzpicture}
 
     \vspace{0.28cm}
-    \plainbox{HarmRed}{SoftRed}{0.90\linewidth}{\normalsize
-      Software-only control proxy; not a packet result.}
+    \plainbox{HarmRed}{SoftRed}{0.90\linewidth}{\small
+      Software-only control proxy; not a packet result.\\[2pt]
+      Proxy scale is illustrative: it is not the BLACK KITE residual scale and not a link result.}
 
     \column{0.34\textwidth}
     {\bfseries Design implication}\\[3pt]
@@ -420,9 +434,9 @@
   \vspace{0.05cm}
   \begin{enumerate}
     \setlength{\itemsep}{0.34cm}
-    \item \textbf{Real-data negative finding.} On BLACK KITE TLE history, learned inter-TLE residual correction never beats SGP4 at tested staleness values.
-    \item \textbf{Chronological evidence-gated deploy/no-deploy rule.} On real BLACK KITE data, the gate closes and deployment equals SGP4 / never-learn.
-    \item \textbf{Software-only endpoint proxy with explicit limits.} Timing, frequency, and energy figures are coverage proxies, not packet or field results.
+    \item \textbf{Real-data negative finding.} On BLACK KITE TLE history, the reported inter-TLE point estimates are worse than SGP4 in every row.
+    \item \textbf{Evidence-gated deploy/refuse audit rule.} $G$ is decided on chronological validation; on real BLACK KITE data the gate closes and deployment equals SGP4 / never-learn.
+    \item \textbf{Secondary: illustrative endpoint-budget proxy.} Timing, frequency, and energy figures are software-only coverage proxies, not packet or field results.
   \end{enumerate}
   \vspace{0.35cm}
   \begin{center}
@@ -439,7 +453,7 @@
     \includegraphics[width=0.80\linewidth,height=0.50\textheight,keepaspectratio]{slide_figures/fig_control_ablation_talk.pdf}
   \end{center}
   \plainbox{Navy}{white}{0.88\linewidth}{\scriptsize
-    Detailed software-only proxy ablation. The orange PGRL* branch denotes the controlled gate-open synthetic case, not a BLACK KITE improvement.}
+    Detailed software-only proxy ablation. The orange right-most bar (\texttt{t+f+synth.}) is the synthetic gate-open branch, not a BLACK KITE improvement.}
 \end{frame}
 
 % Backup slide 2
@@ -472,6 +486,56 @@
     \end{itemize}}
   \end{columns}
   \takeaway{The sensitivity question is policy conservatism, not predictor novelty.}
+\end{frame}
+
+% Backup slide 3
+\begin{frame}{Backup: Software Extension Diagnostics}
+  \vspace{0.06cm}
+\begin{columns}[T,onlytextwidth]
+    \column{0.49\textwidth}
+    {\bfseries What the extension confirms}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[5pt]
+    {\small
+    \begin{itemize}
+      \item Lightweight bias and baseline variants still do not beat SGP4 on BLACK KITE.
+      \item The real MAE gate remains closed in every reported row.
+    \end{itemize}}
+    \vspace{0.16cm}
+    \plainbox{PhysicsBlue}{SoftBlue}{0.90\linewidth}{\scriptsize
+      Median bias, ridge, random forest, gradient boosting, and small MLP; summary-level audit of committed artifacts, not fresh retraining.}
+
+    \column{0.49\textwidth}
+    {\bfseries What it does not establish}\\[-1pt]
+    {\color{LineGray}\rule{\linewidth}{0.5pt}}\\[5pt]
+    {\small
+    \begin{itemize}
+      \item A tail-aware real gate needs per-sample prediction export; not claimed here.
+      \item The multi-satellite pipeline is prepared as future work; no new generalization claim.
+    \end{itemize}}
+    \vspace{0.16cm}
+    \plainbox{MutedGray}{SoftGray}{0.90\linewidth}{\scriptsize
+      All rows are software-only, model-derived inter-TLE results.}
+  \end{columns}
+  \takeaway{The extension reinforces the same safe decision; it does not widen the claim.}
+\end{frame}
+
+% Backup slide 4
+\begin{frame}{Backup: What This Work Does Not Claim}
+  \vspace{0.16cm}
+  {\normalsize
+  \begin{itemize}
+    \setlength{\itemsep}{0.20cm}
+    \item No measured Doppler truth; the reference is a later TLE propagated by SGP4.
+    \item No packet-level, decoding, error-rate, or receiver-acknowledgement outcome.
+    \item No over-the-air transmission and no on-orbit result.
+    \item The synthetic gate-open case is a mechanism check, not a real-data improvement.
+    \item Endpoint proxy curves are software-only; they are not a link-layer result.
+  \end{itemize}}
+  \vspace{0.22cm}
+  \begin{center}
+    \plainbox{HarmRed}{SoftRed}{0.90\linewidth}{\small
+      The claim is a deployment decision on model-derived inter-TLE residuals: on BLACK KITE, keep SGP4 / never-learn.}
+  \end{center}
 \end{frame}
 
 \end{document}
