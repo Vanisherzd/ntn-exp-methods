@@ -1,0 +1,341 @@
+{
+  "qualified": true,
+  "checks": {
+    "min_satellites": {
+      "required": 6,
+      "observed": 7,
+      "pass": true
+    },
+    "min_regimes": {
+      "required": 3,
+      "observed": 5,
+      "regimes": [
+        "alt300-500km_inc0-60deg",
+        "alt500-700km_inc60-90deg",
+        "alt500-700km_inc90-100deg",
+        "alt700-900km_inc60-90deg",
+        "alt900-1400km_inc60-90deg"
+      ],
+      "pass": true
+    },
+    "retention_rule_applied": {
+      "required_bands_per_satellite": 2,
+      "min_pairs_per_split": 3,
+      "satellites_ingested": 9,
+      "satellites_retained": 7,
+      "satellites_dropped": 2,
+      "dropped_keys": [
+        "NORAD100001",
+        "NORAD100002"
+      ],
+      "pass": true
+    }
+  },
+  "retained_keys": [
+    "NORAD25544",
+    "NORAD56726",
+    "NORAD56727",
+    "NORAD61594",
+    "NORAD66514",
+    "NORAD66704",
+    "NORAD66705"
+  ],
+  "per_satellite": [
+    {
+      "satellite_key": "NORAD25544",
+      "satellite_name": "ISS (ZARYA)",
+      "norad_id": 25544,
+      "regime": "alt300-500km_inc0-60deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD56726",
+      "satellite_name": "IRIDIUM 181",
+      "norad_id": 56726,
+      "regime": "alt700-900km_inc60-90deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD56727",
+      "satellite_name": "IRIDIUM 177",
+      "norad_id": 56727,
+      "regime": "alt500-700km_inc60-90deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD61594",
+      "satellite_name": "TBA - TO BE ASSIGNED",
+      "norad_id": 61594,
+      "regime": "alt900-1400km_inc60-90deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD66514",
+      "satellite_name": "SENTINEL-6B",
+      "norad_id": 66514,
+      "regime": "alt900-1400km_inc60-90deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD66704",
+      "satellite_name": "FLOCK 4H 1",
+      "norad_id": 66704,
+      "regime": "alt500-700km_inc90-100deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD66705",
+      "satellite_name": "FLOCK 4H 2",
+      "norad_id": 66705,
+      "regime": "alt500-700km_inc90-100deg",
+      "supported_bands": [
+        8,
+        24,
+        48,
+        72,
+        96,
+        168
+      ],
+      "n_supported_bands": 6,
+      "retained": true
+    },
+    {
+      "satellite_key": "NORAD100001",
+      "satellite_name": "STARLINK-38128",
+      "norad_id": 100001,
+      "regime": "alt300-500km_inc60-90deg",
+      "supported_bands": [],
+      "n_supported_bands": 0,
+      "retained": false
+    },
+    {
+      "satellite_key": "NORAD100002",
+      "satellite_name": "STARLINK-37711",
+      "norad_id": 100002,
+      "regime": "alt300-500km_inc60-90deg",
+      "supported_bands": [],
+      "n_supported_bands": 0,
+      "retained": false
+    }
+  ],
+  "thresholds_note": "Thresholds are fixed in qualify_dataset.py (MIN_SATELLITES=6, MIN_REGIMES=3, MIN_BANDS_PER_SATELLITE=2, MIN_PAIRS_PER_SPLIT=3). They were not relaxed to obtain this verdict.",
+  "reference_is_measured_truth": false,
+  "tle_dir": "/Users/laizhendong/Desktop/LEO-Hybrid-PGRL/dataraw/spacetrack",
+  "satellites_ingested": 9,
+  "black_kite_continuity": {
+    "continuity_qualified": false,
+    "objects": {
+      "66741": {
+        "norad_id": 66741,
+        "canonical_history_available": false,
+        "supported_bands": [],
+        "n_supported_bands": 0,
+        "sufficient_for_phase0": false
+      },
+      "68474": {
+        "norad_id": 68474,
+        "canonical_history_available": false,
+        "supported_bands": [],
+        "n_supported_bands": 0,
+        "sufficient_for_phase0": false
+      }
+    },
+    "missing_norad_ids": [
+      "66741",
+      "68474"
+    ],
+    "blocking_reason": "no canonical history for NORAD 66741, 68474",
+    "note": "Phase-0 requires BK1->BK1, BK2->BK2, BK1->BK2 and BK2->BK1 to be re-derived under the unified protocol before any Paper 1+ claim. No substitute satellite may be used."
+  },
+  "ingestion_audit": [
+    {
+      "satellite": "NORAD25544",
+      "satellite_name": "ISS (ZARYA)",
+      "norad_id": 25544,
+      "canonical_source": "json",
+      "raw_json_rows": 52538,
+      "duplicate_json_rows": 5679,
+      "canonical_unique_rows": 46859,
+      "raw_tle_rows": 52538,
+      "tle_used_for_science": false,
+      "records_before": 92659,
+      "records_after": 46859,
+      "median_gap_before_h": 0.176,
+      "median_gap_after_h": 4.518
+    },
+    {
+      "satellite": "NORAD56726",
+      "satellite_name": "IRIDIUM 181",
+      "norad_id": 56726,
+      "canonical_source": "json",
+      "raw_json_rows": 3017,
+      "duplicate_json_rows": 339,
+      "canonical_unique_rows": 2678,
+      "raw_tle_rows": 3017,
+      "tle_used_for_science": false,
+      "records_before": 5347,
+      "records_after": 2678,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 9.982
+    },
+    {
+      "satellite": "NORAD56727",
+      "satellite_name": "IRIDIUM 177",
+      "norad_id": 56727,
+      "canonical_source": "json",
+      "raw_json_rows": 3042,
+      "duplicate_json_rows": 419,
+      "canonical_unique_rows": 2623,
+      "raw_tle_rows": 3042,
+      "tle_used_for_science": false,
+      "records_before": 5243,
+      "records_after": 2623,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 9.735
+    },
+    {
+      "satellite": "NORAD61594",
+      "satellite_name": "TBA - TO BE ASSIGNED",
+      "norad_id": 61594,
+      "canonical_source": "json",
+      "raw_json_rows": 1929,
+      "duplicate_json_rows": 234,
+      "canonical_unique_rows": 1695,
+      "raw_tle_rows": 1929,
+      "tle_used_for_science": false,
+      "records_before": 3393,
+      "records_after": 1695,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 8.0
+    },
+    {
+      "satellite": "NORAD66514",
+      "satellite_name": "SENTINEL-6B",
+      "norad_id": 66514,
+      "canonical_source": "json",
+      "raw_json_rows": 838,
+      "duplicate_json_rows": 111,
+      "canonical_unique_rows": 727,
+      "raw_tle_rows": 838,
+      "tle_used_for_science": false,
+      "records_before": 1480,
+      "records_after": 727,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 5.621
+    },
+    {
+      "satellite": "NORAD66704",
+      "satellite_name": "FLOCK 4H 1",
+      "norad_id": 66704,
+      "canonical_source": "json",
+      "raw_json_rows": 749,
+      "duplicate_json_rows": 135,
+      "canonical_unique_rows": 614,
+      "raw_tle_rows": 749,
+      "tle_used_for_science": false,
+      "records_before": 1259,
+      "records_after": 614,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 7.895
+    },
+    {
+      "satellite": "NORAD66705",
+      "satellite_name": "FLOCK 4H 2",
+      "norad_id": 66705,
+      "canonical_source": "json",
+      "raw_json_rows": 755,
+      "duplicate_json_rows": 120,
+      "canonical_unique_rows": 635,
+      "raw_tle_rows": 755,
+      "tle_used_for_science": false,
+      "records_before": 1278,
+      "records_after": 635,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 7.893
+    },
+    {
+      "satellite": "NORAD100001",
+      "satellite_name": "STARLINK-38128",
+      "norad_id": 100001,
+      "canonical_source": "json",
+      "raw_json_rows": 11,
+      "duplicate_json_rows": 0,
+      "canonical_unique_rows": 11,
+      "raw_tle_rows": 11,
+      "tle_used_for_science": false,
+      "records_before": 20,
+      "records_after": 11,
+      "median_gap_before_h": 6.083,
+      "median_gap_after_h": 9.886
+    },
+    {
+      "satellite": "NORAD100002",
+      "satellite_name": "STARLINK-37711",
+      "norad_id": 100002,
+      "canonical_source": "json",
+      "raw_json_rows": 9,
+      "duplicate_json_rows": 0,
+      "canonical_unique_rows": 9,
+      "raw_tle_rows": 9,
+      "tle_used_for_science": false,
+      "records_before": 18,
+      "records_after": 9,
+      "median_gap_before_h": 0.0,
+      "median_gap_after_h": 12.927
+    }
+  ]
+}

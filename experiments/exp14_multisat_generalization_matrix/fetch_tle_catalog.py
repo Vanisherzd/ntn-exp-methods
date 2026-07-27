@@ -39,6 +39,14 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import fetch_spacetrack_object_family as st  # noqa: E402
+from spacetrack_client import (  # noqa: E402
+    RequestScheduler,
+    ResponseState,
+    cached_response,
+    classify_gp_history,
+    classify_satcat,
+    classify_tle,
+)
 
 DEFAULT_CATALOG = HERE / "satellite_catalog.yaml"
 DEFAULT_OUT = ROOT / "dataraw" / "spacetrack"
@@ -88,8 +96,12 @@ def _open_session() -> Any:
     return opener
 
 
-def resolve_targets(opener, entry: dict[str, Any]) -> list[dict[str, str]]:
-    """Resolve one plan entry to concrete satcat records."""
+def resolve_targets(opener, entry: dict[str, Any], sched) -> tuple[list[dict], str]:
+    """Resolve one plan entry to concrete satcat records.
+
+    Returns (hits, state). An API error is NEVER reported as "no results".
+    """
+    expected = int(entry["norad_id"]) if entry["norad_id"] else None
     if entry["norad_id"]:
         query = f"{BASE}/satcat/NORAD_CAT_ID/{entry['norad_id']}/format/json"
     elif entry["object_name"]:
@@ -101,35 +113,80 @@ def resolve_targets(opener, entry: dict[str, Any]) -> list[dict[str, str]]:
             f"{BASE}/satcat/OBJECT_NAME/{pattern}/CURRENT/Y/DECAY/null-val"
             "/orderby/LAUNCH%20desc/format/json"
         )
-    parsed = json.loads(st.open_url(opener, query).decode())
-    rows = parsed if isinstance(parsed, list) else []
-    return [
+    label = entry["object_name"] or entry["object_name_pattern"]
+    response = sched.fetch(
+        lambda: st.open_url(opener, query),
+        lambda body: classify_satcat(body, expected),
+        f"satcat resolve {label}",
+    )
+    if not response.ok:
+        return [], response.state.value
+    hits = [
         {
             "norad": str(r.get("NORAD_CAT_ID", "")).strip(),
             "object_name": str(r.get("OBJECT_NAME", "")).strip(),
+            "satcat_row": r,
         }
-        for r in rows[: entry["sample_count"]]
+        for r in response.rows[: entry["sample_count"]]
         if str(r.get("NORAD_CAT_ID", "")).strip()
     ]
+    return hits, (
+        ResponseState.VALID.value if hits else ResponseState.EMPTY.value
+    )
 
 
-def fetch_history(opener, norad: str, object_name: str, out_root: Path) -> Path:
+def fetch_history(opener, norad: str, object_name: str, out_root: Path, sched):
+    """Download one object. Only VALID bodies enter the scientific manifest."""
     slug = f"{st.safe_slug(object_name)}_{norad}"
     outdir = out_root / slug
     outdir.mkdir(parents=True, exist_ok=True)
-    queries = {
-        f"gp_history_{norad}.json": (
-            f"{BASE}/gp_history/NORAD_CAT_ID/{norad}"
-            "/orderby/EPOCH%20asc/format/json"
+    quarantine = outdir / "_quarantine"
+
+    jobs = [
+        (
+            f"gp_history_{norad}.json",
+            f"{BASE}/gp_history/NORAD_CAT_ID/{norad}/orderby/EPOCH%20asc/format/json",
+            lambda b: classify_gp_history(b, int(norad)),
         ),
-        f"gp_history_{norad}.tle": (
-            f"{BASE}/gp_history/NORAD_CAT_ID/{norad}"
-            "/orderby/EPOCH%20asc/format/tle"
+        (
+            f"gp_history_{norad}.tle",
+            f"{BASE}/gp_history/NORAD_CAT_ID/{norad}/orderby/EPOCH%20asc/format/tle",
+            classify_tle,
         ),
-        f"satcat_{norad}.json": f"{BASE}/satcat/NORAD_CAT_ID/{norad}/format/json",
-    }
-    for fname, url in queries.items():
-        st.fetch_to(opener, url, outdir / fname)
+        (
+            f"satcat_{norad}.json",
+            f"{BASE}/satcat/NORAD_CAT_ID/{norad}/format/json",
+            lambda b: classify_satcat(b, int(norad)),
+        ),
+    ]
+
+    states: dict[str, str] = {}
+    for fname, url, classify in jobs:
+        target = outdir / fname
+        cached = cached_response(target, classify)
+        if cached is not None:
+            states[fname] = f"{ResponseState.VALID.value} (cached)"
+            continue
+        response = sched.fetch(
+            lambda u=url: st.open_url(opener, u), classify, f"{slug}/{fname}"
+        )
+        states[fname] = response.state.value
+        if response.archivable:
+            target.write_bytes(response.body)
+        else:
+            # Diagnostic copy only -- marked invalid, excluded from the manifest.
+            quarantine.mkdir(parents=True, exist_ok=True)
+            (quarantine / f"{fname}.{response.state.value}.invalid").write_bytes(
+                response.body
+            )
+            if target.exists():
+                target.unlink()
+
+    valid_files = [
+        p
+        for p in sorted(outdir.iterdir())
+        if p.is_file() and p.name != "fetch_manifest.json"
+    ]
     manifest = {
         "object_name": object_name,
         "norad_cat_id": norad,
@@ -140,26 +197,29 @@ def fetch_history(opener, norad: str, object_name: str, out_root: Path) -> Path:
         "credentials_not_stored": True,
         "reference_is_measured_truth": False,
         "claim_scope": "orbital input only; not hardware or RF evidence",
+        "response_states": states,
+        "all_responses_valid": all(
+            s.startswith(ResponseState.VALID.value) for s in states.values()
+        ),
+        "canonical_science_input": f"gp_history_{norad}.json",
+        "tle_is_archival_only": True,
         "files": [
-            {
-                "path": str(p),
-                "bytes": p.stat().st_size,
-                "sha256": st.sha256_file(p),
-            }
-            for p in sorted(outdir.iterdir())
-            if p.is_file() and p.name != "fetch_manifest.json"
+            {"path": str(p), "bytes": p.stat().st_size, "sha256": st.sha256_file(p)}
+            for p in valid_files
         ],
     }
     (outdir / "fetch_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
-    return outdir
+    return outdir, manifest["all_responses_valid"]
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--catalog", type=Path, default=DEFAULT_CATALOG)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--requests-per-minute", type=float, default=18.0)
+    parser.add_argument("--max-retries", type=int, default=4)
     parser.add_argument(
         "--plan",
         action="store_true",
@@ -197,17 +257,53 @@ def main(argv=None) -> int:
         return 2
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    sched = RequestScheduler(
+        requests_per_minute=args.requests_per_minute,
+        max_retries=args.max_retries,
+    )
     fetched = 0
+    unresolved: list[str] = []
+    degraded: list[str] = []
     for entry in plan:
-        try:
-            entry["resolved"] = resolve_targets(opener, entry)
-        except Exception as exc:  # network / query failures are not fatal
-            print(f"  resolve failed for {entry['regime']}: {exc}", file=sys.stderr)
+        label = entry["object_name"] or entry["object_name_pattern"]
+        hits, state = resolve_targets(opener, entry, sched)
+        entry["resolved"] = hits
+        if not hits:
+            print(
+                f"  UNRESOLVED [{entry['regime']}] {label} "
+                f"norad={entry['norad_id'] or 'by-name'}: state={state}",
+                file=sys.stderr,
+            )
+            unresolved.append(f"{label} -> {state}")
             continue
-        for hit in entry["resolved"]:
-            fetch_history(opener, hit["norad"], hit["object_name"], args.out_dir)
+        if len(hits) < entry["sample_count"]:
+            print(
+                f"  PARTIAL    [{entry['regime']}] {label}: "
+                f"{len(hits)}/{entry['sample_count']} objects",
+                file=sys.stderr,
+            )
+        for hit in hits:
+            _, all_valid = fetch_history(
+                opener, hit["norad"], hit["object_name"], args.out_dir, sched
+            )
             fetched += 1
-    print(f"fetched {fetched} object histories into {args.out_dir}")
+            if not all_valid:
+                degraded.append(f"{hit['object_name']} ({hit['norad']})")
+
+    requested = sum(e["sample_count"] for e in plan)
+    print(
+        f"fetched {fetched}/{requested} object histories into {args.out_dir} "
+        f"(requests={sched.stats['requests']} retries={sched.stats['retries']} "
+        f"throttle_waits={sched.stats['waits']})"
+    )
+    if unresolved:
+        print("UNRESOLVED SLOTS (nothing downloaded):", file=sys.stderr)
+        for item in unresolved:
+            print(f"  - {item}", file=sys.stderr)
+    if degraded:
+        print("OBJECTS WITH QUARANTINED RESPONSES:", file=sys.stderr)
+        for item in degraded:
+            print(f"  - {item}", file=sys.stderr)
     if fetched < int(catalog.get("minimum_satellites", 6)):
         print(
             f"WARNING: {fetched} objects is below the catalog minimum "

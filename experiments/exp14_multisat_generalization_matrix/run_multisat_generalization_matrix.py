@@ -127,6 +127,7 @@ class SatelliteData:
     norad: int
     source_path: str
     records: list[dict[str, Any]] = field(repr=False, default_factory=list)
+    ingestion_audit: dict[str, Any] = field(repr=False, default_factory=dict)
 
     @property
     def n_records(self) -> int:
@@ -298,46 +299,207 @@ def _records_from_text(path: Path) -> list[dict[str, Any]]:
     return out
 
 
-def discover_satellites(tle_dir: Path) -> list[SatelliteData]:
-    """Collect every satellite with a usable TLE history under tle_dir."""
-    if not tle_dir.is_dir():
-        return []
-    by_norad: dict[int, SatelliteData] = {}
+def authoritative_name(archive_path: Path, norad: int) -> str | None:
+    """OBJECT_NAME from the sibling satcat response, if one was preserved.
+
+    gp_history records carry the OBJECT_NAME in force at each epoch, so a newly
+    catalogued object reads "TBA - TO BE ASSIGNED" for its earliest records.
+    The satcat response is the authoritative identity and is preferred.
+    """
+    satcat = archive_path.parent / f"satcat_{norad}.json"
+    if not satcat.is_file():
+        return None
+    try:
+        payload = json.loads(satcat.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    rows = payload if isinstance(payload, list) else [payload]
+    for row in rows:
+        if isinstance(row, dict) and str(row.get("OBJECT_NAME", "")).strip():
+            return str(row["OBJECT_NAME"]).strip()
+    return None
+
+
+EPOCH_QUANTUM_US = 1000  # 1 ms -- deterministic epoch normalization quantum
+
+
+def normalize_epoch(when: dt.datetime) -> str:
+    """Deterministic canonical epoch key.
+
+    GP JSON carries EPOCH as a text field; a TLE line carries it as a packed
+    float that round-trips through a Julian date. Both are quantized to 1 ms so
+    the same physical element set produces the same key regardless of source.
+    """
+    aware = when.astimezone(dt.timezone.utc)
+    micro = (aware.microsecond // EPOCH_QUANTUM_US) * EPOCH_QUANTUM_US
+    return aware.replace(microsecond=micro).isoformat(timespec="milliseconds")
+
+
+def element_id(norad: int, when: dt.datetime) -> str:
+    """Stable identity of one GP element solution: NORAD + normalized epoch."""
+    return f"{norad}|{normalize_epoch(when)}"
+
+
+def _canonical_sources(tle_dir: Path) -> dict[int, dict[str, Any]]:
+    """Group archive files per NORAD and choose ONE canonical science source.
+
+    GP_HISTORY JSON is canonical whenever present. The TLE archive of the same
+    object is an immutable provenance copy and is never ingested as an
+    independent observation: it holds the same element history, so ingesting
+    both doubles the record count and collapses the apparent update cadence
+    toward zero.
+    """
+    groups: dict[int, dict[str, Any]] = {}
     for path in sorted(tle_dir.rglob("*")):
         if not path.is_file():
             continue
-        if path.suffix.lower() == ".json":
-            records = _records_from_json(path)
-        elif path.suffix.lower() in {".txt", ".tle", ".3le"}:
-            records = _records_from_text(path)
+        suffix = path.suffix.lower()
+        if suffix == ".json":
+            if path.name.startswith(("satcat_", "fetch_manifest")):
+                continue
+            records, kind = _records_from_json(path), "json"
+        elif suffix in {".txt", ".tle", ".3le"}:
+            records, kind = _records_from_text(path), "tle"
         else:
             continue
-        for rec in records:
-            norad = rec["norad"]
-            sat = by_norad.get(norad)
-            if sat is None:
-                sat = SatelliteData(
-                    key=f"NORAD{norad}",
-                    name=rec["name"],
-                    norad=norad,
-                    source_path=str(path.relative_to(tle_dir.parent)),
-                )
-                by_norad[norad] = sat
-            sat.records.append(rec)
-    usable = []
-    for sat in by_norad.values():
-        sat.records.sort(key=lambda r: r["epoch"])
-        deduped, seen = [], set()
-        for rec in sat.records:
-            stamp = rec["epoch"].isoformat()
+        if not records:
+            continue
+        for norad in {r["norad"] for r in records}:
+            own = [r for r in records if r["norad"] == norad]
+            group = groups.setdefault(norad, {"json": [], "tle": []})
+            group[kind].append({"path": path, "records": own})
+    return groups
+
+
+def discover_satellites(tle_dir: Path) -> list[SatelliteData]:
+    """Build one canonical element sequence per satellite.
+
+    Canonical input is GP_HISTORY JSON. Duplicate element solutions are removed
+    by `element_id`; the TLE archive is counted for audit but excluded from the
+    scientific sequence whenever a JSON history exists.
+    """
+    if not tle_dir.is_dir():
+        return []
+    usable: list[SatelliteData] = []
+    for norad, group in _canonical_sources(tle_dir).items():
+        chosen_kind = "json" if group["json"] else "tle"
+        chosen = max(group[chosen_kind], key=lambda c: len(c["records"]))
+        raw = sorted(chosen["records"], key=lambda r: r["epoch"])
+
+        canonical, seen = [], set()
+        duplicates = 0
+        for rec in raw:
+            eid = element_id(norad, rec["epoch"])
+            if eid in seen:
+                duplicates += 1
+                continue
+            seen.add(eid)
+            rec["element_id"] = eid
+            rec["source_path"] = str(chosen["path"])
+            canonical.append(rec)
+
+        sat = SatelliteData(
+            key=f"NORAD{norad}",
+            name=canonical[0]["name"] if canonical else str(norad),
+            norad=norad,
+            source_path=str(chosen["path"].relative_to(tle_dir.parent)),
+            records=canonical,
+        )
+        official = authoritative_name(chosen["path"], norad)
+        if official:
+            sat.name = official
+        sat.ingestion_audit = {
+            "canonical_source": chosen_kind,
+            "canonical_source_path": sat.source_path,
+            "raw_json_rows": sum(len(c["records"]) for c in group["json"]),
+            "raw_tle_rows": sum(len(c["records"]) for c in group["tle"]),
+            "raw_rows_from_canonical_source": len(raw),
+            "duplicate_rows_in_canonical_source": duplicates,
+            "canonical_unique_rows": len(canonical),
+            "tle_used_for_science": chosen_kind == "tle",
+        }
+        if sat.n_records >= 2:
+            usable.append(sat)
+    return sorted(usable, key=lambda s: s.norad)
+
+
+def legacy_ingestion_stats(tle_dir: Path) -> dict[int, dict[str, Any]]:
+    """Reproduce the pre-repair (JSON+TLE both ingested) counts for audit only.
+
+    This exists solely so the integrity report can state before/after numbers.
+    It is never used as a scientific input.
+    """
+    out: dict[int, dict[str, Any]] = {}
+    for norad, group in _canonical_sources(tle_dir).items():
+        merged: list[dict[str, Any]] = []
+        for kind in ("json", "tle"):
+            for chunk in group[kind]:
+                merged.extend(chunk["records"])
+        merged.sort(key=lambda r: r["epoch"])
+        seen, deduped = set(), []
+        for rec in merged:
+            stamp = rec["epoch"].isoformat()   # the old, precision-sensitive key
             if stamp in seen:
                 continue
             seen.add(stamp)
             deduped.append(rec)
-        sat.records = deduped
-        if sat.n_records >= 2:
-            usable.append(sat)
-    return sorted(usable, key=lambda s: s.norad)
+        gaps = sorted(
+            (b["epoch"] - a["epoch"]).total_seconds() / 3600.0
+            for a, b in zip(deduped[:-1], deduped[1:])
+        )
+        out[norad] = {
+            "legacy_records": len(deduped),
+            "legacy_median_gap_h": round(statistics.median(gaps), 3) if gaps else None,
+        }
+    return out
+
+
+def ingestion_audit_rows(
+    sats: list[SatelliteData], tle_dir: Path
+) -> list[dict[str, Any]]:
+    """Task-1 audit table: what canonicalization removed, per satellite."""
+    legacy = legacy_ingestion_stats(tle_dir)
+    rows = []
+    for sat in sats:
+        audit = sat.ingestion_audit
+        before = legacy.get(sat.norad, {})
+        rows.append(
+            {
+                "satellite": sat.key,
+                "satellite_name": sat.name,
+                "norad_id": sat.norad,
+                "canonical_source": audit.get("canonical_source"),
+                "raw_json_rows": audit.get("raw_json_rows"),
+                "duplicate_json_rows": audit.get(
+                    "duplicate_rows_in_canonical_source"
+                ),
+                "canonical_unique_rows": audit.get("canonical_unique_rows"),
+                "raw_tle_rows": audit.get("raw_tle_rows"),
+                "tle_used_for_science": audit.get("tle_used_for_science"),
+                "records_before": before.get("legacy_records"),
+                "records_after": sat.n_records,
+                "median_gap_before_h": before.get("legacy_median_gap_h"),
+                "median_gap_after_h": sat.gap_stats_h()["median_gap_h"],
+            }
+        )
+    return rows
+
+
+INGESTION_AUDIT_HEADER = [
+    "satellite",
+    "satellite_name",
+    "norad_id",
+    "canonical_source",
+    "raw_json_rows",
+    "duplicate_json_rows",
+    "canonical_unique_rows",
+    "raw_tle_rows",
+    "tle_used_for_science",
+    "records_before",
+    "records_after",
+    "median_gap_before_h",
+    "median_gap_after_h",
+]
 
 
 def build_data_manifest(sats: list[SatelliteData], args) -> list[dict[str, Any]]:
