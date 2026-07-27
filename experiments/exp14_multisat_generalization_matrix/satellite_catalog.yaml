@@ -1,0 +1,113 @@
+# Paper 1+ generalization dataset design (Phase 1).
+#
+# Regime slots, NOT a verified NORAD list. `norad_id: null` means the ID is
+# resolved at fetch time from the Space-Track satcat by OBJECT_NAME; nothing
+# here is asserted as a confirmed catalogue number until `fetch_tle_catalog.py`
+# writes the resolved ID into data_manifest.json. Do not cite an ID from this
+# file before resolution.
+#
+# Selection intent: >= 6 satellites, preferably 8-12, spanning >= 3 distinct
+# orbital/object regimes so that "generalization" means across regimes, not
+# across two near-identical objects in the same family.
+
+version: 1
+minimum_satellites: 6
+preferred_satellites: 12
+minimum_distinct_regimes: 3
+
+# Diversity axes the final set must actually span, checked against
+# data_manifest.json after ingestion.
+diversity_requirements:
+  altitude_km:
+    min_distinct_bands: 3
+    bands: [[300, 500], [500, 700], [700, 900], [900, 1400]]
+  inclination_deg:
+    min_distinct_bands: 3
+    bands: [[0, 60], [60, 90], [90, 100], [100, 145]]
+  eccentricity:
+    note: "at least one object with e > 0.01 if obtainable"
+  bstar:
+    note: "at least one high-drag and one low-drag object (>= 1 decade apart)"
+  update_cadence_h:
+    min_distinct_bands: 2
+    bands: [[0, 8], [8, 24], [24, 168]]
+
+regimes:
+  - id: very_low_high_drag
+    description: >
+      Low altitude, strong drag, frequent orbit-determination updates. Expect
+      the largest inter-TLE residuals and the most manoeuvre-like epochs.
+    targets:
+      - object_name: "ISS (ZARYA)"
+        norad_id: 25544        # widely published; still re-resolved at fetch
+        family: ISS
+        expected_regime: "~400 km, 51.6 deg, manoeuvring, high update cadence"
+      - object_name_pattern: "STARLINK-*"
+        norad_id: null
+        family: Starlink
+        expected_regime: "~540 km, 53 deg, frequent station-keeping"
+        sample_count: 2
+
+  - id: sun_synchronous_mid
+    description: >
+      Sun-synchronous mid-altitude, near-polar, typically stable drag and
+      regular update cadence. The workhorse regime for D2S IoT payloads.
+    targets:
+      - object_name_pattern: "SENTINEL-*"
+        norad_id: null
+        family: Sentinel
+        expected_regime: "~700 km, ~98 deg SSO"
+        sample_count: 1
+      - object_name_pattern: "FLOCK *"
+        norad_id: null
+        family: Planet Flock
+        expected_regime: "~450-500 km SSO, cubesat, no propulsion"
+        sample_count: 2
+
+  - id: high_leo_low_drag
+    description: >
+      Upper LEO with weak drag and slower element evolution. Expect the
+      smallest inter-TLE residuals and the cleanest chronological structure.
+    targets:
+      - object_name_pattern: "IRIDIUM *"
+        norad_id: null
+        family: Iridium NEXT
+        expected_regime: "~780 km, 86.4 deg"
+        sample_count: 2
+      - object_name_pattern: "ONEWEB-*"
+        norad_id: null
+        family: OneWeb
+        expected_regime: "~1200 km, 87.9 deg"
+        sample_count: 1
+
+  - id: incumbent_reference
+    description: >
+      The two objects behind the frozen Paper 1. Retained so the unified
+      protocol can re-derive them from scratch; their OLD numbers are NOT
+      reused, because the old protocols differ (see
+      UNIFIED_GENERALIZATION_PROTOCOL.md).
+    targets:
+      - object_name: "BLACK KITE-1"
+        norad_id: 66741
+        family: BLACK KITE
+        expected_regime: "LEO, ~6.3 h update cadence"
+      - object_name: "BLACK KITE-2"
+        norad_id: 68474
+        family: BLACK KITE
+        expected_regime: "LEO, ~6.4 h update cadence"
+
+# History window requested per object.
+history:
+  min_epoch_span_days: 120
+  preferred_epoch_span_days: 365
+  min_tle_records: 150
+  note: >
+    A 168 h staleness band needs pairs whose epoch gap reaches 192 h, so short
+    histories silently drop the long-staleness rows. Check
+    usable_staleness_bands_h in data_manifest.json before analysis.
+
+claim_scope: >
+  Orbital input only. reference_is_measured_truth = false. These archives
+  support software-only model-derived Doppler residual work and nothing else:
+  no packet, error-rate, receiver-acknowledgement, over-the-air, or on-orbit
+  claim may be built on them.
