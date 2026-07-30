@@ -1,0 +1,1054 @@
+{
+ "n_rows": 57,
+ "environments": [
+  "E1",
+  "E2",
+  "E3"
+ ],
+ "n_development_faults": 14,
+ "n_held_out": 4,
+ "clean_false_positive_rule_firings": 3,
+ "clean_verdicts_identical_across_envs": true,
+ "development_detection": "42/42",
+ "high_severity_detection": "36/36",
+ "held_out_detection": "12/12",
+ "false_negatives": [],
+ "total_runtime_s": 0.309,
+ "mean_runtime_per_condition_s": 0.0054,
+ "per_fault": {
+  "D1": {
+   "expected": "L1.1",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L1.1",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D2": {
+   "expected": "L1.2",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L1.2",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D3": {
+   "expected": "L1.4",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L1.4",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D4": {
+   "expected": "L2.1",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L2.1",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D5": {
+   "expected": "L1.3",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L1.3",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D6": {
+   "expected": "L3.1",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L3.2",
+    "L4.4"
+   ]
+  },
+  "D7": {
+   "expected": "L4.2",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L4.2",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D8": {
+   "expected": "L3.3",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L3.3",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D9": {
+   "expected": "L3.1",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L3.2",
+    "L4.4"
+   ]
+  },
+  "D10": {
+   "expected": "L3.1",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L3.2",
+    "L4.4"
+   ]
+  },
+  "D11": {
+   "expected": "L4.3",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L4.3",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D12": {
+   "expected": "L1.4",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L1.4",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D13": {
+   "expected": "L4.1",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L4.1",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "D14": {
+   "expected": "L4.4",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L4.4"
+   ],
+   "extra_union": []
+  },
+  "HO1": {
+   "expected": "L1.5",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L1.5",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "HO2": {
+   "expected": "L4.6",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L4.4",
+    "L4.6"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "HO3": {
+   "expected": "L4.7",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L4.4",
+    "L4.7"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  },
+  "HO4": {
+   "expected": "L2.4",
+   "detected_in": 3,
+   "of": 3,
+   "fired_union": [
+    "L2.4",
+    "L4.4"
+   ],
+   "extra_union": [
+    "L4.4"
+   ]
+  }
+ },
+ "rows": [
+  {
+   "env": "E1",
+   "fault": "CLEAN",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": null,
+   "detected": false,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.04
+  },
+  {
+   "env": "E1",
+   "fault": "D1",
+   "fired": [
+    "L1.1",
+    "L4.4"
+   ],
+   "expected": "L1.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0053
+  },
+  {
+   "env": "E1",
+   "fault": "D2",
+   "fired": [
+    "L1.2",
+    "L4.4"
+   ],
+   "expected": "L1.2",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0061
+  },
+  {
+   "env": "E1",
+   "fault": "D3",
+   "fired": [
+    "L1.4",
+    "L4.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0037
+  },
+  {
+   "env": "E1",
+   "fault": "D4",
+   "fired": [
+    "L2.1",
+    "L4.4"
+   ],
+   "expected": "L2.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0042
+  },
+  {
+   "env": "E1",
+   "fault": "D5",
+   "fired": [
+    "L1.3",
+    "L4.4"
+   ],
+   "expected": "L1.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0061
+  },
+  {
+   "env": "E1",
+   "fault": "D6",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0051
+  },
+  {
+   "env": "E1",
+   "fault": "D7",
+   "fired": [
+    "L4.2",
+    "L4.4"
+   ],
+   "expected": "L4.2",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0035
+  },
+  {
+   "env": "E1",
+   "fault": "D8",
+   "fired": [
+    "L3.3",
+    "L4.4"
+   ],
+   "expected": "L3.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E1",
+   "fault": "D9",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E1",
+   "fault": "D10",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0034
+  },
+  {
+   "env": "E1",
+   "fault": "D11",
+   "fired": [
+    "L4.3",
+    "L4.4"
+   ],
+   "expected": "L4.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0024
+  },
+  {
+   "env": "E1",
+   "fault": "D12",
+   "fired": [
+    "L1.4",
+    "L4.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E1",
+   "fault": "D13",
+   "fired": [
+    "L4.1",
+    "L4.4"
+   ],
+   "expected": "L4.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0071
+  },
+  {
+   "env": "E1",
+   "fault": "D14",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": "L4.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0054
+  },
+  {
+   "env": "E1",
+   "fault": "HO1",
+   "fired": [
+    "L1.5",
+    "L4.4"
+   ],
+   "expected": "L1.5",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.004
+  },
+  {
+   "env": "E1",
+   "fault": "HO2",
+   "fired": [
+    "L4.4",
+    "L4.6"
+   ],
+   "expected": "L4.6",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0028
+  },
+  {
+   "env": "E1",
+   "fault": "HO3",
+   "fired": [
+    "L4.4",
+    "L4.7"
+   ],
+   "expected": "L4.7",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0041
+  },
+  {
+   "env": "E1",
+   "fault": "HO4",
+   "fired": [
+    "L2.4",
+    "L4.4"
+   ],
+   "expected": "L2.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0052
+  },
+  {
+   "env": "E2",
+   "fault": "CLEAN",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": null,
+   "detected": false,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0027
+  },
+  {
+   "env": "E2",
+   "fault": "D1",
+   "fired": [
+    "L1.1",
+    "L4.4"
+   ],
+   "expected": "L1.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E2",
+   "fault": "D2",
+   "fired": [
+    "L1.2",
+    "L4.4"
+   ],
+   "expected": "L1.2",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E2",
+   "fault": "D3",
+   "fired": [
+    "L1.4",
+    "L4.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0045
+  },
+  {
+   "env": "E2",
+   "fault": "D4",
+   "fired": [
+    "L2.1",
+    "L4.4"
+   ],
+   "expected": "L2.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.005
+  },
+  {
+   "env": "E2",
+   "fault": "D5",
+   "fired": [
+    "L1.3",
+    "L4.4"
+   ],
+   "expected": "L1.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0054
+  },
+  {
+   "env": "E2",
+   "fault": "D6",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0038
+  },
+  {
+   "env": "E2",
+   "fault": "D7",
+   "fired": [
+    "L4.2",
+    "L4.4"
+   ],
+   "expected": "L4.2",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.005
+  },
+  {
+   "env": "E2",
+   "fault": "D8",
+   "fired": [
+    "L3.3",
+    "L4.4"
+   ],
+   "expected": "L3.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0057
+  },
+  {
+   "env": "E2",
+   "fault": "D9",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0049
+  },
+  {
+   "env": "E2",
+   "fault": "D10",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0049
+  },
+  {
+   "env": "E2",
+   "fault": "D11",
+   "fired": [
+    "L4.3",
+    "L4.4"
+   ],
+   "expected": "L4.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0058
+  },
+  {
+   "env": "E2",
+   "fault": "D12",
+   "fired": [
+    "L1.4",
+    "L4.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0053
+  },
+  {
+   "env": "E2",
+   "fault": "D13",
+   "fired": [
+    "L4.1",
+    "L4.4"
+   ],
+   "expected": "L4.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.006
+  },
+  {
+   "env": "E2",
+   "fault": "D14",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": "L4.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0057
+  },
+  {
+   "env": "E2",
+   "fault": "HO1",
+   "fired": [
+    "L1.5",
+    "L4.4"
+   ],
+   "expected": "L1.5",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0049
+  },
+  {
+   "env": "E2",
+   "fault": "HO2",
+   "fired": [
+    "L4.4",
+    "L4.6"
+   ],
+   "expected": "L4.6",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0111
+  },
+  {
+   "env": "E2",
+   "fault": "HO3",
+   "fired": [
+    "L4.4",
+    "L4.7"
+   ],
+   "expected": "L4.7",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0045
+  },
+  {
+   "env": "E2",
+   "fault": "HO4",
+   "fired": [
+    "L2.4",
+    "L4.4"
+   ],
+   "expected": "L2.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.005
+  },
+  {
+   "env": "E3",
+   "fault": "CLEAN",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": null,
+   "detected": false,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0061
+  },
+  {
+   "env": "E3",
+   "fault": "D1",
+   "fired": [
+    "L1.1",
+    "L4.4"
+   ],
+   "expected": "L1.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0051
+  },
+  {
+   "env": "E3",
+   "fault": "D2",
+   "fired": [
+    "L1.2",
+    "L4.4"
+   ],
+   "expected": "L1.2",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0052
+  },
+  {
+   "env": "E3",
+   "fault": "D3",
+   "fired": [
+    "L1.4",
+    "L4.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0052
+  },
+  {
+   "env": "E3",
+   "fault": "D4",
+   "fired": [
+    "L2.1",
+    "L4.4"
+   ],
+   "expected": "L2.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0084
+  },
+  {
+   "env": "E3",
+   "fault": "D5",
+   "fired": [
+    "L1.3",
+    "L4.4"
+   ],
+   "expected": "L1.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0067
+  },
+  {
+   "env": "E3",
+   "fault": "D6",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0059
+  },
+  {
+   "env": "E3",
+   "fault": "D7",
+   "fired": [
+    "L4.2",
+    "L4.4"
+   ],
+   "expected": "L4.2",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0057
+  },
+  {
+   "env": "E3",
+   "fault": "D8",
+   "fired": [
+    "L3.3",
+    "L4.4"
+   ],
+   "expected": "L3.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0046
+  },
+  {
+   "env": "E3",
+   "fault": "D9",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0037
+  },
+  {
+   "env": "E3",
+   "fault": "D10",
+   "fired": [
+    "L3.1",
+    "L3.2",
+    "L4.4"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2",
+    "L4.4"
+   ],
+   "runtime_s": 0.0058
+  },
+  {
+   "env": "E3",
+   "fault": "D11",
+   "fired": [
+    "L4.3",
+    "L4.4"
+   ],
+   "expected": "L4.3",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0057
+  },
+  {
+   "env": "E3",
+   "fault": "D12",
+   "fired": [
+    "L1.4",
+    "L4.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0044
+  },
+  {
+   "env": "E3",
+   "fault": "D13",
+   "fired": [
+    "L4.1",
+    "L4.4"
+   ],
+   "expected": "L4.1",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0028
+  },
+  {
+   "env": "E3",
+   "fault": "D14",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": "L4.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0043
+  },
+  {
+   "env": "E3",
+   "fault": "HO1",
+   "fired": [
+    "L1.5",
+    "L4.4"
+   ],
+   "expected": "L1.5",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0024
+  },
+  {
+   "env": "E3",
+   "fault": "HO2",
+   "fired": [
+    "L4.4",
+    "L4.6"
+   ],
+   "expected": "L4.6",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0051
+  },
+  {
+   "env": "E3",
+   "fault": "HO3",
+   "fired": [
+    "L4.4",
+    "L4.7"
+   ],
+   "expected": "L4.7",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.0058
+  },
+  {
+   "env": "E3",
+   "fault": "HO4",
+   "fired": [
+    "L2.4",
+    "L4.4"
+   ],
+   "expected": "L2.4",
+   "detected": true,
+   "extra": [
+    "L4.4"
+   ],
+   "runtime_s": 0.005
+  }
+ ],
+ "acceptance": {
+  "1_all_high_severity_detected": true,
+  "2_all_held_out_detected": true,
+  "3_zero_clean_false_positives": false,
+  "4_identical_clean_verdicts": true,
+  "5_runtime_measured": true,
+  "6_findings_name_a_rule": true
+ },
+ "verdict": "FAIL"
+}
