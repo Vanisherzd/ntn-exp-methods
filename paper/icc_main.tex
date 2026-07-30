@@ -54,7 +54,7 @@ learning-assisted communication, regression testing
 Learning components are increasingly proposed as assistants to physical models in satellite
 and non-terrestrial communication software: correcting a propagated orbital prediction,
 adapting a link parameter, or deciding whether a learned branch should override a model-based
-default~\cite{lin2021ntn}. Because such systems are temporal, evaluation is normally
+default~\cite{lin2021ntn}. Because such systems are temporal, evaluation is
 organised as a chronological split---train on the past, validate on the near future, test on
 the far future. That is a common and necessary practice for temporal learning pipelines, and
 the conditions under which ordered splitting is valid are well
@@ -93,8 +93,8 @@ retrospectively, from a publisher.} A better-determined later element set can se
 label, but whether and when it appears is the catalogue's decision; later data may set a
 label's value, uncertainty or closure time, and must never decide whether a transmission
 row existed. \emph{(v) Passes are repeated measures.} Samples within one pass share
-geometry and one propagation state, so the pass or deployment episode is usually the
-exchangeable unit, and treating samples as independent understates every interval.
+geometry and one propagation state, so the pass or deployment episode is often the
+appropriate physical unit, and treating samples as independent understates every interval.
 \emph{(vi) State survives a nominal freeze.} Stateful link adaptation and residual trackers
 update at their own refresh events, which can fall after a model is declared frozen---so the
 learner keeps observing outcomes even when the feature tensor is verifiably clean.
