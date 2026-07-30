@@ -64,9 +64,9 @@ validation_runs/
 *.fc32
 *.cfile
 *.sigmf-data
-hardware_conducted_iq/**/*.npy
-hardware_conducted_iq/**/*.fc32
-hardware_conducted_iq/**/*.cfile
+archive/hardware_validation/conducted_iq/**/*.npy
+archive/hardware_validation/conducted_iq/**/*.fc32
+archive/hardware_validation/conducted_iq/**/*.cfile
 
 # OTA IQ replay raw captures (large; keep local). Curated CSV/JSON/figures stay tracked.
 hardware/ota_iq/runs/**/*.npy

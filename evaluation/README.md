@@ -5,14 +5,14 @@ Tests the *contract*, not any model's performance.
 ```
 scripts/contract_layers.py   19 rules in four layers; every violation carries a rule ID
 scripts/chronological_baseline.py  the baseline protocol property, implemented and run
-scripts/run_matrix.py        runs {2 pipelines} x {19 conditions} x {3 environments}
+scripts/run_matrix.py        runs {2 pipelines} x {18 conditions} x {3 environments}
 mutations/PREREGISTRATION.md the frozen fault definitions, written before the detectors
 results/matrix_result.json   the committed result
 results/matrix_result_prefix_fixture.json   the pre-fix run, retained for audit
 results/EVALUATION_RESULT.md the human-readable summary
 results/fig2_data.json       coverage data behind Fig. 2
 
-The three environments are defined in `scripts/../../tests/fixtures/pipelines.py`
+The three environments are defined in `tests/fixtures/pipelines.py`
 (`ENVS`) and differ only in pseudo-random generator family: PCG64, SFC64, Philox.
 ```
 
