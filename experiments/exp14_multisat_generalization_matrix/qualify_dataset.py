@@ -402,6 +402,20 @@ def main(argv=None) -> int:
         for row in verdict["ingestion_audit"]:
             writer.writerow(row)
 
+    manifest = pipeline.revision_manifest_rows(sats)
+    verdict["same_epoch_revision_manifest_rows"] = len(manifest)
+    verdict["same_epoch_policy"] = pipeline.SAME_EPOCH_POLICY
+    with (args.out_dir / "same_epoch_revision_manifest.csv").open(
+        "w", newline="", encoding="utf-8"
+    ) as fh:
+        writer = csv.DictWriter(
+            fh, fieldnames=list(pipeline.REVISION_MANIFEST_HEADER),
+            extrasaction="ignore",
+        )
+        writer.writeheader()
+        for row in manifest:
+            writer.writerow(row)
+
     with (args.out_dir / "dataset_qualification.csv").open(
         "w", newline="", encoding="utf-8"
     ) as fh:

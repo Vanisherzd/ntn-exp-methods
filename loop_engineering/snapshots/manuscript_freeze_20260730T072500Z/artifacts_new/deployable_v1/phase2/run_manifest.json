@@ -1,0 +1,93 @@
+{
+  "feature_manifest": [
+    {
+      "index": 0,
+      "name": "t_age_s",
+      "deployable": true
+    },
+    {
+      "index": 1,
+      "name": "t_gap_s",
+      "deployable": false
+    },
+    {
+      "index": 2,
+      "name": "stale_doppler_hz",
+      "deployable": true
+    },
+    {
+      "index": 3,
+      "name": "sin_phase",
+      "deployable": true
+    },
+    {
+      "index": 4,
+      "name": "cos_phase",
+      "deployable": true
+    },
+    {
+      "index": 5,
+      "name": "elevation_deg",
+      "deployable": true
+    },
+    {
+      "index": 6,
+      "name": "range_km",
+      "deployable": true
+    },
+    {
+      "index": 7,
+      "name": "stale_mean_motion_rad_min",
+      "deployable": true
+    },
+    {
+      "index": 8,
+      "name": "stale_bstar",
+      "deployable": true
+    },
+    {
+      "index": 9,
+      "name": "stale_ecc",
+      "deployable": true
+    }
+  ],
+  "deployable_feature_indices": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "non_deployable_feature_indices": [
+    1
+  ],
+  "learned_models": [
+    "linear_age",
+    "age_ridge",
+    "deployable_ridge"
+  ],
+  "model_features": {
+    "linear_age": [
+      0
+    ],
+    "age_ridge": [
+      0
+    ],
+    "deployable_ridge": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "pipeline_sha256": "55a437945f3066c9e49d8c849effd4d8467343809b85de7eb5ccb03fddb8bdc4"
+}

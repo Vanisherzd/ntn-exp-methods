@@ -1,0 +1,104 @@
+{
+  "written_before_any_model_fit": true,
+  "purpose": "E2 feature configuration, E3 candidate family, E4 walk-forward protocol and S2 decision rule. Frozen before any learned model is fitted to the causal dataset.",
+
+  "E2_historical_state": {
+    "eligibility": "an observation may enter the history used at refresh t_refresh only if t_close <= t_refresh",
+    "trend_windows_N": [5, 20],
+    "ewma_alphas": [0.05, 0.2],
+    "ewma_variance_alpha": 0.2,
+    "missing_history_behaviour": "feature set to 0.0 and a companion history_valid flag set to 0; the observation is still usable by M0-M2",
+    "minimum_history_for_state_models": {"closed_observations": 200, "closed_episodes": 20},
+    "normalization": "z-score with mean and standard deviation computed on the TRAIN fold only, then frozen for validation and deployment",
+    "reset_behaviour": "history is per satellite and never crosses satellites; it accumulates continuously and is reset only if more than 30 days pass with no closed label (loss of continuity)",
+    "features": [
+      "last_closed_residual_mean", "last_closed_residual_median",
+      "ewma_bias_a005", "ewma_bias_a020",
+      "ewma_abs_err_a005", "ewma_abs_err_a020",
+      "ewma_var_a020",
+      "trend_n5", "trend_n20",
+      "n_closed_episodes", "time_since_last_closed_label_s",
+      "tle_interarrival_median_h", "tle_interarrival_last_h",
+      "delta_mean_motion_rad_min", "delta_bstar", "delta_ecc",
+      "history_valid"
+    ],
+    "forbidden": [
+      "the current deployment episode's reference element",
+      "any label whose t_close > t_refresh",
+      "any future publication timing"
+    ]
+  },
+
+  "E3_candidate_family": {
+    "M0": "SGP4 zero correction (baseline, not gate-eligible)",
+    "M1": "age-only linear: r ~ a + b * age_tx",
+    "M2": "causal static ridge on the 9 deployable static features",
+    "M3": "last-closed-residual bias (constant, = median residual of the most recent closed episode)",
+    "M4": "EWMA residual bias (constant, alpha = 0.05 and 0.2, the better on validation)",
+    "M5": "recursive least squares bias/drift on [1, age_h], forgetting factor 0.99",
+    "M6": "two-state Kalman bias/drift tracker on episode-mean residual",
+    "M7": "ridge on the 9 static + 17 historical-state features",
+    "gate_eligible": ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
+    "constant_predictor_note": "M3 and M4 are constants. They are gate-eligible here because a constant offset provisioned at refresh IS a deployable corrector. If a constant wins, that is reported as 'the learnable structure is an offset, not a function of features' and NOT as feature-based residual learning.",
+    "ridge_alphas": [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0],
+    "rls_forgetting": 0.99,
+    "kalman_Q_diag": [1e-6, 1e-9],
+    "kalman_R_rule": "sample variance of the TRAIN-fold episode-mean residuals",
+    "forbidden_models": ["neural networks", "GRU", "LSTM", "Transformer", "satellite-specific hand-tuned models", "any model or feature chosen after inspecting deployment results"]
+  },
+
+  "E4_walk_forward": {
+    "scope": "one model per satellite, fitted on all causally populated bands pooled, with age_tx as a feature. This matches deployment: an endpoint is provisioned with one corrector, not six.",
+    "band_role": "bands are a reporting stratification and a secondary diagnostic, not separate fits",
+    "decision_point_stride_episodes": 30,
+    "validation_fraction_of_closed_history": 0.25,
+    "validation_placement": "the chronologically LAST 25 percent of closed history immediately preceding the decision point",
+    "minimum_train_observations": 150,
+    "minimum_validation_observations": 50,
+    "deployment_horizon_episodes": 30,
+    "selection_rule": "m_star = argmin validation MAE over the gate-eligible candidates",
+    "gate": "G = 1 if MAE_{m_star}(validation) < gamma * MAE_SGP4(validation), else 0",
+    "gamma": 0.95,
+    "inference_scope_assertion": "the deployment predictor receives no reference element, no reference epoch, no reference publication time and no label; enforced mechanically",
+    "fixed_run_configuration": {
+      "min_epoch_year": 2014,
+      "provisioning_policy": "periodic_24h",
+      "ground_station": [24.0, 121.0, 100.0],
+      "carrier_hz": 868000000.0,
+      "screen_reject_hz": 1500.0,
+      "no_multi_gs": true, "no_915mhz": true, "no_robustness_sweep": true, "no_phy_mapping": true
+    }
+  },
+
+  "S2_analysis": {
+    "statistical_unit": "the refresh EPISODE. The 24 transmissions inside one episode share one frozen stale element and usually one reference element, so they are not independent.",
+    "aggregation": "equal weight per satellite. Within a satellite, the effect is the mean over its deployment episodes of (MAE_learned - MAE_SGP4). Across satellites, the aggregate is the unweighted mean of satellite-level effects, so a high-count object cannot dominate by sample volume.",
+    "uncertainty": "hierarchical block bootstrap, 10000 resamples: resample satellites with replacement, then resample whole deployment episodes with replacement within each selected satellite. Report the 95 percent percentile interval of the satellite-balanced aggregate.",
+    "also_report": ["median satellite effect", "fraction of satellites improved", "orbital-regime consistency", "harmful-admission rate", "gate-open count", "per-band stratification"],
+    "cell_level_status": "secondary diagnostic only; a single positive cell is not evidence"
+  },
+
+  "S2_pass_criteria_all_required": {
+    "1_positive_aggregate": "satellite-balanced aggregate held-out improvement > 0",
+    "2_interval": "hierarchical block bootstrap 95 percent interval excludes zero on the improvement side",
+    "3_breadth": "improvement present in more than one satellite AND more than one orbital regime",
+    "4_no_domination": "no single satellite contributes more than 50 percent of the aggregate gain",
+    "5_sign_stability": "the sign is stable across adjacent walk-forward decision points",
+    "6_screen_robustness": "the result does not depend on one screening threshold; re-evaluated at reject_hz in {750, 1000, 1500, 2500, no screen}",
+    "7_admission_safety": "harmful-admission rate <= 0.20, where a harmful admission is a deployment segment with G = 1 whose realised MAE is worse than SGP4",
+    "insufficient_admissions_rule": "if fewer than 10 admitted deployment segments exist, admission value is reported UNRESOLVED, not successful",
+    "explicit_non_passes": [
+      "one positive cell",
+      "an unadjusted p-value",
+      "aggregate improvement driven by ISS sample volume",
+      "improvement visible only after deleting many observations",
+      "a confidence interval crossing zero",
+      "a result found by changing the provisioning cadence after inspection"
+    ]
+  },
+
+  "decision_after_E4": {
+    "if_fail": "STOP THIS PAPER LINE. Do not rewrite the manuscript as a leak-diagnosis or negative-result paper. Do not build E5 or E6. Archive code, manifests and results as an internal research audit.",
+    "if_pass": "freeze the pilot result, obtain independent statistics and satellite/NTN review, then request human approval for E5. E6 remains unauthorized until E5 passes."
+  }
+}

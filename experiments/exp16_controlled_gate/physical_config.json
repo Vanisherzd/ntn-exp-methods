@@ -1,0 +1,502 @@
+{
+ "version": "v2.2",
+ "supersedes": "v2.1, v2, v1 (none executed)",
+ "written_before_any_model_fit": true,
+ "written_before_any_v2_seed_executed": true,
+ "spec": "Pre-registered physical generative chain, refresh semantics, manoeuvre shift, state-freeze rules and audits. Final design-revision cycle: no v3 chain. If the second independent review finds a new core-physics BLOCKER, the benchmark is simplified or EXP16 stops.",
+ "seed_hygiene": {
+  "BURNED_DEVELOPMENT_SEEDS": {
+   "reviewer_emulation": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012
+   ],
+   "debug": [
+    90001,
+    90002,
+    90003
+   ],
+   "reason": "The first independent reviewer executed the full 27x12 protocol on 1001-1012 and inspected gate decisions, validation ratios, harm outcomes and floor verdicts. Those outcomes informed this v2 design. The seeds are therefore development seeds and MUST NEVER enter formal experimental evidence. The debug seeds were used for the author's own scale and shift probes.",
+   "status": "permanently retired from evidence; permanently separate from evaluation",
+   "retired_unexecuted_manifest": "first v2 manifest (scenario-keyed, 360 seeds) -- retired for violating common random numbers; never executed"
+  },
+  "EVALUATION_SEEDS_V2": {
+   "file": "evaluation_seeds_v2.json",
+   "derivation_script": "derive_evaluation_seeds_v2.py",
+   "scheme": "COMMON RANDOM NUMBERS",
+   "base_rule": "base_seed(regime,staleness,index) = int(sha256('exp16-v2-base'|regime|staleness|index).hexdigest()[:8],16), index 0..11",
+   "n0_rule": "n0_seed(regime,index) = int(sha256('exp16-v2-negative-control'|regime|index).hexdigest()[:8],16) -- separate namespace",
+   "condition_is_NOT_in_the_seed_key": true,
+   "why_regenerated": "The first v2 manifest keyed seeds on scenario_key INCLUDING the condition, so C1, C2 and C3 received DIFFERENT physical realisations. That silently violated the design's central claim that C2 and C3 differ only in shift timing, and made every C1-vs-C2-vs-C3 comparison unpaired. It was never executed, so retirement costs nothing scientifically.",
+   "shared_for_fixed_base_seed": [
+    "base orbit",
+    "OD-error draw and component signs",
+    "OU trajectory",
+    "pass schedule",
+    "model initialisation",
+    "train/validation/deployment row split"
+   ],
+   "shared_across_C2_C3_additionally": [
+    "manoeuvre magnitude",
+    "manoeuvre direction",
+    "state-update equation",
+    "deployment exposure"
+   ],
+   "only_difference_C2_vs_C3": "manoeuvre onset relative to freeze",
+   "run_ids": "unique per (regime,staleness,condition,index) for bookkeeping only; carry NO randomness",
+   "counts": {
+    "base_cells": 9,
+    "base_seeds": 108,
+    "n0_seeds": 36,
+    "formal_runs": 324,
+    "distinct": 144,
+    "collision_with_burned": "none (verified)"
+   },
+   "NEVER_RUN_OR_PROBED_BEFORE_APPROVAL": true
+  }
+ },
+ "controlled_stress_case_declaration": {
+  "what_this_benchmark_is": "A deliberately stylized, controlled model-mismatch stress case whose purpose is to exercise evidence-gate ADMISSION and FALLBACK under known ground truth.",
+  "the_persistent_OD_perturbation": "Delta is drawn once per run and applied identically to every refreshed held element for the whole run. This is INTENTIONALLY STYLIZED. No real catalogue behaves this way, and it is the sole reason a stationary corrector is learnable at all.",
+  "explicitly_not_claimed": [
+   "a model of real catalogue element evolution",
+   "realistic TLE evolution",
+   "operational realism",
+   "generalisation to real orbital data"
+  ],
+  "forbidden_wording": [
+   "realistic TLE evolution",
+   "realistic catalogue behaviour",
+   "models how TLEs actually degrade",
+   "operationally representative"
+  ],
+  "operational_realism": "outside the scope of this workshop benchmark, and stated as such in the paper's limitations"
+ },
+ "generative_chain": {
+  "principle": "The residual is NEVER prescribed in the frequency domain. It exists only as the difference between two independently propagated Doppler predictions.",
+  "single_element_set_form": "truth = SGP4(e_true(t), t); held = SGP4(e_held, t); r(t) = D(truth) - D(held). Staleness is the PROPAGATION DISTANCE t - epoch(e_held). This wording replaces v1's ambiguous 'e_held = e_true(t_refresh - age) + Delta', which invited a construction in which the held element's mean anomaly is recomputed by hand -- an error that produced residuals of 5-78 percent of the Doppler (see DESIGN_PHASE_NOTES.md N2).",
+  "truth_element_sequence": {
+   "grid_h": 6.0,
+   "mean_motion": "n(t) = n0 + ndot_sec*t + OU_n(t)",
+   "drag": "bstar(t) = bstar0 * (1 + OU_b(t))",
+   "mean_anomaly": "INTEGRATED CONTINUOUSLY: M_{k+1} = M_k + integral of n dt over the grid step. Never recomputed from a closed form.",
+   "raan_argp": "advanced at SGP4's own secular rates between grid points, so no node or perigee discontinuity is injected",
+   "continuity_requirement": "the truth Doppler must be continuous across every element-grid boundary to within the WP11 tolerance. Without continuous M and secular RAAN/argp, an SSO node precessing about 1 deg/day injects roughly 15 km of cross-track error every 6 h, which would raise median |r| (helping every cell clear the scale floor) while passing every other check."
+  },
+  "forbidden": [
+   "generating r(t) from a polynomial, sinusoid, bias sequence or any candidate-matched formula",
+   "adding any term directly to r(t)",
+   "modifying r(t) to implement a condition; conditions modify physical state or its timing only"
+  ]
+ },
+ "refresh_semantics": {
+  "refresh_interval_h": 24.0,
+  "forbidden_to_tune": true,
+  "why_pre_registered": "In v1 t_refresh was never defined. The reviewer measured that this single undeclared parameter flips the whole S1 staleness row between eligible and INSUFFICIENT_RESIDUAL_SCALE (3.4-4.3e-4 at 6 h refresh versus 1.04-1.36e-3 at 24 h), and that with no refresh at all the three staleness levels differ by under 5 percent and the staleness factor of the grid collapses to noise.",
+  "deployment_episode": "the interval between refresh q and refresh q+1. NOTHING resets or updates inside an episode.",
+  "state_at_refresh_q": {
+   "1_truth_orbital_state": "e_true(t_q) from the continuously integrated truth sequence; unaffected by any provisioning event",
+   "2_held_physics_state": "e_held(q) = e_true(t_q - S) with mean motion REPLACED by the fitted form n_held = n0 + ndot_sec*(t_q - S) + delta_n_effective, where delta_n_effective is s*delta_n before onset and s*delta_n - delta_n_true after. The OU is NOT sampled into the held element.",
+   "3_new_held_element_generated": "YES, one per refresh. The endpoint is re-provisioned every 24 h with an element whose epoch is S hours old.",
+   "4_perturbation_it_contains": "the SAME Delta (same components, same signs, same magnitudes) as every other refresh in the run. This persistence is the stylized stress case declared above.",
+   "5_prior_manoeuvre_absorbed": "NOT APPLICABLE. The shift is a step in the persistent OD error carried by every held element from onset onward, not a change to the truth. There is nothing to absorb.",
+   "6_model_training_history": "all labels with closure time <= t_q. Labels close at the end of the pass that generated them, so a pass inside the current episode is never available within that episode.",
+   "7_scaler_state": "refitted on the training fold at the decision point only; frozen thereafter",
+   "8_candidate_parameters": "refitted at the decision point only; frozen thereafter",
+   "9_tracker_state": "advanced at refresh from labels closed before t_q ONLY WHILE t_q <= t_freeze. From t_freeze onward the tracker state is FROZEN and receives nothing, even though refreshes continue to issue held elements. v2.1's 'advanced ONLY at refresh' contradicted 'no observation during deployment' because twelve refreshes fall inside the deployment window.",
+   "10_selected_model": "m* = argmin validation MAE, chosen at the decision point; frozen",
+   "11_gate_bit": "G = 1[MAE_m*(V) < gamma*MAE_M0(V)], decided at the decision point; frozen"
+  },
+  "age_at_transmission": "spans [S, S + 24 h) within an episode, so age_s retains variance and M1 does not degenerate to a constant, while the three staleness levels do not overlap",
+  "no_hidden_reset": "asserted mechanically by W4 (state byte-identical before and after each episode)",
+  "refreshes_continue_past_freeze": "YES, for the held element only. No learner state updates after t_freeze.",
+  "decision_point_time": "t_freeze = 48.0 days (end of the validation window)"
+ },
+ "shift_manoeuvre": {
+  "replaces": "v1's x4 magnitude multiplier, which the reviewer proved mathematically incapable of harm: MAE_alwayson/MAE_physics = |k-1|/|k|, so harm requires k < 0.5 and k=4 gives 0.750, i.e. a 25 percent IMPROVEMENT. Measured over the full grid: 0/324 harmful overrides, gate open 324/324.",
+  "physical_event": "an impulsive in-plane tangential manoeuvre applied to the TRUE orbit -- a station-keeping or reboost burn. The archived real-data audit identified manoeuvres as the source of the unpredictable residual tail (finding S2-3).",
+  "delta_v_cm_s": 1.7,
+  "direction": "PROGRADE (along the instantaneous velocity vector), FIXED BY THE SCENARIO",
+  "direction_is_never_conditioned_on": [
+   "the sign of Delta",
+   "whether harm results",
+   "any observed outcome"
+  ],
+  "magnitude_justification": "1.7 cm/s is an order of magnitude BELOW routine station-keeping (0.1-1 m/s). It is chosen so that |delta_n_true| is comparable to |delta_n| in Delta, which places k near -1 when the burn opposes the pre-existing error -- the regime where harm is possible at all. Choosing a much larger burn would swamp the pre-existing error and give k >> 1 (no harm); a much smaller one would give k near 1 (no effect).",
+  "state_update_equation": "delta_a = 2*a*delta_v/v ; delta_n_true = -1.5*n*delta_a/a ; applied to e_true at onset and carried forward by the continuous integration thereafter",
+  "relationship_to_OD_error_draws": "Delta's component SIGNS are drawn per seed, INDEPENDENTLY of the burn direction. Pre-shift gap g0 = s*delta_n; post-shift gap g1 = g0 - delta_n_true; k = g1/g0. Harm occurs in whichever seeds happen to have the sign the burn opposes -- verified k = -1.04/-0.97/-0.85 for R1/R2/R3 with B/A = 1.963 measured at R1, versus k = +3.04/+2.97/+2.85 and B/A = 0.671 for the other sign.",
+  "harm_is_an_outcome_not_a_target": "The expected harmful-override rate is about 50 percent because the sign draw is fair. No seed is selected, reordered or discarded on the basis of whether it produces harm. If the realised rate differs from 50 percent, that is reported as measured.",
+  "onset": {
+   "C2": "FIXED at the midpoint of the validation window (day 42.0 of 60). Validation exposure is exactly 0.500.",
+   "C3": "FIXED at the first transmission of the deployment window (day 48.0). Validation exposure 0.000, deployment exposure 1.000.",
+   "no_randomisation": "Onset is NOT randomised. v2 drew C2's onset uniformly over the middle 60 percent of validation, which made validation exposure vary 0.20-0.80 across seeds -- so C2 was a continuum of evidence strengths, not one condition, and seed variation changed evidence DURATION rather than only the physical realisation.",
+   "exposure_sensitivity": "any exposure sweep belongs OUTSIDE the primary 27-cell grid and is NOT authorized in this implementation phase"
+  },
+  "identical_across_C2_and_C3": [
+   "delta_v magnitude",
+   "direction",
+   "state-update equation",
+   "seed realization",
+   "Delta draw",
+   "post-onset exposure",
+   "all state-transition rules"
+  ],
+  "only_difference": "onset timing relative to validation and freeze",
+  "do_not_tune_after_execution": "Delta-v is frozen. It may not change after any v2 evaluation seed is executed.",
+  "manoeuvre_absorption": "NOT APPLICABLE -- there is one truth stream and no absorption rule.",
+  "mechanism": "PERSISTENT OD-ERROR STEP. At onset the held element's along-track rate error steps once: delta_n -> s*delta_n - delta_n_true, where delta_n_true = -1.5*n*delta_a/a and delta_a = 2*a*delta_v/v for the pre-registered burn. Physically this is an orbit re-solve after an unannounced burn that lands on a persistently wrong along-track rate -- the same event read from the catalogue's side. Delta is ALREADY declared as a persistent stylized OD error, so no new mechanism is introduced.",
+  "why_not_a_truth_rate_step": "v2.1 stepped the TRUTH's rate and never absorbed it, so the error integrated without bound: |k| reached 20-98 by mid-deployment, driving B/A to 1 from whichever side, and the residual to 5.8 percent of the Doppler with 77 km of unmodelled along-track error. DESIGN_PHASE_NOTES.md N2 had itself called 5-78 percent 'physically absurd'. The OD-error step keeps the gap at (s*delta_n - delta_n_true)*A with A bounded by [S, S+24 h), so k is CONSTANT at -1.038/-0.968/-0.846 and B/A holds at 1.96-2.18 locally for the whole window.",
+  "k_is_constant_not_integrating": true
+ },
+ "learner_state_freeze": {
+  "principle": "No residual observation exists during deployment. The system provides no observable measurement to the endpoint between refreshes.",
+  "immutable_throughout_episode": [
+   "tracker latent state (bias, drift, EWMA, Kalman)",
+   "model coefficients",
+   "scaler mean and scale",
+   "gate bit",
+   "selected-model metadata"
+  ],
+  "updates_occur_only_at_refresh": "and only from labels whose closure time <= t_refresh",
+  "M3_observation_model": "Two-state Kalman bias/drift tracker. State advances at refreshes up to and including t_freeze, from labels closed before each such refresh. FROZEN from t_freeze through the end of the run. It receives no observation at any deployment-window refresh.",
+  "why_this_is_mandatory": "The reviewer ran the alternative (M3 continuing to observe residuals during deployment) under N0, where Delta = 0 exactly: it produced a 14-31 percent stable held-out gain and a 67-92 percent gate-open rate on a null cell -- which the design itself defines as a broken benchmark. The OU is mean-reverting with tau = 48 h, so the pass-mean residual is an autocorrelated bias that a tracker legitimately predicts IF allowed to keep observing truth.",
+  "mutation_tests_must_fail_when_future_information_is_injected_into": [
+   "deployment features",
+   "scaler parameters",
+   "model coefficients",
+   "bias/EWMA/Kalman latent state",
+   "gate state",
+   "selected-model metadata"
+  ],
+  "note": "v1's W3 canary covered only 'a feature column'. Model state is not a feature column, which is why the M3 channel was invisible -- the same scope failure as the archived V4."
+ },
+ "features": {
+  "static_deployable": [
+   {
+    "i": 0,
+    "name": "age_s"
+   },
+   {
+    "i": 1,
+    "name": "pred_doppler_hz"
+   },
+   {
+    "i": 2,
+    "name": "pred_doppler_rate_hz_per_s"
+   },
+   {
+    "i": 3,
+    "name": "sin_phase"
+   },
+   {
+    "i": 4,
+    "name": "cos_phase"
+   },
+   {
+    "i": 5,
+    "name": "elevation_deg"
+   },
+   {
+    "i": 6,
+    "name": "range_km"
+   },
+   {
+    "i": 7,
+    "name": "stale_mean_motion"
+   },
+   {
+    "i": 8,
+    "name": "stale_bstar"
+   },
+   {
+    "i": 9,
+    "name": "stale_ecc"
+   }
+  ],
+  "doppler_rate_audit": {
+   "why_added": "The reviewer showed the residual is r ~ -Ddot_physics(t)*(c1*age + c0), so an oracle two-parameter model on (Ddot, Ddot*age) reaches R2 = 0.997-0.999 while v1's single-feature WP7 guard read only 0.66-0.77. Doppler RATE is trivially computable by any terminal that computes Doppler, so excluding it had no physical justification and made the benchmark's difficulty a free parameter disguised as an inherited feature list.",
+   "computed_from": [
+    "held physics state",
+    "current transmission UTC",
+    "fixed GS configuration"
+   ],
+   "truth_or_reference_state_enters": false,
+   "method": "central finite difference of pred_doppler_hz",
+   "frozen_numerical_settings": {
+    "step_s": 1.0,
+    "scheme": "central",
+    "order": 2
+   },
+   "independently_recomputed": "a second implementation computes it analytically from the SGP4 position/velocity/acceleration triple; V4a asserts the two agree to 1e-6 relative"
+  },
+  "no_epoch_gap_feature": "the t_gap_s class of feature that leaked in the original real-TLE work does not exist in this manifest and cannot be reconstructed from it"
+ },
+ "FUNCTIONAL_FORM_MATCH_AUDIT": {
+  "purpose": "Determine whether a pre-registered candidate nearly reproduces the simulator's generating equation, and if so refuse to claim broad learning generalisation from it.",
+  "procedure": "For each cell, fit each candidate on the training fold and report OUT-OF-SAMPLE diagnostic R2 on the deployment window against: (a) pred_doppler_rate alone, (b) pred_doppler_rate x age, (c) the full candidate input set. Also report the out-of-sample R2 of an oracle affine model on (Ddot, Ddot*age).",
+  "threshold": 0.95,
+  "consequence_if_exceeded": "C1 is labelled a CONTROLLED CALIBRATION / SANITY SCENARIO in every table, figure and sentence. It then demonstrates only that the gate ADMITS when a genuine causal correction exists -- which is exactly what it is for -- and NOT that residual learning generalises.",
+  "pre_registered_expectation": "With pred_doppler_rate_hz_per_s in the feature set, M2 is EXPECTED to exceed 0.95 and C1 is therefore EXPECTED to be labelled a controlled calibration scenario. This is recorded in advance so it is a prediction, not a concession made after seeing results. The paper's scientific weight rests on C2 and C3, not on C1.",
+  "not_a_failure": "A calibration scenario is a necessary control. The gate must be shown to admit correctly before its refusals mean anything.",
+  "quantity_compared_to_threshold": "the OUT-OF-SAMPLE R2 of the affine oracle on (Ddot, Ddot*age) -- diagnostic (b). Measured 0.9985-0.9994 in every cell, so the calibration labelling applies to C1 at every staleness. Using the fitted candidate's own R2 instead would let the S1 row escape the label at 0.888-0.903 while the diagnostic reads 0.9985."
+ },
+ "residual_scale_floor": {
+  "status": "DIAGNOSTIC ONLY",
+  "threshold": "median |r| >= 0.002 * median |D_physics| within a cell",
+  "threshold_raised_from": "0.001 in v1, which sat BELOW the 0.128 percent the project's own archived audit identified as unresolvable for real data",
+  "resolution_argument": "The archived real-TLE cohort had residuals of 0.006-0.36 percent of the Doppler being pre-compensated; for one object that was 0.18 mm/s of range rate, finer than any TLE-derived quantity resolves. A threshold at 0.2 percent sits above the pathological 0.128 percent case rather than inside the condemned range.",
+  "must_not": [
+   "exclude a cell",
+   "exclude a seed",
+   "alter model fitting",
+   "alter success criteria",
+   "trigger parameter retuning"
+  ],
+  "all_cells_retained_and_reported": true,
+  "label_if_below": "INSUFFICIENT_RESIDUAL_SCALE",
+  "perturbation_unchanged": "Delta magnitudes are NOT changed to make any cell clear the floor. delta_n stays at 5.0e-5 rev/day.",
+  "pre_registered_expectation": "The S1 (6 h staleness) row may fall below this floor and be labelled INSUFFICIENT_RESIDUAL_SCALE. That would be a FINDING -- short-staleness residuals not being worth correcting, mirroring the archived real-data result -- not a failure to be rescued."
+ },
+ "injected_od_error_Delta": {
+  "components": [
+   "delta_n_rev_per_day",
+   "delta_bstar_frac",
+   "delta_incl_deg"
+  ],
+  "nominal_magnitudes": {
+   "delta_n_rev_per_day": 5e-05,
+   "delta_bstar_frac": 0.2,
+   "delta_incl_deg": 0.002
+  },
+  "removed_in_v2": {
+   "delta_mean_anomaly_deg": "REMOVED. At 6 h staleness delta_n contributes 0.54 km of along-track error and delta_MA = 0.005 deg contributed 0.60 km -- commensurate, so independent sign draws gave |0.54*s_n + 0.60*s_M| in {1.14, 0.06} km, a 19x effective-magnitude ratio from a coin flip that flipped the scale-floor verdict per seed. It was also redundant with delta_n."
+  },
+  "added_in_v2": {
+   "delta_incl_deg": "an OUT-OF-PLANE component, 0.002 deg. It projects into range rate with a different geometric signature from the along-track term, so the residual is genuinely two-dimensional rather than a scalar time offset times a known geometric factor. Real TLE OD error covariance is not diagonal and carries correlated inclination and node error."
+  },
+  "magnitude_rationale": "delta_n = 5e-5 rev/day gives along-track drift ds = 2*pi*a*delta_n*age of 0.54/2.16/6.49 km at 6/24/72 h for a = 6878 km, reproducing the documented behaviour that TLE-based position degrades a few kilometres per day.",
+  "sign_rule": "component signs drawn per seed; magnitudes fixed. No sign is chosen on the basis of any outcome.",
+  "persistence": "drawn once per run, applied identically at every refresh. STYLIZED -- see controlled_stress_case_declaration."
+ },
+ "regimes": {
+  "R1_low_sso": {
+   "alt_km": 500,
+   "incl_deg": 97.42,
+   "n_rev_day": 15.21,
+   "ecc": 0.0003,
+   "bstar": 0.0003,
+   "analogue": "FLOCK 4H / BLACK KITE-1"
+  },
+  "R2_mid_polar": {
+   "alt_km": 750,
+   "incl_deg": 86.45,
+   "n_rev_day": 14.43,
+   "ecc": 0.0002,
+   "bstar": 2.3e-05,
+   "analogue": "IRIDIUM 181"
+  },
+  "R3_upper_polar": {
+   "alt_km": 1200,
+   "incl_deg": 87.89,
+   "n_rev_day": 13.11,
+   "ecc": 0.0001,
+   "bstar": 0.0016,
+   "analogue": "ONEWEB-0015"
+  }
+ },
+ "regime_note": "Element values are taken from the archived real cohort for domain realism of the INITIAL CONDITIONS only. No real object is simulated and no real-object behaviour is claimed.",
+ "staleness_levels_h": {
+  "S1_short": 6.0,
+  "S2_medium": 24.0,
+  "S3_long": 72.0
+ },
+ "true_element_process": {
+  "true_element_interval_h": 6.0,
+  "secular_ndot_rev_per_day2": 1e-06,
+  "ou_n_sigma_rev_per_day": 2e-06,
+  "ou_n_tau_h": 48.0,
+  "ou_b_sigma_frac": 0.15,
+  "ou_b_tau_h": 72.0,
+  "partial_observability_disclosure": "CLOSED in v2.2 rather than merely disclosed. v1 claimed the OU is 'not a function of any deployable feature'; v2 retracted that as false because stale_mean_motion contained OU_n(t_ep) exactly, and the reviewer measured that a linear model reads the OU level and exploits its mean reversion -- 27 percent held-out gain and 100 percent gate-open on a Delta = 0 cell. Removing the OU sample from the held element makes v1's original claim TRUE BY CONSTRUCTION. Measured: N0 B/A 0.991-1.027, gate-open 0.00-0.08.",
+  "SNR_direction": "SNR proportional to A^(-1/2). The systematic term grows as A while the OU-induced along-track error grows as A^1.5, so SNR DECREASES with staleness: predicted 87/43/25 at 6/24/72 h, reviewer measured 187/75/40.",
+  "corrected_pre_registered_expectation": "The gate should be MOST likely to admit at SHORT staleness, where SNR is highest. v1 predicted the opposite and was wrong before any code was written.",
+  "held_element_mean_motion": "n_held = n0 + ndot_sec*t_ep + delta_n_effective. The OU affects ONLY the truth's propagation. A catalogue element's mean motion is a fitted OD solution, not an instantaneous sample of the true drag state.",
+  "secular_ndot_mismatch": "ZERO. The held element carries the truth's secular ndot."
+ },
+ "within_pass_sampling": {
+  "offsets": [
+   0.2,
+   0.5,
+   0.8
+  ],
+  "status": "REPEATED NUMERICAL SAMPLES, not independent geometry",
+  "withdrawn_claim": "v1 asserted that asymmetric offsets 0.15/0.35/0.55/0.80 'break the symmetry'. The reviewer measured 0.9986-0.9997 correlation between offset pairs -- the exact pathology the change was meant to fix -- because the mirror of 0.80 is 0.20, only 0.05 of a pass from 0.15, and because slant range is dominated by the pass's maximum elevation, shared by all offsets. Within a single pass, elevation and range trace one smooth unimodal curve and CANNOT be decorrelated by choosing sample positions.",
+  "geometric_diversity_comes_from": "across-pass variation in maximum elevation and pass geometry",
+  "aggregation_chain": "time samples -> pass aggregate -> seed/cell aggregate -> regime aggregate",
+  "never": "within-pass samples used as independent statistical units",
+  "must_document": "measured within-pass correlations for every cell, reported without a pass/fail threshold attached to them"
+ },
+ "fixed_config": {
+  "gs_lat_deg": 24.0,
+  "gs_lon_deg": 121.0,
+  "gs_alt_m": 100.0,
+  "carrier_hz": 868000000.0,
+  "elevation_mask_deg": 10.0,
+  "min_pass_duration_s": 60.0,
+  "min_pass_duration_note": "DECLARED as part of the visibility criterion. Verified inert in this benchmark (shortest pass 72.5-171 s, 0 percent under 60 s), retained as a declaration rather than a protection.",
+  "coarse_scan_step_s": 60.0,
+  "bisection_tolerance_s": 1.0,
+  "scan_settings_note": "declared because the archive showed they are regime-dependent (3 of 366 ISS passes missed at 60 s), even though verified benign here (identical passes at 10/20/30/60 s versus a 5 s reference).",
+  "vertical": "geodetic",
+  "vertical_assertion": "a test asserts the up-vector satisfies the ellipsoid-normal identity and that geodetic-minus-geocentric elevation is 0.143 deg at 24 deg N; reverting to geocentric currently goes undetected",
+  "boundary_pass_rule": "a pass is assigned to the window containing its threshold ENTRY, but any sample falling after the freeze instant is DROPPED rather than assigned to validation. v1's rule could place validation samples after the freeze and, in C3, after the onset.",
+  "split": {
+   "train": 0.6,
+   "validation": 0.2,
+   "deployment": 0.2,
+   "chronological": true
+  },
+  "gamma": 0.95,
+  "run_duration_days": 60.0
+ },
+ "grid_uniformity_canary": {
+  "rationale": "The grid varies regime, staleness and condition -- none of which is a CORRECTNESS axis. A defect in the simulator, feature list or shift specification is invariant across all runs and appears as a uniform result rather than as variation. The reviewer's emulation produced exactly that: 27 of 27 cells identical in both reported quantities.",
+  "trigger": "a mechanical WARNING if all regime/staleness cells produce identical or numerically near-identical gate decisions, validation ratios, held-out ratios, or harmful-override outcomes",
+  "near_identical_tolerance": {
+   "gate_decision": "all cells equal",
+   "ratio_spread": 0.01
+  },
+  "consequence": "triggers DESIGN INSPECTION, not automatic result rejection"
+ },
+ "candidates": {
+  "M0": "physics baseline, zero residual (not gate-eligible)",
+  "M1": "linear age correction",
+  "M2": "causal ridge on the 10 deployable static features",
+  "M3": "causal bias/drift tracker, two-state Kalman, state advanced ONLY at refresh from closed labels and frozen through the episode",
+  "no_neural_networks": true,
+  "ridge_alphas": [
+   0.01,
+   0.1,
+   1.0,
+   10.0,
+   100.0,
+   1000.0
+  ]
+ },
+ "test_suite": {
+  "ported_sound": {
+   "V2": "registry builder source contains no label machinery",
+   "V3": "every transmission above the declared mask",
+   "V8": "no forbidden feature (t_gap_s class); feature count assertion updated to 10",
+   "V9": "implementation offsets equal within_pass_sampling.offsets (key path updated from the retired fixed_config.transmission_offsets)",
+   "V10": "history admission strictly causal",
+   "V10b": "gate decision source touches no deployment data -- the only test asserting the paper's central claim, dropped in v1 and re-instated"
+  },
+  "replaced": {
+   "V4a": "PURITY -- features recomputed from e_held alone in an INDEPENDENT code path. Copied columns compared BITWISE; pred_doppler_rate_hz_per_s compared to 1e-6 RELATIVE, because its independent implementation is analytic rather than finite-difference. A literal bitwise assertion on that column would fail on a correct implementation -- the v1 V4 trap.",
+   "V4b": "TRUNCATION -- features recomputed with the OU path and the shift onset truncated at t, asserting bit-identity ON ROWS WITH t < onset ONLY. Truncating the onset legitimately changes post-onset features, so an unscoped comparison would go red on a correct implementation.",
+   "why_replaced": "v1's 'V4-repaired' asserted that features are invariant when the truth realisation is re-drawn. That is FALSE here: stale_mean_motion contains OU_n(t_ep) exactly, so re-drawing legitimately moves it and the geometry features with it. The test would go red on a CORRECT implementation, and both natural repairs either pin the parameter carrying the dependence (v1's V1 defect) or empty the test."
+  },
+  "new": {
+   "W1": "label completeness exactly 1.000",
+   "W2": "hash schedule, generate truth, re-hash, assert equality",
+   "W3": "mutation canary over FEATURE columns -- inject truth, assert the suite goes red",
+   "W4": "STATE canary -- future information injected into scaler parameters, model coefficients, tracker latent state, gate state or selected-model metadata must redden the suite. Asserts state is byte-identical BOTH within an episode AND ACROSS EVERY REFRESH AFTER t_freeze. v2.1 checked only within an episode, while the update happened between them -- the third generation of the V4 -> W3 -> W4 scope failure.",
+   "WP10": "ORACLE SPAN -- out-of-sample R2 of an affine model on (Ddot, Ddot*age). THRESHOLD 0.95: exceeding it triggers the calibration labelling of the FUNCTIONAL_FORM_MATCH_AUDIT.",
+   "WP11": "TRUTH CONTINUITY -- truth Doppler continuous across every element-grid boundary to within 1.0e-3 Hz.",
+   "W6": "TIMELINE -- asserts every numeric ordering in `timeline`; that no post-onset sample reaches C3's validation fold; and that no held element anywhere in the run reflects a quantity from after its own epoch.",
+   "W5a": "PAIRING -- feature matrix bit-identical across C1/C2/C3 for a fixed base seed, on rows before the earlier onset",
+   "W5b": "RNG STREAM -- the OU array and the Delta sign draws byte-identical across C1/C2/C3 for a fixed base seed. Catches condition-dependent RNG consumption order, which would silently break common random numbers."
+  },
+  "falsifiability_requirement": "Every test must be demonstrated to FAIL under a deliberate mutation and PASS on a correct implementation. Checkpoint 1 is a mutation audit of the actual code, not of this document -- v1's V1 had a correct prose proposition and a defective implementation.",
+  "no_importorskip": "A missing module must FAIL, not SKIP. The archived tests use pytest.importorskip, which silently converts an absent implementation into green."
+ },
+ "timeline": {
+  "run_duration_days": 60.0,
+  "split": "chronological 60/20/20",
+  "t_run_start": 0.0,
+  "t_train_end": 36.0,
+  "t_validation_start": 36.0,
+  "t_shift_C2": 42.0,
+  "t_validation_end": 48.0,
+  "t_freeze": 48.0,
+  "t_shift_C3": 48.0,
+  "t_deployment_start": 48.0,
+  "t_deployment_end": 60.0,
+  "t_manoeuvre_absorption": "never within the run (infinity)",
+  "refresh_grid_days": 1.0,
+  "C2_required_ordering": "t_validation_start(36) < t_shift_C2(42) < t_validation_end(48) < t_freeze(48) <= t_deployment_start(48) < t_deployment_end(60) < t_absorption(inf) -- SATISFIED",
+  "C3_required_ordering": "t_validation_end(48) < t_freeze(48) < t_shift_C3(48) <= t_deployment_start(48) < t_deployment_end(60) < t_absorption(inf) -- SATISFIED (freeze and shift coincide at the window boundary; the shift takes effect at the FIRST DEPLOYMENT TRANSMISSION, strictly after the gate bit is decided on validation data that contains no post-onset sample)",
+  "C2_validation_exposure": 0.5,
+  "C2_deployment_exposure": 1.0,
+  "C3_validation_exposure": 0.0,
+  "C3_deployment_exposure": 1.0,
+  "assertion_test": "W6 -- fails if the manoeuvre is absorbed before t_deployment_end, and fails if any required ordering above is violated"
+ },
+ "v2_2_changes": {
+  "nature": "FOUR DELETIONS in response to the second review's new core-physics BLOCKER (NF-1). No new mechanism is introduced and no design cycle is opened. Every number below was measured by the independent reviewer.",
+  "1_delete_two_truth_streams": "The truth-rate step is replaced by a persistent OD-ERROR step. Measured consequence: harm 0.42 (unchanged), prevention 43/90 = 0.48 (was 0.33), B/A on harmed runs 1.19-1.33 (was 0.99-1.01), gate benefit 17-25 percent (was 0.4-1.4), C2 protection restored at S3 (gate-open 0.67, was 1.00), deployment residual 0.24-1.82 percent of Doppler (was 1.65-5.80), max unmodelled along-track error <= 6.5 km (was 51-79 km). ONE truth stream; the absorption question ceases to exist.",
+  "2_delete_per_refresh_tracker_update": "Tracker state freezes at t_freeze, not at each refresh. v2.1 said 'advanced ONLY at refresh' AND 'receives no observation during deployment' -- twelve refreshes fall inside the 12-day deployment window, so both could not hold. Measured leak: N0 gate-open 0.83-0.92 with a 24 h-lagged tracker.",
+  "3_delete_OU_from_held_element": "n_held = n0 + ndot_sec*t_ep + delta_n. A catalogue element's mean motion is a FITTED OD solution, not an instantaneous sample of the true drag state, so sampling OU_n(t_ep) into it was physically wrong as well as leaky. The held element also carries the truth's secular ndot, so no ndot mismatch survives Delta = 0. Measured: N0 goes from B/A 0.716-0.731 with gate-open 1.00 to B/A 0.991-1.027 with gate-open 0.00-0.08.",
+  "4_delete_S2_only_N0": "N0 runs at all three staleness levels. The leak it must detect is monotone in staleness (gate-open 0.00-0.17 at S2 versus 0.83-1.00 at S3), so the control had been placed where the effect is smallest."
+ },
+ "negative_control_N0": {
+  "construction": "Delta = 0 exactly; OU retained on the truth only; held element uses the fitted mean-motion form with delta_n = 0 and the truth's secular ndot",
+  "staleness_levels": "ALL THREE (S1, S2, S3). v2.1 scheduled N0 only at S2, where the leak it must detect is smallest.",
+  "pass_criterion": "gate-open rate <= 0.20 at EVERY staleness level in EVERY regime",
+  "if_it_fails": "the benchmark is broken and no headline result may be reported from it"
+ },
+ "statistical_reporting": {
+  "effective_unit": "the BASE SEED. Common random numbers make replication exact: the reviewer measured ONE distinct harm pattern across all 9 regime x staleness cells -- the same 5 of 12 seeds harm everywhere.",
+  "harm_reported_as": "k of 12 base seeds",
+  "forbidden_framing": "'90 harmful overrides' or any count over condition-cells, which is 5 sign draws replicated 18 times",
+  "bootstrap": "over base seeds only"
+ },
+ "withdrawn_claims": {
+  "two_dimensional_residual": "WITHDRAWN. delta_incl = 0.002 deg gives a cross-track share of 9.2-11.5 percent at age 0-30 h falling to 0.6-0.9 percent beyond 72 h -- smallest exactly where the design says the interesting behaviour lives. The residual remains approximately Ddot times an affine function of age, oracle R2 above 0.987 everywhere. MAJOR 9's actual purpose (killing the 8.5x sign-draw swing) IS achieved: the per-seed floor-ratio spread is now 1.02-1.10x.",
+  "design_phase_note_N1": "WITHDRAWN. debug_probe_residual_scale.py cannot run against v2.2 (KeyError: delta_mean_anomaly_deg) and its age semantics sampled 13.9-50.8 h for a nominal 6 h, so the three staleness rows overlapped. Under v2.2 semantics the S1 row measures 0.104-0.138 percent, so ALL THREE S1 combinations FAIL the 0.2 percent floor and 9 of 27 cells will be labelled INSUFFICIENT_RESIDUAL_SCALE. That is the pre-registered expectation, recorded before execution."
+ },
+ "prose_tension_to_reconcile": "The corrected SNR expectation says the gate should admit MOST readily at short staleness, while the residual-scale floor declares that same row's residuals not worth correcting. Both are true and they are not in conflict -- a high-SNR residual can still be too small to matter -- but the paper must state them together rather than in separate sections.",
+ "pre_implementation_probe": {
+  "purpose": "MECHANICAL QUALIFICATION ONLY. May answer whether v2.2 is mechanically coherent, falsifiable, causal, paired and physically bounded. May NOT answer whether the Evidence Gate succeeds scientifically.",
+  "seeds": "permanently burned development/reviewer seeds ONLY. No EVALUATION_SEEDS_V2 value is executed.",
+  "pass_criteria": {
+   "non_degeneracy": "at least one paired realization where the frozen correction HELPS, and at least one where the SAME frozen correction HARMS after the pre-registered shift. Sign must be determined by the independent pre-registered OD-error realization, never by seed selection or intervention tuning. The observed count is REPORTED but is not a target. If all burned seeds produce only one sign: STOP EXP16, and do not change the manoeuvre or OD-error magnitude.",
+   "Q1_null_control": "N0 gate-open <= 0.20 for every regime x staleness cell; no stable positive held-out gain; no candidate receives deployment truth or residual observations; OU absent from held-element features; tracker/scaler/candidate state frozen after t_freeze",
+   "Q2_paired_identity": "max|X_C1 - X_C2| = 0 before label intervention; max|X_C2 - X_C3| = 0; identical row identifiers; identical random-state hashes",
+   "Q3_timeline": "C2 and C3 orderings assert mechanically; mismatch active through the FULL deployment window; no refresh, tracker update, held-state replacement or hidden reset absorbs it before deployment_end",
+   "Q4_mutation": "future/reference information injected separately into each of 6 state channels must fail the appropriate test; the clean implementation must pass. A test passing BOTH clean and mutated is invalid and is reported as a BLOCKER.",
+   "Q5_physical_bounds": "deployment residual <= 2 percent of absolute Doppler; no monotonic unbounded integration from the shift; no state divergence comparable to the rejected 77 km case; identical physical equations in C2 and C3",
+   "Q6_functional_form": "cross-validated R2 for age only / Doppler rate only / age + Doppler rate / full feature set. R2 >= 0.95 for a candidate-compatible form permanently classifies C1 as CONTROLLED CALIBRATION / SANITY SCENARIO. The generator is NOT altered to move this R2.",
+   "Q7_repeated_measures": "all three within-pass offsets aggregated before MAE comparison, gate diagnostics, confidence intervals, win counts and harmful-override counts; within-pass correlations reported; no within-pass sample counts as an independent replicate",
+   "Q8_grid_uniformity": "the pre-registered canary run on burned seeds; near-identical cells return HOLD for inspection, never an automatic parameter change"
+  },
+  "authorization": "AUTHORIZED (final mechanical qualification probe)",
+  "removed_criterion": {
+   "was": "harmful-override rate in [0.20, 0.80]",
+   "why_removed": "OUTCOME-SHAPING. Requiring a preferred proportion of harmful seeds makes the probe a tuning target for the intervention magnitude, which is exactly the post-hoc adjustment the pre-registration exists to prevent."
+  },
+  "verdict_options": [
+   "APPROVE FORMAL IMPLEMENTATION",
+   "STOP EXP16"
+  ],
+  "no_third_option": "A design-revision recommendation is NOT an available outcome. No v2.3, v3 or simulator redesign is authorized."
+ },
+ "after_approval": [
+  "freeze v2.2 source/config/tests",
+  "record all hashes",
+  "obtain the same reviewer's signed CLOSED verdict",
+  "run the untouched EVALUATION_SEEDS_V2 once",
+  "do not modify design after seeing formal outcomes",
+  "the formal run may still produce a scientific NO-GO; no manuscript editing until formal results pass the approved C1/C2/C3/N0 criteria"
+ ]
+}

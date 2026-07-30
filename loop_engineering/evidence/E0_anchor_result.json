@@ -1,0 +1,109 @@
+{
+  "clean_from": "2014-01-01T00:00:00+00:00",
+  "per_satellite": [
+    {
+      "satellite": "ISS (ZARYA)",
+      "elements_total": 46859,
+      "elements_clean": 20933,
+      "retained_pct": 44.67
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "elements_total": 2678,
+      "elements_clean": 2678,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "elements_total": 2623,
+      "elements_clean": 2623,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "elements_total": 1695,
+      "elements_clean": 1695,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "elements_total": 727,
+      "elements_clean": 727,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "elements_total": 614,
+      "elements_clean": 614,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "elements_total": 635,
+      "elements_clean": 635,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "elements_total": 446,
+      "elements_clean": 446,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "elements_total": 252,
+      "elements_clean": 252,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "STARLINK-38128",
+      "elements_total": 11,
+      "elements_clean": 11,
+      "retained_pct": 100.0
+    },
+    {
+      "satellite": "STARLINK-37711",
+      "elements_total": 9,
+      "elements_clean": 9,
+      "retained_pct": 100.0
+    }
+  ],
+  "bands": [
+    {
+      "target_h": 8,
+      "pairs_reference_anchored": 26783,
+      "pairs_transmission_anchored_epoch_only": 6996,
+      "pairs_transmission_anchored_availability_enforced": 14976
+    },
+    {
+      "target_h": 24,
+      "pairs_reference_anchored": 30104,
+      "pairs_transmission_anchored_epoch_only": 4747,
+      "pairs_transmission_anchored_availability_enforced": 18562
+    },
+    {
+      "target_h": 48,
+      "pairs_reference_anchored": 30168,
+      "pairs_transmission_anchored_epoch_only": 5190,
+      "pairs_transmission_anchored_availability_enforced": 18446
+    },
+    {
+      "target_h": 72,
+      "pairs_reference_anchored": 30125,
+      "pairs_transmission_anchored_epoch_only": 5087,
+      "pairs_transmission_anchored_availability_enforced": 18367
+    },
+    {
+      "target_h": 96,
+      "pairs_reference_anchored": 30314,
+      "pairs_transmission_anchored_epoch_only": 5539,
+      "pairs_transmission_anchored_availability_enforced": 18547
+    },
+    {
+      "target_h": 168,
+      "pairs_reference_anchored": 30308,
+      "pairs_transmission_anchored_epoch_only": 6388,
+      "pairs_transmission_anchored_availability_enforced": 18653
+    }
+  ]
+}

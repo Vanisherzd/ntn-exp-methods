@@ -1,0 +1,143 @@
+{
+  "test": "T1_reference_epoch_perturbation",
+  "n_satellites_tested": 9,
+  "feature_names": [
+    "t_age_s",
+    "t_gap_s",
+    "stale_doppler_hz",
+    "sin_phase",
+    "cos_phase",
+    "elevation_deg",
+    "range_km",
+    "stale_mean_motion_rad_min",
+    "stale_bstar",
+    "stale_ecc"
+  ],
+  "indices_that_changed_when_only_the_reference_changed": [
+    1
+  ],
+  "=> NON_DEPLOYABLE_empirical": [
+    "t_gap_s"
+  ],
+  "=> DEPLOYABLE_empirical": [
+    "t_age_s",
+    "stale_doppler_hz",
+    "sin_phase",
+    "cos_phase",
+    "elevation_deg",
+    "range_km",
+    "stale_mean_motion_rad_min",
+    "stale_bstar",
+    "stale_ecc"
+  ],
+  "per_satellite": [
+    {
+      "satellite": "ISS (ZARYA)",
+      "stale_epoch": "2012-10-14T18:13:17.461632+00:00",
+      "ref_a_epoch": "2012-10-17T11:20:32.207136+00:00",
+      "ref_b_epoch": "2012-10-19T21:50:41.699040+00:00",
+      "t_abs": "2012-10-15T03:13:17.461632+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 234434.745504,
+      "gap_b_s": 445044.237408
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "stale_epoch": "2025-03-13T21:33:03.265344+00:00",
+      "ref_a_epoch": "2025-03-18T13:01:55.780608+00:00",
+      "ref_b_epoch": "2025-03-24T12:07:36.908256+00:00",
+      "t_abs": "2025-03-14T06:33:03.265344+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 401332.515264,
+      "gap_b_s": 916473.642912
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "stale_epoch": "2025-03-14T13:32:14.751168+00:00",
+      "ref_a_epoch": "2025-03-20T07:26:32.365248+00:00",
+      "ref_b_epoch": "2025-03-27T06:33:23.138208+00:00",
+      "t_abs": "2025-03-14T22:32:14.751168+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 496457.61408,
+      "gap_b_s": 1098068.38704
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "stale_epoch": "2025-11-02T06:00:24.465888+00:00",
+      "ref_a_epoch": "2025-11-06T18:02:33.974304+00:00",
+      "ref_b_epoch": "2025-11-13T18:30:21.488256+00:00",
+      "t_abs": "2025-11-02T15:00:24.465888+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 388929.508416,
+      "gap_b_s": 995397.022368
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "stale_epoch": "2026-03-27T21:17:06.928800+00:00",
+      "ref_a_epoch": "2026-03-31T13:21:17.624736+00:00",
+      "ref_b_epoch": "2026-04-03T12:33:36.427392+00:00",
+      "t_abs": "2026-03-28T06:17:06.928800+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 317050.695936,
+      "gap_b_s": 573389.498592
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "stale_epoch": "2026-04-03T11:14:00.415968+00:00",
+      "ref_a_epoch": "2026-04-07T17:56:48.902208+00:00",
+      "ref_b_epoch": "2026-04-11T18:20:10.582368+00:00",
+      "t_abs": "2026-04-03T20:14:00.415968+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 369768.48624,
+      "gap_b_s": 716770.1664
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "stale_epoch": "2026-04-07T11:23:48.370560+00:00",
+      "ref_a_epoch": "2026-04-12T03:34:10.518240+00:00",
+      "ref_b_epoch": "2026-04-17T03:38:18.677184+00:00",
+      "t_abs": "2026-04-07T20:23:48.370560+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 403822.14768,
+      "gap_b_s": 836070.306624
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "stale_epoch": "2026-04-27T22:54:25.108992+00:00",
+      "ref_a_epoch": "2026-05-01T10:39:15.442272+00:00",
+      "ref_b_epoch": "2026-05-05T11:02:17.343744+00:00",
+      "t_abs": "2026-04-28T07:54:25.108992+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 301490.33328,
+      "gap_b_s": 648472.234752
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "stale_epoch": "2026-06-02T03:07:42.004992+00:00",
+      "ref_a_epoch": "2026-06-07T15:04:01.627104+00:00",
+      "ref_b_epoch": "2026-06-12T02:52:07.333248+00:00",
+      "t_abs": "2026-06-02T12:07:42.004992+00:00",
+      "indices_changed": [
+        1
+      ],
+      "gap_a_s": 474979.622112,
+      "gap_b_s": 863065.328256
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "selected_before_any_model_training": true,
+  "closure_horizon_h": 48,
+  "k_min": 2,
+  "decision_inputs": "R2_feasibility.json only (label coverage, reference count, ensemble spread, catalogue metadata quality). No model performance of any kind was computed or inspected before this choice.",
+  "criteria_applied_in_preregistered_priority_order": {
+    "1_high_label_completeness": "48h/k2 gives the highest COMPLETE rate of any grid point: 0.808 NOMINAL / 0.838 DEGRADED. 72h/k2 is lower on COMPLETE (0.785 / 0.834) despite a higher labelled rate, because the extra horizon converts COMPLETE rows into AMBIGUOUS_HIGH_SPREAD ones. 24h/k2 is far lower (0.687 / 0.718) and 24h/k3 collapses (0.426 / 0.436).",
+    "2_stable_ensemble_uncertainty": "sigma_ref p50 across satellites is 0.903 Hz at 48h against 1.520 Hz at 72h -- the longer horizon admits more distant solutions whose own propagation error inflates the spread. This is the criterion that most clearly separates 48h from 72h.",
+    "3_consistent_availability_across_satellites": "minimum per-satellite COMPLETE rate 0.624 NOMINAL / 0.638 DEGRADED at 48h/k2, essentially tied with 72h/k2 (0.624 / 0.653).",
+    "4_minimal_closure_delay": "48h beats 72h directly."
+  },
+  "k_min_rationale": "K_min = 2 dominates K_min = 3 at every horizon on completeness (48h: 0.808 vs 0.760 NOMINAL) while sigma_ref is essentially unchanged (0.903 vs 0.866), so the third reference buys no uncertainty reduction and costs coverage.",
+  "known_risk_recorded_before_the_full_audit": "the minimum per-satellite COMPLETE rate of 0.624 is BELOW the pre-registered R3 requirement of 0.70. The strict COMPLETE-only reading of the gate is therefore at risk of failing. This is recorded here, before the full labelling pass, so that a subsequent FAIL cannot be reinterpreted as a surprise and the gate cannot be quietly relaxed. No grid point in the sweep satisfies the 0.70 per-satellite floor on the strict reading; 48h/k2 is the closest.",
+  "feasibility_source_sha256_note": "see R2_feasibility.json; grid covers horizons {24,48,72} h x K_min {2,3} for both provisioning scenarios"
+}

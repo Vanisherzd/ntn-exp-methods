@@ -1,0 +1,238 @@
+{
+ "seeds_used": [
+  1001,
+  1002,
+  1003,
+  1004,
+  1005,
+  1006,
+  1007,
+  1008,
+  1009,
+  1010,
+  1011,
+  1012
+ ],
+ "n_seeds": 12,
+ "findings": [
+  "BLOCKER: Q5 ceiling exceeded in 2 cells: ['R1_low_sso|S3_long', 'R2_mid_polar|S3_long']",
+  "BLOCKER: Q1 N0 gate-open > 0.2 in 9 cells: ['R1_low_sso|S1_short', 'R1_low_sso|S2_medium', 'R1_low_sso|S3_long', 'R2_mid_polar|S1_short', 'R2_mid_polar|S2_medium', 'R2_mid_polar|S3_long', 'R3_upper_polar|S1_short', 'R3_upper_polar|S2_medium', 'R3_upper_polar|S3_long']",
+  "BLOCKER: Q2 pairing violated in 108 cases: [('R1_low_sso', 'S1_short', 1001, 'row_ids'), ('R1_low_sso', 'S1_short', 1002, 'row_ids'), ('R1_low_sso', 'S1_short', 1003, 'row_ids'), ('R1_low_sso', 'S1_short', 1004, 'row_ids'), ('R1_low_sso', 'S1_short', 1005, 'row_ids')]",
+  "BLOCKER: Q4 undetectable mutation channels: ['tracker', 'selmeta', 'gate']"
+ ],
+ "Q5": {
+  "max_ratio": 0.07908898125160617,
+  "cells_over_ceiling": [
+   "R1_low_sso|S3_long",
+   "R2_mid_polar|S3_long"
+  ],
+  "ceiling": 0.02,
+  "pass": false,
+  "late_over_early_ratio": {
+   "p50": 0.9218860398529589,
+   "p95": 0.9990536858649679,
+   "max": 1.0110140797827765
+  }
+ },
+ "Q1": {
+  "cells": {
+   "R1_low_sso|S1_short": {
+    "gate_open": 1.0,
+    "ba_p50": 0.2720427041462284,
+    "ratio": 0.0025388056497838616
+   },
+   "R1_low_sso|S2_medium": {
+    "gate_open": 1.0,
+    "ba_p50": 0.16093114227625083,
+    "ratio": 0.009679823918976885
+   },
+   "R1_low_sso|S3_long": {
+    "gate_open": 1.0,
+    "ba_p50": 0.07356635778344639,
+    "ratio": 0.04477465784588018
+   },
+   "R2_mid_polar|S1_short": {
+    "gate_open": 1.0,
+    "ba_p50": 0.4262089390341897,
+    "ratio": 0.00014780284370206567
+   },
+   "R2_mid_polar|S2_medium": {
+    "gate_open": 1.0,
+    "ba_p50": 0.37751674290912096,
+    "ratio": 0.0003290465966208027
+   },
+   "R2_mid_polar|S3_long": {
+    "gate_open": 1.0,
+    "ba_p50": 0.3021651127867496,
+    "ratio": 0.0008804049792637647
+   },
+   "R3_upper_polar|S1_short": {
+    "gate_open": 1.0,
+    "ba_p50": 0.335671658857002,
+    "ratio": 0.00014379394598334761
+   },
+   "R3_upper_polar|S2_medium": {
+    "gate_open": 1.0,
+    "ba_p50": 0.21024943592320577,
+    "ratio": 0.0004583352732669444
+   },
+   "R3_upper_polar|S3_long": {
+    "gate_open": 1.0,
+    "ba_p50": 0.10406409799020602,
+    "ratio": 0.001966482341640377
+   }
+  },
+  "failing": [
+   "R1_low_sso|S1_short",
+   "R1_low_sso|S2_medium",
+   "R1_low_sso|S3_long",
+   "R2_mid_polar|S1_short",
+   "R2_mid_polar|S2_medium",
+   "R2_mid_polar|S3_long",
+   "R3_upper_polar|S1_short",
+   "R3_upper_polar|S2_medium",
+   "R3_upper_polar|S3_long"
+  ],
+  "pass": false
+ },
+ "Q2": {
+  "violations": 108,
+  "detail": [
+   [
+    "R1_low_sso",
+    "S1_short",
+    1001,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1002,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1003,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1004,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1005,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1006,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1007,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1008,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1009,
+    "row_ids"
+   ],
+   [
+    "R1_low_sso",
+    "S1_short",
+    1010,
+    "row_ids"
+   ]
+  ],
+  "pass": false
+ },
+ "Q3": {
+  "c2_ordering": true,
+  "c3_ordering": true,
+  "min_deployment_exposure": 1.0,
+  "c3_validation_contamination": 0,
+  "pass": true
+ },
+ "Q4": {
+  "channels": {
+   "scaler": true,
+   "coeff": true,
+   "tracker": false,
+   "selmeta": false,
+   "gate": false,
+   "feature_tensor": true
+  },
+  "pass": false
+ },
+ "Q6": {
+  "r2": {
+   "S1_short": {
+    "age": 0.2525901179077408,
+    "ddot": 0.6064820038958423,
+    "age+ddot": 0.870536371393375,
+    "full": 0.8697189162164753,
+    "oracle": 0.9988580829322115
+   },
+   "S2_medium": {
+    "age": 0.11636421706814448,
+    "ddot": 0.8126006679386586,
+    "age+ddot": 0.9378028266445211,
+    "full": 0.9376223700630529,
+    "oracle": 0.9992344976455246
+   },
+   "S3_long": {
+    "age": 0.029654775264430833,
+    "ddot": 0.9479815066675932,
+    "age+ddot": 0.9824221803173386,
+    "full": 0.9832027045757993,
+    "oracle": 0.9984904853131714
+   }
+  },
+  "oracle_max": 0.9992344976455246,
+  "C1_classification": "CONTROLLED CALIBRATION / SANITY SCENARIO"
+ },
+ "Q7": {
+  "within_pass_icc_p50": 0.12352717590546977,
+  "aggregation_implemented": true,
+  "pass": true
+ },
+ "Q8": {
+  "canary_fires": false,
+  "gate_spread": [
+   0.5833333333333334,
+   1.0
+  ],
+  "helpful": 264,
+  "harmful": 60,
+  "non_degenerate": true,
+  "pass": true
+ },
+ "checks": {
+  "Q1_null": false,
+  "Q2_paired": false,
+  "Q3_timeline": true,
+  "Q4_mutation": false,
+  "Q5_bounds": false,
+  "Q7_repeated": true,
+  "Q8_not_uniform": true,
+  "non_degeneracy": true
+ },
+ "verdict": "STOP EXP16",
+ "config_sha256": "1e07d768d6339f4f73bccd1aba22eca9b375218cf29f466599e826ce8ddfa5d3",
+ "sim_sha256": "602899c657ac27feb46dac6dd8eb601b86a81e9ff1622c11e7ada9d869f73c70"
+}

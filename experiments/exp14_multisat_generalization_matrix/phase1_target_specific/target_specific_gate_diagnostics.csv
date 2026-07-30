@@ -1,0 +1,43 @@
+target_name,staleness_h,selected_model,gate_decision,gate_mae,gate_p95,gate_p99,gate_outage,gate_guard_cost,val_sgp4_mae_hz,val_learned_mae_hz,test_sgp4_p95_hz,test_learned_p95_hz,test_sgp4_p99_hz,test_learned_p99_hz,test_sgp4_outage_proxy,test_learned_outage_proxy
+ISS (ZARYA),8,linear_bias_rate,closed,closed,closed,closed,closed,closed,2.033868,2.049001,7.709307,7.725447,13.846566,13.856367,0.000197,0.000197
+ISS (ZARYA),24,linear_bias_rate,closed,closed,closed,closed,closed,closed,6.224329,6.233598,25.395951,25.408912,45.038037,45.045863,0.001611,0.001611
+ISS (ZARYA),48,linear_bias_rate,closed,closed,closed,closed,closed,closed,13.52868,13.554557,55.945878,55.970875,92.776832,92.792575,0.004896,0.004896
+ISS (ZARYA),72,linear_bias_rate,closed,closed,closed,closed,closed,closed,21.371541,21.416184,87.268583,87.283742,142.963729,142.969524,0.009424,0.009429
+ISS (ZARYA),96,linear_bias_rate,closed,closed,closed,closed,closed,closed,27.638435,27.696921,115.742384,115.762544,186.110788,186.115293,0.012802,0.012822
+ISS (ZARYA),168,linear_bias_rate,closed,closed,closed,closed,closed,closed,54.650589,54.801684,225.555194,225.561348,331.018963,330.987456,0.030388,0.03035
+IRIDIUM 181,8,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.194536,0.191874,0.434291,0.427804,0.538744,0.532149,0.0,0.0
+IRIDIUM 181,24,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.718019,0.735589,1.688697,1.719606,2.360598,2.389648,0.0,0.0
+IRIDIUM 181,48,stale_age_ridge,closed,closed,closed,closed,closed,closed,1.728454,1.722946,4.267894,4.229699,5.771777,5.737592,0.0,0.0
+IRIDIUM 181,72,stale_age_ridge,closed,closed,closed,closed,closed,closed,3.048264,3.035582,7.531783,7.452793,10.173922,10.101205,0.0,0.0
+IRIDIUM 181,96,stale_age_ridge,closed,closed,closed,closed,closed,closed,4.97603,4.936554,11.882672,11.632432,16.013465,15.777004,0.0,0.0
+IRIDIUM 181,168,stale_age_ridge,closed,closed,closed,closed,closed,closed,13.464661,13.380122,26.120521,25.135615,35.639949,34.634589,5.5e-05,5.5e-05
+IRIDIUM 177,8,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.488971,0.487756,1.141726,1.147159,1.492778,1.498537,0.0,0.0
+IRIDIUM 177,24,linear_bias_rate,closed,closed,closed,closed,closed,closed,1.672105,1.686998,4.291282,4.307635,5.374954,5.386646,0.0,0.0
+IRIDIUM 177,48,stale_age_ridge,closed,closed,closed,closed,closed,closed,3.841564,3.866884,13.796237,13.874271,17.955077,18.004017,0.000346,0.000346
+IRIDIUM 177,72,stale_age_ridge,closed,closed,closed,closed,closed,closed,7.474526,7.443991,26.86643,26.804213,34.551047,34.467676,0.000686,0.000686
+IRIDIUM 177,96,stale_age_ridge,closed,closed,closed,closed,closed,closed,13.459444,13.259391,44.266147,44.023508,57.65186,57.368506,0.001195,0.001138
+IRIDIUM 177,168,stale_age_ridge,closed,closed,closed,closed,closed,closed,36.848041,36.099575,111.924581,110.134189,144.473203,142.574253,0.006221,0.00605
+ONEWEB-0015,8,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.56699,0.899166,1.292079,1.89926,1.748542,2.356378,0.0,0.0
+ONEWEB-0015,24,linear_bias_rate,closed,closed,closed,closed,closed,closed,1.085374,2.411641,2.830601,4.171194,3.722226,4.944055,0.0,0.0
+ONEWEB-0015,48,stale_age_ridge,closed,closed,closed,closed,closed,closed,2.001634,2.278222,5.199854,5.594495,6.733572,7.115334,0.0,0.0
+ONEWEB-0015,72,linear_bias_rate,closed,closed,closed,closed,closed,closed,2.390593,2.414566,6.419694,6.470061,8.210994,8.257677,0.0,0.0
+ONEWEB-0015,96,stale_age_ridge,closed,closed,closed,closed,closed,closed,2.667518,2.660379,8.638962,8.667323,10.77105,10.796729,0.0,0.0
+ONEWEB-0015,168,linear_bias_rate,closed,closed,closed,closed,closed,closed,5.056065,5.074444,23.124395,23.141986,29.542103,29.559652,0.000309,0.000309
+SENTINEL-6B,8,linear_bias_rate,closed,closed,closed,closed,closed,closed,0.045403,0.050174,0.116859,0.119098,0.135416,0.136472,0.0,0.0
+SENTINEL-6B,24,linear_bias_rate,closed,closed,closed,closed,closed,closed,0.143756,0.152887,0.338164,0.329225,0.39321,0.384734,0.0,0.0
+SENTINEL-6B,48,linear_bias_rate,closed,closed,closed,closed,closed,closed,0.292191,0.313504,0.642011,0.613951,0.740964,0.701516,0.0,0.0
+SENTINEL-6B,72,linear_bias_rate,closed,closed,closed,closed,closed,closed,0.451209,0.482681,0.959541,0.907549,1.08834,1.012971,0.0,0.0
+SENTINEL-6B,96,linear_bias_rate,closed,closed,closed,closed,closed,closed,0.612175,0.683088,1.285116,1.342481,1.457956,1.492801,0.0,0.0
+SENTINEL-6B,168,linear_bias_rate,closed,closed,closed,closed,closed,closed,1.300264,1.410429,2.220821,2.227594,2.588541,2.623288,0.0,0.0
+FLOCK 4H 1,8,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.241628,0.26576,0.678661,0.725401,1.03378,1.079177,0.0,0.0
+FLOCK 4H 1,24,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.760135,0.775872,2.388986,2.413776,3.405874,3.420185,0.0,0.0
+FLOCK 4H 1,48,stale_age_ridge,closed,closed,closed,closed,closed,closed,1.906867,1.943669,5.807978,5.791485,7.960019,7.923211,0.0,0.0
+FLOCK 4H 1,72,linear_bias_rate,closed,closed,closed,closed,closed,closed,4.075125,4.068125,11.503069,11.573825,16.301634,16.365915,0.0,0.0
+FLOCK 4H 1,96,linear_bias_rate,closed,closed,closed,closed,closed,closed,6.821142,6.841708,20.770611,20.697864,29.397848,29.322585,0.0,0.0
+FLOCK 4H 1,168,stale_age_ridge,closed,closed,closed,closed,closed,closed,25.549213,25.508987,63.737147,63.639828,88.262663,88.172054,0.000386,0.000386
+FLOCK 4H 2,8,linear_bias_rate,closed,closed,closed,closed,closed,closed,0.264916,0.270762,0.720315,0.717769,0.984265,0.981197,0.0,0.0
+FLOCK 4H 2,24,stale_age_ridge,closed,closed,closed,closed,closed,closed,0.754164,0.763376,2.355223,2.351195,3.094859,3.085062,0.0,0.0
+FLOCK 4H 2,48,stale_age_ridge,closed,closed,closed,closed,closed,closed,1.962829,1.954249,6.747777,6.749378,9.651474,9.652445,0.0,0.0
+FLOCK 4H 2,72,stale_age_ridge,closed,closed,closed,closed,closed,closed,4.652394,4.627796,14.952347,14.893242,19.982203,19.927856,0.0,0.0
+FLOCK 4H 2,96,stale_age_ridge,closed,closed,closed,closed,closed,closed,7.717516,7.697709,20.703507,20.714817,27.074315,27.079069,0.0,0.0
+FLOCK 4H 2,168,stale_age_ridge,closed,closed,closed,closed,closed,closed,25.129225,25.09383,63.147221,62.969536,87.395156,87.206862,0.000389,0.000389

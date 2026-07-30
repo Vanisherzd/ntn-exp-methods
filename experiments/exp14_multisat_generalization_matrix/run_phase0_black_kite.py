@@ -77,13 +77,7 @@ def _per_pair_delta(
     pairs: list[dict[str, Any]], phys, learned, f_tol_hz: float
 ) -> np.ndarray:
     """learned minus SGP4 per-pair MAE. One value per accepted TLE pair."""
-    return np.array(
-        [
-            pipeline.pair_metrics(p["y"] - learned(p["x"]), f_tol_hz)["mae_hz"]
-            - pipeline.pair_metrics(p["y"] - phys(p["x"]), f_tol_hz)["mae_hz"]
-            for p in pairs
-        ]
-    )
+    return pipeline.per_pair_mae(pairs, learned) - pipeline.per_pair_mae(pairs, phys)
 
 
 def evaluate_phase0_cell(

@@ -1,0 +1,466 @@
+{
+  "creation_minus_epoch_hours": {
+    "n_elements": 56529,
+    "min": -7.7,
+    "p10": -5.592,
+    "p50": 1.549,
+    "p90": 13396.582,
+    "p99": 46771.996,
+    "max": 50336.541,
+    "negative_count": 15332
+  },
+  "per_satellite": {
+    "ISS (ZARYA)": {
+      "n": 46859,
+      "min_h": -7.7,
+      "p50_h": 0.993,
+      "p90_h": 20187.47,
+      "max_h": 50336.541,
+      "negative_lag_count": 15332
+    },
+    "IRIDIUM 181": {
+      "n": 2678,
+      "min_h": 0.805,
+      "p50_h": 5.824,
+      "p90_h": 10.96,
+      "max_h": 1130.741,
+      "negative_lag_count": 0
+    },
+    "IRIDIUM 177": {
+      "n": 2623,
+      "min_h": 0.729,
+      "p50_h": 5.909,
+      "p90_h": 11.204,
+      "max_h": 52.967,
+      "negative_lag_count": 0
+    },
+    "ONEWEB-0015": {
+      "n": 1695,
+      "min_h": 0.605,
+      "p50_h": 5.509,
+      "p90_h": 10.756,
+      "max_h": 444.937,
+      "negative_lag_count": 0
+    },
+    "SENTINEL-6B": {
+      "n": 727,
+      "min_h": 1.336,
+      "p50_h": 5.225,
+      "p90_h": 11.193,
+      "max_h": 217.089,
+      "negative_lag_count": 0
+    },
+    "FLOCK 4H 1": {
+      "n": 614,
+      "min_h": 1.594,
+      "p50_h": 5.697,
+      "p90_h": 10.223,
+      "max_h": 42.724,
+      "negative_lag_count": 0
+    },
+    "FLOCK 4H 2": {
+      "n": 635,
+      "min_h": 1.307,
+      "p50_h": 5.567,
+      "p90_h": 9.61,
+      "max_h": 51.507,
+      "negative_lag_count": 0
+    },
+    "BLACK KITE-1": {
+      "n": 446,
+      "min_h": 1.269,
+      "p50_h": 5.796,
+      "p90_h": 13.791,
+      "max_h": 1046.857,
+      "negative_lag_count": 0
+    },
+    "BLACK KITE-2": {
+      "n": 252,
+      "min_h": 1.738,
+      "p50_h": 5.961,
+      "p90_h": 11.879,
+      "max_h": 31.382,
+      "negative_lag_count": 0
+    }
+  },
+  "current_pairing_causality": [
+    {
+      "satellite": "ISS (ZARYA)",
+      "target_h": 8,
+      "pairs": 44649,
+      "stale_not_yet_available_pct": 20.93,
+      "reference_already_available_pct": 60.45
+    },
+    {
+      "satellite": "ISS (ZARYA)",
+      "target_h": 24,
+      "pairs": 46659,
+      "stale_not_yet_available_pct": 18.03,
+      "reference_already_available_pct": 59.49
+    },
+    {
+      "satellite": "ISS (ZARYA)",
+      "target_h": 48,
+      "pairs": 46707,
+      "stale_not_yet_available_pct": 17.49,
+      "reference_already_available_pct": 59.45
+    },
+    {
+      "satellite": "ISS (ZARYA)",
+      "target_h": 72,
+      "pairs": 46667,
+      "stale_not_yet_available_pct": 17.28,
+      "reference_already_available_pct": 59.46
+    },
+    {
+      "satellite": "ISS (ZARYA)",
+      "target_h": 96,
+      "pairs": 46732,
+      "stale_not_yet_available_pct": 17.12,
+      "reference_already_available_pct": 59.45
+    },
+    {
+      "satellite": "ISS (ZARYA)",
+      "target_h": 168,
+      "pairs": 46745,
+      "stale_not_yet_available_pct": 16.95,
+      "reference_already_available_pct": 59.47
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "target_h": 8,
+      "pairs": 1902,
+      "stale_not_yet_available_pct": 17.61,
+      "reference_already_available_pct": 0.95
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "target_h": 24,
+      "pairs": 2584,
+      "stale_not_yet_available_pct": 0.5,
+      "reference_already_available_pct": 1.28
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "target_h": 48,
+      "pairs": 2612,
+      "stale_not_yet_available_pct": 0.19,
+      "reference_already_available_pct": 1.15
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "target_h": 72,
+      "pairs": 2597,
+      "stale_not_yet_available_pct": 0.08,
+      "reference_already_available_pct": 1.16
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "target_h": 96,
+      "pairs": 2652,
+      "stale_not_yet_available_pct": 0.11,
+      "reference_already_available_pct": 1.21
+    },
+    {
+      "satellite": "IRIDIUM 181",
+      "target_h": 168,
+      "pairs": 2663,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 1.24
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "target_h": 8,
+      "pairs": 1875,
+      "stale_not_yet_available_pct": 20.11,
+      "reference_already_available_pct": 0.75
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "target_h": 24,
+      "pairs": 2545,
+      "stale_not_yet_available_pct": 0.43,
+      "reference_already_available_pct": 0.98
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "target_h": 48,
+      "pairs": 2534,
+      "stale_not_yet_available_pct": 0.12,
+      "reference_already_available_pct": 0.83
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "target_h": 72,
+      "pairs": 2552,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.98
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "target_h": 96,
+      "pairs": 2601,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 1.0
+    },
+    {
+      "satellite": "IRIDIUM 177",
+      "target_h": 168,
+      "pairs": 2610,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 1.0
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "target_h": 8,
+      "pairs": 1334,
+      "stale_not_yet_available_pct": 16.27,
+      "reference_already_available_pct": 8.92
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "target_h": 24,
+      "pairs": 1651,
+      "stale_not_yet_available_pct": 0.42,
+      "reference_already_available_pct": 7.93
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "target_h": 48,
+      "pairs": 1664,
+      "stale_not_yet_available_pct": 0.06,
+      "reference_already_available_pct": 7.81
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "target_h": 72,
+      "pairs": 1656,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 7.73
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "target_h": 96,
+      "pairs": 1680,
+      "stale_not_yet_available_pct": 0.06,
+      "reference_already_available_pct": 7.8
+    },
+    {
+      "satellite": "ONEWEB-0015",
+      "target_h": 168,
+      "pairs": 1677,
+      "stale_not_yet_available_pct": 0.06,
+      "reference_already_available_pct": 7.75
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "target_h": 8,
+      "pairs": 487,
+      "stale_not_yet_available_pct": 15.2,
+      "reference_already_available_pct": 0.62
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "target_h": 24,
+      "pairs": 689,
+      "stale_not_yet_available_pct": 0.73,
+      "reference_already_available_pct": 0.58
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "target_h": 48,
+      "pairs": 687,
+      "stale_not_yet_available_pct": 0.29,
+      "reference_already_available_pct": 0.58
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "target_h": 72,
+      "pairs": 688,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.58
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "target_h": 96,
+      "pairs": 698,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.57
+    },
+    {
+      "satellite": "SENTINEL-6B",
+      "target_h": 168,
+      "pairs": 686,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.58
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "target_h": 8,
+      "pairs": 453,
+      "stale_not_yet_available_pct": 13.69,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "target_h": 24,
+      "pairs": 581,
+      "stale_not_yet_available_pct": 0.69,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "target_h": 48,
+      "pairs": 598,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "target_h": 72,
+      "pairs": 589,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "target_h": 96,
+      "pairs": 600,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "FLOCK 4H 1",
+      "target_h": 168,
+      "pairs": 590,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "target_h": 8,
+      "pairs": 478,
+      "stale_not_yet_available_pct": 12.13,
+      "reference_already_available_pct": 0.42
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "target_h": 24,
+      "pairs": 605,
+      "stale_not_yet_available_pct": 0.83,
+      "reference_already_available_pct": 0.5
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "target_h": 48,
+      "pairs": 616,
+      "stale_not_yet_available_pct": 0.32,
+      "reference_already_available_pct": 0.49
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "target_h": 72,
+      "pairs": 615,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.49
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "target_h": 96,
+      "pairs": 614,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.49
+    },
+    {
+      "satellite": "FLOCK 4H 2",
+      "target_h": 168,
+      "pairs": 609,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.49
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "target_h": 8,
+      "pairs": 318,
+      "stale_not_yet_available_pct": 17.61,
+      "reference_already_available_pct": 0.31
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "target_h": 24,
+      "pairs": 397,
+      "stale_not_yet_available_pct": 1.51,
+      "reference_already_available_pct": 0.76
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "target_h": 48,
+      "pairs": 398,
+      "stale_not_yet_available_pct": 2.76,
+      "reference_already_available_pct": 0.75
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "target_h": 72,
+      "pairs": 401,
+      "stale_not_yet_available_pct": 1.0,
+      "reference_already_available_pct": 0.75
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "target_h": 96,
+      "pairs": 403,
+      "stale_not_yet_available_pct": 1.24,
+      "reference_already_available_pct": 0.74
+    },
+    {
+      "satellite": "BLACK KITE-1",
+      "target_h": 168,
+      "pairs": 405,
+      "stale_not_yet_available_pct": 2.22,
+      "reference_already_available_pct": 0.74
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "target_h": 8,
+      "pairs": 183,
+      "stale_not_yet_available_pct": 18.03,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "target_h": 24,
+      "pairs": 229,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "target_h": 48,
+      "pairs": 221,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "target_h": 72,
+      "pairs": 223,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "target_h": 96,
+      "pairs": 235,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    },
+    {
+      "satellite": "BLACK KITE-2",
+      "target_h": 168,
+      "pairs": 241,
+      "stale_not_yet_available_pct": 0.0,
+      "reference_already_available_pct": 0.0
+    }
+  ]
+}

@@ -137,3 +137,11 @@ hardware_conducted_iq/board_inventory/**/*.bin
 # Firmware build artifacts
 build/
 firmware_patches/**/build/
+
+# Derived arrays from the stopped residual-learning lines (~60 MB, regenerable from
+# the committed builders). JSON summaries and audit reports ARE committed.
+experiments/exp15_causal_recovery/causal_dataset/
+experiments/exp15_visible_causal/registry/*/
+experiments/exp15_visible_causal/labels/
+experiments/exp16_controlled_gate/__pycache__/
+**/__pycache__/

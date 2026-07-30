@@ -1,0 +1,12 @@
+satellite,satellite_name,norad_id,canonical_source,raw_json_rows,duplicate_json_rows,same_epoch_policy,equivalent_duplicate_rows_collapsed,same_epoch_revision_groups,same_epoch_revision_rows_discarded,conflicting_epochs_dropped,canonical_unique_rows,raw_tle_rows,tle_used_for_science,records_before,records_after,median_gap_before_h,median_gap_after_h
+NORAD25544,ISS (ZARYA),25544,json,52538,4803,drop_conflicting,4803,733,0,733,46126,52538,False,92659,46126,0.176,4.532
+NORAD56726,IRIDIUM 181,56726,json,3017,317,drop_conflicting,317,22,0,22,2656,3017,False,5347,2656,0.0,9.982
+NORAD56727,IRIDIUM 177,56727,json,3042,394,drop_conflicting,394,24,0,24,2599,3042,False,5243,2599,0.0,9.735
+NORAD61594,ONEWEB-0015,61594,json,1929,207,drop_conflicting,207,26,0,26,1669,1929,False,3393,1669,0.0,8.0
+NORAD66514,SENTINEL-6B,66514,json,838,85,drop_conflicting,85,24,0,24,703,838,False,1480,703,0.0,5.621
+NORAD66704,FLOCK 4H 1,66704,json,749,118,drop_conflicting,118,16,0,16,598,749,False,1259,598,0.0,7.896
+NORAD66705,FLOCK 4H 2,66705,json,755,98,drop_conflicting,98,22,0,22,613,755,False,1278,613,0.0,7.894
+NORAD66741,BLACK KITE-1,66741,json,531,75,drop_conflicting,75,10,0,10,436,531,False,906,436,0.0,6.33
+NORAD68474,BLACK KITE-2,68474,json,308,49,drop_conflicting,49,7,0,7,245,308,False,521,245,0.0,8.044
+NORAD100001,STARLINK-38128,100001,json,11,0,drop_conflicting,0,0,0,0,11,11,False,20,11,6.083,9.886
+NORAD100002,STARLINK-37711,100002,json,9,0,drop_conflicting,0,0,0,0,9,9,False,18,9,0.0,12.927

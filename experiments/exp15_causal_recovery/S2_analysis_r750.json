@@ -1,0 +1,327 @@
+{
+ "statistical_unit": "the refresh EPISODE. The 24 transmissions inside one episode share one frozen stale element and usually one reference element, so they are not independent.",
+ "n_satellites": 9,
+ "n_segments_total": 279,
+ "gates_open_total": 1,
+ "gamma": 0.95,
+ "candidates": {
+  "M1": {
+   "satellite_balanced_delta_mae_hz": 2.10233,
+   "boot_ci95_hz": [
+    0.806147,
+    3.861333
+   ],
+   "improvement_pct_negative_is_worse": -58.28,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 1.089216,
+   "n_satellites_improved": 0,
+   "satellites_improved": [],
+   "regimes_improved": [],
+   "max_single_satellite_share_of_gain": null,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 0.471883,
+    "IRIDIUM 181": 0.961348,
+    "IRIDIUM 177": 1.046407,
+    "ONEWEB-0015": 7.755659,
+    "SENTINEL-6B": 2.019974,
+    "FLOCK 4H 1": 1.089216,
+    "FLOCK 4H 2": 1.300363,
+    "BLACK KITE-1": 4.230763,
+    "BLACK KITE-2": 0.045356
+   }
+  },
+  "M2": {
+   "satellite_balanced_delta_mae_hz": 6.154031,
+   "boot_ci95_hz": [
+    1.933875,
+    12.581106
+   ],
+   "improvement_pct_negative_is_worse": -170.5997,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 2.556517,
+   "n_satellites_improved": 0,
+   "satellites_improved": [],
+   "regimes_improved": [],
+   "max_single_satellite_share_of_gain": null,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 1.632154,
+    "IRIDIUM 181": 16.907675,
+    "IRIDIUM 177": 1.37661,
+    "ONEWEB-0015": 20.126751,
+    "SENTINEL-6B": 1.839006,
+    "FLOCK 4H 1": 2.556517,
+    "FLOCK 4H 2": 3.89215,
+    "BLACK KITE-1": 6.855474,
+    "BLACK KITE-2": 0.199941
+   }
+  },
+  "M3": {
+   "satellite_balanced_delta_mae_hz": 0.805807,
+   "boot_ci95_hz": [
+    0.257744,
+    1.47339
+   ],
+   "improvement_pct_negative_is_worse": -22.3383,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 0.754672,
+   "n_satellites_improved": 0,
+   "satellites_improved": [],
+   "regimes_improved": [],
+   "max_single_satellite_share_of_gain": null,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 2.817759,
+    "IRIDIUM 181": 0.98515,
+    "IRIDIUM 177": 0.754672,
+    "ONEWEB-0015": 1.108455,
+    "SENTINEL-6B": 0.005623,
+    "FLOCK 4H 1": 0.124306,
+    "FLOCK 4H 2": 0.191407,
+    "BLACK KITE-1": 1.204745,
+    "BLACK KITE-2": 0.060146
+   }
+  },
+  "M4": {
+   "satellite_balanced_delta_mae_hz": 0.424465,
+   "boot_ci95_hz": [
+    0.083211,
+    0.902617
+   ],
+   "improvement_pct_negative_is_worse": -11.7669,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 0.193351,
+   "n_satellites_improved": 0,
+   "satellites_improved": [],
+   "regimes_improved": [],
+   "max_single_satellite_share_of_gain": null,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 2.018347,
+    "IRIDIUM 181": 0.295575,
+    "IRIDIUM 177": 0.193351,
+    "ONEWEB-0015": 0.42239,
+    "SENTINEL-6B": 0.004844,
+    "FLOCK 4H 1": 0.076307,
+    "FLOCK 4H 2": 0.11081,
+    "BLACK KITE-1": 0.690235,
+    "BLACK KITE-2": 0.008329
+   }
+  },
+  "M5": {
+   "satellite_balanced_delta_mae_hz": 0.490718,
+   "boot_ci95_hz": [
+    0.004525,
+    1.163882
+   ],
+   "improvement_pct_negative_is_worse": -13.6035,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 0.133728,
+   "n_satellites_improved": 0,
+   "satellites_improved": [],
+   "regimes_improved": [],
+   "max_single_satellite_share_of_gain": null,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 1.770957,
+    "IRIDIUM 181": 0.190011,
+    "IRIDIUM 177": 0.133728,
+    "ONEWEB-0015": 0.518817,
+    "SENTINEL-6B": 0.077535,
+    "FLOCK 4H 1": 0.026992,
+    "FLOCK 4H 2": 0.060434,
+    "BLACK KITE-1": 1.637375,
+    "BLACK KITE-2": 0.000614
+   }
+  },
+  "M6": {
+   "satellite_balanced_delta_mae_hz": 0.002449,
+   "boot_ci95_hz": [
+    4e-05,
+    0.005275
+   ],
+   "improvement_pct_negative_is_worse": -0.0679,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 0.000718,
+   "n_satellites_improved": 1,
+   "satellites_improved": [
+    "IRIDIUM 177"
+   ],
+   "regimes_improved": [
+    "LEO-polar-comms"
+   ],
+   "max_single_satellite_share_of_gain": 1.0,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 0.000531,
+    "IRIDIUM 181": 0.000401,
+    "IRIDIUM 177": -9.7e-05,
+    "ONEWEB-0015": 0.000718,
+    "SENTINEL-6B": 0.002677,
+    "FLOCK 4H 1": 0.004544,
+    "FLOCK 4H 2": 0.00209,
+    "BLACK KITE-1": 0.010668,
+    "BLACK KITE-2": 0.00051
+   }
+  },
+  "M7": {
+   "satellite_balanced_delta_mae_hz": 6.188088,
+   "boot_ci95_hz": [
+    2.219889,
+    10.847621
+   ],
+   "improvement_pct_negative_is_worse": -171.5438,
+   "sgp4_baseline_mae_hz": 3.60729,
+   "median_satellite_effect_hz": 2.656709,
+   "n_satellites_improved": 0,
+   "satellites_improved": [],
+   "regimes_improved": [],
+   "max_single_satellite_share_of_gain": null,
+   "per_satellite_delta_mae_hz": {
+    "ISS (ZARYA)": 2.300293,
+    "IRIDIUM 181": 10.817832,
+    "IRIDIUM 177": 1.924087,
+    "ONEWEB-0015": 17.638287,
+    "SENTINEL-6B": 3.389046,
+    "FLOCK 4H 1": 2.656709,
+    "FLOCK 4H 2": 2.587329,
+    "BLACK KITE-1": 14.158143,
+    "BLACK KITE-2": 0.221064
+   }
+  }
+ },
+ "gated_system": {
+  "n_admitted_segments": 1,
+  "aggregate_improvement_hz": null,
+  "note": "see per-segment records",
+  "harmful_admission_rate": 1.0,
+  "admission_value": "UNRESOLVED (fewer than 10 admitted segments)"
+ },
+ "m_star_sign_stability": {
+  "ISS (ZARYA)": {
+   "n_episodes": 4551,
+   "frac_episodes_improved": 0.4825,
+   "sign_flip_rate": 0.411,
+   "mean_delta_hz": 0.002506
+  },
+  "IRIDIUM 181": {
+   "n_episodes": 1130,
+   "frac_episodes_improved": 0.4823,
+   "sign_flip_rate": 0.395,
+   "mean_delta_hz": 0.187049
+  },
+  "IRIDIUM 177": {
+   "n_episodes": 1130,
+   "frac_episodes_improved": 0.5434,
+   "sign_flip_rate": 0.4119,
+   "mean_delta_hz": 0.007771
+  },
+  "ONEWEB-0015": {
+   "n_episodes": 609,
+   "frac_episodes_improved": 0.5271,
+   "sign_flip_rate": 0.2977,
+   "mean_delta_hz": 0.986627
+  },
+  "SENTINEL-6B": {
+   "n_episodes": 212,
+   "frac_episodes_improved": 0.2406,
+   "sign_flip_rate": 0.3602,
+   "mean_delta_hz": 0.003937
+  },
+  "FLOCK 4H 1": {
+   "n_episodes": 189,
+   "frac_episodes_improved": 0.455,
+   "sign_flip_rate": 0.4255,
+   "mean_delta_hz": 0.006315
+  },
+  "FLOCK 4H 2": {
+   "n_episodes": 189,
+   "frac_episodes_improved": 0.4656,
+   "sign_flip_rate": 0.4521,
+   "mean_delta_hz": 0.002546
+  },
+  "BLACK KITE-1": {
+   "n_episodes": 137,
+   "frac_episodes_improved": 0.4672,
+   "sign_flip_rate": 0.4191,
+   "mean_delta_hz": 0.002882
+  },
+  "BLACK KITE-2": {
+   "n_episodes": 72,
+   "frac_episodes_improved": 0.4444,
+   "sign_flip_rate": 0.4648,
+   "mean_delta_hz": 0.008096
+  }
+ },
+ "m_star_selection_counts": {
+  "M1": 0,
+  "M2": 0,
+  "M3": 1,
+  "M4": 6,
+  "M5": 5,
+  "M6": 266,
+  "M7": 1
+ },
+ "val_margin_ratio": {
+  "ISS (ZARYA)": {
+   "min": 0.9899,
+   "median": 1.0001,
+   "gate_threshold": 0.95
+  },
+  "IRIDIUM 181": {
+   "min": 0.9887,
+   "median": 1.0002,
+   "gate_threshold": 0.95
+  },
+  "IRIDIUM 177": {
+   "min": 0.959,
+   "median": 0.9997,
+   "gate_threshold": 0.95
+  },
+  "ONEWEB-0015": {
+   "min": 0.92,
+   "median": 0.9998,
+   "gate_threshold": 0.95
+  },
+  "SENTINEL-6B": {
+   "min": 1.0001,
+   "median": 1.0081,
+   "gate_threshold": 0.95
+  },
+  "FLOCK 4H 1": {
+   "min": 0.9688,
+   "median": 1.0027,
+   "gate_threshold": 0.95
+  },
+  "FLOCK 4H 2": {
+   "min": 0.9726,
+   "median": 1.001,
+   "gate_threshold": 0.95
+  },
+  "BLACK KITE-1": {
+   "min": 1.0003,
+   "median": 1.0014,
+   "gate_threshold": 0.95
+  },
+  "BLACK KITE-2": {
+   "min": 0.9885,
+   "median": 1.0002,
+   "gate_threshold": 0.95
+  }
+ },
+ "best_candidate_by_aggregate": "M6",
+ "criteria": {
+  "1_positive_aggregate": false,
+  "2_interval_excludes_zero": false,
+  "3_breadth": false,
+  "4_no_domination": false,
+  "5_sign_stability": false,
+  "6_screen_robustness": null,
+  "7_admission_safety": false
+ },
+ "S2_VERDICT": "FAIL",
+ "failed_criteria": [
+  "1_positive_aggregate",
+  "2_interval_excludes_zero",
+  "3_breadth",
+  "4_no_domination",
+  "5_sign_stability",
+  "7_admission_safety"
+ ],
+ "screen_reject_hz": 750.0
+}

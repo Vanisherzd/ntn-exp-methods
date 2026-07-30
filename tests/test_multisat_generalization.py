@@ -756,3 +756,174 @@ def test_no_quarantined_response_is_in_a_scientific_manifest() -> None:
                 norad = int(path.stem.split("_")[1])
                 state = stc.classify_satcat(path.read_bytes(), norad).state
                 assert state is stc.ResponseState.VALID, (path, state)
+
+
+# --------------------------------------------------- Phase-0 outputs (BK only)
+
+PHASE0: Final = EXP / "phase0_black_kite"
+
+
+def _phase0() -> dict[str, Any] | None:
+    path = PHASE0 / "phase0_results.json"
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_phase0_runs_only_the_four_black_kite_cells() -> None:
+    payload = _phase0()
+    if payload is None:
+        return
+    allowed = {
+        "NORAD66741->NORAD66741",
+        "NORAD68474->NORAD68474",
+        "NORAD66741->NORAD68474",
+        "NORAD68474->NORAD66741",
+    }
+    cells = {r["cell"] for r in payload["rows"]}
+    assert cells <= allowed, cells - allowed
+    assert payload["metadata"]["integrity_checks_passed"] is True
+    assert payload["metadata"]["reference_is_measured_truth"] is False
+
+
+def test_phase0_gate_is_reproducible_from_validation_only() -> None:
+    payload = _phase0()
+    if payload is None:
+        return
+    for row in payload["rows"]:
+        if row["status"] != "evaluated":
+            continue
+        base, cand = row["val_sgp4_mae_hz"], row["val_learned_mae_hz"]
+        expected = "closed"
+        if base > 0 and cand < row["gamma"] * base:
+            expected = "open"
+        assert row["gate_mae"] == expected, row["cell"]
+
+
+def test_phase0_statistical_unit_is_the_pair() -> None:
+    payload = _phase0()
+    if payload is None:
+        return
+    deltas = payload["per_pair_delta_mae_hz"]
+    for row in payload["rows"]:
+        if row["status"] != "evaluated":
+            continue
+        n_pairs = row["n_unique_test_pair_ids"]
+        assert n_pairs == row["n_test_pairs"]
+        assert (
+            row["learned_wins"] + row["sgp4_wins"] + row["ties"] == n_pairs
+        ), row["cell"]
+        key = f"{row['cell']}|{row['staleness_h']}"
+        assert len(deltas[key]) == n_pairs
+        assert n_pairs != row["n_test_pairs"] * runner.K_SAMPLES_PER_PAIR
+
+
+def test_phase0_declares_legacy_cross_transfer_not_reused() -> None:
+    """The old BK1->BK2 numbers must be declared incomparable, not merged in.
+
+    Deliberately NOT a numeric-collision check: a genuine new degradation could
+    legitimately equal a legacy value, so that would be a false positive.
+    """
+    payload = _phase0()
+    if payload is None:
+        return
+    note = payload["metadata"]["legacy_cross_transfer_superseded"].lower()
+    assert "not comparable" in note and "not reused" in note
+    for marker in ("reject threshold", "features", "pairing", "selection"):
+        assert marker in note, marker
+
+
+def test_phase0_canonical_input_is_json_only() -> None:
+    payload = _phase0()
+    if payload is None:
+        return
+    for sat in payload["satellites"].values():
+        assert sat["tle_used_for_science"] is False
+        assert sat["canonical_source"] == "json"
+
+
+# ---------------------------------------------------------------------------
+# Same-epoch revision policy
+# ---------------------------------------------------------------------------
+def _rev_row(gp_id: str, creation: str, file_id: str, line2_tail: str) -> dict:
+    """Minimal record shaped like one parsed GP row."""
+    line1 = ("1 25544U 98067A   26025.16496516  .00010995  00000-0  "
+             "53350-3 0  9991")
+    line2 = f"2 25544  51.6400 101.2038 0003609  95.5840 264.5806 {line2_tail}"
+    return {
+        "physical_key": runner.physical_element_key(line1, line2),
+        "gp_id": gp_id,
+        "creation_date": creation,
+        "file": file_id,
+        "line1": line1,
+        "line2": line2,
+    }
+
+
+def test_physical_key_ignores_publication_bookkeeping() -> None:
+    """Element-set number, revolution number and checksum are not orbit state."""
+    a = _rev_row("1", "2026-01-01T00:00:00", "10", "15.50306033  8715")
+    b = _rev_row("2", "2026-01-02T00:00:00", "11", "15.50306033  8716")
+    assert a["physical_key"] == b["physical_key"]
+
+
+def test_physical_key_separates_distinct_mean_motion() -> None:
+    a = _rev_row("1", "2026-01-01T00:00:00", "10", "15.50306033  8715")
+    b = _rev_row("2", "2026-01-02T00:00:00", "11", "15.49961241  8715")
+    assert a["physical_key"] != b["physical_key"]
+
+
+def test_equivalent_rows_collapse_regardless_of_policy() -> None:
+    members = [
+        _rev_row("1", "2026-01-01T00:00:00", "10", "15.50306033  8715"),
+        _rev_row("2", "2026-01-02T00:00:00", "11", "15.50306033  8716"),
+    ]
+    for policy in runner.SAME_EPOCH_POLICIES:
+        keep, prov = runner.resolve_same_epoch_group(members, policy)
+        assert keep is not None, policy
+        assert prov["resolution"] == "equivalent_duplicate_collapse"
+        assert prov["distinct_physical_solutions"] == 1
+
+
+def test_conflicting_rows_resolve_to_latest_publication() -> None:
+    old = _rev_row("1", "2026-01-01T00:00:00", "10", "15.50306033  8715")
+    new = _rev_row("2", "2026-03-09T00:00:00", "11", "15.49961241  8715")
+    keep, prov = runner.resolve_same_epoch_group([old, new], "latest_published")
+    assert keep is new
+    assert prov["resolution"] == "same_epoch_revision"
+    assert prov["gp_id"] == "2"
+    assert prov["distinct_physical_solutions"] == 2
+
+    keep, _ = runner.resolve_same_epoch_group([old, new], "earliest_published")
+    assert keep is old
+
+    keep, prov = runner.resolve_same_epoch_group([old, new], "drop_conflicting")
+    assert keep is None
+    assert prov["resolution"] == "dropped_conflicting_epoch"
+
+
+def test_creation_date_ties_break_on_file_then_gp_id() -> None:
+    stamp = "2026-01-01T00:00:00"
+    lo_file = _rev_row("9", stamp, "10", "15.50306033  8715")
+    hi_file = _rev_row("1", stamp, "11", "15.49961241  8715")
+    keep, _ = runner.resolve_same_epoch_group([lo_file, hi_file], "latest_published")
+    assert keep is hi_file, "FILE must outrank GP_ID"
+
+    lo_gp = _rev_row("3", stamp, "10", "15.50306033  8715")
+    hi_gp = _rev_row("7", stamp, "10", "15.49961241  8715")
+    keep, _ = runner.resolve_same_epoch_group([lo_gp, hi_gp], "latest_published")
+    assert keep is hi_gp, "GP_ID breaks a FILE tie"
+
+
+def test_revision_resolution_is_order_independent() -> None:
+    """The canonical rule must not depend on the order rows appear in the file."""
+    rows = [
+        _rev_row("5", "2026-02-01T00:00:00", "20", "15.50306033  8715"),
+        _rev_row("2", "2026-03-01T00:00:00", "21", "15.49961241  8715"),
+        _rev_row("9", "2026-01-01T00:00:00", "19", "15.50133615  8715"),
+    ]
+    chosen = {
+        runner.resolve_same_epoch_group(perm, "latest_published")[0]["gp_id"]
+        for perm in (rows, rows[::-1], [rows[1], rows[0], rows[2]])
+    }
+    assert chosen == {"2"}
