@@ -1,0 +1,212 @@
+{
+ "source": "evaluation/results/matrix_result.json",
+ "generated_by": "evaluation/scripts/make_fig2_data.py",
+ "baseline_caught": 2,
+ "n_fault_classes": 18,
+ "contract_caught": 18,
+ "rows": [
+  {
+   "fault": "D1",
+   "name": "unavailable deployment feature",
+   "layer": "L1",
+   "rule": "L1.1",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D2",
+   "name": "epoch vs publication time",
+   "layer": "L1",
+   "rule": "L1.2",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D3",
+   "name": "future-dependent row membership",
+   "layer": "L1",
+   "rule": "L1.4",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D12",
+   "name": "reference-dependent sched. bound",
+   "layer": "L1",
+   "rule": "L1.4",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "HO1",
+   "name": "availability boundary equality",
+   "layer": "L1",
+   "rule": "L1.5",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": true
+  },
+  {
+   "fault": "D5",
+   "name": "invalid label-closure timing",
+   "layer": "L1",
+   "rule": "L1.3",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 3,
+   "baseline_checks": [
+    "B3"
+   ],
+   "held_out": false
+  },
+  {
+   "fault": "D4",
+   "name": "below-horizon schedule",
+   "layer": "L2",
+   "rule": "L2.1",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "HO4",
+   "name": "declared vs implemented physics",
+   "layer": "L2",
+   "rule": "L2.4",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": true
+  },
+  {
+   "fault": "D6",
+   "name": "scaler/model/tracker state leak",
+   "layer": "L3",
+   "rule": "L3.1",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D9",
+   "name": "model-metadata state leak",
+   "layer": "L3",
+   "rule": "L3.1",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D10",
+   "name": "gate-state leak",
+   "layer": "L3",
+   "rule": "L3.1",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D8",
+   "name": "broken negative control",
+   "layer": "L3",
+   "rule": "L3.3",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D13",
+   "name": "fold chronology violated",
+   "layer": "L4",
+   "rule": "L4.1",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 3,
+   "baseline_checks": [
+    "B1",
+    "B2"
+   ],
+   "held_out": false
+  },
+  {
+   "fault": "D7",
+   "name": "unpaired conditions",
+   "layer": "L4",
+   "rule": "L4.2",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D11",
+   "name": "repeated measures as independent",
+   "layer": "L4",
+   "rule": "L4.3",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "D14",
+   "name": "burned seed in evaluation",
+   "layer": "L4",
+   "rule": "L4.4",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": false
+  },
+  {
+   "fault": "HO2",
+   "name": "incomplete provenance",
+   "layer": "L4",
+   "rule": "L4.6",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": true
+  },
+  {
+   "fault": "HO3",
+   "name": "wrong statistical unit level",
+   "layer": "L4",
+   "rule": "L4.7",
+   "contract_detected": 3,
+   "of": 3,
+   "baseline_detected": 0,
+   "baseline_checks": [],
+   "held_out": true
+  }
+ ]
+}

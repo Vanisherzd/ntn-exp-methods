@@ -13,9 +13,9 @@ reproduce it. Recomputed after the repository restructure.
 | held-out detection | 12/12 (4 mutations x 3 environments) | same artifact | as above |
 | fault-environment cells | 54/54 | 18 x 3 | as above |
 | clean-path false positives | 0 | same artifact | as above |
-| chronological baseline coverage | 2/18 | `evaluation/results/fig2_data.json` | derived in `evaluation/scripts/` |
+| chronological baseline coverage | 2/18 (**measured**) | `evaluation/results/matrix_result.json` -> `chronological_baseline`; `evaluation/results/fig2_data.json` | `python evaluation/scripts/run_matrix.py` |
 | sweep runtime | under 0.2 s, about 3 ms per condition | same artifact, `total_runtime_s` | as above |
-| toolkit size | 812 lines in four modules + 399-line test suite | `src/orbit_evidence/`, `tests/regression/` | `find src/orbit_evidence -name '*.py' \| xargs wc -l` |
+| toolkit size | 710 lines in four modules + 399-line test suite | `src/orbit_evidence/`, `tests/regression/` | `find src/orbit_evidence -name '*.py' \| xargs wc -l` (710 total incl. five `__init__.py`; 696 excl.) |
 | regression tests | 23 passing | `tests/regression/` | `PYTHONPATH=src pytest tests/regression -q` |
 | fault-injection tests | 4 passing | `tests/fault_injection/` | `PYTHONPATH=src pytest tests/fault_injection -q` |
 

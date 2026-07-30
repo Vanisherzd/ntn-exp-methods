@@ -4,6 +4,7 @@ Tests the *contract*, not any model's performance.
 
 ```
 scripts/contract_layers.py   19 rules in four layers; every violation carries a rule ID
+scripts/chronological_baseline.py  the baseline protocol property, implemented and run
 scripts/run_matrix.py        runs {2 pipelines} x {19 conditions} x {3 environments}
 mutations/PREREGISTRATION.md the frozen fault definitions, written before the detectors
 results/matrix_result.json   the committed result

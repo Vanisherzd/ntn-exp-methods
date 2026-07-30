@@ -240,14 +240,43 @@ def aggregate_repeated_measures(values: np.ndarray, group_ids: np.ndarray
 
 
 def within_group_icc(values: np.ndarray, group_ids: np.ndarray) -> float:
-    g, v = np.asarray(group_ids), np.asarray(values, dtype=float)
-    grp = [v[g == u] for u in np.unique(g) if int((g == u).sum()) >= 2]
-    if len(grp) < 2:
+    """Unbiased one-way random-effects ICC(1) from variance components.
+
+    ICC(1) = (MSB - MSW) / (MSB + (m - 1) * MSW)
+
+    The previous implementation returned a *biased variance ratio*
+    ``sb / (sb + sw)`` built from raw between- and within-group scatter. That
+    statistic has null expectation approximately 1/m for m observations per group, so
+    a fixed threshold of 0.2 sat BELOW its own null mean for m <= 4: measured on iid
+    data with true ICC = 0, P(rho > 0.2) was 1.00 at m = 2 and m = 3, and 0.91 at
+    m = 4. Any rule thresholding it therefore fired on correctly specified designs.
+    ICC(1) subtracts the within-group mean square, so its expectation under
+    independence is 0 for every group size.
+
+    Returns 0.0 rather than a negative value when the estimate is negative, which is
+    the conventional truncation and cannot manufacture a false positive.
+    """
+    g = np.asarray(group_ids)
+    v = np.asarray(values, dtype=float)
+    groups = [v[g == u] for u in np.unique(g)]
+    groups = [x for x in groups if x.size >= 2]
+    k = len(groups)
+    if k < 2:
         return float("nan")
-    gm = float(np.concatenate(grp).mean())
-    sb = float(np.mean([(x.mean() - gm) ** 2 for x in grp]))
-    sw = float(np.mean([x.var() for x in grp]))
-    return sb / (sb + sw) if sb + sw > 0 else float("nan")
+    n_total = sum(x.size for x in groups)
+    grand = float(np.concatenate(groups).mean())
+    ss_between = sum(x.size * (float(x.mean()) - grand) ** 2 for x in groups)
+    ss_within = sum(float(((x - x.mean()) ** 2).sum()) for x in groups)
+    df_within = n_total - k
+    if df_within <= 0:
+        return float("nan")
+    ms_between = ss_between / (k - 1)
+    ms_within = ss_within / df_within
+    m_bar = n_total / k                      # mean group size (balanced in our use)
+    denom = ms_between + (m_bar - 1.0) * ms_within
+    if denom <= 0:
+        return 0.0
+    return max(0.0, (ms_between - ms_within) / denom)
 
 
 def grid_uniformity_warning(cell_metrics: Mapping[str, Mapping[str, float]],

@@ -26,6 +26,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "tests" / "fixtures"))
 sys.path.insert(0, str(ROOT / "src"))
 
+import chronological_baseline as CB  # noqa: E402
 import contract_layers as CL     # noqa: E402
 import pipelines as P            # noqa: E402
 
@@ -87,6 +88,14 @@ def run_case_a(fault: str | None, env: P.Env) -> list[str]:
     return fired
 
 
+def baseline_case_a(fault: str | None, env: P.Env) -> list[str]:
+    return CB.run_baseline_case_a(P.build_case_a(fault, env))
+
+
+def baseline_case_b(fault: str | None, env: P.Env) -> list[str]:
+    return CB.run_baseline_case_b(P.build_case_b(fault, env))
+
+
 def run_case_b(fault: str | None, env: P.Env) -> list[str]:
     c = P.build_case_b(fault, env)
     fired: list[str] = []
@@ -119,12 +128,15 @@ def main() -> int:
         for cond in conditions:
             t0 = time.perf_counter()
             fired = sorted(set(run_case_a(cond, env) + run_case_b(cond, env)))
+            base = sorted(set(baseline_case_a(cond, env) + baseline_case_b(cond, env)))
             dt = time.perf_counter() - t0
             exp = EXPECTED.get(cond) if cond else None
             rows.append({"env": env.name, "fault": cond or "CLEAN",
                          "fired": fired, "expected": exp,
                          "detected": bool(exp and exp in fired),
                          "extra": [r for r in fired if r != exp],
+                         "baseline_fired": base,
+                         "baseline_detected": bool(cond and base),
                          "runtime_s": round(dt, 4)})
     total_s = time.perf_counter() - t_start
 
@@ -146,7 +158,10 @@ def main() -> int:
                         "detected_in": sum(r["detected"] for r in rs),
                         "of": len(rs),
                         "fired_union": sorted({x for r in rs for x in r["fired"]}),
-                        "extra_union": sorted({x for r in rs for x in r["extra"]})}
+                        "extra_union": sorted({x for r in rs for x in r["extra"]}),
+                        "baseline_detected_in": sum(r["baseline_detected"] for r in rs),
+                        "baseline_fired_union": sorted(
+                            {x for r in rs for x in r["baseline_fired"]})}
 
     out = {
         "n_rows": len(rows), "environments": [e.name for e in P.ENVS],
@@ -170,6 +185,16 @@ def main() -> int:
         "5_runtime_measured": True,
         "6_findings_name_a_rule": all(
             all(x in CL.RULES for x in r["fired"]) for r in rows),
+    }
+    base_caught = [f for f in P.ALL_FAULTS if per_fault[f]["baseline_detected_in"] > 0]
+    out["chronological_baseline"] = {
+        "scope": CB.BASELINE_SCOPE,
+        "checks": list(CB.BASELINE_CHECKS),
+        "faults_caught": base_caught,
+        "n_caught": len(base_caught),
+        "n_fault_classes": len(P.ALL_FAULTS),
+        "clean_path_firings": sum(len(r["baseline_fired"]) for r in clean),
+        "per_fault": {f: per_fault[f]["baseline_fired_union"] for f in P.ALL_FAULTS},
     }
     out["acceptance"] = acc
     out["verdict"] = "PASS" if all(acc.values()) else "FAIL"

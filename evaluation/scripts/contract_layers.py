@@ -368,16 +368,27 @@ def check_provenance_completeness(
 
 def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
                           coarser_ids: np.ndarray,
-                          residual_icc_max: float = 0.2) -> None:
+                          residual_icc_max: float = 0.2,
+                          min_coarser_groups: int = 8) -> dict[str, Any]:
     """L4.7 -- GENERAL RULE, written before any held-out mutation was injected.
     No predecessor detector of any kind existed for this proposition.
 
-    Aggregate to the CHOSEN unit, then measure correlation of those unit-level values
-    within the next COARSER grouping. If material correlation remains, the chosen unit
-    is too fine and intervals computed over it are optimistic.
+    Aggregate to the CHOSEN unit, then measure the intraclass correlation of those
+    unit-level values within the next COARSER grouping. Material residual correlation
+    means the chosen unit shares state with its neighbours, so intervals computed over
+    it are optimistic. Aggregating correctly at one level says nothing about whether
+    that level is the exchangeable one; this is the check for the level itself.
 
-    Aggregating correctly at one level says nothing about whether that level is the
-    exchangeable one; this is the check for the level itself.
+    ESTIMABILITY PRECONDITION. The rule does not halt when it cannot estimate. With
+    fewer than `min_coarser_groups` coarser groups the ICC estimate is dominated by
+    sampling noise: measured on this repository's own clean fixture at four groups of
+    three, two environments returned 0.000 and 0.018 while a third returned 0.201 --
+    crossing a 0.2 threshold on noise alone, which would have been a false halt and a
+    non-reproducible verdict across environments. A rule that halts on an unestimable
+    statistic is worse than no rule, so below the precondition the check reports
+    INDETERMINATE and raises nothing.
+
+    Returns a verdict dict so a caller can distinguish "passed" from "could not judge".
     """
     u, agg = EC.aggregate_repeated_measures(values, unit_ids)
     ui, ci = np.asarray(unit_ids), np.asarray(coarser_ids)
@@ -385,12 +396,24 @@ def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
     for a, b in zip(ui.tolist(), ci.tolist()):
         coarse_of.setdefault(a, b)
     grp = np.array([coarse_of[k] for k in u.tolist()])
+    n_groups = len({g for g, c in zip(grp.tolist(), np.bincount(
+        np.unique(grp, return_inverse=True)[1]).tolist()) } | set(grp.tolist()))
+    n_groups = len(set(grp.tolist()))
+    if n_groups < min_coarser_groups:
+        return {"verdict": "INDETERMINATE", "n_coarser_groups": n_groups,
+                "min_required": min_coarser_groups, "icc": None,
+                "reason": "too few coarser groups to estimate an ICC; not halting"}
     icc = EC.within_group_icc(agg, grp)
-    if np.isfinite(icc) and icc > residual_icc_max:
+    if not np.isfinite(icc):
+        return {"verdict": "INDETERMINATE", "n_coarser_groups": n_groups,
+                "icc": None, "reason": "ICC not estimable"}
+    if icc > residual_icc_max:
         raise ContractViolation(
             "L4.7", f"unit-level values retain correlation {icc:.3f} within the next "
-                    f"coarser grouping (limit {residual_icc_max}); the chosen "
-                    f"statistical unit is finer than the exchangeable one")
+                    f"coarser grouping over {n_groups} groups (limit "
+                    f"{residual_icc_max}); the chosen statistical unit is finer than "
+                    f"the exchangeable one")
+    return {"verdict": "PASS", "n_coarser_groups": n_groups, "icc": float(icc)}
 
 
 # ==========================================================================

@@ -13,8 +13,8 @@
  "high_severity_detection": "36/36",
  "held_out_detection": "12/12",
  "false_negatives": [],
- "total_runtime_s": 0.156,
- "mean_runtime_per_condition_s": 0.0027,
+ "total_runtime_s": 0.243,
+ "mean_runtime_per_condition_s": 0.0043,
  "per_fault": {
   "D1": {
    "expected": "L1.1",
@@ -23,7 +23,9 @@
    "fired_union": [
     "L1.1"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D2": {
    "expected": "L1.2",
@@ -32,7 +34,9 @@
    "fired_union": [
     "L1.2"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D3": {
    "expected": "L1.4",
@@ -41,7 +45,9 @@
    "fired_union": [
     "L1.4"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D4": {
    "expected": "L2.1",
@@ -50,7 +56,9 @@
    "fired_union": [
     "L2.1"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D5": {
    "expected": "L1.3",
@@ -59,7 +67,11 @@
    "fired_union": [
     "L1.3"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 3,
+   "baseline_fired_union": [
+    "B3"
+   ]
   },
   "D6": {
    "expected": "L3.1",
@@ -71,7 +83,9 @@
    ],
    "extra_union": [
     "L3.2"
-   ]
+   ],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D7": {
    "expected": "L4.2",
@@ -80,7 +94,9 @@
    "fired_union": [
     "L4.2"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D8": {
    "expected": "L3.3",
@@ -89,7 +105,9 @@
    "fired_union": [
     "L3.3"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D9": {
    "expected": "L3.1",
@@ -101,7 +119,9 @@
    ],
    "extra_union": [
     "L3.2"
-   ]
+   ],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D10": {
    "expected": "L3.1",
@@ -113,7 +133,9 @@
    ],
    "extra_union": [
     "L3.2"
-   ]
+   ],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D11": {
    "expected": "L4.3",
@@ -122,7 +144,9 @@
    "fired_union": [
     "L4.3"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D12": {
    "expected": "L1.4",
@@ -131,7 +155,9 @@
    "fired_union": [
     "L1.4"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "D13": {
    "expected": "L4.1",
@@ -140,7 +166,12 @@
    "fired_union": [
     "L4.1"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 3,
+   "baseline_fired_union": [
+    "B1",
+    "B2"
+   ]
   },
   "D14": {
    "expected": "L4.4",
@@ -149,7 +180,9 @@
    "fired_union": [
     "L4.4"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "HO1": {
    "expected": "L1.5",
@@ -158,7 +191,9 @@
    "fired_union": [
     "L1.5"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "HO2": {
    "expected": "L4.6",
@@ -167,7 +202,9 @@
    "fired_union": [
     "L4.6"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "HO3": {
    "expected": "L4.7",
@@ -176,7 +213,9 @@
    "fired_union": [
     "L4.7"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   },
   "HO4": {
    "expected": "L2.4",
@@ -185,7 +224,9 @@
    "fired_union": [
     "L2.4"
    ],
-   "extra_union": []
+   "extra_union": [],
+   "baseline_detected_in": 0,
+   "baseline_fired_union": []
   }
  },
  "rows": [
@@ -196,7 +237,9 @@
    "expected": null,
    "detected": false,
    "extra": [],
-   "runtime_s": 0.0222
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0207
   },
   {
    "env": "E1",
@@ -207,7 +250,9 @@
    "expected": "L1.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0028
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0038
   },
   {
    "env": "E1",
@@ -218,7 +263,9 @@
    "expected": "L1.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0042
   },
   {
    "env": "E1",
@@ -229,7 +276,9 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.004
   },
   {
    "env": "E1",
@@ -240,7 +289,9 @@
    "expected": "L2.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0028
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0051
   },
   {
    "env": "E1",
@@ -251,7 +302,11 @@
    "expected": "L1.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [
+    "B3"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.0041
   },
   {
    "env": "E1",
@@ -265,7 +320,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0039
   },
   {
    "env": "E1",
@@ -276,7 +333,9 @@
    "expected": "L4.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E1",
@@ -287,7 +346,9 @@
    "expected": "L3.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0039
   },
   {
    "env": "E1",
@@ -301,7 +362,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E1",
@@ -315,7 +378,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.004
   },
   {
    "env": "E1",
@@ -326,7 +391,9 @@
    "expected": "L4.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E1",
@@ -337,7 +404,9 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0036
   },
   {
    "env": "E1",
@@ -348,7 +417,12 @@
    "expected": "L4.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.003
+   "baseline_fired": [
+    "B1",
+    "B2"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.0044
   },
   {
    "env": "E1",
@@ -359,7 +433,9 @@
    "expected": "L4.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0038
   },
   {
    "env": "E1",
@@ -370,7 +446,9 @@
    "expected": "L1.5",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0044
   },
   {
    "env": "E1",
@@ -381,7 +459,9 @@
    "expected": "L4.6",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.004
   },
   {
    "env": "E1",
@@ -392,7 +472,9 @@
    "expected": "L4.7",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0027
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E1",
@@ -403,7 +485,9 @@
    "expected": "L2.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E2",
@@ -412,7 +496,9 @@
    "expected": null,
    "detected": false,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0044
   },
   {
    "env": "E2",
@@ -423,7 +509,9 @@
    "expected": "L1.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0042
   },
   {
    "env": "E2",
@@ -434,7 +522,9 @@
    "expected": "L1.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E2",
@@ -445,7 +535,9 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E2",
@@ -456,7 +548,9 @@
    "expected": "L2.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0029
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0044
   },
   {
    "env": "E2",
@@ -467,7 +561,11 @@
    "expected": "L1.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [
+    "B3"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.0038
   },
   {
    "env": "E2",
@@ -481,7 +579,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E2",
@@ -492,7 +592,9 @@
    "expected": "L4.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E2",
@@ -503,7 +605,9 @@
    "expected": "L3.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E2",
@@ -517,7 +621,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0034
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0043
   },
   {
    "env": "E2",
@@ -531,7 +637,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0038
   },
   {
    "env": "E2",
@@ -542,7 +650,9 @@
    "expected": "L4.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E2",
@@ -553,7 +663,9 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0039
   },
   {
    "env": "E2",
@@ -564,7 +676,12 @@
    "expected": "L4.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [
+    "B1",
+    "B2"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.0037
   },
   {
    "env": "E2",
@@ -575,7 +692,9 @@
    "expected": "L4.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0039
   },
   {
    "env": "E2",
@@ -586,7 +705,9 @@
    "expected": "L1.5",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E2",
@@ -597,7 +718,9 @@
    "expected": "L4.6",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E2",
@@ -608,7 +731,9 @@
    "expected": "L4.7",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.004
   },
   {
    "env": "E2",
@@ -619,7 +744,9 @@
    "expected": "L2.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0039
   },
   {
    "env": "E3",
@@ -628,7 +755,9 @@
    "expected": null,
    "detected": false,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E3",
@@ -639,7 +768,9 @@
    "expected": "L1.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0036
   },
   {
    "env": "E3",
@@ -650,7 +781,9 @@
    "expected": "L1.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.004
   },
   {
    "env": "E3",
@@ -661,7 +794,9 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E3",
@@ -672,7 +807,9 @@
    "expected": "L2.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0028
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0049
   },
   {
    "env": "E3",
@@ -683,7 +820,11 @@
    "expected": "L1.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [
+    "B3"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.004
   },
   {
    "env": "E3",
@@ -697,7 +838,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E3",
@@ -708,7 +851,9 @@
    "expected": "L4.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0036
   },
   {
    "env": "E3",
@@ -719,7 +864,9 @@
    "expected": "L3.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0042
   },
   {
    "env": "E3",
@@ -733,7 +880,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0038
   },
   {
    "env": "E3",
@@ -747,7 +896,9 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0036
   },
   {
    "env": "E3",
@@ -758,7 +909,9 @@
    "expected": "L4.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E3",
@@ -769,7 +922,9 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0041
   },
   {
    "env": "E3",
@@ -780,7 +935,12 @@
    "expected": "L4.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [
+    "B1",
+    "B2"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.0039
   },
   {
    "env": "E3",
@@ -791,7 +951,9 @@
    "expected": "L4.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E3",
@@ -802,7 +964,9 @@
    "expected": "L1.5",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.004
   },
   {
    "env": "E3",
@@ -813,7 +977,9 @@
    "expected": "L4.6",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0037
   },
   {
    "env": "E3",
@@ -824,7 +990,9 @@
    "expected": "L4.7",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0042
   },
   {
    "env": "E3",
@@ -835,9 +1003,51 @@
    "expected": "L2.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0038
   }
  ],
+ "chronological_baseline": {
+  "scope": "Chronological splitting is a protocol property constraining the order of quantities present in the dataset. It is not a competing detector suite, and the comparison in the paper is not tool-versus-tool: it measures how much of the fault space that property covers when applied conscientiously.",
+  "checks": [
+   "B1",
+   "B2",
+   "B3"
+  ],
+  "faults_caught": [
+   "D5",
+   "D13"
+  ],
+  "n_caught": 2,
+  "n_fault_classes": 18,
+  "clean_path_firings": 0,
+  "per_fault": {
+   "D1": [],
+   "D2": [],
+   "D3": [],
+   "D4": [],
+   "D5": [
+    "B3"
+   ],
+   "D6": [],
+   "D7": [],
+   "D8": [],
+   "D9": [],
+   "D10": [],
+   "D11": [],
+   "D12": [],
+   "D13": [
+    "B1",
+    "B2"
+   ],
+   "D14": [],
+   "HO1": [],
+   "HO2": [],
+   "HO3": [],
+   "HO4": []
+  }
+ },
  "acceptance": {
   "1_all_high_severity_detected": true,
   "2_all_held_out_detected": true,

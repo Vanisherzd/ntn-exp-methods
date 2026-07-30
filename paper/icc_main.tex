@@ -88,7 +88,7 @@ deployment-causality violations each admits, organised as four mechanically chec
 layers: availability (L1), physical and scheduling validity (L2), model-state causality
 (L3), and independence and reproducibility (L4). Nineteen rules, Table~\ref{tab:rules}.
 \item \textbf{Orbit-Evidence, an executable implementation.} A dependency-light
-toolkit (812 lines in four modules plus a 399-line two-sided test suite,
+toolkit (710 lines in four modules plus a 399-line two-sided test suite,
 \texttt{numpy} only) providing visible-pass scheduling, a
 freeze-then-label transmission registry, reference-ensemble labelling with published
 uncertainty, a six-channel mutation canary, and seed and provenance controls. Every
@@ -238,6 +238,15 @@ Residual correlation at the coarser level means the chosen unit shares state wit
 neighbours, so intervals computed over it are optimistic. A pipeline can pass a
 conventional replicate check and fail this one, which is precisely the case we injected.
 
+Two properties of the estimator are load-bearing and were not obvious to us. It must be an
+unbiased variance-components ICC: a raw between-over-total scatter ratio has null
+expectation $\approx 1/m$ for $m$ observations per group, so any fixed threshold below that
+value halts on correct designs. And the rule must \emph{decline to judge} when it cannot
+estimate---below a declared minimum number of coarser groups it reports indeterminate and
+raises nothing, since a rule that halts on an unestimable statistic is worse than no rule.
+We found both only after making the clean fixture non-degenerate; the degenerate clean path
+had been silently short-circuiting the check.
+
 \emph{Mutation canaries.} Six channels are probed. The toolkit separates two questions
 that are easily conflated: whether a channel is \emph{guarded}, and whether the
 mutation used to probe it was \emph{effective}. An inert mutation changes nothing and
@@ -271,11 +280,21 @@ family.
 
 \subsection{Results}
 
-Fig.~\ref{fig:coverage} gives the coverage matrix; Fig.~\ref{fig:cases} shows where each case study was halted. Chronological checks detect
-$2/18$ fault classes: invalid label-closure timing and a violated fold order, which are
-precisely the two faults that \emph{are} ordering properties. The remaining sixteen are
-invisible to ordering by construction. The contract detects $18/18$ classes in all
-three environments, $54/54$ condition-environment cells.
+Fig.~\ref{fig:coverage} gives the coverage matrix; Fig.~\ref{fig:cases} shows where each
+case study was halted.
+
+The chronological baseline is \emph{implemented and executed}, not reasoned about: three
+checks assert that fold time-extents are ordered and disjoint, that no row sits in a fold
+whose span it does not belong to, and that no label used at a decision point postdates it.
+It runs inside the same sweep, over the same fixtures, in the same three environments. We
+stress that it is not a competing detector suite: chronological splitting is a
+\emph{protocol property} of intentionally limited scope, and the comparison measures how
+much of the fault space that property covers, not tool against tool.
+
+Measured, it detects $2/18$ fault classes---invalid label-closure timing and a violated
+fold order, precisely the two that \emph{are} ordering properties---and fires on no clean
+path. The remaining sixteen are invisible to ordering by construction. The contract
+detects $18/18$ classes in all three environments, $54/54$ condition-environment cells.
 
 \input{tables/contract_rules.tex}
 

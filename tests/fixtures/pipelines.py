@@ -278,7 +278,10 @@ def build_case_b(fault: str | None, env: Env, seed: int = 20260731) -> CaseB:
     f = fault
     c = CaseB(fault=f, env=env)
     g = env.rng(seed)
-    n_ep, n_pass, n_rep = 12, 4, 3
+    # 24 episodes gives 8 coarser blocks of 3, which meets L4.7's estimability
+    # precondition, so the clean path genuinely exercises the rule instead of being
+    # waved through as indeterminate.
+    n_ep, n_pass, n_rep = 24, 4, 3
     n = n_ep * n_pass * n_rep
 
     ep = np.repeat(np.arange(n_ep), n_pass * n_rep)
@@ -358,7 +361,14 @@ def build_case_b(fault: str | None, env: Env, seed: int = 20260731) -> CaseB:
         # the exchangeable unit although passes share an episode-level state
         c.unit_ids, c.coarser_ids = c.pass_ids, c.episode_ids
     else:
-        c.unit_ids, c.coarser_ids = c.episode_ids, np.zeros_like(c.episode_ids)
+        # Clean path: the EPISODE is the exchangeable unit by construction (ep_effect is
+        # drawn iid per episode), and the coarser grouping is a genuine block of three
+        # consecutive episodes that share no state. This must be NON-DEGENERATE: the
+        # previous fixture passed `zeros_like`, a single group, which made
+        # within_group_icc return nan and short-circuit the check -- so the clean path
+        # never exercised L4.7's null behaviour at all and could not have revealed the
+        # estimator defect that this fixture now guards.
+        c.unit_ids, c.coarser_ids = c.episode_ids, c.episode_ids // 3
 
     c.manifest = EC.provenance_manifest([Path(__file__)],
                                         {"env": env.name, "seed": seed})
