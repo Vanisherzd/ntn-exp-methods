@@ -1,16 +1,62 @@
-lifecycle_state: "BUILD_VERIFIED"
-current_branch: "paper/orbit-evidence-contract"
-source_commit: "24a3d9f76106bdbfe962543ade4d32b88cce3d6f"
+lifecycle_state: "REVIEWING"
+loop: "FINAL WORKSHOP-SALVAGE LOOP (human-authorized reframing after two spent revision cycles)"
+
+current_branch: "paper/orbit-evidence-contract"   # renamed to submission/orbit-evidence-workshop in Loop R
+source_commit: "b0a9bc602eb6e3eb198379f9fc38a10e73bf7480"
 remote_name: "origin"
 remote_url: "https://github.com/Vanisherzd/PGRL-LRFHSS-D2S.git"
 working_tree: "clean"
+
 active_manuscript: "paper/icc_main.tex"
-active_manuscript_sha256: "f0084ce196ec86f6e54f910f65e2625a6d8d805c8da5654b08eb52e07cd1a8bb"
+active_manuscript_sha256: "e307fff5971742d70174b8dc5c22f93c34d05901646d1d1eada7ce38375e6c48"
 active_pdf: "paper/icc_main.pdf"
-active_pdf_sha256: "ea5ee4d7509c2e6bf79461786d807d690db1cf1c3dd1175a2913d8aeec312eeb"
-protected_branches: ["main", "archive/residual-learning-stop-2026-07", "paper/orbit-evidence-contract"]
-protected_tags: ["stop/real-tle-line-2026-07", "stop/exp16-qualification-2026-07", "evidence/formal-seeds-never-executed-2026-07", "exp15-visible-causal-preregistered-v1", "pre-finalization/orbit-evidence-workshop-2026-07"]
-current_review_loop: "not started (Loop B pending)"
+active_pdf_sha256: "4768bc1c4d3b44efe14f87382666be7feecadd408f62710e66831fb6da558382"
+evidence_artifact: "evaluation/results/final_summary.json"
+evidence_artifact_sha256: "3b4e0afe0bd6dbb88cbdccc186c73f2174433a87f5992d25aca5816545fb730d"
+
+# The human decision that defines this loop.
+claim_decision:
+  withdrawn: "four genuinely held-out mutations proving detector generalisation"
+  reason: "HO1/HO4 mutate detector-local objects; HO3's detector was rewritten after its outcome was recorded; only HO2 survives (n=1)"
+  replacement: "a curated fault-injection regression evaluation demonstrating that the implemented contract detects the known violations represented in the suite, while clean reference paths remain accepted"
+  enforcement: "paper/scripts/check_banlist.py WITHDRAWN_CLAIMS (17 patterns), hard prerequisite of the PDF target"
+  new_evidence_permitted: false
+
+protected_branches:
+  - "main"                                     # 25 commits AHEAD of origin/main; untouched
+  - "archive/residual-learning-stop-2026-07"   # 2 unique commits, no tag at tip
+  - "exp15-visible-causal-rebuild"             # 2 unique commits, tag is ancestor not tip
+  - "paper/orbit-evidence-contract"            # the active submission
+  - "origin/claude/leo-dtf-experiment-prep-ksnesg"  # 18 unique commits: HIL package + CI
+
+protected_tags: ["stop/real-tle-line-2026-07", "stop/exp16-qualification-2026-07",
+                 "evidence/formal-seeds-never-executed-2026-07",
+                 "exp15-visible-causal-preregistered-v1",
+                 "pre-finalization/orbit-evidence-workshop-2026-07",
+                 "archive/* (9 tags)", "all historical checkpoint tags"]
+tags_total: 21
+tags_to_delete: []
+
+current_review_loop: "S9 pair 1 dispatched (R3F methodology, R4F reproducibility); pair 2 (R5, R6) pending"
 unresolved_blockers: []
 unresolved_majors: []
-verification: {"tests": "27 passed", "matrix": "PASS", "pdf_pages": 6, "banlist": "clean", "overfull": 0, "undefined_refs": 0, "undefined_cites": 0}
+
+resolved_this_loop:
+  - "R1-10/R2-F5: build_label outcome-dependent status -> coverage-only, baseline removed from signature, 2 regression tests"
+  - "R2-F2: coarse_step_s declared as solver parameter, coarse_step_s <= min_pass_s enforced, convergence test over declared range"
+  - "R2/R3/R4: universal two-sided claim withdrawn -> 16 of 19 rules have a red fixture, three named"
+  - "stale denominators: '2 of 18' in the conclusion and the 18-row Fig. 2 corrected to 17"
+  - "runtime stated as a bound (under 2 s) rather than a wall-clock string that cannot reproduce"
+  - "EVALUATION_RESULT.md and fig2_data.json now generated from the artifact (had drifted to 14 faults / 57 rows / 0.187 s)"
+  - "root README described the retired paper; now describes the active submission"
+
+verification:
+  tests: "30 passed"
+  matrix: "PASS"
+  pdf_pages: 6
+  latex_errors: 0
+  undefined_refs: 0
+  undefined_cites: 0
+  overfull_boxes: 0
+  banlist: "clean (11 banned + 17 withdrawn patterns, 9 artifact numbers verified)"
+  gate_twice: "PASS twice, 22 summary fields reproduced, only wall-clock volatile"
