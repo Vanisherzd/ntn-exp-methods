@@ -7,7 +7,7 @@ three historical tests failed exactly that way -- one compared two arrays built 
 the same object, one pinned the parameter carrying the dependence it was testing, and
 one attached no threshold to the quantity it reported.
 
-Run: pytest salvage/orbit-evidence-toolkit/tests/test_regressions.py
+Run: pytest tests/regression/test_regressions.py
 """
 
 from __future__ import annotations

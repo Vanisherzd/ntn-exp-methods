@@ -24,7 +24,7 @@ catches it, then asserts the fixed behaviour passes. Three historical tests were
 unfalsifiable, so a test that only exercises the fixed path is not accepted here.
 
 ```
-pytest salvage/orbit-evidence-toolkit/tests/test_regressions.py
+pytest tests/regression/test_regressions.py
 ```
 
 ## The three rules the toolkit exists to enforce

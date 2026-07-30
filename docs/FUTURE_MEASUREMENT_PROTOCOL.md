@@ -15,7 +15,7 @@ succeed where the archive route could not.
 ## 1. Pre-register visible passes
 
 Predict passes from the element the endpoint **holds**, using
-`salvage/orbit-evidence-toolkit/scheduler/visible_pass.py`. Declare mask, coarse step,
+`src/orbit_evidence/pass_scheduler/visible_pass.py`. Declare mask, coarse step,
 bisection tolerance and minimum pass duration as numbers. Never sample on a clock grid
 and filter afterwards.
 

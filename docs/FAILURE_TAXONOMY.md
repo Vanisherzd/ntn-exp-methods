@@ -169,5 +169,5 @@ headline number was computed.
 arrays built from the same object, one pinned the parameter carrying the dependence it
 tested, one attached no threshold to what it reported. A suite that cannot go red is
 not evidence. Prove each test fails against the broken implementation — see
-`salvage/orbit-evidence-toolkit/tests/test_regressions.py`, which does exactly that
+`tests/regression/test_regressions.py`, which does exactly that
 for all twelve modes.
