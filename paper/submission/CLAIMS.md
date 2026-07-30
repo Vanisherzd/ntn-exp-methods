@@ -28,9 +28,9 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 | rules with a demonstrated red fixture | 16 of 19 | `detectors_with_red_fixture` | `make matrix` |
 | rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` | `make matrix` |
 | sweep runtime | **under 2 s** (bound); ≈30 ms per condition | `runtime_seconds` | `make matrix` |
-| toolkit size | 780 lines across four modules | `source_loc` | `make matrix` |
-| test suite size | 490 lines | `test_suite_loc` | `make matrix` |
-| tests | 30 passing (regression + fault injection) | — | `make test` |
+| toolkit size | 833 lines across four modules | `source_loc` | `make matrix` |
+| test suite size | 655 lines (regression + fault injection) | `test_suite_loc` | `make matrix` |
+| tests | 32 passing | `test_count` | `make test` |
 
 Runtime is the one figure that does **not** reproduce bit-for-bit: it varies by a few
 percent between runs and machines. The manuscript therefore states a *bound* (under 2 s),

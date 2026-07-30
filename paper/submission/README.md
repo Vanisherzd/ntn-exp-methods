@@ -41,7 +41,7 @@ disagrees with the summary artifact.
   only on the clean path, and the paper says so.
 - Two case-study pipelines were halted by a contract rule before any conclusion was drawn,
   and in the second case the pre-registered blind evaluation seeds were never executed.
-- The toolkit is 780 lines across four modules plus a 490-line test suite, `numpy` only.
+- The toolkit is 833 lines across four modules plus a 655-line test suite, `numpy` only.
 - The sweep runs in under 2 s, cheap enough for a per-commit gate.
 
 ## Prohibited claims

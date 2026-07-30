@@ -19,13 +19,16 @@ against a curated suite of 17 fault classes.
 ## Quick start
 
 ```bash
+pip install -e '.[test]'   # numpy + pytest; numpy is the only runtime dependency
 make gate         # tests + fault matrix + claim gate + six-page paper build
 make gate-twice   # runs the gate twice and asserts the summary artifact reproduces
 make paper        # build paper/icc_main.pdf only
 ```
 
 `numpy` is the only runtime dependency; the paper build needs a TeX Live installation with
-`latexmk`.
+`latexmk` and `IEEEtran`. The committed `uv.lock` pins the much larger stack the *archived*
+research lines used and is not needed for anything above — do not `uv sync` expecting this
+artifact's dependencies.
 
 ## Layout
 
