@@ -17,10 +17,14 @@
   noord/.style={->,line width=0.8pt,blue!55!black,densely dotted},
   lab/.style={font=\scriptsize,fill=white,inner sep=2.2pt}]
 \draw[line width=1.1pt,black!55] (-0.4,0) -- (18.0,0);
-\foreach \x/\lab in {1.4/{$t_{\text{avail}}$}, 5.2/{$t_d$ decision},
-                     9.0/{freeze}, 12.8/{deployment}, 16.6/{$t_c$ closure}}
+% Tick labels are set WITHOUT math subscripts. Under \resizebox a bigger declared font
+% widens the canvas by the same factor, so the rendered size is fixed by the width ratio --
+% the $t_{\text{avail}}$ subscript sat at 5.9 pt and could not be lifted by declaring a
+% larger size. The body defines the symbols; the axis only needs the names.
+\foreach \x/\lab in {1.4/{available}, 5.2/{decision},
+                     9.0/{freeze}, 12.8/{deployment}, 16.6/{closure}}
   {\draw[line width=1.1pt,black!55] (\x,-0.16) -- (\x,0.16);
-   \node[font=\footnotesize,text=black!65,anchor=north] at (\x,-0.28) {\lab};}
+   \node[font=\small,text=black!65,anchor=north] at (\x,-0.28) {\lab};}
 \node[box,fill=blue!7]  (avail) at (1.4,1.7) {available state};
 \node[box,fill=blue!7]  (reg)   at (5.2,1.7) {frozen registry};
 \node[box,fill=orange!8](val)   at (9.0,1.7) {validate, freeze};
@@ -40,8 +44,9 @@
 \draw[noord] (lab.south) to[out=-106,in=-74] node[lab,pos=0.5,below]
   {\rulename{L1.3} label used before closure} (val.south east);
 \end{tikzpicture}}
-\caption{The deployment-causality contract. Solid paths are permitted: published state held
-before $t_d$ populates a registry whose rows are hashed before any label exists, model and gate
+\caption{The deployment-causality contract; axis ticks mark availability, the decision
+instant $t_d$, the freeze, deployment and closure $t_c$. Solid paths are permitted: published
+state held before $t_d$ populates a registry whose rows are hashed before any label exists, model and gate
 are fixed at the freeze, deployment reads frozen state only, labels close retrospectively. The three red \emph{dashed}
 paths are the point of this paper---each is \emph{chronologically consistent}, so an ordering check
 cannot express it. The blue \emph{dotted} path (\rulename{L1.3}) is the contrast case: one of the
