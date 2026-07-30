@@ -17,10 +17,15 @@ paper/                       manuscript, figures, table, build system
 
 ```bash
 pip install numpy pytest
-PYTHONPATH=src pytest tests -q                     # 27 tests
+PYTHONPATH=src pytest tests/regression tests/fault_injection -q   # 27 tests
 python evaluation/scripts/run_matrix.py            # regenerates the matrix result
 make -C paper verify                               # builds and asserts 6 pages
 ```
+
+> **Note on the test path.** The repository root `tests/` also holds legacy tests from
+> unrelated earlier work streams (they import `torch` and other dependencies this paper does
+> not use). The active suite is exactly `tests/regression` and `tests/fault_injection`; the
+> commands above name them explicitly rather than relying on `tests/` collecting cleanly.
 
 No network access, no external data, no proprietary inputs. The pass scheduler is
 exercised through a dependency-free analytic propagator, so no orbital-propagation

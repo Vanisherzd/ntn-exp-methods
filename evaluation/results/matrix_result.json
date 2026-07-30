@@ -13,8 +13,8 @@
  "high_severity_detection": "36/36",
  "held_out_detection": "12/12",
  "false_negatives": [],
- "total_runtime_s": 0.163,
- "mean_runtime_per_condition_s": 0.0029,
+ "total_runtime_s": 0.156,
+ "mean_runtime_per_condition_s": 0.0027,
  "per_fault": {
   "D1": {
    "expected": "L1.1",
@@ -196,7 +196,7 @@
    "expected": null,
    "detected": false,
    "extra": [],
-   "runtime_s": 0.0217
+   "runtime_s": 0.0222
   },
   {
    "env": "E1",
@@ -218,7 +218,7 @@
    "expected": "L1.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0027
+   "runtime_s": 0.0025
   },
   {
    "env": "E1",
@@ -229,7 +229,7 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0047
+   "runtime_s": 0.0022
   },
   {
    "env": "E1",
@@ -240,7 +240,7 @@
    "expected": "L2.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0029
+   "runtime_s": 0.0028
   },
   {
    "env": "E1",
@@ -251,7 +251,7 @@
    "expected": "L1.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "runtime_s": 0.0024
   },
   {
    "env": "E1",
@@ -265,7 +265,7 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0024
   },
   {
    "env": "E1",
@@ -276,7 +276,7 @@
    "expected": "L4.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "runtime_s": 0.0025
   },
   {
    "env": "E1",
@@ -301,7 +301,7 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0025
+   "runtime_s": 0.0023
   },
   {
    "env": "E1",
@@ -315,7 +315,7 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0025
   },
   {
    "env": "E1",
@@ -326,7 +326,7 @@
    "expected": "L4.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "runtime_s": 0.0024
   },
   {
    "env": "E1",
@@ -337,7 +337,7 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0024
   },
   {
    "env": "E1",
@@ -370,7 +370,7 @@
    "expected": "L1.5",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0024
   },
   {
    "env": "E1",
@@ -381,7 +381,7 @@
    "expected": "L4.6",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0023
   },
   {
    "env": "E1",
@@ -392,7 +392,7 @@
    "expected": "L4.7",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "runtime_s": 0.0027
   },
   {
    "env": "E1",
@@ -403,7 +403,7 @@
    "expected": "L2.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0025
+   "runtime_s": 0.0023
   },
   {
    "env": "E2",
@@ -412,7 +412,7 @@
    "expected": null,
    "detected": false,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0025
   },
   {
    "env": "E2",
@@ -423,7 +423,7 @@
    "expected": "L1.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "runtime_s": 0.0023
   },
   {
    "env": "E2",
@@ -434,7 +434,7 @@
    "expected": "L1.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "runtime_s": 0.0023
   },
   {
    "env": "E2",
@@ -445,10 +445,226 @@
    "expected": "L1.4",
    "detected": true,
    "extra": [],
+   "runtime_s": 0.0024
+  },
+  {
+   "env": "E2",
+   "fault": "D4",
+   "fired": [
+    "L2.1"
+   ],
+   "expected": "L2.1",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0029
+  },
+  {
+   "env": "E2",
+   "fault": "D5",
+   "fired": [
+    "L1.3"
+   ],
+   "expected": "L1.3",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E2",
+   "fault": "D6",
+   "fired": [
+    "L3.1",
+    "L3.2"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2"
+   ],
    "runtime_s": 0.0023
   },
   {
    "env": "E2",
+   "fault": "D7",
+   "fired": [
+    "L4.2"
+   ],
+   "expected": "L4.2",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E2",
+   "fault": "D8",
+   "fired": [
+    "L3.3"
+   ],
+   "expected": "L3.3",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E2",
+   "fault": "D9",
+   "fired": [
+    "L3.1",
+    "L3.2"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2"
+   ],
+   "runtime_s": 0.0034
+  },
+  {
+   "env": "E2",
+   "fault": "D10",
+   "fired": [
+    "L3.1",
+    "L3.2"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2"
+   ],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E2",
+   "fault": "D11",
+   "fired": [
+    "L4.3"
+   ],
+   "expected": "L4.3",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E2",
+   "fault": "D12",
+   "fired": [
+    "L1.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E2",
+   "fault": "D13",
+   "fired": [
+    "L4.1"
+   ],
+   "expected": "L4.1",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0024
+  },
+  {
+   "env": "E2",
+   "fault": "D14",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": "L4.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E2",
+   "fault": "HO1",
+   "fired": [
+    "L1.5"
+   ],
+   "expected": "L1.5",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0024
+  },
+  {
+   "env": "E2",
+   "fault": "HO2",
+   "fired": [
+    "L4.6"
+   ],
+   "expected": "L4.6",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0023
+  },
+  {
+   "env": "E2",
+   "fault": "HO3",
+   "fired": [
+    "L4.7"
+   ],
+   "expected": "L4.7",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0025
+  },
+  {
+   "env": "E2",
+   "fault": "HO4",
+   "fired": [
+    "L2.4"
+   ],
+   "expected": "L2.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0024
+  },
+  {
+   "env": "E3",
+   "fault": "CLEAN",
+   "fired": [],
+   "expected": null,
+   "detected": false,
+   "extra": [],
+   "runtime_s": 0.0021
+  },
+  {
+   "env": "E3",
+   "fault": "D1",
+   "fired": [
+    "L1.1"
+   ],
+   "expected": "L1.1",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0022
+  },
+  {
+   "env": "E3",
+   "fault": "D2",
+   "fired": [
+    "L1.2"
+   ],
+   "expected": "L1.2",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0021
+  },
+  {
+   "env": "E3",
+   "fault": "D3",
+   "fired": [
+    "L1.4"
+   ],
+   "expected": "L1.4",
+   "detected": true,
+   "extra": [],
+   "runtime_s": 0.0021
+  },
+  {
+   "env": "E3",
    "fault": "D4",
    "fired": [
     "L2.1"
@@ -459,222 +675,6 @@
    "runtime_s": 0.0028
   },
   {
-   "env": "E2",
-   "fault": "D5",
-   "fired": [
-    "L1.3"
-   ],
-   "expected": "L1.3",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E2",
-   "fault": "D6",
-   "fired": [
-    "L3.1",
-    "L3.2"
-   ],
-   "expected": "L3.1",
-   "detected": true,
-   "extra": [
-    "L3.2"
-   ],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E2",
-   "fault": "D7",
-   "fired": [
-    "L4.2"
-   ],
-   "expected": "L4.2",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E2",
-   "fault": "D8",
-   "fired": [
-    "L3.3"
-   ],
-   "expected": "L3.3",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0026
-  },
-  {
-   "env": "E2",
-   "fault": "D9",
-   "fired": [
-    "L3.1",
-    "L3.2"
-   ],
-   "expected": "L3.1",
-   "detected": true,
-   "extra": [
-    "L3.2"
-   ],
-   "runtime_s": 0.0024
-  },
-  {
-   "env": "E2",
-   "fault": "D10",
-   "fired": [
-    "L3.1",
-    "L3.2"
-   ],
-   "expected": "L3.1",
-   "detected": true,
-   "extra": [
-    "L3.2"
-   ],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E2",
-   "fault": "D11",
-   "fired": [
-    "L4.3"
-   ],
-   "expected": "L4.3",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E2",
-   "fault": "D12",
-   "fired": [
-    "L1.4"
-   ],
-   "expected": "L1.4",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0058
-  },
-  {
-   "env": "E2",
-   "fault": "D13",
-   "fired": [
-    "L4.1"
-   ],
-   "expected": "L4.1",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0027
-  },
-  {
-   "env": "E2",
-   "fault": "D14",
-   "fired": [
-    "L4.4"
-   ],
-   "expected": "L4.4",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0023
-  },
-  {
-   "env": "E2",
-   "fault": "HO1",
-   "fired": [
-    "L1.5"
-   ],
-   "expected": "L1.5",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0023
-  },
-  {
-   "env": "E2",
-   "fault": "HO2",
-   "fired": [
-    "L4.6"
-   ],
-   "expected": "L4.6",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0024
-  },
-  {
-   "env": "E2",
-   "fault": "HO3",
-   "fired": [
-    "L4.7"
-   ],
-   "expected": "L4.7",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0023
-  },
-  {
-   "env": "E2",
-   "fault": "HO4",
-   "fired": [
-    "L2.4"
-   ],
-   "expected": "L2.4",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E3",
-   "fault": "CLEAN",
-   "fired": [],
-   "expected": null,
-   "detected": false,
-   "extra": [],
-   "runtime_s": 0.0021
-  },
-  {
-   "env": "E3",
-   "fault": "D1",
-   "fired": [
-    "L1.1"
-   ],
-   "expected": "L1.1",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0034
-  },
-  {
-   "env": "E3",
-   "fault": "D2",
-   "fired": [
-    "L1.2"
-   ],
-   "expected": "L1.2",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0039
-  },
-  {
-   "env": "E3",
-   "fault": "D3",
-   "fired": [
-    "L1.4"
-   ],
-   "expected": "L1.4",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0022
-  },
-  {
-   "env": "E3",
-   "fault": "D4",
-   "fired": [
-    "L2.1"
-   ],
-   "expected": "L2.1",
-   "detected": true,
-   "extra": [],
-   "runtime_s": 0.0026
-  },
-  {
    "env": "E3",
    "fault": "D5",
    "fired": [
@@ -683,7 +683,7 @@
    "expected": "L1.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0024
+   "runtime_s": 0.0022
   },
   {
    "env": "E3",
@@ -697,7 +697,7 @@
    "extra": [
     "L3.2"
    ],
-   "runtime_s": 0.0024
+   "runtime_s": 0.0023
   },
   {
    "env": "E3",
@@ -708,7 +708,7 @@
    "expected": "L4.2",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0021
   },
   {
    "env": "E3",
@@ -719,7 +719,7 @@
    "expected": "L3.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0021
+   "runtime_s": 0.0022
   },
   {
    "env": "E3",
@@ -758,7 +758,7 @@
    "expected": "L4.3",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0023
   },
   {
    "env": "E3",
@@ -780,7 +780,7 @@
    "expected": "L4.1",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "runtime_s": 0.0022
   },
   {
    "env": "E3",
@@ -791,7 +791,7 @@
    "expected": "L4.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0022
+   "runtime_s": 0.0023
   },
   {
    "env": "E3",
@@ -802,7 +802,7 @@
    "expected": "L1.5",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0027
+   "runtime_s": 0.0022
   },
   {
    "env": "E3",
@@ -813,7 +813,7 @@
    "expected": "L4.6",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0023
+   "runtime_s": 0.0021
   },
   {
    "env": "E3",
@@ -835,7 +835,7 @@
    "expected": "L2.4",
    "detected": true,
    "extra": [],
-   "runtime_s": 0.0032
+   "runtime_s": 0.0021
   }
  ],
  "acceptance": {

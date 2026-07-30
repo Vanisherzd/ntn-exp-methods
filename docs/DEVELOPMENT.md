@@ -32,10 +32,15 @@ Concretely, when adding a rule:
 ## Before committing
 
 ```bash
-PYTHONPATH=src pytest tests -q
+PYTHONPATH=src pytest tests/regression tests/fault_injection -q
 python evaluation/scripts/run_matrix.py
 make -C paper verify
 ```
 
 All three must pass. The paper build additionally refuses to run while a prohibited claim
 is present in any source file.
+
+> **Note on the test path.** The repository root `tests/` also holds legacy tests from
+> unrelated earlier work streams (they import `torch` and other dependencies this paper does
+> not use). The active suite is exactly `tests/regression` and `tests/fault_injection`; the
+> commands above name them explicitly rather than relying on `tests/` collecting cleanly.

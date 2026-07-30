@@ -1,0 +1,16 @@
+lifecycle_state: "BUILD_VERIFIED"
+current_branch: "paper/orbit-evidence-contract"
+source_commit: "24a3d9f76106bdbfe962543ade4d32b88cce3d6f"
+remote_name: "origin"
+remote_url: "https://github.com/Vanisherzd/PGRL-LRFHSS-D2S.git"
+working_tree: "clean"
+active_manuscript: "paper/icc_main.tex"
+active_manuscript_sha256: "f0084ce196ec86f6e54f910f65e2625a6d8d805c8da5654b08eb52e07cd1a8bb"
+active_pdf: "paper/icc_main.pdf"
+active_pdf_sha256: "ea5ee4d7509c2e6bf79461786d807d690db1cf1c3dd1175a2913d8aeec312eeb"
+protected_branches: ["main", "archive/residual-learning-stop-2026-07", "paper/orbit-evidence-contract"]
+protected_tags: ["stop/real-tle-line-2026-07", "stop/exp16-qualification-2026-07", "evidence/formal-seeds-never-executed-2026-07", "exp15-visible-causal-preregistered-v1", "pre-finalization/orbit-evidence-workshop-2026-07"]
+current_review_loop: "not started (Loop B pending)"
+unresolved_blockers: []
+unresolved_majors: []
+verification: {"tests": "27 passed", "matrix": "PASS", "pdf_pages": 6, "banlist": "clean", "overfull": 0, "undefined_refs": 0, "undefined_cites": 0}

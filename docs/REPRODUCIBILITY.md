@@ -4,7 +4,7 @@
 
 ```bash
 pip install numpy pytest
-PYTHONPATH=src pytest tests -q                  # 27 tests: 23 regression + 4 fault-injection
+PYTHONPATH=src pytest tests/regression tests/fault_injection -q   # 23 regression + 4 fault-injection
 python evaluation/scripts/run_matrix.py         # regenerates evaluation/results/matrix_result.json
 make -C paper verify                            # builds paper/icc_main.pdf and asserts 6 pages
 ```
@@ -48,3 +48,8 @@ regenerable, not required by the active paper, and their scientific status is go
 | `evaluation/results/matrix_result.json` | the paper's evidence; regenerating overwrites it, so the committed copy is the citable record |
 | `evaluation/results/matrix_result_prefix_fixture.json` | the pre-fix run, retained so the fixture-repair sequence is auditable rather than asserted |
 | `archive/**` | provenance for a stopped programme; never regenerated |
+
+> **Note on the test path.** The repository root `tests/` also holds legacy tests from
+> unrelated earlier work streams (they import `torch` and other dependencies this paper does
+> not use). The active suite is exactly `tests/regression` and `tests/fault_injection`; the
+> commands above name them explicitly rather than relying on `tests/` collecting cleanly.
