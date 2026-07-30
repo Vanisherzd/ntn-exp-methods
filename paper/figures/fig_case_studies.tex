@@ -1,56 +1,62 @@
 % Fig. 3 -- case-study timelines
 % Included by paper/icc_main.tex via \input.
-% Node sublabels name the satellite-specific object each stage owns.
+%
+% LAYOUT NOTE. An earlier version carried a \tiny sublabel under every node naming the
+% satellite object that stage owns, on a canvas squeezed to 0.64 -- which put that layer at
+% 3.2 pt while the caption told the reader to read it. The sublabels are now in the caption
+% and the canvas is sized to the column, so nothing here renders below ~6 pt.
+%
+% VERB NOTE. These are retrospective accounts, not executed runs of the released contract.
+% The boxes therefore say WOULD HALT, not HALT.
 \begin{figure}[!t]
 \centering
-\resizebox{0.94\columnwidth}{!}{%
-\begin{tikzpicture}[font=\scriptsize,>={Latex[length=2.0mm]},
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}[font=\scriptsize,>={Latex[length=1.8mm]},
   nd/.style={draw=black!70,line width=0.6pt,rounded corners=1.5pt,align=center,
-             minimum height=9mm,minimum width=20mm,inner sep=2pt,fill=white},
-  fl/.style={->,line width=0.8pt,black!70},
-  bad/.style={->,line width=0.8pt,red!65!black,dashed},
-  stop/.style={draw=red!65!black,line width=1.1pt,rounded corners=2pt,fill=red!6,
-               align=center,inner sep=2.5pt,font=\scriptsize}]
+             minimum height=7mm,minimum width=15mm,inner sep=1.5pt,fill=white},
+  fl/.style={->,line width=0.7pt,black!70},
+  bad/.style={->,line width=0.7pt,red!65!black,dashed},
+  lab/.style={font=\scriptsize,fill=white,inner sep=1.6pt},
+  stop/.style={draw=red!65!black,line width=1.0pt,rounded corners=2pt,fill=red!6,
+               align=center,inner sep=2pt,font=\scriptsize}]
 % ---------------- panel (a)
-\node[anchor=west,font=\scriptsize\bfseries] at (-0.3,2.05) {(a) retrospective-label pipeline};
-\node[nd] (a1) at (0.9,1.05) {held element\\[-1pt]{\tiny published $\le t_d$}};
-\node[nd] (a2) at (3.6,1.05) {visible-pass\\[-1pt]{\tiny above mask}};
-\node[nd] (a3) at (6.3,1.05) {frozen\\[-1pt]{\tiny registry hashed}};
-\node[nd] (a4) at (9.0,1.05) {later element\\[-1pt]{\tiny catalogue publishes}};
-\node[nd] (a5) at (11.7,1.05) {label closes\\[-1pt]{\tiny at $t_c$}};
+\node[anchor=west,font=\scriptsize\bfseries] at (-0.2,2.15) {(a) retrospective-label pipeline};
+\node[nd] (a1) at (0.8,1.35) {held\\element};
+\node[nd] (a2) at (2.7,1.35) {visible\\pass};
+\node[nd] (a3) at (4.6,1.35) {frozen\\registry};
+\node[nd] (a4) at (6.5,1.35) {later\\element};
+\node[nd] (a5) at (8.4,1.35) {label\\closes};
 \foreach \x/\y in {a1/a2,a2/a3,a3/a4,a4/a5} \draw[fl] (\x) -- (\y);
-\draw[bad] (a4.north) to[out=140,in=40]
-  node[pos=0.5,above,font=\scriptsize,fill=white,inner sep=1pt]
+\draw[bad] (a4.north) to[out=112,in=68] node[lab,pos=0.5,above]
   {element-epoch gap as a feature} (a3.north);
-\draw[bad] (a5.south) to[out=-150,in=-30]
-  node[pos=0.5,below,font=\scriptsize,fill=white,inner sep=1pt]
-  {row membership set by later publication} (a3.south);
-\node[stop] at (6.3,-1.0) {\textsc{halt} \rulename{L1.1} \rulename{L1.4}};
-\draw[red!65!black,line width=0.9pt] (6.3,0.6) -- (6.3,-0.62);
+\draw[bad] (a5.south) to[out=-118,in=-62] node[lab,pos=0.5,below]
+  {membership set by later publication} (a3.south);
+\node[stop] at (4.6,-1.28) {\textsc{would halt} \rulename{L1.1} \rulename{L1.4}};
+\draw[red!65!black,line width=0.8pt] (4.6,0.9) -- (4.6,-0.95);
 % ---------------- panel (b)
-\node[anchor=west,font=\scriptsize\bfseries] at (-0.3,-1.95) {(b) learning and gating pipeline};
-\node[nd] (b1) at (0.9,-3.0) {physics\\[-1pt]{\tiny baseline}};
-\node[nd] (b2) at (3.6,-3.0) {learned\\[-1pt]{\tiny residual branch}};
-\node[nd] (b3) at (6.3,-3.0) {validate,\\[-1pt]{\tiny select}};
-\node[nd] (b4) at (9.0,-3.0) {\textbf{freeze}\\[-1pt]{\tiny model, gate, tracker}};
-\node[nd] (b5) at (11.7,-3.0) {deployment\\[-1pt]{\tiny per pass}};
+\node[anchor=west,font=\scriptsize\bfseries] at (-0.2,-2.1) {(b) learning and gating pipeline};
+\node[nd] (b1) at (0.8,-3.25) {physics\\baseline};
+\node[nd] (b2) at (2.7,-3.25) {learned\\branch};
+\node[nd] (b3) at (4.6,-3.25) {validate,\\select};
+\node[nd] (b4) at (6.5,-3.25) {\textbf{freeze}};
+\node[nd] (b5) at (8.4,-3.25) {deploy};
 \foreach \x/\y in {b1/b2,b2/b3,b3/b4,b4/b5} \draw[fl] (\x) -- (\y);
-\draw[bad] (b5.north) to[out=140,in=40]
-  node[pos=0.5,above,font=\scriptsize,fill=white,inner sep=1pt]
-  {tracker state advances past the freeze} (b3.north);
-\node[font=\scriptsize,text=red!65!black,anchor=west] at (0.15,-4.15)
+% Drawn BELOW the node row. As an `above' label on a high arc it landed beside panel (a)'s
+% halt box and above panel (b)'s own heading, so it read as a panel-(a) defect.
+\draw[bad] (b5.south) to[out=-118,in=-62] node[lab,pos=0.5,below]
+  {tracker state advances past the freeze} (b3.south);
+\node[font=\scriptsize,text=red!65!black,anchor=west] at (-0.2,-5.15)
   {zero-effect control admits $\Rightarrow$ target not null};
-\node[font=\scriptsize,text=red!65!black,anchor=west] at (0.15,-4.62)
-  {pooled per sample, not per pass $\Rightarrow$ unit finer than exchangeable};
-\node[stop] at (9.0,-5.35) {\textsc{halt} \rulename{L3.1} \rulename{L3.3}
-  \rulename{L4.2} \rulename{L4.7}};
-\draw[red!65!black,line width=0.9pt] (9.0,-3.45) -- (9.0,-5.0);
+\node[stop] at (6.5,-6.0) {\textsc{would halt} \rulename{L3.1} \rulename{L3.3}
+  \rulename{L4.2}};
+\draw[red!65!black,line width=0.8pt] (6.5,-3.65) -- (6.5,-5.65);
 \end{tikzpicture}}
-\caption{Where the contract halts each case study, with the satellite object each stage owns
-named beneath it: element publication versus epoch, visible-pass scheduling, the frozen
-registry fixing row membership, frozen model/gate/tracker state, and the pass as statistical
-unit. Solid arrows are the intended flow, dashed the defects found. Every dashed path is
-chronologically consistent, which is why ordering does not exclude it. No model-performance
-quantity is reported from either pipeline.}
+\caption{The two case studies and the rule naming each defect. \textbf{Retrospective accounts,
+not executed runs}: both pipelines predate the released contract, hence \emph{would halt}, and no
+artifact survives for (b). Satellite objects, left to right in (a): element publication versus
+epoch, visible-pass scheduling, the frozen registry fixing row membership, later catalogue
+publication, label closure; in (b) validation selection, frozen model/gate/tracker state, per-pass
+deployment. Dashed arrows are the defects, each chronologically consistent. No model-performance
+quantity is reported.}
 \label{fig:cases}
 \end{figure}

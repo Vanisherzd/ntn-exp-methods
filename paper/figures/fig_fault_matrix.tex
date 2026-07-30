@@ -6,7 +6,7 @@
 \begin{figure}[!t]
 \centering
 \resizebox{\columnwidth}{!}{%
-\begin{tikzpicture}[font=\scriptsize,x=8.4mm,y=2.6mm]
+\begin{tikzpicture}[font=\scriptsize,x=8.4mm,y=2.25mm]
 \def\hit#1#2{\fill[green!55!black] (#1-0.36,#2-0.30) rectangle (#1+0.36,#2+0.30);
   \node[white,font=\tiny\bfseries] at (#1,#2) {D};}
 \def\mis#1#2{\draw[red!60!black,line width=0.5pt] (#1-0.36,#2-0.30) rectangle
@@ -14,15 +14,15 @@
 \foreach \c/\lab in {0/{chrono.}, 1/{L1}, 2/{L2}, 3/{L3}, 4/{L4}}
   \node[rotate=40,anchor=west,font=\scriptsize] at (\c,0.75) {\lab};
 \foreach \r/\nm in {%
-  1/{unavailable deployment feature}, 2/{epoch vs publication time},
-  3/{invalid label-closure timing}, 4/{future-dependent row membership},
-  5/{availability boundary equality}, 6/{below-horizon schedule},
-  7/{declared vs implemented physics}, 8/{scaler/model/tracker state leak},
-  9/{model-metadata state leak}, 10/{gate-state leak},
+  1/{unavailable feature}, 2/{epoch vs publication},
+  3/{label used before closure}, 4/{membership set by future},
+  5/{boundary equality}, 6/{below-horizon schedule},
+  7/{declared vs implemented}, 8/{scaler/tracker state leak},
+  9/{model-metadata leak}, 10/{gate-state leak},
   11/{broken negative control}, 12/{fold chronology violated},
-  13/{unpaired conditions}, 14/{repeated measures as independent},
+  13/{unpaired conditions}, 14/{replicates as observations},
   15/{burned seed in evaluation}, 16/{incomplete provenance},
-  17/{wrong statistical unit level}}
+  17/{wrong statistical unit}}
   {\node[anchor=east,font=\scriptsize] at (-0.55,-\r) {\nm};}
 % chronological protocol checks detect only the two ordering properties
 \foreach \r in {1,2,4,5,6,7,8,9,10,11,13,14,15,16,17} {\mis{0}{-\r}}
@@ -35,7 +35,7 @@
 \draw[black!35] (-0.45,0.45) rectangle (4.45,-17.55);
 \draw[black!35,dashed] (0.45,0.45) -- (0.45,-17.55);
 \node[anchor=north,font=\scriptsize,text=black!70] at (2,-18.4)
-  {\textbf{D} detected, identically in all three environments \quad -- not detected};
+  {\textbf{D} detected, identically in all 3 environments \quad -- not detected\quad blank: layer not applicable};
 \end{tikzpicture}}
 \caption{Curated regression coverage over the \num{17} fault classes, grouped by detecting
 layer. Chronological protocol checks (left column) detect $2/17$---exactly the two classes that

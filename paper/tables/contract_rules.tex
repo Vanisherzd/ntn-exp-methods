@@ -2,41 +2,37 @@
 % Included by paper/icc_main.tex via \input.
 % The Evidence column must agree with detectors_with_red_fixture /
 % detectors_without_red_fixture in evaluation/results/final_summary.json.
-% Concrete violation instances are not repeated here: Fig. 2 names all 17 by row.
+%
+% LAYOUT NOTE. Laid out as two side-by-side blocks of rules rather than one 19-row list:
+% as a single column of rows this table plus Fig. 1 left its page ~70 % float, and the
+% paper does not have the budget. Concrete violation instances are not repeated here --
+% Fig. 2 names all seventeen by row -- and the full mechanical check for every rule is in
+% the artifact's rule_table().
 \begin{table*}[!t]
-\caption{The nineteen contract rules; Fig.~\ref{fig:coverage} names the violation injected for
-each, and every violation raises an exception carrying its rule identifier.
-\textbf{Evidence}---\emph{clean\,+\,red}: both a passing clean-path test and a broken fixture on
-which the rule fails; \emph{clean only}: implemented and clean-path-exercised, but tripped by no
-fault here, which by our own standard is not yet evidence it \emph{can} fail.
-$^{\dagger}$\rulename{L4.7} also \emph{abstains} below its declared minimum group structure.}
+\caption{The nineteen rules and what is demonstrated for each.
+\textbf{clean\,+\,red} = a passing clean-path test \emph{and} a broken fixture on which the rule
+fails; \textbf{clean only} = implemented and clean-path-exercised but tripped by no fault here,
+which by our own standard is not yet evidence it can fail. We report those three rather than
+authoring fixtures to recover a round number. $^{\dagger}$\rulename{L4.7} also abstains below its
+declared minimum group structure. Fig.~\ref{fig:coverage} names each injected violation.}
 \label{tab:rules}
 \centering
 \scriptsize
-\begin{tabular}{@{}llp{9.4cm}l@{}}
+\begin{tabular}{@{}lll@{\hspace{7mm}}lll@{}}
 \toprule
-\textbf{Rule} & \textbf{Protected object} & \textbf{Mechanical check} &
-\textbf{Evidence}\\
+\textbf{Rule} & \textbf{Protected object} & \textbf{Evidence} &
+\textbf{Rule} & \textbf{Protected object} & \textbf{Evidence}\\
 \midrule
-\rulename{L1.1} & feature availability & recompute features with state after $t$ truncated; require bit-identity & clean\,+\,red \\
-\rulename{L1.2} & availability clock & assert the selected item's \emph{publication} time $\le t_d$, not its epoch & clean\,+\,red \\
-\rulename{L1.3} & label closure & mask by $t_c \le t_d$ & clean\,+\,red \\
-\rulename{L1.4} & row membership & rebuild from a truncated source against the same declared window & clean\,+\,red \\
-\rulename{L1.5} & comparison boundary & probe before, exactly at, and after $t_d$ & clean\,+\,red \\
-\rulename{L2.1} & sampling geometry & assert every scheduled sample lies above the declared mask & clean\,+\,red \\
-\rulename{L2.2} & physical scale & ratio against a resolution floor \emph{and} a plausibility ceiling & clean only \\
-\rulename{L2.3} & hidden state & late/early magnitude ratio, bounding unbounded integration & clean only \\
-\rulename{L2.4} & declared relation & compare declared against implemented over the domain \emph{plus} an extrapolation margin & clean\,+\,red \\
-\rulename{L3.1} & state channels & six-channel mutation canary (features, scaler, coefficients, tracker, metadata, gate) & clean\,+\,red \\
-\rulename{L3.2} & canary effectiveness & require the probe mutation to change an observable & clean\,+\,red \\
-\rulename{L3.3} & negative control & admission rate at every covariate level, injected effect at zero & clean\,+\,red \\
-\rulename{L4.1} & fold chronology & compare fold time extents for order and disjointness & clean\,+\,red \\
-\rulename{L4.2} & paired randomness & assert arms bit-identical away from the intervention & clean\,+\,red \\
-\rulename{L4.3} & repeated measures & within-group correlation before aggregation & clean\,+\,red \\
-\rulename{L4.4} & seed hygiene & disjointness of the burned, debug and evaluation namespaces & clean\,+\,red \\
-\rulename{L4.5} & provenance hashes & manifest and self-hash present for every artifact & clean only \\
-\rulename{L4.6} & provenance completeness & differing outputs under one manifest hash, Eq.~\eqref{eq:prov} & clean\,+\,red \\
-\rulename{L4.7} & statistical unit & unit-level $\mathrm{ICC}(1)$ against a permutation null at $\alpha=0.05$ & clean\,+\,red$^{\dagger}$ \\
+\rulename{L1.1} & feature availability   & clean\,+\,red & \rulename{L3.2} & canary effectiveness    & clean\,+\,red \\
+\rulename{L1.2} & availability clock     & clean\,+\,red & \rulename{L3.3} & negative control        & clean\,+\,red \\
+\rulename{L1.3} & label closure          & clean\,+\,red & \rulename{L4.1} & fold chronology         & clean\,+\,red \\
+\rulename{L1.4} & row membership         & clean\,+\,red & \rulename{L4.2} & paired randomness       & clean\,+\,red \\
+\rulename{L1.5} & comparison boundary    & clean\,+\,red & \rulename{L4.3} & repeated measures       & clean\,+\,red \\
+\rulename{L2.1} & sampling geometry      & clean\,+\,red & \rulename{L4.4} & seed hygiene            & clean\,+\,red \\
+\rulename{L2.2} & physical scale         & clean only    & \rulename{L4.5} & provenance hashes       & clean only \\
+\rulename{L2.3} & hidden state           & clean only    & \rulename{L4.6} & provenance completeness & clean\,+\,red \\
+\rulename{L2.4} & declared relation      & clean\,+\,red & \rulename{L4.7} & statistical unit        & clean\,+\,red$^{\dagger}$ \\
+\rulename{L3.1} & state channels         & clean\,+\,red & & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
