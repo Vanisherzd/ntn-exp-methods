@@ -12,6 +12,7 @@ Run: pytest tests/regression/test_regressions.py
 
 from __future__ import annotations
 
+import dataclasses
 import math
 import sys
 from pathlib import Path
@@ -231,9 +232,24 @@ def test_label_status_is_not_outcome_dependent():
     # Red path: the declared ceiling, and only it, decides AMBIGUOUS.
     assert RE.build_label(members, closure_time=1.0, k_min=2,
                           sigma_max=0.1).status == RE.LabelStatusName.AMBIGUOUS
-    # No declared ceiling => no spread classification is invented.
+    # No declared ceiling => no spread classification is invented, and crucially the row
+    # is NOT called COMPLETE: nothing was checked, so a completeness rate must not count it.
     assert RE.build_label([0.0, 500.0], closure_time=1.0, k_min=2,
-                          sigma_max=None).status == RE.LabelStatusName.COMPLETE
+                          sigma_max=None).status == RE.LabelStatusName.UNCLASSIFIED
+
+    # A non-finite member yields a non-finite median and MAD, so `sigma > sigma_max` is
+    # False and the row would previously have been stamped COMPLETE -- an unusable label
+    # inflating every completeness rate computed over a mixed corpus.
+    for bad in ([100.0, float("nan"), 99.0, 101.0], [100.0, float("inf"), 99.0, 101.0]):
+        got = RE.build_label(bad, closure_time=1.0, k_min=2, sigma_max=10.0)
+        assert got.status == RE.LabelStatusName.INVALID, \
+            f"non-finite member classified {got.status}"
+        assert got.n_members == 4, "the row is retained, not dropped"
+
+    # Provenance must enumerate its own members, or the count is unauditable.
+    with pytest.raises(ValueError, match="member_ids has"):
+        RE.build_label([1.0, 2.0, 3.0], closure_time=1.0, k_min=2,
+                       member_ids=("only-one",), sigma_max=10.0)
 
 
 def test_label_status_never_changes_row_membership():
@@ -286,6 +302,82 @@ def test_scheduler_convergence_over_declared_step_range():
 
     with pytest.raises(ValueError, match="exceeds min_pass_s"):
         VP.PassFinderConfig(mask_deg=10.0, coarse_step_s=120.0, min_pass_s=60.0)
+
+    # A zero step divides in the grid construction; a negative one builds a DESCENDING
+    # grid that survives the `grid <= t1` filter and returns silently wrong passes.
+    for bad in (0.0, -10.0):
+        with pytest.raises(ValueError, match="must be > 0"):
+            VP.PassFinderConfig(mask_deg=10.0, coarse_step_s=bad, min_pass_s=60.0)
+
+
+def test_scheduler_bisection_settings_converge_over_declared_range():
+    """The convergence guarantee must cover EVERY solver setting, not just the named one.
+
+    `coarse_step_s` was declared and swept after review, but `bisect_tol_s` and
+    `bisect_max_iter` move the same quantity -- the reported pass extent -- and had no
+    declared range and no test. Fixing one parameter while leaving its siblings
+    unconstrained addresses the instance, not the defect class.
+
+    Declared ranges: bisect_tol_s 0.01-1.0 s, bisect_max_iter 20-40. Across them the pass
+    COUNT must not change and every boundary must stay above the mask; extents may differ
+    by at most the coarsest tolerance in play, since that is what the tolerance bounds.
+    """
+    prop = circular_propagator(6878.0, 97.4)
+
+    def extents(**kw):
+        cfg = VP.PassFinderConfig(mask_deg=10.0, coarse_step_s=10.0, min_pass_s=60.0, **kw)
+        iv = VP.find_passes(prop, ST, T0, T0 + 86400.0, cfg)
+        assert iv, f"no passes for {kw}"
+        for a_, b_ in iv:
+            el, _, _, _ = VP.look_angles(prop, ST, np.array([a_, b_]), 1.0)
+            assert el.min() >= cfg.mask_deg - 1e-6, f"boundary below mask for {kw}"
+        return iv
+
+    ref = extents(bisect_tol_s=0.01, bisect_max_iter=40)
+    for tol in (0.01, 0.1, 1.0):
+        for it in (20, 30, 40):
+            iv = extents(bisect_tol_s=tol, bisect_max_iter=it)
+            assert len(iv) == len(ref), \
+                f"pass count changed at tol={tol}, iter={it}: {len(iv)} vs {len(ref)}"
+            for (a_, b_), (ra, rb) in zip(iv, ref):
+                # Refinement returns the above-threshold side, so a looser tolerance can
+                # only SHRINK the reported extent -- never place it outside the pass.
+                assert a_ >= ra - 1e-9 and b_ <= rb + 1e-9, \
+                    f"extent grew beyond the reference at tol={tol}, iter={it}"
+                assert (a_ - ra) <= tol + 1e-6 and (rb - b_) <= tol + 1e-6, \
+                    f"extent moved more than the tolerance at tol={tol}, iter={it}"
+
+
+def test_scheduler_config_is_in_provenance():
+    """The config docstring claims the solver settings belong in the provenance manifest.
+
+    That claim was asserted in prose and implemented nowhere -- no code emitted
+    `coarse_step_s` into any manifest and no test named one, so a schedule could be
+    published without the numbers that located its boundaries. `provenance()` makes the
+    claim executable; this test is what stops it reverting to prose.
+    """
+    cfg = VP.PassFinderConfig(mask_deg=10.0, coarse_step_s=30.0, bisect_tol_s=0.5,
+                              bisect_max_iter=25, min_pass_s=60.0)
+    prov = cfg.provenance()
+    for field in ("mask_deg", "min_pass_s", "coarse_step_s", "bisect_tol_s",
+                  "bisect_max_iter"):
+        assert field in prov, f"{field} missing from provenance"
+    # Every declared field must appear: a manifest silent about a setting is the defect
+    # L4.6 exists to catch, and it would be perverse for the scheduler to commit it.
+    declared = {f.name for f in dataclasses.fields(cfg)}
+    assert declared == set(prov), f"provenance omits {declared - set(prov)}"
+    assert prov["coarse_step_s"] == 30.0 and prov["bisect_max_iter"] == 25
+
+    # And it must be carryable in a real manifest as `extra`, and change the manifest
+    # hash -- a setting that does not move the hash is not covered by provenance at all,
+    # which is precisely the L4.6 defect.
+    src = Path(VP.__file__)
+    m30 = EC.provenance_manifest([src], {"pass_finder": prov})
+    m60 = EC.provenance_manifest(
+        [src], {"pass_finder": dataclasses.replace(cfg, coarse_step_s=60.0).provenance()})
+    assert "manifest_sha256" in m30 and m30["files"]
+    assert m30["manifest_sha256"] != m60["manifest_sha256"], \
+        "changing a solver setting left the manifest hash unchanged"
 
 
 def test_label_closure_precedes_training():

@@ -17,7 +17,11 @@ def main() -> int:
     pages = re.findall(r"Output written on .*\((\d+) pages", log)
     checks = {
         "pages": (int(pages[-1]) if pages else -1, EXPECTED_PAGES),
-        "latex_errors": (len(re.findall(r"^! ", log, re.M)), 0),
+        # `.latexmkrc` passes -file-line-error, which reformats errors as
+        # "./file.tex:NNN: message" and DROPS the "! " prefix. Matching only "^! "
+        # therefore reported zero errors on a genuinely broken build -- the invariant
+        # advertised as mechanically enforced never fired. Both forms are matched now.
+        "latex_errors": (len(re.findall(r"^(?:! |\./.*?:\d+: )", log, re.M)), 0),
         "undefined_refs": (len(re.findall(r"LaTeX Warning: Reference", log)), 0),
         "undefined_cites": (len(re.findall(r"Citation .* undefined", log)), 0),
         "overfull_boxes": (len(re.findall(r"Overfull \\hbox", log)), 0),

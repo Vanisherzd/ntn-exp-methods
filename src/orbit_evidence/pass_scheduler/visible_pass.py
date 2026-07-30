@@ -55,24 +55,34 @@ class PassFinderConfig:
     `mask_deg` and `min_pass_s` define the visibility CRITERION -- what counts as a
     usable pass. `coarse_step_s`, `bisect_tol_s` and `bisect_max_iter` are SOLVER
     settings of the interval finder: they determine how accurately the criterion's
-    boundaries are located, and they belong in the provenance manifest for that
-    reason. They do not define the criterion, but they are not free of it either --
-    the schedule is a numerical solution, and claiming otherwise would be the same
-    kind of undeclared dependence the contract exists to catch.
+    boundaries are located. They do not define the criterion, but they are not free of
+    it either -- the schedule is a numerical solution, and claiming otherwise would be
+    the same kind of undeclared dependence the contract exists to catch. `provenance()`
+    emits all of them, so a manifest can record the solver that produced a schedule;
+    `test_scheduler_config_is_in_provenance` asserts that it does.
 
-    Two consequences are enforced below rather than assumed:
+    Three consequences are enforced or measured rather than assumed:
 
     - A pass shorter than the coarse step can fall entirely between two grid points
       and be missed, so `coarse_step_s <= min_pass_s` is required. The historical
       implementation justified a 60 s step with a false claim ('a 10 deg pass lasts
       >= 4 min') while the true minimum above-mask pass measured 15 s -- so the
       criterion, not folklore, has to bound the solver.
-    - `bisect_tol_s` bounds boundary ERROR, not boundary VALUE: refinement returns
-      the above-threshold side of the bracket, so the reported extent is contained
-      within the true pass to within the tolerance rather than straddling it.
+    - `bisect_tol_s` bounds boundary ERROR, not boundary VALUE: refinement returns the
+      above-threshold side of the bracket, so the reported extent is contained within
+      the true pass to within the tolerance rather than straddling it.
+    - CAVEAT, found by review and not yet removed: because the reported extent is that
+      conservative under-estimate, the `b - a >= min_pass_s` filter in `find_passes`
+      tests a slightly SHORT interval. A pass whose true duration exceeds
+      `min_pass_s` by less than the tolerance can therefore be dropped, which makes
+      row membership depend on `bisect_tol_s` -- inside the very module offered as the
+      remedy for membership defects. The dependence is bounded by `bisect_tol_s` and
+      is declared here rather than hidden; removing it means comparing against
+      `b - a + bisect_tol_s`, which we have not done because it would change a
+      published schedule.
 
-    `test_scheduler_convergence_over_declared_step_range` exercises the declared
-    range and asserts stability of the recovered extent.
+    `test_scheduler_convergence_over_declared_step_range` sweeps the declared ranges of
+    all three solver settings and asserts stability of the recovered extents.
     """
     mask_deg: float
     coarse_step_s: float = 60.0
@@ -81,6 +91,11 @@ class PassFinderConfig:
     min_pass_s: float = 60.0
 
     def __post_init__(self) -> None:
+        if self.coarse_step_s <= 0:
+            raise ValueError(
+                f"coarse_step_s={self.coarse_step_s} must be > 0: zero divides in the "
+                "grid construction and a negative step yields a descending grid that "
+                "survives the upper-bound filter and returns silently wrong passes")
         if self.coarse_step_s > self.min_pass_s:
             raise ValueError(
                 f"coarse_step_s={self.coarse_step_s} exceeds min_pass_s="
@@ -88,6 +103,18 @@ class PassFinderConfig:
                 "two grid points and never be found")
         if self.bisect_tol_s <= 0 or self.bisect_max_iter < 1:
             raise ValueError("bisect_tol_s must be > 0 and bisect_max_iter >= 1")
+
+    def provenance(self) -> dict[str, float | int]:
+        """Every setting, criterion and solver alike, for the provenance manifest.
+
+        The docstring above claims the solver settings belong in the manifest. This is
+        that claim made executable: a schedule is reproducible only if the numbers that
+        located its boundaries are recorded alongside the ones that defined them.
+        """
+        return {"mask_deg": self.mask_deg, "min_pass_s": self.min_pass_s,
+                "coarse_step_s": self.coarse_step_s,
+                "bisect_tol_s": self.bisect_tol_s,
+                "bisect_max_iter": self.bisect_max_iter}
 
 
 def gmst_rad(jd: np.ndarray, fr: np.ndarray) -> np.ndarray:
