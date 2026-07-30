@@ -1,20 +1,20 @@
 {
- "n_rows": 57,
+ "n_rows": 54,
  "environments": [
   "E1",
   "E2",
   "E3"
  ],
- "n_development_faults": 14,
+ "n_development_faults": 13,
  "n_held_out": 4,
  "clean_false_positive_rule_firings": 0,
  "clean_verdicts_identical_across_envs": true,
- "development_detection": "42/42",
- "high_severity_detection": "36/36",
+ "development_detection": "39/39",
+ "high_severity_detection": "33/33",
  "held_out_detection": "12/12",
  "false_negatives": [],
- "total_runtime_s": 0.243,
- "mean_runtime_per_condition_s": 0.0043,
+ "total_runtime_s": 1.461,
+ "mean_runtime_per_condition_s": 0.0271,
  "per_fault": {
   "D1": {
    "expected": "L1.1",
@@ -148,17 +148,6 @@
    "baseline_detected_in": 0,
    "baseline_fired_union": []
   },
-  "D12": {
-   "expected": "L1.4",
-   "detected_in": 3,
-   "of": 3,
-   "fired_union": [
-    "L1.4"
-   ],
-   "extra_union": [],
-   "baseline_detected_in": 0,
-   "baseline_fired_union": []
-  },
   "D13": {
    "expected": "L4.1",
    "detected_in": 3,
@@ -239,7 +228,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0207
+   "runtime_s": 0.0417
   },
   {
    "env": "E1",
@@ -252,7 +241,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0038
+   "runtime_s": 0.024
   },
   {
    "env": "E1",
@@ -265,7 +254,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0042
+   "runtime_s": 0.0234
   },
   {
    "env": "E1",
@@ -278,7 +267,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.004
+   "runtime_s": 0.023
   },
   {
    "env": "E1",
@@ -291,7 +280,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0051
+   "runtime_s": 0.0234
   },
   {
    "env": "E1",
@@ -306,7 +295,7 @@
     "B3"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0234
   },
   {
    "env": "E1",
@@ -322,7 +311,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0039
+   "runtime_s": 0.0287
   },
   {
    "env": "E1",
@@ -335,7 +324,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0252
   },
   {
    "env": "E1",
@@ -348,7 +337,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0039
+   "runtime_s": 0.0258
   },
   {
    "env": "E1",
@@ -364,7 +353,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.027
   },
   {
    "env": "E1",
@@ -380,7 +369,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.004
+   "runtime_s": 0.024
   },
   {
    "env": "E1",
@@ -393,20 +382,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
-  },
-  {
-   "env": "E1",
-   "fault": "D12",
-   "fired": [
-    "L1.4"
-   ],
-   "expected": "L1.4",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0036
+   "runtime_s": 0.0231
   },
   {
    "env": "E1",
@@ -422,7 +398,7 @@
     "B2"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0044
+   "runtime_s": 0.0234
   },
   {
    "env": "E1",
@@ -435,7 +411,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0038
+   "runtime_s": 0.0239
   },
   {
    "env": "E1",
@@ -448,7 +424,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0044
+   "runtime_s": 0.0236
   },
   {
    "env": "E1",
@@ -461,7 +437,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.004
+   "runtime_s": 0.0238
   },
   {
    "env": "E1",
@@ -474,7 +450,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.056
   },
   {
    "env": "E1",
@@ -487,7 +463,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0233
   },
   {
    "env": "E2",
@@ -498,7 +474,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0044
+   "runtime_s": 0.0231
   },
   {
    "env": "E2",
@@ -511,7 +487,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0042
+   "runtime_s": 0.0229
   },
   {
    "env": "E2",
@@ -524,7 +500,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0233
   },
   {
    "env": "E2",
@@ -537,7 +513,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0225
   },
   {
    "env": "E2",
@@ -550,7 +526,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0044
+   "runtime_s": 0.0241
   },
   {
    "env": "E2",
@@ -565,7 +541,7 @@
     "B3"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0038
+   "runtime_s": 0.0232
   },
   {
    "env": "E2",
@@ -581,7 +557,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0235
   },
   {
    "env": "E2",
@@ -594,7 +570,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0242
   },
   {
    "env": "E2",
@@ -607,7 +583,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0239
   },
   {
    "env": "E2",
@@ -623,7 +599,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0043
+   "runtime_s": 0.0232
   },
   {
    "env": "E2",
@@ -639,7 +615,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0038
+   "runtime_s": 0.0233
   },
   {
    "env": "E2",
@@ -652,20 +628,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
-  },
-  {
-   "env": "E2",
-   "fault": "D12",
-   "fired": [
-    "L1.4"
-   ],
-   "expected": "L1.4",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0039
+   "runtime_s": 0.0228
   },
   {
    "env": "E2",
@@ -681,7 +644,7 @@
     "B2"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0229
   },
   {
    "env": "E2",
@@ -694,7 +657,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0039
+   "runtime_s": 0.0246
   },
   {
    "env": "E2",
@@ -707,7 +670,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0246
   },
   {
    "env": "E2",
@@ -720,7 +683,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.024
   },
   {
    "env": "E2",
@@ -733,7 +696,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.004
+   "runtime_s": 0.0749
   },
   {
    "env": "E2",
@@ -746,7 +709,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0039
+   "runtime_s": 0.0278
   },
   {
    "env": "E3",
@@ -757,7 +720,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0291
   },
   {
    "env": "E3",
@@ -770,7 +733,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0036
+   "runtime_s": 0.033
   },
   {
    "env": "E3",
@@ -783,7 +746,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.004
+   "runtime_s": 0.0253
   },
   {
    "env": "E3",
@@ -796,7 +759,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0257
   },
   {
    "env": "E3",
@@ -809,7 +772,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0049
+   "runtime_s": 0.0243
   },
   {
    "env": "E3",
@@ -824,7 +787,7 @@
     "B3"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.004
+   "runtime_s": 0.0241
   },
   {
    "env": "E3",
@@ -840,7 +803,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0249
   },
   {
    "env": "E3",
@@ -853,7 +816,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0036
+   "runtime_s": 0.0259
   },
   {
    "env": "E3",
@@ -866,7 +829,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0042
+   "runtime_s": 0.0253
   },
   {
    "env": "E3",
@@ -882,7 +845,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0038
+   "runtime_s": 0.0268
   },
   {
    "env": "E3",
@@ -898,7 +861,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0036
+   "runtime_s": 0.0309
   },
   {
    "env": "E3",
@@ -911,20 +874,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
-  },
-  {
-   "env": "E3",
-   "fault": "D12",
-   "fired": [
-    "L1.4"
-   ],
-   "expected": "L1.4",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0041
+   "runtime_s": 0.0238
   },
   {
    "env": "E3",
@@ -940,7 +890,7 @@
     "B2"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0039
+   "runtime_s": 0.0243
   },
   {
    "env": "E3",
@@ -953,7 +903,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.0236
   },
   {
    "env": "E3",
@@ -966,7 +916,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.004
+   "runtime_s": 0.0238
   },
   {
    "env": "E3",
@@ -979,7 +929,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0037
+   "runtime_s": 0.024
   },
   {
    "env": "E3",
@@ -992,7 +942,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0042
+   "runtime_s": 0.0574
   },
   {
    "env": "E3",
@@ -1005,7 +955,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0038
+   "runtime_s": 0.0239
   }
  ],
  "chronological_baseline": {
@@ -1020,7 +970,7 @@
    "D13"
   ],
   "n_caught": 2,
-  "n_fault_classes": 18,
+  "n_fault_classes": 17,
   "clean_path_firings": 0,
   "per_fault": {
    "D1": [],
@@ -1036,7 +986,6 @@
    "D9": [],
    "D10": [],
    "D11": [],
-   "D12": [],
    "D13": [
     "B1",
     "B2"

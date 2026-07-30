@@ -39,8 +39,12 @@ MASK_DEG = 10.0
 OFFSETS = (0.2, 0.5, 0.8)
 T0 = (2460000.5 - 2440587.5) * 86400.0
 
+# D12 was removed: its injector was the same branch as D3 and produced a
+# byte-identical registry, so it was one fault counted twice. The distinction it
+# claimed (window from the LABEL source rather than the ROW source) was never
+# implemented. 13 development faults + 4 held-out = 17 fault classes.
 DEV_FAULTS = ("D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10",
-              "D11", "D12", "D13", "D14")
+              "D11", "D13", "D14")
 HELD_OUT = ("HO1", "HO2", "HO3", "HO4")
 ALL_FAULTS = DEV_FAULTS + HELD_OUT
 
@@ -182,7 +186,7 @@ def build_case_a(fault: str | None, env: Env, seed: int = 20260731) -> CaseA:
                  "t_tx": float(t)} for i, t in enumerate(src)
                 if w.t_start <= t <= w.t_end]
 
-    if f in ("D3", "D12"):
+    if f == "D3":
         def build(src, _w):
             # D3: window end from the data. D12: window end from the LABEL source's
             # extent, which is a distinct object from the row source.

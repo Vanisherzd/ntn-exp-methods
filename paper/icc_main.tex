@@ -31,11 +31,12 @@ observed. We formalise six protected objects---decision time, feature availabili
 row membership, label closure, state channels and statistical units---as an executable
 experiment contract in four mechanically checkable layers, and release
 \emph{Orbit-Evidence}, a dependency-light implementation. In a fault-injection
-evaluation over two pipelines, eighteen fault classes and three deterministic
-environments, chronological checks detect $2/18$ classes while the contract detects
-$18/18$, including four mutations specified before their detectors were written, with
-zero clean-path false positives and a sub-\qty{0.2}{\second} sweep suitable for
-per-commit use. Two case studies show chronology-compliant experiments halted by a
+evaluation over two pipelines, seventeen fault classes and three deterministic
+environments, an implemented chronological baseline detects $2/17$ classes while the
+contract detects $17/17$, with a clean-path false-halt rate of $0.042$ against a nominal
+$0.05$ and a sweep under \qty{2}{\second}, suitable for per-commit use. One of the four
+mutations withheld from the detectors survives full scrutiny as such; we report that
+reduction rather than the headline count. Two case studies show chronology-compliant experiments halted by a
 contract rule before any conclusion was drawn. We make no claim about physical-layer
 performance; the contribution is the contract and its fault-detection evidence.
 \end{abstract}
@@ -86,19 +87,23 @@ detectors' authors.
 \item \textbf{A threat model and contract.} Six protected objects and the
 deployment-causality violations each admits, organised as four mechanically checkable
 layers: availability (L1), physical and scheduling validity (L2), model-state causality
-(L3), and independence and reproducibility (L4). Nineteen rules, Table~\ref{tab:rules}.
+(L3), and independence and reproducibility (L4). Nineteen rules, Table~\ref{tab:rules};
+note that rules and fault classes are distinct counts, and three rules are exercised
+only on the clean path.
 \item \textbf{Orbit-Evidence, an executable implementation.} A dependency-light
-toolkit (710 lines in four modules plus a 399-line two-sided test suite,
+toolkit (739 lines in four modules plus a 399-line test suite,
 \texttt{numpy} only) providing visible-pass scheduling, a
 freeze-then-label transmission registry, reference-ensemble labelling with published
-uncertainty, a six-channel mutation canary, and seed and provenance controls. Every
-detector carries a two-sided test that fails on a broken fixture and passes on the
-clean path.
-\item \textbf{A fault-injection evaluation with held-out mutations.} Fourteen
-development faults and four mutations specified before their detectors existed,
-injected into two pipelines across three deterministic environments, with detection
-rate, clean-path false positives, determinism and continuous-integration runtime;
-plus two case studies of chronology-compliant experiments halted by a rule.
+uncertainty, a six-channel mutation canary, and seed and provenance controls. Sixteen of the
+nineteen rules are demonstrated red by a fault fixture; three (L2.2, L2.3, L4.5) are
+exercised only on the clean path, and we say so rather than claiming otherwise.
+\item \textbf{A fault-injection evaluation, and an honest account of its limits.}
+Thirteen development faults and four withheld mutations, injected into two pipelines
+across three deterministic environments, reporting detection rate, a \emph{measured}
+clean-path false-halt rate under seed variation, determinism and runtime---together
+with the reasons only one withheld mutation supports the generalisation claim
+(\S\ref{sec:threats}); plus two case studies of chronology-compliant experiments
+halted by a rule.
 \end{enumerate}
 
 We claim nothing about radio-frequency or packet-level performance. No learned
@@ -269,10 +274,9 @@ physics baseline, optional learned branch, validation selection, frozen
 model/scaler/gate state, held-out deployment. They carry no physical claim; they exist
 to exercise rules.
 
-We inject fourteen \emph{development} faults, drawn from defects that motivated the
-detectors, and four \emph{held-out} mutations whose definitions were frozen before the
-corresponding rules were written and whose outcomes were not inspected until after the
-rules were fixed. Two of the four---incomplete provenance and a statistical unit chosen
+We inject thirteen \emph{development} faults, drawn from defects that motivated the
+detectors, and four \emph{withheld} mutations whose definitions were frozen before the
+corresponding rules were written. Two of the four---incomplete provenance and a statistical unit chosen
 at the wrong nesting level---had \emph{no} predecessor detector of any kind, so they
 test whether a general rule can be written for a defect it was not designed against.
 Each condition runs in three environments differing only in pseudo-random generator
@@ -291,25 +295,26 @@ stress that it is not a competing detector suite: chronological splitting is a
 \emph{protocol property} of intentionally limited scope, and the comparison measures how
 much of the fault space that property covers, not tool against tool.
 
-Measured, it detects $2/18$ fault classes---invalid label-closure timing and a violated
+Measured, it detects $2/17$ fault classes---invalid label-closure timing and a violated
 fold order, precisely the two that \emph{are} ordering properties---and fires on no clean
-path. The remaining sixteen are invisible to ordering by construction. The contract
-detects $18/18$ classes in all three environments, $54/54$ condition-environment cells.
+path. The remaining fifteen are invisible to ordering by construction. The contract
+detects $17/17$ classes in all three environments, $51/51$ condition-environment cells.
 
 \input{tables/contract_rules.tex}
 
 \input{figures/fig_fault_matrix.tex}
 
-All four held-out mutations were detected, in every environment, with \emph{zero}
-correction loops drawn from a pre-registered budget of two. Clean paths produced no
-false positives, and clean verdicts were identical across the three environments.
+All four withheld mutations were detected, in every environment. Clean paths produced no
+rule firing at the committed seed, and clean verdicts were identical across the three
+environments; more informatively, over 450 clean paths spanning 150 fixture seeds the
+false-halt rate of the size-controlled L4.7 rule is $0.042$ against its nominal $0.05$.
 Three faults additionally raise \rulename{L3.2}: when a state channel is unguarded, the
 mutation aimed at it is also inert, which is a true positive rather than noise.
 
-The full sweep---nineteen conditions per environment, being the eighteen fault classes
+The full sweep---eighteen conditions per environment, being the seventeen fault classes
 plus one clean path---over both pipelines and three environments runs
-in under \qty{0.2}{\second} on a single core of a commodity laptop---about
-\qty{3}{\milli\second} per condition---with
+in under \qty{2}{\second} on a single core of a commodity laptop---about
+\qty{28}{\milli\second} per condition, dominated by L4.7's permutation null---with
 \texttt{numpy} as the only dependency, so it is affordable as a per-commit gate rather
 than a periodic audit.
 
@@ -388,18 +393,62 @@ demonstrated red on a broken fixture before it is trusted.
 
 \input{figures/fig_case_studies.tex}
 
+\section{Threats to Validity}
+\label{sec:threats}
+
+We state the bounds on our evaluation explicitly, because several are severe enough to
+change how the detection counts should be read.
+
+\emph{The fault set is not independent of the detectors.} Thirteen of seventeen classes are
+drawn from the defects that motivated the rules. For those, $17/17$ measures detector
+\emph{reachability}---that a fixture written to trip rule $X$ trips rule $X$---and not
+mutation adequacy in the sense of~\cite{jia2011mutation}. Hand-authored mutants are known
+to overstate suite strength, and ours are authored by the same hand as the rules.
+
+\emph{Injection is at fixture-input level, not program level.} Each fault selects a
+pre-shaped input rather than mutating pipeline source. For most classes the input then
+flows through the pipeline, but for two of the four withheld mutations it does not: L1.5's
+availability predicate and L2.4's declared and implemented relations are objects consumed
+only by their own detector. Those two therefore demonstrate that a rule fires when handed a
+broken input, not that it catches the defect inside a working pipeline.
+
+\emph{One withheld mutation, not four.} Of the four, two are the fixture-local cases just
+described; a third (the statistical-unit mutation) had its detector rewritten after its
+outcome was recorded, when a reviewer showed the original statistic was uncalibrated---so
+its withheld status is void, and we report it as a development fault in all but name. Only
+the provenance-completeness mutation was defined before its rule existed, injected through
+the pipeline, and left untouched afterwards. \textbf{The generalisation claim rests on
+$n=1$.} We report this rather than the headline four.
+
+\emph{Two faults postdate the freeze.} The pre-registration froze eleven development
+faults; two more, targeting rules that already existed, were added afterwards. They do not
+bear on the withheld set, but the pre-registered counts differ from the reported ones.
+
+\emph{No independent temporal evidence.} The pre-registration, the detectors and both
+result records were committed within one short window, so the ordering that makes a
+withheld mutation meaningful rests on our attestation and not on anything a third party can
+check. A paper arguing that validity claims must be differentially checkable rather than
+asserted should not ask for an exception here, and we do not.
+
+\emph{Three rules are never demonstrated red.} L2.2, L2.3 and L4.5 fire in no condition.
+They are exercised only on the clean path, which by our own standard is insufficient.
+
+\emph{The environment axis is narrow.} The three environments differ in pseudo-random
+generator family alone, so for the rules whose inputs do not depend on random draws the
+three cells are the same computation three times.
+
 \section{Limitations and Conclusion}
 
 This is a software-methodology contribution. We validate no radio-frequency behaviour,
 no packet-level outcome, and no learned communication method; the fixtures are
 deterministic constructions for exercising rules, not simulators, and no physical
 conclusion should be drawn from them. We make no completeness claim: the contract
-covers six protected objects we found necessary, and the existence of further channels
-is likely rather than excluded---our own evaluation added two rules for propositions
-that had no detector until they were sought. The held-out mutation count is small, and a
-detection rate over eighteen fault classes bounds nothing about faults nobody has
-conceived. Finally, the two case studies come from one programme; the threat model
-generalises by argument, not by demonstration across independent projects.
+covers six protected objects we found necessary, and the existence of further channels is
+likely rather than excluded. Section~\ref{sec:threats} bounds the evaluation; the short
+version is that a detection rate over a self-authored fault set measures reachability, and
+the generalisation evidence is one mutation. The two case studies come from one programme,
+so the threat model generalises by argument rather than by demonstration across independent
+projects.
 
 What the evidence supports is narrow and, we think, useful. Chronological splitting
 addresses ordering and only ordering; on our matrix it detects $2$ of $18$ fault

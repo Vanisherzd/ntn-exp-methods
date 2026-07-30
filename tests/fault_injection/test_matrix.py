@@ -31,7 +31,9 @@ def test_committed_result_passes_every_criterion(committed):
 def test_counts_are_self_consistent(committed):
     n_dev, n_ho = committed["n_development_faults"], committed["n_held_out"]
     n_env = len(committed["environments"])
-    assert n_dev + n_ho == 18, "fault-class count changed"
+    # 17 = 13 development + 4 withheld. Was 18 until D12 was found to be the same
+    # injection as D3, producing a byte-identical registry; see the threats section.
+    assert n_dev + n_ho == 17, "fault-class count changed"
     assert n_env == 3
     # 19 conditions per environment = 18 faults + 1 clean path
     assert committed["n_rows"] == (n_dev + n_ho + 1) * n_env

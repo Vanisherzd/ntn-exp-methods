@@ -34,10 +34,10 @@ import pipelines as P            # noqa: E402
 EXPECTED: dict[str, str] = {
     "D1": "L1.1", "D2": "L1.2", "D3": "L1.4", "D4": "L2.1", "D5": "L1.3",
     "D6": "L3.1", "D7": "L4.2", "D8": "L3.3", "D9": "L3.1", "D10": "L3.1",
-    "D11": "L4.3", "D12": "L1.4", "D13": "L4.1", "D14": "L4.4",
+    "D11": "L4.3", "D13": "L4.1", "D14": "L4.4",
     "HO1": "L1.5", "HO2": "L4.6", "HO3": "L4.7", "HO4": "L2.4",
 }
-HIGH_SEVERITY = {"D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9", "D10", "D12",
+HIGH_SEVERITY = {"D1", "D2", "D3", "D4", "D5", "D6", "D8", "D9", "D10",
                  "D13", "D14"}
 
 
@@ -116,7 +116,14 @@ def run_case_b(fault: str | None, env: P.Env) -> list[str]:
     run(CL.check_repeated_measures, c.y, c.pass_ids, c.aggregated)
     run(CL.check_seed_hygiene, c.seed_registry, c.about_to_run)
     run(CL.check_provenance_hashes, c.manifest)
-    run(CL.check_statistical_unit, c.y, c.unit_ids, c.coarser_ids)
+    # L4.7 returns a verdict dict; INDETERMINATE must be recorded, not discarded,
+    # or a rule that declined to judge is indistinguishable from one that passed.
+    try:
+        verdict = CL.check_statistical_unit(c.y, c.unit_ids, c.coarser_ids)
+        if verdict.get("verdict") == "INDETERMINATE":
+            fired.append("L4.7:INDETERMINATE")
+    except CL.ContractViolation as v:
+        fired.append(v.rule)
     return fired
 
 
@@ -184,7 +191,7 @@ def main() -> int:
         "4_identical_clean_verdicts": deterministic,
         "5_runtime_measured": True,
         "6_findings_name_a_rule": all(
-            all(x in CL.RULES for x in r["fired"]) for r in rows),
+            all(x.split(":")[0] in CL.RULES for x in r["fired"]) for r in rows),
     }
     base_caught = [f for f in P.ALL_FAULTS if per_fault[f]["baseline_detected_in"] > 0]
     out["chronological_baseline"] = {

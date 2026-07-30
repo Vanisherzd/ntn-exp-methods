@@ -5,17 +5,17 @@ reproduce it. Recomputed after the repository restructure.
 
 | claim | value | artifact | regenerate with |
 |---|---|---|---|
-| fault classes | 18 (14 development + 4 held-out) | `evaluation/results/matrix_result.json` | `python evaluation/scripts/run_matrix.py` |
+| fault classes | 17 (13 development + 4 withheld; only 1 supports generalisation, see threats) | `evaluation/results/matrix_result.json` | `python evaluation/scripts/run_matrix.py` |
 | contract rules | 19 across four layers | `evaluation/scripts/contract_layers.py` (`RULES`) | `python -c "import contract_layers as C; print(len(C.RULES))"` |
-| conditions per environment | 19 = 18 faults + 1 clean path | same artifact, `n_rows / 3` | as above |
+| conditions per environment | 18 = 17 faults + 1 clean path | same artifact, `n_rows / 3` | as above |
 | deterministic environments | 3 (PCG64, SFC64, Philox) | same artifact, `environments` | as above |
-| development detection | 42/42 | same artifact | as above |
-| held-out detection | 12/12 (4 mutations x 3 environments) | same artifact | as above |
-| fault-environment cells | 54/54 | 18 x 3 | as above |
-| clean-path false positives | 0 | same artifact | as above |
-| chronological baseline coverage | 2/18 (**measured**) | `evaluation/results/matrix_result.json` -> `chronological_baseline`; `evaluation/results/fig2_data.json` | `python evaluation/scripts/run_matrix.py` |
-| sweep runtime | under 0.2 s, about 3 ms per condition | same artifact, `total_runtime_s` | as above |
-| toolkit size | 710 lines in four modules + 399-line test suite | `src/orbit_evidence/`, `tests/regression/` | `find src/orbit_evidence -name '*.py' \| xargs wc -l` (710 total incl. five `__init__.py`; 696 excl.) |
+| development detection | 39/39 | same artifact | as above |
+| withheld detection | 12/12 (4 mutations x 3 environments); generalisation evidence n=1 | same artifact | as above |
+| fault-environment cells | 51/51 | 17 x 3 | as above |
+| clean-path false halts | 0 at the committed seed; **0.042 over 450 clean paths** (nominal 0.05) | same artifact | as above |
+| chronological baseline coverage | 2/17 (**measured**) | `evaluation/results/matrix_result.json` -> `chronological_baseline`; `evaluation/results/fig2_data.json` | `python evaluation/scripts/run_matrix.py` |
+| sweep runtime | under 2 s, about 28 ms per condition (1.461 s measured) | same artifact, `total_runtime_s` | as above |
+| toolkit size | 739 lines in four modules + 399-line test suite | `src/orbit_evidence/`, `tests/regression/` | `find src/orbit_evidence -name '*.py' \| xargs wc -l` (710 total incl. five `__init__.py`; 696 excl.) |
 | regression tests | 23 passing | `tests/regression/` | `PYTHONPATH=src pytest tests/regression -q` |
 | fault-injection tests | 4 passing | `tests/fault_injection/` | `PYTHONPATH=src pytest tests/fault_injection -q` |
 

@@ -50,6 +50,14 @@ Closed-form linear target; no orbital dynamics.
 
 ## Development faults (detectors already exist)
 
+**AMENDMENT, recorded after the fact and disclosed in the paper's threats section.**
+Two development faults (D13 fold-order, D14 seed-hygiene) were added after this document
+was frozen; both target rules that already existed. One (D12) was later removed on review,
+its injector having been the same branch as D3 and producing a byte-identical registry. The
+frozen set was eleven development faults; the reported set is thirteen. The withheld set
+below is unchanged, but see the threats section for why only one of the four supports the
+generalisation claim.
+
 | id | fault | severity |
 |---|---|---|
 | D1 | future/reference epoch used as a feature | high |

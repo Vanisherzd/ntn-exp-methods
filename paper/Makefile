@@ -32,4 +32,5 @@ verify: $(PDF)
 clean:
 	$(LATEXMK) -C -outdir=$(BUILD) $(TEX) >/dev/null 2>&1 || true
 	@rm -rf $(BUILD)
+	@rm -f $(PDF)
 	@echo "cleaned regenerable products (sources untouched)"
