@@ -14,6 +14,8 @@ for sub in ("evaluation/scripts", "src", "tests/fixtures"):
     sys.path.insert(0, str(ROOT / sub))
 
 import contract_layers as CL   # noqa: E402
+from orbit_evidence.experiment_contract import experiment_contract as EC  # noqa: E402
+import numpy as np             # noqa: E402
 import pipelines as P          # noqa: E402
 
 N_SEEDS = 150
@@ -38,7 +40,32 @@ def main() -> int:
     det, m = sweep("HO3")
     print(f"clean paths      : {n}  false halts {fh}  rate {fh/n:.3f}  (nominal 0.05)")
     print(f"injected paths   : {m}  detected    {det}  rate {det/m:.3f}")
+    for k in (8, 20, 96):
+        s = fixed_threshold_null_size(k=k)
+        print(f"fixed-0.2 null size at {k:3d} groups of 3: {s:.3f}  "
+              f"(the construction L4.3 still uses)")
     return 0
+
+
+
+
+def fixed_threshold_null_size(thresh: float = 0.2, k: int = 8, m: int = 3,
+                              n_draws: int = 4000, seed: int = 20260731) -> float:
+    """P(ICC(1) > thresh) on iid data: the size of the DISCARDED fixed-threshold rule.
+
+    This is the number the paper cites to justify replacing a fixed threshold with a
+    permutation null, and it was the only quantitative claim in the paper with no
+    artifact field and no regeneration command. Measured here so it is under the same
+    gate as everything else.
+
+    L4.3 still ships the fixed-threshold construction, so this also quantifies that
+    disclosed limitation rather than leaving it as an assertion.
+    """
+    rng = np.random.default_rng(seed)
+    grp = np.repeat(np.arange(k), m)
+    hits = sum(1 for _ in range(n_draws)
+               if EC.within_group_icc(rng.standard_normal(k * m), grp) > thresh)
+    return hits / n_draws
 
 
 if __name__ == "__main__":

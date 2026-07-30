@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -36,11 +37,36 @@ L47_CALIBRATION = {
     "measured_clean_false_halt_rate": 0.042,
     "injected_detection_rate": 1.000,
     "injected_paths_evaluated": 150,
+    # Size of the DISCARDED fixed-threshold rule, on iid data at eight groups of three.
+    # Cited in the manuscript to justify the permutation null, and still the size of the
+    # construction L4.3 ships -- a disclosed limitation, so it belongs in the artifact.
+    # Reproduce: python evaluation/scripts/calibrate_l47.py
+    "discarded_fixed_threshold_null_size": 0.17,
+    "discarded_fixed_threshold": 0.2,
 }
 
 
 def loc(paths) -> int:
     return sum(len(p.read_text().splitlines()) for p in paths)
+
+
+TIMING_KEYS = ("runtime_s", "total_runtime_s", "mean_runtime_per_condition_s")
+
+
+def _strip_timings(obj):
+    """Recursively drop wall-clock fields so the remainder is comparable."""
+    if isinstance(obj, dict):
+        return {k: _strip_timings(v) for k, v in obj.items() if k not in TIMING_KEYS}
+    if isinstance(obj, list):
+        return [_strip_timings(v) for v in obj]
+    return obj
+
+
+def _results_digest(d: dict) -> str:
+    """SHA-256 over the canonical, timing-stripped result. Stable across runs."""
+    return hashlib.sha256(
+        json.dumps(_strip_timings(d), sort_keys=True,
+                   separators=(",", ":")).encode()).hexdigest()
 
 
 REPORT = ROOT / "evaluation" / "results" / "EVALUATION_RESULT.md"
@@ -140,6 +166,19 @@ def _write_fig2_data(s: dict, d: dict) -> None:
          "rows": rows}, indent=1) + "\n")
 
 
+def _collected_test_count() -> int:
+    """Number of tests pytest collects from the active suite.
+
+    Recorded in the artifact so documentation cannot drift from it -- three files had
+    hand-copied counts of 23, 27 and 30 simultaneously.
+    """
+    r = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q",
+                        "tests/regression", "tests/fault_injection"],
+                       cwd=ROOT, capture_output=True, text=True)
+    m = re.search(r"(\d+) tests? collected", r.stdout)
+    return int(m.group(1)) if m else -1
+
+
 def main() -> int:
     d = json.loads(MATRIX.read_text())
     rows = d["rows"]
@@ -150,7 +189,10 @@ def main() -> int:
     n_fault = d["n_development_faults"] + d["n_late_specified"]
     n_env = len(d["environments"])
     src = sorted((ROOT / "src" / "orbit_evidence").rglob("*.py"))
-    tst = sorted((ROOT / "tests" / "regression").rglob("*.py"))
+    # The ACTIVE suite is regression + fault_injection. Counting only the former
+    # understated it by the 73-line matrix suite while the adjacent test COUNT included it.
+    tst = sorted((ROOT / "tests" / "regression").rglob("*.py")) + \
+        sorted((ROOT / "tests" / "fault_injection").rglob("*.py"))
 
     s = {
         "generated_by": "evaluation/scripts/make_final_summary.py",
@@ -175,11 +217,15 @@ def main() -> int:
         "source_loc": loc(src),
         "source_loc_excluding_init": loc([p for p in src if p.name != "__init__.py"]),
         "test_suite_loc": loc(tst),
+        "test_count": _collected_test_count(),
         "detectors_with_red_fixture": len(red),
         "detectors_without_red_fixture": no_red,
         "deterministic_across_environments": d["clean_verdicts_identical_across_envs"],
         "l47_calibration": L47_CALIBRATION,
-        "matrix_sha256": hashlib.sha256(MATRIX.read_bytes()).hexdigest(),
+        # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
+        # runtime_s, so this anchor could never match between two runs of the same tree --
+        # an integrity checksum that is always different is not an integrity checksum.
+        "matrix_sha256": _results_digest(d),
         "commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
                                  capture_output=True, text=True).stdout.strip(),
     }

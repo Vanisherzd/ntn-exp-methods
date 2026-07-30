@@ -10,7 +10,11 @@ from __future__ import annotations
 import json
 import sys
 
-VOLATILE = {"runtime_seconds", "runtime_ms_per_condition", "matrix_sha256", "commit"}
+# Only wall-clock is genuinely volatile. `commit` is `git rev-parse HEAD`, constant
+# across two runs in one tree; `matrix_sha256` now hashes the timing-stripped result and
+# is stable. Both were previously excluded AND omitted from the report -- silently
+# ignored, which is exactly what this module's docstring promised not to do.
+VOLATILE = {"runtime_seconds", "runtime_ms_per_condition"}
 
 
 def main(a: str, b: str) -> int:
@@ -23,9 +27,12 @@ def main(a: str, b: str) -> int:
         for k, u, v in diffs:
             print(f"  {k}: run1={u!r} run2={v!r}")
         return 1
-    print(f"summary reproduced: {len(keys) - len(VOLATILE)} field(s) identical")
-    for k in sorted(VOLATILE - {"matrix_sha256", "commit"}):
-        print(f"   volatile {k}: run1={x.get(k)} run2={y.get(k)}")
+    compared = [k for k in keys if k not in VOLATILE]
+    print(f"summary reproduced: {len(compared)} field(s) identical, "
+          f"including matrix_sha256 and commit")
+    for k in sorted(VOLATILE):
+        if k in x or k in y:
+            print(f"   volatile {k}: run1={x.get(k)} run2={y.get(k)}")
     return 0
 
 
