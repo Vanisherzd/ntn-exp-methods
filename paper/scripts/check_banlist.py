@@ -68,23 +68,77 @@ WITHDRAWN_CLAIMS: list[tuple[str, str]] = [
 ]
 
 
-# The ban is on ASSERTING a withdrawn claim, not on denying it -- the paper is required
-# to bound its own scope, and doing so means naming the claim it does not make ("does
-# not estimate completeness on unseen faults"). A match preceded by a negation inside
-# the same clause is therefore permitted. Kept deliberately blunt: the failure mode
-# worth preventing is a positive claim sneaking back, and a blunt rule over-reports
-# rather than under-reports when it is wrong.
+# The ban is on ASSERTING a withdrawn claim, not on denying it: the paper is required to
+# bound its own scope, and doing so means naming the claim it does not make ("does not
+# estimate completeness on unseen faults"). Two exemptions are therefore allowed, both
+# narrow, and both REPORTED rather than applied silently.
+#
+# An earlier version of this exemption was defeated in review. It treated only "." ";"
+# and a blank line as clause boundaries and allowed a negation up to 120 characters
+# back, so "We do not overstate this: the contract generalises to unseen faults." passed
+# the gate -- the negation belonged to a different clause entirely. The comment claimed
+# the rule "over-reports rather than under-reports when it is wrong"; it under-reported,
+# which is the unsafe direction for a gate whose whole purpose is to make a withdrawn
+# claim unreachable. Boundaries now include ":" "," and an em-dash, and the negation must
+# sit within NEGATION_WINDOW characters of the match.
+CLAUSE_BOUNDARY = re.compile(r"[.;:,]|---|\n\n")
+NEGATION_WINDOW = 60
+
 NEGATION = re.compile(
     r"\b(not|no|neither|nor|never|without|cannot|can't|withdrawn|rather than|"
-    r"instead of|makes? none|does not|do not|is not|are not)\b[^.;]{0,120}$",
-    re.IGNORECASE)
+    r"instead of|makes? none)\b", re.IGNORECASE)
 
 
-def _is_negated(text: str, pos: int) -> bool:
-    """True when a negation governs the match within its clause."""
-    clause_start = max(text.rfind(".", 0, pos), text.rfind(";", 0, pos),
-                       text.rfind("\n\n", 0, pos))
-    return bool(NEGATION.search(text[clause_start + 1:pos]))
+def _clause_before(text: str, pos: int) -> str:
+    """The text from the nearest clause boundary up to the match."""
+    start = 0
+    for m in CLAUSE_BOUNDARY.finditer(text, 0, pos):
+        start = m.end()
+    return text[start:pos]
+
+
+def _exempt(text: str, pos: int) -> str | None:
+    """Return the reason this match is permitted, or None to flag it.
+
+    (a) a negation governs it inside its own clause and within the window; or
+    (b) the enclosing paragraph documents the withdrawal itself, which is how CLAIMS.md
+        and the pre-registration notice are allowed to name the claim they retract.
+    """
+    clause = _clause_before(text, pos)
+    if len(clause) <= NEGATION_WINDOW and NEGATION.search(clause):
+        return "negated in-clause"
+    para_start = text.rfind("\n\n", 0, pos) + 1
+    para_end = text.find("\n\n", pos)
+    para = text[para_start:para_end if para_end != -1 else len(text)]
+    if re.search(r"withdraw|prohibit|banned|retract", para, re.IGNORECASE):
+        return "withdrawal/prohibition context"
+    return None
+
+
+# Spelled forms, derived from the artifact rather than hardcoded beside the digit. The
+# previous version accepted `\b19\b|nineteen`, so the manuscript's word "nineteen"
+# satisfied the check no matter what the artifact said and the value could drift freely.
+_WORDS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven",
+          8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve",
+          13: "thirteen", 14: "fourteen", 15: "fifteen", 16: "sixteen",
+          17: "seventeen", 18: "eighteen", 19: "nineteen", 20: "twenty",
+          51: "fifty-one", 450: "four hundred and fifty"}
+
+
+def _digit_or_word(n: int) -> str:
+    r"""Regex matching n written the way the manuscript writes a COUNT.
+
+    Deliberately EXCLUDES the bare digit. `\b19\b` also matches a TikZ coordinate, a
+    figure row index and a BibTeX `number = {12}` field, so a required-presence check
+    built on it passes for arbitrary drifted values -- which is exactly how two counts
+    stayed unguarded through review. Counts in this manuscript are written `\num{N}` or
+    spelled out, and those are what we require.
+    """
+    alts = [rf"num\{{{n}\}}"]
+    if n in _WORDS:
+        w = _WORDS[n]
+        alts.append(rf"[{w[0].upper()}{w[0]}]{w[1:]}\b")
+    return "|".join(alts)
 
 
 def artifact_numbers() -> list[tuple[str, str]]:
@@ -92,7 +146,7 @@ def artifact_numbers() -> list[tuple[str, str]]:
     s = json.loads(SUMMARY.read_text())
     n, c = s["fault_class_count"], s["l47_calibration"]
     return [
-        (rf"\b{s['rule_count']}\b|nineteen", f"rule_count={s['rule_count']}"),
+        (_digit_or_word(s["rule_count"]), f"rule_count={s['rule_count']}"),
         (rf"{s['chronological_detected_count']}\s*/\s*{n}",
          f"baseline {s['chronological_detected_count']}/{n}"),
         (rf"{s['contract_detected_count']}\s*/\s*{n}",
@@ -104,17 +158,22 @@ def artifact_numbers() -> list[tuple[str, str]]:
         (re.escape(str(c["measured_clean_false_halt_rate"])),
          "L4.7 measured clean false-halt rate"),
         (re.escape(str(c["nominal_alpha"])), "L4.7 nominal alpha"),
-        (rf"\b{c['clean_paths_evaluated']}\b|num\{{{c['clean_paths_evaluated']}\}}",
+        (_digit_or_word(c["clean_paths_evaluated"]),
          f"L4.7 clean paths={c['clean_paths_evaluated']}"),
-        (rf"\b{s['detectors_with_red_fixture']}\b|[Ss]ixteen",
+        (_digit_or_word(s["detectors_with_red_fixture"]),
          f"detectors_with_red_fixture={s['detectors_with_red_fixture']}"),
     ]
 
 
 def main() -> int:
+    # The manuscript is not the only claim surface. paper/submission/*.md and the root
+    # README restate every headline number, and paper/submission/README.md advertises this
+    # very check as enforcing the prohibited-claim list -- so they must be inside it.
     srcs = (sorted(PAPER.glob("*.tex")) + sorted(PAPER.glob("*.bib"))
             + sorted(PAPER.glob("figures/*.tex")) + sorted(PAPER.glob("tables/*.tex"))
-            + sorted(PAPER.glob("sections/*.tex")))
+            + sorted(PAPER.glob("sections/*.tex"))
+            + sorted(PAPER.glob("submission/*.md")) + [ROOT / "README.md"])
+    srcs = [p for p in srcs if p.exists()]
     if not srcs:
         print("check_banlist: no source files found")
         return 1
@@ -124,14 +183,18 @@ def main() -> int:
         return 1
 
     bad: list[str] = []
+    exempt: list[str] = []
     for p in srcs:
         text = p.read_text()
+        rel = p.relative_to(ROOT)
         for pat, label in BANNED_PATTERNS + WITHDRAWN_CLAIMS:
             for m in re.finditer(pat, text, flags=re.IGNORECASE):
-                if _is_negated(text, m.start()):
-                    continue
                 line = text[:m.start()].count("\n") + 1
-                bad.append(f"{p.relative_to(PAPER)}:{line}: [{label}] matched {m.group(0)!r}")
+                why = _exempt(text, m.start())
+                if why:
+                    exempt.append(f"{rel}:{line}: [{label}] {m.group(0)!r} ({why})")
+                    continue
+                bad.append(f"{rel}:{line}: [{label}] matched {m.group(0)!r}")
 
     # The runtime claim is a BOUND, not a wall-clock string: timings vary between runs
     # and machines, so pinning an exact figure would make the build fail elsewhere.
@@ -141,9 +204,13 @@ def main() -> int:
         bad.append(f"RUNTIME: artifact reports {s['runtime_seconds']} s, but the "
                    "manuscript claims the sweep runs in under 2 s")
 
-    body = "\n".join(p.read_text() for p in srcs)
+    # Required-presence applies to the MANUSCRIPT only; a doc need not restate every
+    # number, but nothing anywhere may contradict the artifact (handled by the pattern
+    # scans above plus the runtime bound).
+    manuscript = "\n".join(p.read_text() for p in srcs
+                           if p.suffix == ".tex" or p.suffix == ".bib")
     for pat, label in artifact_numbers():
-        if not re.search(pat, body):
+        if not re.search(pat, manuscript):
             bad.append(f"MISSING: [{label}] nothing matches {pat!r} -- the manuscript "
                        "does not quote the current artifact value")
 
@@ -152,9 +219,12 @@ def main() -> int:
         for b in bad:
             print("  " + b)
         return 1
+    for e in exempt:
+        print(f"  permitted: {e}")
     print(f"check_banlist: {len(srcs)} file(s) clean; {len(BANNED_PATTERNS)} banned + "
           f"{len(WITHDRAWN_CLAIMS)} withdrawn patterns, "
-          f"{len(artifact_numbers())} artifact numbers verified")
+          f"{len(artifact_numbers())} artifact numbers bound to the artifact, "
+          f"{len(exempt)} permitted mention(s)")
     return 0
 
 if __name__ == "__main__":
