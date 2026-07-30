@@ -19,13 +19,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+SRC = Path(__file__).resolve().parents[2] / "src"
+sys.path.insert(0, str(SRC))
 
-from contract import experiment_contract as EC          # noqa: E402
-from ensemble import reference_ensemble as RE           # noqa: E402
-from registry import causal_registry as CR              # noqa: E402
-from scheduler import visible_pass as VP                # noqa: E402
+from orbit_evidence.experiment_contract import experiment_contract as EC          # noqa: E402
+from orbit_evidence.label_ensemble import reference_ensemble as RE           # noqa: E402
+from orbit_evidence.causal_registry import causal_registry as CR              # noqa: E402
+from orbit_evidence.pass_scheduler import visible_pass as VP                # noqa: E402
 
 MU = 398600.4418
 ST = VP.Station(24.0, 121.0, 100.0)
