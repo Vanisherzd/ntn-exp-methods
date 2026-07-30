@@ -7,7 +7,8 @@
   box/.style={draw=black!70,line width=0.7pt,rounded corners=2pt,align=center,
               minimum height=11mm,minimum width=31mm,inner sep=3pt,fill=white},
   ok/.style={->,line width=1.0pt,black!75},
-  no/.style={->,line width=0.8pt,red!65!black,dashed}]
+  no/.style={->,line width=0.8pt,red!65!black,dashed},
+  noord/.style={->,line width=0.8pt,blue!55!black,densely dotted}]
 \draw[line width=1.1pt,black!55] (-0.6,0) -- (30.4,0);
 \foreach \x/\lab in {1.6/{$t_{\text{avail}}$}, 8.0/{$t_d$ decision},
                      15.0/{freeze}, 21.5/{deployment}, 28.0/{$t_c$ closure}}
@@ -22,21 +23,25 @@
 \draw[ok] (val) -- (dep);   \draw[ok] (dep) -- (lab);
 \node[font=\footnotesize,text=red!65!black,anchor=south] at (15.0,3.35)
   {\textsc{prohibited}};
+\node[font=\scriptsize,text=blue!55!black,anchor=west] at (23.4,3.42)
+  {dotted: the one an ordering check already catches};
 \draw[no] (lab.north) to[out=120,in=60] node[pos=0.5,above,font=\scriptsize,
   fill=white,inner sep=1pt]{\rulename{L1.1} feature from a later item} (reg.north);
 \draw[no] (lab.north) to[out=150,in=30] node[pos=0.5,above,font=\scriptsize,
   fill=white,inner sep=1pt]{\rulename{L1.4} membership set by later data} (avail.north);
 \draw[no] (dep.south) to[out=-120,in=-60] node[pos=0.5,below,font=\scriptsize,
   fill=white,inner sep=1pt]{\rulename{L3.1} state observes past the freeze} (val.south);
-\draw[no] (lab.south) to[out=-140,in=-40] node[pos=0.5,below,font=\scriptsize,
+\draw[noord] (lab.south) to[out=-140,in=-40] node[pos=0.5,below,font=\scriptsize,
   fill=white,inner sep=1pt]{\rulename{L1.3} label used before closure} (val.south east);
 \end{tikzpicture}}
 \caption{The deployment-causality contract. Solid paths are permitted: state available
 before the decision instant $t_d$ populates a registry whose rows are frozen and
 hashed, a model and admission decision are fixed at the freeze, deployment reads only
-frozen state, and retrospective labels close afterwards. Dashed paths are prohibited
-and each is enforced by a named rule. Crucially, every prohibited path shown here is
-\emph{chronologically consistent} in the sense a train/validation/test split
-checks---which is why a split does not exclude them.}
+frozen state, and retrospective labels close afterwards. Prohibited paths are enforced by
+named rules. The three \emph{dashed} paths are the point of this paper: each is
+\emph{chronologically consistent} in the sense a train/validation/test split checks---the
+timestamps are correctly ordered---so a split does not exclude them. The single
+\emph{dotted} path (\rulename{L1.3}) is drawn for contrast: it \emph{is} an ordering
+violation, and it is the one class a chronological split already catches.}
 \label{fig:contract}
 \end{figure*}

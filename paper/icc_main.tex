@@ -131,9 +131,11 @@ occur in both directions: rows dropped when a later reference fails to appear, a
 created when a schedule's extent is derived from the data on hand rather than declared.
 
 \emph{Label closure.} A retrospective label becomes usable only at a closure time
-$t_c$. Its use before $t_c$ is an ordering violation and is caught by a split; the
-harder failure is when the \emph{probability} of a label existing depends on the
-covariate under study, which is a missingness property that no split addresses.
+$t_c$. Its use before $t_c$ is an ordering violation and \emph{is} caught by a split---the
+one class in our taxonomy for which that is true, drawn dotted in
+Fig.~\ref{fig:contract} for contrast. The harder failure is when the \emph{probability}
+of a label existing depends on the covariate under study, which is a missingness property
+that no split addresses.
 
 \emph{State channels.} Beyond the feature tensor, information can enter through the
 scaler, model coefficients, a tracker's latent state, selected-model metadata, or the
