@@ -7,7 +7,7 @@ CASE A -- retrospective orbital-label pipeline: held orbital state, visible-pass
 scheduling, frozen registry, later reference construction, label closure.
 
 CASE B -- controlled learning/gating pipeline: physics baseline, optional learned
-branch, validation selection, frozen model/scaler/gate state, held-out deployment.
+branch, validation selection, frozen model/scaler/gate state, later deployment window.
 
 Fault identifiers are frozen in PREREGISTRATION.md. `None` is the clean path.
 """
@@ -42,11 +42,18 @@ T0 = (2460000.5 - 2440587.5) * 86400.0
 # D12 was removed: its injector was the same branch as D3 and produced a
 # byte-identical registry, so it was one fault counted twice. The distinction it
 # claimed (window from the LABEL source rather than the ROW source) was never
-# implemented. 13 development faults + 4 held-out = 17 fault classes.
+# implemented.
+#
+# The suite is 17 CURATED fault classes. It is split below only for provenance: the
+# first group was frozen in the pre-registration's first batch, the second group later.
+# That split carries NO evidential weight and must not be reported as a held-out or
+# generalisation result -- see the withdrawal notice at the top of
+# evaluation/mutations/PREREGISTRATION.md. LS1/LS2 are consumed only by their own
+# detector, and LS3's detector was rewritten after its outcome was inspected.
 DEV_FAULTS = ("D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10",
               "D11", "D13", "D14")
-HELD_OUT = ("HO1", "HO2", "HO3", "HO4")
-ALL_FAULTS = DEV_FAULTS + HELD_OUT
+LATE_SPECIFIED = ("HO1", "HO2", "HO3", "HO4")
+ALL_FAULTS = DEV_FAULTS + LATE_SPECIFIED
 
 
 @dataclass

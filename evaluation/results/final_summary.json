@@ -1,0 +1,44 @@
+{
+ "generated_by": "evaluation/scripts/make_final_summary.py",
+ "source_artifact": "evaluation/results/matrix_result.json",
+ "rule_count": 19,
+ "fault_class_count": 17,
+ "development_fault_count": 13,
+ "late_specified_fault_count": 4,
+ "curated_regression_fault_count": 17,
+ "environment_count": 3,
+ "injected_cell_count": 51,
+ "clean_path_count": 3,
+ "chronological_detected_count": 2,
+ "chronological_checks": [
+  "B1",
+  "B2",
+  "B3"
+ ],
+ "contract_detected_count": 17,
+ "clean_false_halt_count": 0,
+ "runtime_seconds": 1.382,
+ "runtime_ms_per_condition": 25.6,
+ "conditions_per_environment": 18,
+ "source_loc": 780,
+ "source_loc_excluding_init": 766,
+ "test_suite_loc": 490,
+ "detectors_with_red_fixture": 16,
+ "detectors_without_red_fixture": [
+  "L2.2",
+  "L2.3",
+  "L4.5"
+ ],
+ "deterministic_across_environments": true,
+ "l47_calibration": {
+  "nominal_alpha": 0.05,
+  "clean_paths_evaluated": 450,
+  "fixture_seeds": 150,
+  "environments": 3,
+  "measured_clean_false_halt_rate": 0.042,
+  "injected_detection_rate": 1.0,
+  "injected_paths_evaluated": 150
+ },
+ "matrix_sha256": "4bdd731ded49b66d2e0d73910bf6fef984e20c501e37c336f6b19572ed51ad92",
+ "commit": "b2114f6cde7cfd7fad0fa8c1d69d682ef29bfad4"
+}

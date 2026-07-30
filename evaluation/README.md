@@ -27,8 +27,18 @@ CI by `tests/fault_injection/test_matrix.py`.
 
 ## The one thing to read first
 
-`mutations/PREREGISTRATION.md` records why three of the four originally suggested
-held-out mutations were **reclassified as development faults**: detectors already existed
-for those exact channels, so injecting them would have produced a meaningless 4/4
-held-out rate. The four that replaced them include two propositions for which no detector
-existed at all.
+`mutations/PREREGISTRATION.md` opens with a **withdrawal notice**. That document
+pre-registered four mutations as held-out evidence of generalisation; adversarial review
+established the claim does not hold, and it has been withdrawn. What this suite measures
+is **represented-fault regression coverage** — the implemented rules catch the violations
+the suite contains, and those violations cannot silently return. It does not estimate
+sensitivity to faults the suite does not contain.
+
+Consequences worth knowing before reading any number here:
+
+- The 17/17 detection figure has a **curated** denominator, not a sample from a natural
+  fault distribution. It is a regression result, not a sensitivity.
+- The faults and the rules share an author, so for most classes the figure measures
+  detector *reachability*.
+- `DEV_FAULTS` vs `LATE_SPECIFIED` in `tests/fixtures/pipelines.py` is **provenance only**
+  and carries no evidential weight.

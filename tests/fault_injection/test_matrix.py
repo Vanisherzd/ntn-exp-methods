@@ -29,16 +29,23 @@ def test_committed_result_passes_every_criterion(committed):
 
 
 def test_counts_are_self_consistent(committed):
-    n_dev, n_ho = committed["n_development_faults"], committed["n_held_out"]
+    """The three denominators the paper must keep apart: rules, fault classes, conditions.
+
+    The development/late-specified split is provenance only and carries no evidential
+    weight -- it is asserted here so the totals stay honest, not to support a held-out
+    claim (withdrawn; see evaluation/mutations/PREREGISTRATION.md).
+    """
+    n_dev = committed["n_development_faults"]
+    n_late = committed["n_late_specified"]
     n_env = len(committed["environments"])
-    # 17 = 13 development + 4 withheld. Was 18 until D12 was found to be the same
-    # injection as D3, producing a byte-identical registry; see the threats section.
-    assert n_dev + n_ho == 17, "fault-class count changed"
+    # 17 = 13 + 4. Was 18 until D12 was found to be the same injection as D3, producing
+    # a byte-identical registry; see the threats section.
+    assert n_dev + n_late == 17, "fault-class count changed"
     assert n_env == 3
-    # 19 conditions per environment = 18 faults + 1 clean path
-    assert committed["n_rows"] == (n_dev + n_ho + 1) * n_env
+    # 18 conditions per environment = 17 fault classes + 1 clean path
+    assert committed["n_rows"] == (n_dev + n_late + 1) * n_env
     assert committed["development_detection"] == f"{n_dev * n_env}/{n_dev * n_env}"
-    assert committed["held_out_detection"] == f"{n_ho * n_env}/{n_ho * n_env}"
+    assert committed["late_specified_detection"] == f"{n_late * n_env}/{n_late * n_env}"
     assert committed["clean_false_positive_rule_firings"] == 0
     assert committed["false_negatives"] == []
 
@@ -60,7 +67,7 @@ def test_matrix_reproduces_from_source():
                        cwd=str(ROOT))
     assert r.returncode == 0, r.stdout[-2000:] + r.stderr[-2000:]
     after = json.loads(RESULT.read_text())
-    for k in ("verdict", "development_detection", "held_out_detection",
+    for k in ("verdict", "development_detection", "late_specified_detection",
               "clean_false_positive_rule_firings", "n_rows",
               "clean_verdicts_identical_across_envs"):
         assert after[k] == before[k], f"{k} changed on re-run: {before[k]} -> {after[k]}"

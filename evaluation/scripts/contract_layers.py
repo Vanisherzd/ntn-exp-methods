@@ -9,11 +9,23 @@ Layers:
   L3  model-state causality
   L4  statistical independence and reproducibility
 
-Four rules here are GENERAL rules written before any held-out mutation was injected
-and without knowledge of its outcome: L1.5 (boundary probing), L2.4 (declared relation
-versus implementation), L4.6 (provenance completeness by differential test) and L4.7
-(statistical unit at the correct nesting level). Two of those four had no predecessor
-detector of any kind.
+PROVENANCE, STATED HONESTLY. An earlier version of this module claimed that four rules
+were written before their faults were injected and therefore constituted held-out
+evidence of generalisation. That claim has been WITHDRAWN; it does not survive scrutiny:
+
+  L1.5, L2.4  the mutated object is consumed only by the rule's own detector, so the
+              fault demonstrates the rule firing on a broken input, not catching a
+              defect inside a working pipeline.
+  L4.7        its detector was REWRITTEN after its fault's outcome had been recorded
+              (the original statistic was uncalibrated), which voids the ordering that
+              would have made it held-out evidence.
+  L4.6        the one rule that was specified before its detector existed, injected
+              through the pipeline, and left untouched. n=1 supports nothing general.
+
+This suite therefore measures REPRESENTED-FAULT regression coverage: the rules catch
+the violations the suite contains, and those violations cannot silently return. It does
+not estimate sensitivity to faults the suite does not contain. See the withdrawal notice
+in evaluation/mutations/PREREGISTRATION.md.
 """
 
 from __future__ import annotations
@@ -126,7 +138,8 @@ def check_row_membership(build_fn, window, full_source, truncated_source) -> Non
 
 def probe_comparison_boundary(admit_fn: Callable[[float, float], bool],
                              t_decision: float = 100.0) -> None:
-    """L1.5 -- GENERAL RULE, written before any held-out mutation was injected.
+    """L1.5 -- general rule. Its fault is consumed only by this detector (see the
+    module docstring), so it evidences reachability, not pipeline-level detection.
 
     An availability predicate must admit an item published strictly before the
     decision instant, admit one published exactly at it, and reject one published
@@ -195,7 +208,8 @@ def check_declared_relation(declared: Callable[[np.ndarray], np.ndarray],
                            domain: tuple[float, float],
                            extrapolation_margin: float = 0.5,
                            rtol: float = 1e-3, n: int = 256) -> None:
-    """L2.4 -- GENERAL RULE, written before any held-out mutation was injected.
+    """L2.4 -- general rule. Its fault is consumed only by this detector (see the
+    module docstring), so it evidences reachability, not pipeline-level detection.
 
     A declared relation is checked on the declared domain and on an extrapolation
     margin beyond it. Checking only the declared domain cannot separate a correct
@@ -339,8 +353,10 @@ def check_provenance_hashes(manifest: Mapping[str, Any]) -> None:
 def check_provenance_completeness(
         run_fn: Callable[[Mapping[str, Any]], tuple[Any, Mapping[str, Any]]],
         input_variations: Sequence[Mapping[str, Any]]) -> None:
-    """L4.6 -- GENERAL RULE, written before any held-out mutation was injected.
-    No predecessor detector of any kind existed for this proposition.
+    """L4.6 -- general rule. No predecessor detector of any kind existed for this
+    proposition, and this rule was not edited after its fault's outcome was recorded.
+    It is the only rule in the suite for which both hold; one case supports no claim
+    about faults the suite does not contain.
 
     Differential test: run under each variation, collect (output_digest, manifest_hash).
     If two variations produce DIFFERENT outputs under the SAME manifest hash, the
@@ -388,8 +404,11 @@ def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
                           coarser_ids: np.ndarray, alpha: float = 0.05,
                           min_coarser_groups: int = 4, n_perm: int = 400,
                           seed: int = 0) -> dict[str, Any]:
-    """L4.7 -- GENERAL RULE, written before any held-out mutation was injected.
-    No predecessor detector of any kind existed for this proposition.
+    """L4.7 -- general rule. NOT independent evidence: this detector was rewritten after
+    its fault's outcome had been recorded, because review showed the original statistic
+    was uncalibrated (see SIZE CONTROL below). The rewrite was the right fix and the
+    rule is now size-controlled, but the edit voids the ordering that would have made
+    the result independent evidence. Recorded here so the claim cannot be revived.
 
     Aggregate to the CHOSEN unit, then ask whether those unit-level values retain
     correlation within the next COARSER grouping. Material residual correlation means

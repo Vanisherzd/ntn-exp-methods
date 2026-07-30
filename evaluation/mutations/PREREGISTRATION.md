@@ -1,3 +1,35 @@
+> # WITHDRAWAL NOTICE — read before anything below
+>
+> **The held-out generalisation claim this document supports has been WITHDRAWN.**
+> Nothing below has been edited: a pre-registration that is revised after its outcomes are
+> known is worthless as a record, so the original text stands and this notice bounds it.
+>
+> The document defines four mutations (HO1–HO4) intended as held-out evidence that the
+> contract detects faults it was not designed against. Adversarial review established that
+> the claim does not hold:
+>
+> | mutation | rule | why it is not held-out evidence |
+> |---|---|---|
+> | HO1 | L1.5 | the mutated availability predicate is consumed **only** by its own detector, so it shows the rule firing on a broken input, not catching a defect in a working pipeline |
+> | HO4 | L2.4 | same defect: the declared/implemented relations are detector-local objects |
+> | HO3 | L4.7 | its detector was **rewritten after its outcome was recorded**, because review showed the original statistic was uncalibrated. The rewrite was correct, but it voids the ordering that made the result independent |
+> | HO2 | L4.6 | the only one that survives: specified before its detector existed, injected through the pipeline, untouched afterwards |
+>
+> One surviving case supports no claim about faults the suite does not contain. The paper
+> therefore reports **represented-fault regression coverage** only: the rules catch the
+> violations the suite contains, and those violations cannot silently return.
+>
+> Also recorded for completeness: the pre-registration froze **eleven** development faults;
+> the reported suite has **thirteen** (two were added later, targeting rules that already
+> existed), and D12 was subsequently found to be the same injection as D3 — a byte-identical
+> registry — reducing eighteen fault classes to **seventeen**.
+>
+> The forbidden wording is enforced mechanically by `paper/scripts/check_banlist.py`
+> (`WITHDRAWN_CLAIMS`). In code, `LATE_SPECIFIED` retains the HO identifiers as
+> **provenance only**, with no evidential weight. See `submission_finalization/CLAIM_LEDGER.md`.
+
+---
+
 # LOOP 1 — FAULT-INJECTION PRE-REGISTRATION
 
 **Frozen before any detector for a held-out mutation is written.** No detector may be

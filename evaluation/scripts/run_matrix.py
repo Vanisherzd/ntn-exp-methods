@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Loop 3 -- fault-injection evaluation.
 
-Runs {CASE A, CASE B} x {clean, 14 development faults, 4 held-out mutations} x
+Runs {CASE A, CASE B} x {clean, 17 curated fault classes} x
 {3 deterministic environments} and reports which contract rule fired.
 
-The detectors are frozen. Whatever the held-out mutations produce is the answer; no
-detector is edited after its held-out result is inspected.
+The detectors are frozen for the run. NOTE: this suite measures REPRESENTED-FAULT
+regression coverage, not generalisation -- the faults and the rules share an author.
+The late-specified subset is retained for provenance only and carries no evidential
+weight; see the withdrawal notice in evaluation/mutations/PREREGISTRATION.md.
 """
 
 from __future__ import annotations
@@ -150,10 +152,10 @@ def main() -> int:
     # ---- metrics ----------------------------------------------------------
     clean = [r for r in rows if r["fault"] == "CLEAN"]
     dev = [r for r in rows if r["fault"] in P.DEV_FAULTS]
-    ho = [r for r in rows if r["fault"] in P.HELD_OUT]
+    ls = [r for r in rows if r["fault"] in P.LATE_SPECIFIED]
     fp = sum(len(r["fired"]) for r in clean)
     dev_det = sum(r["detected"] for r in dev)
-    ho_det = sum(r["detected"] for r in ho)
+    ls_det = sum(r["detected"] for r in ls)
     high = [r for r in dev if r["fault"] in HIGH_SEVERITY]
     verdicts = {r["env"]: tuple(r["fired"]) for r in clean}
     deterministic = len(set(verdicts.values())) == 1
@@ -172,12 +174,13 @@ def main() -> int:
 
     out = {
         "n_rows": len(rows), "environments": [e.name for e in P.ENVS],
-        "n_development_faults": len(P.DEV_FAULTS), "n_held_out": len(P.HELD_OUT),
+        "n_development_faults": len(P.DEV_FAULTS),
+        "n_late_specified": len(P.LATE_SPECIFIED),
         "clean_false_positive_rule_firings": fp,
         "clean_verdicts_identical_across_envs": deterministic,
         "development_detection": f"{dev_det}/{len(dev)}",
         "high_severity_detection": f"{sum(r['detected'] for r in high)}/{len(high)}",
-        "held_out_detection": f"{ho_det}/{len(ho)}",
+        "late_specified_detection": f"{ls_det}/{len(ls)}",
         "false_negatives": [r["fault"] for r in rows if r["expected"] and not r["detected"]],
         "total_runtime_s": round(total_s, 3),
         "mean_runtime_per_condition_s": round(total_s / max(len(rows), 1), 4),
@@ -186,7 +189,7 @@ def main() -> int:
     }
     acc = {
         "1_all_high_severity_detected": sum(r["detected"] for r in high) == len(high),
-        "2_all_held_out_detected": ho_det == len(ho),
+        "2_all_late_specified_detected": ls_det == len(ls),
         "3_zero_clean_false_positives": fp == 0,
         "4_identical_clean_verdicts": deterministic,
         "5_runtime_measured": True,
@@ -213,13 +216,13 @@ def main() -> int:
     print(f"clean verdicts identical across envs: {deterministic}")
     print(f"development detection: {out['development_detection']}   "
           f"high-severity: {out['high_severity_detection']}")
-    print(f"HELD-OUT detection: {out['held_out_detection']}")
+    print(f"late-specified detection: {out['late_specified_detection']}")
     if out["false_negatives"]:
         print(f"FALSE NEGATIVES: {sorted(set(out['false_negatives']))}")
     print(f"\n{'fault':6s} {'expect':7s} {'det':>5s}  fired")
     for f in P.ALL_FAULTS:
         d = per_fault[f]
-        mark = "*" if f in P.HELD_OUT else " "
+        mark = " "
         print(f"{mark}{f:5s} {d['expected']:7s} {d['detected_in']}/{d['of']}  "
               f"{d['fired_union']}")
     print("\nacceptance:")
