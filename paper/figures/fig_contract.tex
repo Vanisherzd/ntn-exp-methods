@@ -1,0 +1,42 @@
+% Fig. 1 -- deployment-causality contract
+% Included by paper/icc_main.tex via \input.
+\begin{figure*}[!t]
+\centering
+\resizebox{0.97\textwidth}{!}{%
+\begin{tikzpicture}[font=\small,>={Latex[length=2.4mm]},
+  box/.style={draw=black!70,line width=0.7pt,rounded corners=2pt,align=center,
+              minimum height=11mm,minimum width=31mm,inner sep=3pt,fill=white},
+  ok/.style={->,line width=1.0pt,black!75},
+  no/.style={->,line width=0.8pt,red!65!black,dashed}]
+\draw[line width=1.1pt,black!55] (-0.6,0) -- (30.4,0);
+\foreach \x/\lab in {1.6/{$t_{\text{avail}}$}, 8.0/{$t_d$ decision},
+                     15.0/{freeze}, 21.5/{deployment}, 28.0/{$t_c$ closure}}
+  {\draw[line width=1.1pt,black!55] (\x,-0.16) -- (\x,0.16);
+   \node[font=\footnotesize,text=black!65,anchor=north] at (\x,-0.26) {\lab};}
+\node[box,fill=blue!7]  (avail) at (1.6,1.55) {available state\\[1pt]\footnotesize published, held};
+\node[box,fill=blue!7]  (reg)   at (8.0,1.55) {frozen registry\\[1pt]\footnotesize rows hashed};
+\node[box,fill=orange!8](val)   at (15.0,1.55){validate, select,\\[1pt]\footnotesize freeze model/gate};
+\node[box,fill=green!8] (dep)   at (21.5,1.55){deployment\\[1pt]\footnotesize frozen state only};
+\node[box,fill=black!5] (lab)   at (28.0,1.55){label closes\\[1pt]\footnotesize retrospective};
+\draw[ok] (avail) -- (reg); \draw[ok] (reg) -- (val);
+\draw[ok] (val) -- (dep);   \draw[ok] (dep) -- (lab);
+\node[font=\footnotesize,text=red!65!black,anchor=south] at (15.0,3.35)
+  {\textsc{prohibited}};
+\draw[no] (lab.north) to[out=120,in=60] node[pos=0.5,above,font=\scriptsize,
+  fill=white,inner sep=1pt]{\rulename{L1.1} feature from a later item} (reg.north);
+\draw[no] (lab.north) to[out=150,in=30] node[pos=0.5,above,font=\scriptsize,
+  fill=white,inner sep=1pt]{\rulename{L1.4} membership set by later data} (avail.north);
+\draw[no] (dep.south) to[out=-120,in=-60] node[pos=0.5,below,font=\scriptsize,
+  fill=white,inner sep=1pt]{\rulename{L3.1} state observes past the freeze} (val.south);
+\draw[no] (lab.south) to[out=-140,in=-40] node[pos=0.5,below,font=\scriptsize,
+  fill=white,inner sep=1pt]{\rulename{L1.3} label used before closure} (val.south east);
+\end{tikzpicture}}
+\caption{The deployment-causality contract. Solid paths are permitted: state available
+before the decision instant $t_d$ populates a registry whose rows are frozen and
+hashed, a model and admission decision are fixed at the freeze, deployment reads only
+frozen state, and retrospective labels close afterwards. Dashed paths are prohibited
+and each is enforced by a named rule. Crucially, every prohibited path shown here is
+\emph{chronologically consistent} in the sense a train/validation/test split
+checks---which is why a split does not exclude them.}
+\label{fig:contract}
+\end{figure*}

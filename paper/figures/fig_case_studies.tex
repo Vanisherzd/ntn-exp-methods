@@ -1,0 +1,51 @@
+% Fig. 3 -- case-study timelines
+% Included by paper/icc_main.tex via \input.
+\begin{figure}[!t]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}[font=\scriptsize,>={Latex[length=2.0mm]},
+  nd/.style={draw=black!70,line width=0.6pt,rounded corners=1.5pt,align=center,
+             minimum height=7mm,minimum width=19mm,inner sep=2pt,fill=white},
+  fl/.style={->,line width=0.8pt,black!70},
+  bad/.style={->,line width=0.8pt,red!65!black,dashed},
+  stop/.style={draw=red!65!black,line width=1.1pt,rounded corners=2pt,fill=red!6,
+               align=center,inner sep=2.5pt,font=\scriptsize}]
+% ---------------- panel (a)
+\node[anchor=west,font=\scriptsize\bfseries] at (-0.3,2.35) {(a) retrospective-label pipeline};
+\node[nd] (a1) at (0.9,1.2) {held state};
+\node[nd] (a2) at (3.6,1.2) {visible-pass\\schedule};
+\node[nd] (a3) at (6.3,1.2) {frozen\\registry};
+\node[nd] (a4) at (9.0,1.2) {later reference};
+\node[nd] (a5) at (11.7,1.2) {label closes};
+\foreach \x/\y in {a1/a2,a2/a3,a3/a4,a4/a5} \draw[fl] (\x) -- (\y);
+\draw[bad] (a4.north) to[out=140,in=40]
+  node[pos=0.5,above,font=\scriptsize,fill=white,inner sep=1pt]
+  {epoch gap as a feature} (a3.north);
+\draw[bad] (a5.south) to[out=-150,in=-30]
+  node[pos=0.5,below,font=\scriptsize,fill=white,inner sep=1pt]
+  {membership set by later publication} (a3.south);
+\node[stop] at (6.3,-0.95) {\textsc{halt} \rulename{L1.1} \rulename{L1.4}};
+\draw[red!65!black,line width=0.9pt] (6.3,0.85) -- (6.3,-0.55);
+% ---------------- panel (b)
+\node[anchor=west,font=\scriptsize\bfseries] at (-0.3,-2.15) {(b) learning and gating pipeline};
+\node[nd] (b1) at (0.9,-3.3) {baseline};
+\node[nd] (b2) at (3.6,-3.3) {learned\\branch};
+\node[nd] (b3) at (6.3,-3.3) {validate,\\select};
+\node[nd] (b4) at (9.0,-3.3) {\textbf{freeze}};
+\node[nd] (b5) at (11.7,-3.3) {deployment};
+\foreach \x/\y in {b1/b2,b2/b3,b3/b4,b4/b5} \draw[fl] (\x) -- (\y);
+\draw[bad] (b5.north) to[out=140,in=40]
+  node[pos=0.5,above,font=\scriptsize,fill=white,inner sep=1pt]
+  {tracker state advances past the freeze} (b3.north);
+\node[font=\scriptsize,text=red!65!black,anchor=west] at (0.15,-4.5)
+  {zero-effect control admits $\Rightarrow$ target not null};
+\node[stop] at (9.0,-5.45) {\textsc{halt} \rulename{L3.1} \rulename{L3.3} \rulename{L4.2}};
+\draw[red!65!black,line width=0.9pt] (9.0,-3.65) -- (9.0,-5.05);
+\end{tikzpicture}}
+\caption{Where the contract halts each case study. Solid arrows are the intended flow;
+dashed arrows are the defects found. In (a) two prohibited paths reach a registry whose
+rows were meant to be fixed before labels existed. In (b) the feature tensor was clean,
+yet a stateful component kept observing outcomes after the freeze, and the zero-effect
+control admitted a learned branch. Every dashed path is chronologically consistent.}
+\label{fig:cases}
+\end{figure}

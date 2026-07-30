@@ -1,0 +1,36 @@
+% Table I -- contract rules
+% Included by paper/icc_main.tex via \input.
+\begin{table*}[!t]
+\caption{Contract rules. Every violation raises an exception carrying its rule
+identifier. Detectors are two-sided: each has a clean-path test that passes and a
+deliberately broken fixture that fails.}
+\label{tab:rules}
+\centering
+\footnotesize
+\begin{tabular}{@{}llp{4.6cm}p{4.3cm}l@{}}
+\toprule
+\textbf{Rule} & \textbf{Protected object} & \textbf{Violation example} &
+\textbf{Mechanical check} & \textbf{Failure action}\\
+\midrule
+\rulename{L1.1} & feature availability & feature spans two past timestamps, one published later & recompute features with state after $t$ truncated; require bit-identity & halt \\
+\rulename{L1.2} & availability clock & selection by descriptive rather than publication time & assert selected item's publication $\le t_d$ & halt \\
+\rulename{L1.3} & label closure & label used before its closure time & mask by $t_c \le t_d$ & halt \\
+\rulename{L1.4} & row membership & schedule extent taken from available data & rebuild from truncated source, same declared window & halt \\
+\rulename{L1.5} & comparison boundary & availability test strict where it must be inclusive & probe before, exactly at, and after $t_d$ & halt \\
+\rulename{L2.1} & sampling geometry & schedule sampled on a clock grid & assert every sample above the declared mask & halt \\
+\rulename{L2.2} & physical scale & target below instrument resolution or above plausibility & ratio against a floor \emph{and} a ceiling & label, retain \\
+\rulename{L2.3} & hidden state & error integrates over the window & late/early magnitude ratio & halt \\
+\rulename{L2.4} & declared relation & config and code agree only where fitted & compare over domain \emph{plus} extrapolation margin & halt \\
+\rulename{L3.1} & state channels & tracker observes outcomes past the freeze & six-channel mutation canary & halt \\
+\rulename{L3.2} & canary effectiveness & probe mutation is a no-op & require the mutation to change an observable & halt \\
+\rulename{L3.3} & negative control & zero-effect cell admits a learned branch & admission rate at every covariate level & halt \\
+\rulename{L4.1} & fold chronology & folds overlap in time & compare fold time extents & halt \\
+\rulename{L4.2} & paired randomness & condition label enters the seed & assert arms bit-identical off-intervention & halt \\
+\rulename{L4.3} & repeated measures & replicates counted as observations & within-group correlation before aggregation & halt \\
+\rulename{L4.4} & seed hygiene & burned seed re-enters evaluation & namespace disjointness & halt \\
+\rulename{L4.5} & provenance hashes & artifact unhashed & manifest and self-hash present & halt \\
+\rulename{L4.6} & provenance completeness & behaviour-changing input uncovered & differing outputs under one manifest hash & halt \\
+\rulename{L4.7} & statistical unit & unit finer than the exchangeable one & residual correlation at the next coarser grouping & halt \\
+\bottomrule
+\end{tabular}
+\end{table*}
