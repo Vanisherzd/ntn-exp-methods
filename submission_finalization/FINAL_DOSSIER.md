@@ -89,9 +89,9 @@ that the manual line breaks did not hold, orphaning "A" — rebroken.
 | R3F | experimental methodology | WEAK ACCEPT | none |
 | R4F | artifact / reproducibility | WEAK ACCEPT | none |
 | R5 | adversarial reject advocate | WEAK REJECT → **WEAK ACCEPT** (R5V) | none remaining |
-| R6 | six-page camera-ready | WEAK ACCEPT, **2 blockers** → cleared by measurement | see §15 |
+| R6 | six-page camera-ready | WEAK ACCEPT, **2 blockers** | cleared |
 | R5V | verification of R5's six items | WEAK ACCEPT, *no remaining rejection argument* | **NONE** |
-| R6V | verification of R6's blockers | dispatched; superseded by direct measurement (§15) | — |
+| R6V | verification of R6's blockers | WEAK ACCEPT, 5 blockers found | **all 5 cleared** |
 
 All six independently described the contribution as an executable deployment-causality
 contract with a curated regression suite. **None described it as an internal bug report** —
@@ -156,9 +156,9 @@ intentionally unmet.
 | | |
 |---|---|
 | active branch | `submission/orbit-evidence-workshop` |
-| local HEAD | `b08d52c` (33 commits ahead of `main`) |
-| remote HEAD | **not yet pushed** — see §19 |
-| `main` | `9e3380c`, **untouched** |
+| local HEAD | `9fc5d7d` (33 commits ahead of `main`) |
+| remote HEAD | `9fc5d7d` — **matches local** |
+| `main` | `9e3380c`, **untouched and not pushed**; `origin/main` is `31da77b`, 25 behind |
 
 ## 10. Preserved archive branches and tags
 
@@ -253,17 +253,30 @@ one of them advertised the gate). Every permitted mention is printed with its re
 
 ## 19. Push verification
 
-**NOT YET PUSHED.** Held pending the decision in §20 and, for the archive branch, an explicit
-instruction — see the recommendation.
+**Pushed.** Full detail in `PUSH_LOG.md`.
+
+- `submission/orbit-evidence-workshop` — remote HEAD `9fc5d7d` **matches local**
+- `archive/residual-learning-stop-2026-07` — **now remote**, closing the archival risk
+- `exp15-visible-causal-rebuild` — now remote
+- 7 tags: 3 `stop/*`, 1 `evidence/*`, the pre-registration, the pre-finalization safety tag,
+  and `paper/orbit-evidence-workshop-review-ready-2026-07`
+- `main` untouched and not pushed; **no force-push, no history rewritten**
+- `paper/icc_main.pdf` is not tracked (regenerable; `make paper`)
+
+**No submission tag was created** — that awaits explicit human approval.
+
+Two items left for a human, both recorded in `PUSH_LOG.md`: the remote has been **renamed** to
+`LEO-PGRL.git` and every push is being redirected, and `main` is 25 commits ahead of
+`origin/main` — both predate this loop.
 
 ## 20. Recommendation
 
-**READY FOR FLAGSHOP WORKSHOP SUBMISSION**, against the stated threshold:
+**READY FOR FLAGSHIP WORKSHOP SUBMISSION**, against the stated threshold:
 
 | condition | status |
 |---|---|
 | R3F and R4F report no BLOCKER | ✅ both WEAK ACCEPT, none |
-| R6 reports no camera-ready BLOCKER | ✅ two raised, both cleared by measurement (§15) |
+| R6 reports no camera-ready BLOCKER | ✅ 2 raised then 5 more on re-verification; **all 7 cleared** (§15) |
 | R5's remaining rejection argument limited to external-validity scale | ✅ R5V: *no remaining rejection argument at all* |
 | no unresolved scientific MAJOR fixable only with new evidence | ✅ all resolved without new evidence |
 | the manuscript explicitly bounds generalisation | ✅ §VI, plus mechanical enforcement |
@@ -274,8 +287,9 @@ Two caveats a reader of this dossier should carry:
    whose faults and rules share an author. It says so, in the section where a reader will find
    it. A reviewer preferring independently authored faults may still decline it, and that
    preference is legitimate.
-2. **The archive branch exists only locally.** `archive/residual-learning-stop-2026-07`
-   carries two commits reachable from nowhere else and no tag points at its tip. Until it is
-   pushed, a disk failure loses the record of why the residual-learning line was stopped.
-   Pushing it is the single most valuable remaining action and it needs your go-ahead, since
-   it publishes a branch to a remote.
+2. **Seven camera-ready blockers were found across two passes, and four of the last five were
+   my own damage from holding the paper to six pages** — two figure layers measured below the
+   legibility floor because my own check filtered them out, an orphaned float created by
+   removing a false claim, and two published reference titles I truncated for space, which made
+   them unresolvable. The paper is fixed and the checks that missed them are fixed. But the
+   pattern is worth carrying: the page budget was where the errors came from, not the science.
