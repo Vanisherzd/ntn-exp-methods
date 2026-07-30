@@ -137,3 +137,37 @@ hardware_conducted_iq/board_inventory/**/*.bin
 # Firmware build artifacts
 build/
 firmware_patches/**/build/
+
+# ---- active submission repository (orbit-evidence workshop paper) ----
+# LaTeX intermediates
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+paper/build/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary / OS
+.DS_Store
+*.tmp
+*.bak
+*~
+.ipynb_checkpoints/
+
+# NOTE: *.json, *.csv and *.npz are deliberately NOT ignored -- several are
+# scientific artifacts. Individually ignored regenerable artifacts are listed with
+# their regeneration commands in docs/REPRODUCIBILITY.md.

@@ -1,0 +1,55 @@
+{
+  "policy_family": "PERIODIC_PROVISIONING_WITH_FROZEN_OPEN_LOOP_OPERATION",
+  "written_before_any_model_fit": true,
+  "availability_notions": {
+    "globally_published": "Space-Track CREATION_DATE has passed. A fact about the catalogue, NOT about the endpoint.",
+    "available_to_endpoint": "The element has been provisioned to the device at a refresh event. Only elements with CREATION_DATE <= t_refresh are eligible.",
+    "currently_held": "The single frozen element/model/scaler/gate state used for every transmission until the next refresh."
+  },
+  "system_assumption": "The endpoint does NOT poll Space-Track. It receives a provisioning payload on a fixed schedule and operates open-loop between refreshes: no satellite downlink beacon, no newly published element, no label feedback.",
+  "retracted_statement": "'a fresher element was already published, therefore the stale element could not be used' -- valid only under continuous/immediate provisioning, which is NOT the primary model here.",
+  "primary_policy": {
+    "policy_id": "periodic_24h_frozen_openloop",
+    "refresh_interval_h": 24.0,
+    "transmissions_per_episode": 24,
+    "transmission_offset_rule": "t_tx = t_refresh + m * (refresh_interval_h / transmissions_per_episode) * 3600, m = 0..23",
+    "offset_rationale": "1 h spacing is incommensurate with the 1.583 h sampling period, so orbital phase decorrelates from TLE age across offsets without any random jitter."
+  },
+  "sensitivity_variants_dataset_counts_only_no_training": [
+    {"policy_id": "immediate", "refresh_interval_h": null, "rule": "t_refresh at every element availability time"},
+    {"policy_id": "periodic_24h", "refresh_interval_h": 24.0},
+    {"policy_id": "periodic_72h", "refresh_interval_h": 72.0}
+  ],
+  "availability_clock": {
+    "field": "CREATION_DATE",
+    "trust_min_epoch_year": 2014,
+    "justification": "E0 year-stratified audit: 1998-2003 is archive backfill (lag up to 50337 h); 2004-2013 has 52-94 percent negative lag; 2014-2026 has 0 percent negative lag with p50 0.96-5.76 h.",
+    "evidence": "loop_engineering/evidence/E0_DOSSIER.md"
+  },
+  "reference_quality_rules_preregistered": {
+    "creation_date_present": true,
+    "creation_strictly_after_tx": "CREATION_DATE(reference) > t_tx",
+    "max_abs_epoch_offset_h": 48.0,
+    "epoch_offset_note": "EPOCH(reference) may be before or after t_tx; only |EPOCH(ref) - t_tx| <= 48 h is required, to exclude backfilled or stale-solution rows.",
+    "sgp4_must_converge_at_tx": true,
+    "must_be_distinct_physical_solution_from_stale": true
+  },
+  "label_semantics": {
+    "name": "later-solution, model-derived reference",
+    "is_ground_truth": false,
+    "closure_time": "t_close = CREATION_DATE(reference)",
+    "training_rule": "usable at refresh t_refresh only if t_close <= t_refresh",
+    "deployment_rule": "t_close > t_tx by construction; the residual cannot inform any decision before the next refresh after closure"
+  },
+  "staleness_bands_from_actual_age_tx": {
+    "8": [4, 14], "24": [16, 36], "48": [36, 60],
+    "72": [60, 84], "96": [84, 120], "168": [144, 192]
+  },
+  "band_note": "Bands are assigned from ACTUAL age_tx = t_tx - EPOCH(stale). Refresh interval and TLE age are NOT interchangeable.",
+  "fixed_config": {
+    "gs_lat_deg": 24.0, "gs_lon_deg": 121.0, "gs_alt_m": 100.0,
+    "carrier_hz": 868000000.0,
+    "screen_reject_hz": 1500.0,
+    "screen_note": "Applied per transmission as a physical-plausibility filter. Raw residual is persisted unscreened so S2 criterion 6 can vary the threshold without refitting."
+  }
+}
