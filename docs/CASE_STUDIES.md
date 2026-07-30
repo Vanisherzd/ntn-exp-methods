@@ -66,7 +66,7 @@ proceeding.
 
 A physics baseline, an optional learned residual branch, candidate selection on a
 chronologically prior validation window, an admission decision frozen before the
-held-out window opens, and fallback to the baseline when the decision is negative.
+deployment window opens, and fallback to the baseline when the decision is negative.
 Selection and admission read validation quantities only. A negative control with the
 injected effect set to zero is included.
 
@@ -74,7 +74,7 @@ injected effect set to zero is included.
 
 1. **Future information entered through a non-feature state channel.** The feature
    tensor was clean and verified so by perturbation. But a stateful tracker continued
-   to advance at refresh events that fell *inside* the held-out window, so the learner
+   to advance at refresh events that fell *inside* the deployment window, so the learner
    kept observing outcomes after its own freeze. The leak was in latent state, not in
    any column.
 2. **The negative control contained undeclared deterministic signal.** A secular rate

@@ -1,107 +1,88 @@
-# Physics-First Evidence-Gated LR-FHSS D2S Uplink Control
+# Orbit-Evidence
 
-This repository contains the software-only artifacts for the paper:
+A deployment-causality and falsifiability contract for learning-assisted satellite
+communication software, plus the toolkit that implements it and the regression suite that
+exercises it.
 
-**Physics-First Evidence-Gated Uplink Control for LR-FHSS Direct-to-Satellite IoT**
+**Active paper:** *Beyond Chronological Splits: A Deployment-Causality and Falsifiability
+Contract for Learning-Assisted Satellite Communication Software* — `paper/icc_main.tex`.
 
-The project studies transmitter-side Doppler pre-compensation for LR-FHSS Direct-to-Satellite IoT under stale orbital information. The core idea is a physics-first controller: stale-TLE SGP4 open-loop Doppler compensation is the default, and a learned residual branch is enabled only when a chronological held-out validation window proves that it beats the physics baseline by a margin.
+Chronological train/validation/test splitting is necessary for temporal learning
+pipelines, but ordering is only one of the properties a deployment claim rests on. A
+pipeline can satisfy it exactly and still be uninterpretable, because ordering constrains
+neither whether a past-dated quantity was *available* at the decision instant, nor which
+rows *exist*, nor what a learner's hidden state has already observed, nor whether the unit
+over which intervals are computed is exchangeable. This repository turns those four
+assumptions into 19 executable checks over six protected objects, and measures them
+against a curated suite of 17 fault classes.
 
-## Scope
-
-This repository is intentionally scoped to the final software-only paper artifacts.
-
-It includes:
-
-- the IEEE paper source under `paper/`
-- the final paper figures under `paper/figures/`
-- scripts used to reproduce the final evidence-gate figures
-- compact evidence tables and audit reports under `docs/review/`
-- software-only experiment scripts under `tools/`
-
-It does **not** claim:
-
-- measured Doppler truth
-- live-satellite contact
-- RF or hardware validation
-- standards-compliant LR-FHSS decoding
-- PER / BER / CRC / PDR / gateway acknowledgement
-- measured power or battery savings
-
-All Doppler references in the paper are model-derived from SGP4-propagated real TLE histories. The BLACK KITE result is a model-to-model inter-TLE residual study, not an RF measurement.
-
-## Main paper
-
-Build the paper with:
+## Quick start
 
 ```bash
-tectonic paper/icc_main.tex
+make gate         # tests + fault matrix + claim gate + six-page paper build
+make gate-twice   # runs the gate twice and asserts the summary artifact reproduces
+make paper        # build paper/icc_main.pdf only
 ```
 
-The expected output is a six-page IEEE-style manuscript, including references.
+`numpy` is the only runtime dependency; the paper build needs a TeX Live installation with
+`latexmk`.
 
-## Final reproducibility artifacts
-
-Important files:
+## Layout
 
 ```text
-paper/icc_main.tex
-paper/refs.bib
-paper/figures/fig_bk_residual.pdf
-paper/figures/fig_gate_behavior.pdf
-paper/figures/generate_evidence_gate_figures.py
-docs/review/bk_negative_result_compact.csv
-docs/review/bk_negative_result_compact.md
-docs/review/gate_stress_compact.csv
-docs/review/gate_stress_compact.md
-docs/review/claim_evidence_matrix.md
-docs/review/paper_rewrite_report.md
+paper/                  active manuscript; icc_main.tex is the sole entry point
+  submission/           claims, artifact map, checklist, allowed/prohibited claims
+src/orbit_evidence/     the toolkit (pass scheduler, registry, labels, contract)
+tests/regression/       two-sided regression tests, one per historical defect
+tests/fault_injection/  the matrix acceptance tests
+tests/fixtures/         the two pipelines and the frozen fault injectors
+evaluation/scripts/     the 19 contract rules, the baseline, the matrix runner
+evaluation/results/     final_summary.json -- the single source of every paper number
+evaluation/mutations/   the pre-registration, with its withdrawal notice
+docs/                   failure taxonomy, future measurement protocol, reproducibility
+archive/                stopped research lines, retired manuscript, invalid results
 ```
 
-Regenerate the final paper figures with:
+## What this repository claims
 
-```bash
-python paper/figures/generate_evidence_gate_figures.py
-```
+- Chronological splitting constrains ordering and does not by itself establish
+  availability, row membership, hidden-state cleanliness, or unit exchangeability.
+- On the curated suite: chronological protocol checks detect **2 of 17** fault classes;
+  the contract detects **17 of 17** across three deterministic environments (51 injected
+  cells). Clean reference paths are accepted.
+- For the statistical-unit rule, specificity is a **measured rate**: 0.042 false halts
+  over 450 clean paths against a nominal α = 0.05.
+- **16 of 19** rules have a demonstrated broken fixture. L2.2, L2.3 and L4.5 are exercised
+  only on the clean path, and the paper says so rather than claiming otherwise.
+- The full sweep runs in under 2 s, cheap enough for a per-commit gate.
 
-## Paper 1 gap-closure analyses (software-only)
+## What it does not claim
 
-Three software-only analyses extend the control story. Regenerate with:
+- **No generalisation to faults the suite does not contain.** The 17/17 figure is
+  represented-fault *regression* coverage: the faults and the rules share an author, so
+  for most classes it measures detector reachability. An earlier held-out-mutation claim
+  was withdrawn after review — see `evaluation/mutations/PREREGISTRATION.md`.
+- No completeness over leakage classes. Six protected objects is what we found necessary,
+  not what exists.
+- No radio-frequency, packet-level, PER/BER/PDR, energy, or live-satellite result. The two
+  pipelines are deterministic fixtures for exercising rules, not simulators.
+- No claim that any learned communication method works or fails. The object of study is
+  the experiment, not the model.
 
-```bash
-source .venv/bin/activate
-python experiments/exp7_timing_sensitivity/run_timing_sensitivity.py  # timing-offset / TLE-age sensitivity
-python experiments/exp8_control_ablation/run_control_ablation.py      # timing/frequency/PGRL ablation
-python experiments/exp9_pgrl_footprint/run_footprint.py              # PGRL embedded footprint
-```
+## Stopped research, kept on purpose
 
-Shared constants live in `experiments/paper1_proxy_model.py` (consistent with
-exp2/exp3). All three emit `results.json` + `_reproducibility`/`limitations`.
-TX-window hit/miss are analytic guard-coverage / hop-bin-tolerance proxies, **not**
-measured LR-FHSS packet outcomes. Paste-ready text and figure plan:
-`PAPER1_REVISED_CORE_TEXT.md`, `PAPER1_WORKSHOP_FIGURE_PLAN.md`,
-`PAPER1_FINAL_CHECKLIST.md`; staleness methodology in
-`docs/TLE_AGING_METHODOLOGY.md`.
+This repository previously pursued a residual-Doppler line for LR-FHSS
+direct-to-satellite IoT. That line was **stopped** — the label source proved to have
+missing-not-at-random censoring on the very covariate under study, and a controlled
+replacement benchmark failed its own negative control. Both are archived rather than
+deleted:
 
-## Hardware evidence reproducibility (Paper 1)
+- `archive/KNOWN_INVALID_RESULTS.md` — results that must never be reused. The paper build
+  fails if any of them appears in a manuscript source.
+- `archive/retired_manuscript/` — the retired manuscript, preserved.
+- `archive/real_tle_causality_audit/` — the causality audit that stopped the line.
+- `docs/FAILURE_TAXONOMY.md`, `docs/FUTURE_MEASUREMENT_PROTOCOL.md` — what went wrong and
+  what a valid measurement would require.
 
-Paper 1 hardware evidence can be reproduced by reflashing the archived
-deterministic LR1121 923.2 MHz firmware and rerunning the conducted IQ scripts.
-The physical board is **not** required to currently hold the Paper-1 firmware
-(it may be reflashed for Paper 2 / Paper 3 work); reproduction relies on the
-committed firmware source, build/flash README, serial logs, reports, and figures.
-The evidence ceiling is conducted IQ-level measurement-path / TX-ON–TX-OFF
-spectrum / waterfall / CFO–hop-center proxy candidate — no packet decode, PER/PDR/
-CRC, gateway ACK, OTA, or live-satellite claim. See
-`PAPER_HARDWARE_EVIDENCE_TEXT.md` and `VALIDATION_STATUS_FOR_SLIDES.md`.
-
-## Claim boundary
-
-The final manuscript is a software-only, model-derived study. Legacy hardware experiments and raw run artifacts are intentionally excluded from this submission-scope branch to avoid implying hardware evidence that the paper does not claim.
-
-## Backup tag
-
-The final six-page paper checkpoint is tagged as:
-
-```text
-paper-final-6page-204a053
-```
+The threat model and both case studies come from that experience. No performance claim
+does.

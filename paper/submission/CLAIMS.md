@@ -1,32 +1,55 @@
 # Claims and their evidence
 
-Every headline number with its artifact, the script that produces it, and how to
-reproduce it. Recomputed after the repository restructure.
+Every headline number with its artifact and the command that regenerates it.
 
-| claim | value | artifact | regenerate with |
+**Single source of truth:** `evaluation/results/final_summary.json`. Every number in the
+manuscript is generated from that file, and `paper/scripts/check_banlist.py` fails the
+build if the manuscript quotes a value the artifact does not contain. Regenerate with:
+
+```
+make matrix      # re-runs the suite and rewrites the summary artifact
+make gate        # tests + matrix + claim gate + six-page paper build
+make gate-twice  # runs the gate twice and asserts the summary reproduces
+```
+
+| claim | value | artifact field | regenerate with |
 |---|---|---|---|
-| fault classes | 17 (13 development + 4 withheld; only 1 supports generalisation, see threats) | `evaluation/results/matrix_result.json` | `python evaluation/scripts/run_matrix.py` |
-| contract rules | 19 across four layers | `evaluation/scripts/contract_layers.py` (`RULES`) | `python -c "import contract_layers as C; print(len(C.RULES))"` |
-| conditions per environment | 18 = 17 faults + 1 clean path | same artifact, `n_rows / 3` | as above |
-| deterministic environments | 3 (PCG64, SFC64, Philox) | same artifact, `environments` | as above |
-| development detection | 39/39 | same artifact | as above |
-| withheld detection | 12/12 (4 mutations x 3 environments); generalisation evidence n=1 | same artifact | as above |
-| fault-environment cells | 51/51 | 17 x 3 | as above |
-| clean-path false halts | 0 at the committed seed; **0.042 over 450 clean paths** (nominal 0.05) | same artifact | as above |
-| chronological baseline coverage | 2/17 (**measured**) | `evaluation/results/matrix_result.json` -> `chronological_baseline`; `evaluation/results/fig2_data.json` | `python evaluation/scripts/run_matrix.py` |
-| sweep runtime | under 2 s, about 28 ms per condition (1.461 s measured) | same artifact, `total_runtime_s` | as above |
-| toolkit size | 739 lines in four modules + 399-line test suite | `src/orbit_evidence/`, `tests/regression/` | `find src/orbit_evidence -name '*.py' \| xargs wc -l` (710 total incl. five `__init__.py`; 696 excl.) |
-| regression tests | 23 passing | `tests/regression/` | `PYTHONPATH=src pytest tests/regression -q` |
-| fault-injection tests | 4 passing | `tests/fault_injection/` | `PYTHONPATH=src pytest tests/fault_injection -q` |
+| contract rules | 19 across four layers | `rule_count` | `make matrix` |
+| curated fault classes | 17 | `fault_class_count` | `make matrix` |
+| deterministic environments | 3 (PCG64, SFC64, Philox) | `environment_count` | `make matrix` |
+| conditions per environment | 18 = 17 faults + 1 clean path | `conditions_per_environment` | `make matrix` |
+| injected fault-environment cells | 51 | `injected_cell_count` | `make matrix` |
+| clean reference paths | 3, reported separately | `clean_path_count` | `make matrix` |
+| chronological baseline coverage | 2/17 (**measured**, not asserted) | `chronological_detected_count` | `make matrix` |
+| contract coverage | 17/17, identical in all 3 environments | `contract_detected_count` | `make matrix` |
+| clean-path rule firings | 0 | `clean_false_halt_count` | `make matrix` |
+| L4.7 clean false-halt rate | **0.042 over 450 clean paths** (nominal α = 0.05) | `l47_calibration` | `python evaluation/scripts/calibrate_l47.py` |
+| L4.7 injected detection | 150/150 | `l47_calibration` | as above |
+| rules with a demonstrated red fixture | 16 of 19 | `detectors_with_red_fixture` | `make matrix` |
+| rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` | `make matrix` |
+| sweep runtime | **under 2 s** (bound); ≈30 ms per condition | `runtime_seconds` | `make matrix` |
+| toolkit size | 780 lines across four modules | `source_loc` | `make matrix` |
+| test suite size | 490 lines | `test_suite_loc` | `make matrix` |
+| tests | 30 passing (regression + fault injection) | — | `make test` |
+
+Runtime is the one figure that does **not** reproduce bit-for-bit: it varies by a few
+percent between runs and machines. The manuscript therefore states a *bound* (under 2 s),
+and the claim gate asserts the artifact still satisfies that bound rather than matching a
+string. `make gate-twice` reports the volatile fields explicitly instead of hiding them.
 
 ## Distinctions the paper must not blur
 
-**19 rules is not 18 fault classes.** Rules are contract obligations; fault classes are
+**19 rules is not 17 fault classes.** Rules are contract obligations; fault classes are
 injected defects. Several faults map to one rule (three state-channel faults all violate
-L3.1), and some rules were never the target of an injected fault.
+L3.1), and some rules are the target of no injected fault at all.
 
-**Nineteen conditions is not nineteen rules.** A condition is one run configuration:
-eighteen fault classes plus one clean path, per environment.
+**18 conditions is not 19 rules.** A condition is one run configuration: 17 fault classes
+plus one clean path, per environment.
+
+**"17/17" is regression coverage, not sensitivity.** The denominator is a curated suite,
+not a sample from a natural fault distribution. The number says these violations cannot
+silently return; it does not estimate the probability of catching a defect nobody
+anticipated. See the threats section of the manuscript.
 
 **The initial L4.4 firing was not a detector false positive.** The first matrix run fired
 L4.4 on the clean rows because the clean fixture declared it was about to execute a seed
@@ -35,7 +58,13 @@ was correct; the fixture was not a clean path. The fixture was repaired, no dete
 changed, and both records are retained
 (`evaluation/results/matrix_result_prefix_fixture.json`).
 
-**Held out means held out from the detector, not from the paper.** Each of HO1–HO4 was
-defined in `evaluation/mutations/PREREGISTRATION.md` before the corresponding rule was
-written, and no rule was edited after its held-out outcome was inspected. HO2 and HO3 had
-no predecessor detector of any kind.
+**The generalisation claim is withdrawn.** An earlier version reported four "held-out
+mutations" as evidence that the contract detects faults it was not designed against.
+Review established that this does not hold: two of the four mutate an object consumed only
+by their own detector, and a third had its detector rewritten after its outcome was
+recorded. One case remains, which supports nothing general. The claim was withdrawn by
+author decision; the wording is banned from the manuscript by
+`paper/scripts/check_banlist.py` (`WITHDRAWN_CLAIMS`), and the reasoning is recorded in
+`evaluation/mutations/PREREGISTRATION.md` and `submission_finalization/CLAIM_LEDGER.md`.
+The development / late-specified split survives in the code as **provenance only** and
+carries no evidential weight.

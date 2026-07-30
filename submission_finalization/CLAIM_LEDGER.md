@@ -164,3 +164,86 @@ proprietary data.
 What the paper must not do is lean on the stopped project for authority. The stopped
 project is the *source* of the threat model and of two case studies. The *evidence* is
 the fault-injection matrix.
+
+---
+
+# FINAL CLAIM SET — human-authorized reframing, 2026-07-31
+
+This section supersedes every contribution list above. Earlier sections are retained as a
+record of what was claimed and when; they are **not** the current claim set.
+
+## The withdrawal
+
+Contribution 3 was previously *"a fault-injection evaluation with genuinely held-out
+mutations."* Adversarial review (R1–R4) established that the evidence does not support it:
+
+| mutation | rule | finding |
+|---|---|---|
+| HO1 | L1.5 | mutated object consumed **only** by its own detector — reachability, not pipeline detection |
+| HO4 | L2.4 | same defect |
+| HO3 | L4.7 | detector **rewritten after** its outcome was recorded; withheld status void |
+| HO2 | L4.6 | survives: specified before its detector, injected through the pipeline, untouched |
+
+One surviving case. Restoring the claim would require newly frozen, independently authored
+mutations — new evidence generated after reviewer feedback, which the governing rules
+forbid. The claim was therefore **withdrawn by human decision**, not repaired.
+
+## Final one-sentence thesis
+
+> Orbit-Evidence turns deployment-time availability, row membership, model-state and
+> statistical-unit assumptions into executable CI checks for satellite communication
+> experiments; a curated regression suite demonstrates those checks on seventeen known
+> fault classes that chronological ordering alone is not designed to detect.
+
+## Final three contributions
+
+1. **A deployment-causality threat model and contract.** Six protected objects — decision
+   time, feature availability, row membership, label closure, state channels, statistical
+   units — organised as **19 executable rules** in four mechanically checkable layers:
+   availability and closure (L1), physical and scheduling validity (L2), model-state
+   causality (L3), statistical independence and reproducibility (L4).
+
+2. **Orbit-Evidence, an implementation.** A dependency-light toolkit (**780 lines** across
+   four modules, `numpy` only): visible-pass scheduling, freeze-then-label row registry,
+   reference-ensemble labelling with published uncertainty, canaries over six state
+   channels, and seed, provenance and statistical-unit controls.
+
+3. **A curated fault-injection regression evaluation.** **17** curated fault classes in two
+   minimal pipelines and three deterministic environments: chronological protocol checks
+   detect **2/17**, the contract detects **17/17** (51 injected cells), clean reference
+   paths are accepted, the sweep is deterministic and runs in **under 2 s**, and two case
+   studies show defects chronology does not constrain. Reported as **represented-fault
+   regression coverage**, not sensitivity or generalisation.
+
+## Numbers, and where they come from
+
+Every manuscript number is generated from `evaluation/results/final_summary.json`.
+`paper/scripts/check_banlist.py` fails the build if the manuscript quotes a value the
+artifact does not contain, and separately if any withdrawn wording is reachable.
+
+| quantity | value |
+|---|---|
+| contract rules | 19 |
+| curated fault classes | 17 (was 18 until D12 was found identical to D3) |
+| injected cells | 51 |
+| chronological baseline | 2/17, measured |
+| contract detection | 17/17 |
+| rules with a demonstrated red fixture | **16 of 19** (L2.2, L2.3, L4.5 clean-path only) |
+| L4.7 clean false-halt rate | 0.042 over 450 clean paths, nominal α = 0.05 |
+| L4.7 injected detection | 150/150 |
+| runtime | under 2 s (bound; wall-clock varies run to run) |
+| toolkit / tests | 780 / 490 lines |
+| tests passing | 30 |
+
+## Retired claims — must not reappear
+
+- "four held-out mutations", "genuinely held-out", "mutations withheld from the detector
+  authors"
+- any generalisation to unseen fault classes
+- "all nineteen rules have two-sided red/green tests" (16 do)
+- the 18-fault and 54-cell denominators
+- 1095 / 812 / 739-line toolkit counts; 0.31 s runtime
+
+All are enforced mechanically by `WITHDRAWN_CLAIMS` in `paper/scripts/check_banlist.py`.
+The `DEV_FAULTS` / `LATE_SPECIFIED` split survives in code as provenance only, with an
+explicit comment that it carries no evidential weight.
