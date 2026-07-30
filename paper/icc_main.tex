@@ -127,7 +127,7 @@ We claim nothing about radio-frequency or packet-level performance. No learned c
 method is shown here to work or to fail; the object of study is the experiment, not the model.
 
 \emph{Availability.} The toolkit, fixtures, fault suite and summary artifact accompany this
-submission anonymously; \texttt{make gate} regenerates the evaluation, rebuilds this paper, and
+submission anonymously; \texttt{make gate} regenerates the evaluation, rebuilds this paper and
 refuses to build if any number here disagrees with the artifact.
 
 \section{Threat Model and Experiment Contract}
@@ -176,11 +176,11 @@ protects model-state causality through mutation canaries and a negative control.
 fold chronology, paired randomness, repeated-measure aggregation, seed hygiene and provenance
 completeness.
 
-Two design commitments make the contract usable. Every violation raises an exception carrying
-its \emph{rule identifier}, so a finding names what it broke rather than surfacing a bare
-assertion failure. And a detector is trusted only once demonstrated to fail on a deliberately
-broken fixture: a check that cannot go red is not evidence. Table~\ref{tab:rules} distinguishes
-rules with such a fixture from those exercised only on the clean path.
+Two design commitments make the contract usable. Every violation raises an exception carrying its
+\emph{rule identifier}, so a finding names what it broke rather than surfacing a bare assertion
+failure. And a detector is trusted only once demonstrated to fail on a deliberately broken fixture:
+a check that cannot go red is not evidence. Table~\ref{tab:rules} separates rules with such a
+fixture from those exercised only on the clean path.
 
 \subsection{Relation to existing practice}
 
@@ -296,10 +296,10 @@ machine-readable artifact, \texttt{final\_summary.json}, derived from the commit
 
 The chronological baseline is \emph{implemented and executed}, not reasoned about: three checks
 assert that fold time-extents are ordered and disjoint, that no row sits in a fold whose span it
-does not belong to, and that no label used at a decision point postdates it. It runs in the same
-sweep, over the same fixtures and environments. It is not a competing detector suite:
-chronological splitting is a \emph{protocol property} of limited scope, so the comparison measures
-how much of this fault space that property covers, not tool against tool.
+does not belong to, and that no label used at a decision point postdates it. It runs in the same sweep,
+over the same fixtures and environments. It is not a competing detector suite: chronological
+splitting is a \emph{protocol property} of limited scope, so the comparison measures how much of
+this fault space that property covers, not tool against tool.
 Measured, it detects $2/17$ classes---invalid label-closure timing and a violated fold order,
 precisely the two that \emph{are} ordering properties---and fires on no clean path; the remaining
 fifteen lie outside what ordering can express. The contract detects $17/17$, identically in all
@@ -333,18 +333,22 @@ contract.
 \section{Case Studies}
 \label{sec:cases}
 
-Both case studies are software pipelines that were built with chronological splitting and passed
-it. They are \emph{retrospective accounts}: both predate the contract released here, so we report
-which rule \emph{names} each defect rather than a halt we executed, and no result artifact survives
-for the second. They are also not independent of Fig.~\ref{fig:coverage}---the fixtures were
-modelled on these pipelines and the fault classes derived from their defects---so the two are not
-separate lines of evidence. No model-performance quantity is reported from either.
+Both case studies are pipelines from a \emph{stopped} research programme, built with chronological
+splitting and passed by it. They are \emph{retrospective accounts}: both predate the contract
+released here, so we report which rule \emph{names} each defect rather than a halt we executed, and
+no artifact survives for the second. Three of that programme's own checks were later found
+incapable of failing---one compared two arrays built from the same object, one pinned the parameter
+whose influence it tested, one attached no threshold---which is where the red-fixture requirement
+comes from. They are also not independent of Fig.~\ref{fig:coverage}: the fixtures were modelled on these
+pipelines and the fault classes derived from their defects, so the two are not separate lines of
+evidence. No model-performance quantity is reported.
 
 \subsection{Retrospective-label pipeline}
 
 A system holds a stale orbital element set and predicts open-loop; labels come from a later,
 better-determined element set in the same catalogue; folds are split chronologically by reference
-time. A feature was the interval between the held element's \emph{epoch} and the \emph{reference}
+time. Three defects were present. A feature was the interval between the held element's
+\emph{epoch} and the \emph{reference}
 element's epoch---a difference of two past timestamps, hence ordering-consistent, but containing
 an item the system had not been sent (\rulename{L1.1}). Row membership depended on the future
 catalogue, since a transmission entered the dataset only if a qualifying later element was
@@ -372,8 +376,7 @@ deterministic function of the covariate, hence learnable, with the injected effe
 having entered the seed derivation (\rulename{L4.2}).
 
 A row-level split governs rows and cannot constrain model state: the tracker's update was
-chronologically forward at every step and still wrong, because it crossed the freeze. The control
-involves no leakage at all---its rows are ordered, its target simply not null.
+chronologically forward at every step and still wrong, because it crossed the freeze.
 
 \input{figures/fig_case_studies.tex}
 
@@ -405,10 +408,11 @@ repair it, because editing a detector after its outcome is known is precisely wh
 standing of \rulename{L4.7}'s own result.
 
 \emph{Two objects the contract names but does not check.} Covariate-coupled label availability is
-called the harder failure in \S\ref{sec:whysat}, yet no rule detects it and no fault represents
-it: it was found by an \emph{ad hoc} thresholded diagnostic---a standardised mean difference
-between labelled and censored rows on pre-decision covariates, which fired on the study covariate
-in that stopped pipeline---never promoted to a rule, so it has no identifier and no red fixture.
+called the harder failure in \S\ref{sec:whysat}, yet no rule detects it and no fault represents it.
+It was found by an \emph{ad hoc} thresholded diagnostic---a standardised mean difference between
+labelled and censored rows on pre-decision covariates, which fired on the study covariate in the
+stopped pipeline of \S\ref{sec:cases} and is recorded in the archived audit---never promoted to a
+rule, so it has no identifier and no red fixture.
 And $t_d$ itself is declared, not checked: every L1 rule is conditional on it, but under periodic
 provisioning the defensible $t_d$ is the refresh instant rather than the transmission instant, and
 declaring the latter makes every availability check pass while admitting up to one refresh
@@ -417,21 +421,20 @@ sufficient.
 
 \emph{The axes of variation are narrow.} Both fixtures come from this programme, so reuse across
 independent projects is argued rather than demonstrated, and the environments differ in generator
-family alone---not in satellite system, ground segment or catalogue. No radio-frequency behaviour,
-packet-level outcome, deployed-system property or learned method is established anywhere here; the
-fixtures exercise rules, they do not simulate. Nor is the contract complete: it covers six
-protected objects we found necessary, and further channels are likely rather than excluded. Fault
-diversity in particular matters, and a regression suite protects exactly what it represents:
-showing that a rule catches defects nobody anticipated needs faults authored independently of the
-detectors, frozen before the rules exist and injected at program level.
+family alone. No radio-frequency behaviour, packet-level outcome, deployed-system property or
+learned method is established here; the fixtures exercise rules, they do not simulate. Nor is the
+contract complete: it covers six protected objects we found necessary. Fault diversity in
+particular matters, and a regression suite protects exactly what it represents: showing that a rule
+catches defects nobody anticipated needs faults authored independently of the detectors, frozen
+before the rules exist and injected at program level.
 
 What the evidence supports is narrow and, we think, useful. Chronological splitting addresses
-ordering and only ordering, and the fifteen classes it misses here are ordinary consequences of
-two clocks, a publisher-controlled label, predicted-visible geometry, pass-level dependence, or
-state outliving a freeze. An executable contract catches them cheaply enough to run on every
-commit, and names the obligation broken rather than reporting that something failed. Applying the
-same machinery where labels come from measurement rather than a published catalogue would remove
-the covariate-coupled censoring this contract cannot yet detect.
+ordering and only ordering, and the fifteen classes it misses here are ordinary consequences of two
+clocks, a publisher-controlled label, predicted-visible geometry, pass-level dependence, or state
+outliving a freeze. An executable contract catches them cheaply enough to run on every commit, and
+names the obligation broken rather than reporting that something failed. Applying the same
+machinery where labels come from measurement would remove the covariate-coupled censoring this
+contract cannot yet detect.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}

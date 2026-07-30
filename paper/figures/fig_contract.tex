@@ -11,7 +11,7 @@
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[font=\small,>={Latex[length=2.4mm]},
   box/.style={draw=black!70,line width=0.7pt,rounded corners=2pt,align=center,
-              minimum height=11mm,minimum width=27mm,inner sep=3pt,fill=white},
+              minimum height=7mm,minimum width=27mm,inner sep=3pt,fill=white},
   ok/.style={->,line width=1.0pt,black!75},
   no/.style={->,line width=0.8pt,red!65!black,dashed},
   noord/.style={->,line width=0.8pt,blue!55!black,densely dotted},
@@ -21,28 +21,28 @@
                      9.0/{freeze}, 12.8/{deployment}, 16.6/{$t_c$ closure}}
   {\draw[line width=1.1pt,black!55] (\x,-0.16) -- (\x,0.16);
    \node[font=\footnotesize,text=black!65,anchor=north] at (\x,-0.28) {\lab};}
-\node[box,fill=blue!7]  (avail) at (1.4,1.7) {available state\\[1pt]\footnotesize published, held};
-\node[box,fill=blue!7]  (reg)   at (5.2,1.7) {frozen registry\\[1pt]\footnotesize rows hashed};
-\node[box,fill=orange!8](val)   at (9.0,1.7) {validate, select,\\[1pt]\footnotesize freeze model/gate};
-\node[box,fill=green!8] (dep)   at (12.8,1.7){deployment\\[1pt]\footnotesize frozen state only};
-\node[box,fill=black!5] (lab)   at (16.6,1.7){label closes\\[1pt]\footnotesize retrospective};
+\node[box,fill=blue!7]  (avail) at (1.4,1.7) {available state};
+\node[box,fill=blue!7]  (reg)   at (5.2,1.7) {frozen registry};
+\node[box,fill=orange!8](val)   at (9.0,1.7) {validate, freeze};
+\node[box,fill=green!8] (dep)   at (12.8,1.7){deployment};
+\node[box,fill=black!5] (lab)   at (16.6,1.7){label closes};
 \draw[ok] (avail) -- (reg); \draw[ok] (reg) -- (val);
 \draw[ok] (val) -- (dep);   \draw[ok] (dep) -- (lab);
 % Prohibited paths. Arcs are lifted clear of the node row and labels carry a wider white
 % mask: an earlier version had the L1.1 arc struck through both the legend and the L1.4
 % label, and the L3.1 arc through its own text.
-\draw[no] (lab.north) to[out=98,in=82] node[lab,pos=0.5,above]
+\draw[no] (lab.north) to[out=94,in=86] node[lab,pos=0.5,above]
   {\rulename{L1.1} feature from a later item} (reg.north);
-\draw[no] (lab.north) to[out=112,in=68] node[lab,pos=0.5,above]
+\draw[no] (lab.north) to[out=104,in=76] node[lab,pos=0.5,above]
   {\rulename{L1.4} membership set by later data} (avail.north);
-\draw[no] (dep.south) to[out=-98,in=-82] node[lab,pos=0.5,below]
+\draw[no] (dep.south) to[out=-94,in=-86] node[lab,pos=0.5,below]
   {\rulename{L3.1} state observes past the freeze} (val.south);
-\draw[noord] (lab.south) to[out=-118,in=-62] node[lab,pos=0.5,below]
+\draw[noord] (lab.south) to[out=-106,in=-74] node[lab,pos=0.5,below]
   {\rulename{L1.3} label used before closure} (val.south east);
 \end{tikzpicture}}
-\caption{The deployment-causality contract. Solid paths are permitted: state available before
-$t_d$ populates a registry whose rows are frozen and hashed, model and gate are fixed at the
-freeze, deployment reads only frozen state, labels close afterwards. The three red \emph{dashed}
+\caption{The deployment-causality contract. Solid paths are permitted: published state held
+before $t_d$ populates a registry whose rows are hashed before any label exists, model and gate
+are fixed at the freeze, deployment reads frozen state only, labels close retrospectively. The three red \emph{dashed}
 paths are the point of this paper---each is \emph{chronologically consistent}, so an ordering check
 cannot express it. The blue \emph{dotted} path (\rulename{L1.3}) is the contrast case: one of the
 two classes ordering already catches.}

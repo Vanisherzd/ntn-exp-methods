@@ -192,6 +192,29 @@ def test_rejects_a_runtime_that_breaks_the_stated_bound(repo):
     assert r.returncode != 0 and "RUNTIME" in r.stdout
 
 
+def test_requires_the_mandated_framing_for_a_permitted_observation(repo):
+    """The banlist permits citing the labelled-vs-censored SMD only as a stopped-pipeline
+    observation, never as a general rate. Grepping for the banned rate cannot enforce that
+    the framing is PRESENT, so the gate requires it in the same file -- a first version
+    checked the concatenation of all sources, so the word "stopped" in the README satisfied
+    a claim made in the manuscript.
+    """
+    p = repo / "paper/icc_main.tex"
+    t = p.read_text()
+    assert "standardised mean difference" in t
+    p.write_text(t.replace("stopped", "earlier"))
+    r = _gate(repo)
+    assert r.returncode != 0 and "FRAMING" in r.stdout, r.stdout
+
+
+def test_rejects_a_per_condition_runtime_that_breaks_its_bound(repo):
+    """The manuscript states a bound on per-condition cost, so it must be checked like the
+    sweep bound rather than left to drift -- this figure moved 30 -> 27 -> 26 unchecked."""
+    _drift(repo, "runtime_ms_per_condition", 95.0)
+    r = _gate(repo)
+    assert r.returncode != 0 and "RUNTIME" in r.stdout
+
+
 def test_refuses_to_run_without_the_artifact(repo):
     """No artifact means no verification. Passing would be worse than failing."""
     (repo / SUMMARY).unlink()

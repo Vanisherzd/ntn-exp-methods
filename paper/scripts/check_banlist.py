@@ -216,6 +216,23 @@ def main() -> int:
     if s["runtime_seconds"] >= 2.0:
         bad.append(f"RUNTIME: artifact reports {s['runtime_seconds']} s, but the "
                    "manuscript claims the sweep runs in under 2 s")
+    if s["runtime_ms_per_condition"] >= 30.0:
+        bad.append(f"RUNTIME: artifact reports {s['runtime_ms_per_condition']} ms per "
+                   "condition, but the manuscript claims under 30 ms")
+
+    # The banlist permits citing the labelled-vs-censored SMD observation ONLY with its
+    # framing (INVALID_RESULT_BANLIST.md): a stopped pipeline, never a general rate. Grepping
+    # for the banned rate cannot enforce that the framing is PRESENT, so require it directly --
+    # and require it in the SAME FILE. A first version checked the concatenation of all
+    # eleven sources, so the word "stopped" anywhere in the README satisfied a claim made in
+    # the manuscript; stripping the framing from the manuscript alone did not fire it.
+    for q in srcs:
+        text = q.read_text()
+        if re.search(r"standardi[sz]ed mean difference", text) \
+                and not re.search(r"\bstopped\b", text):
+            bad.append(f"FRAMING: {q.relative_to(ROOT)} cites the labelled-vs-censored SMD "
+                       "observation without the mandatory 'stopped pipeline' framing "
+                       "(submission_finalization/INVALID_RESULT_BANLIST.md)")
 
     # Required-presence applies to the MANUSCRIPT only; a doc need not restate every
     # number, but nothing anywhere may contradict the artifact (handled by the pattern
