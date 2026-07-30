@@ -1,36 +1,42 @@
 % Table I -- contract rules
 % Included by paper/icc_main.tex via \input.
+% The Evidence column must agree with detectors_with_red_fixture /
+% detectors_without_red_fixture in evaluation/results/final_summary.json.
+% Concrete violation instances are not repeated here: Fig. 2 names all 17 by row.
 \begin{table*}[!t]
-\caption{Contract rules. Every violation raises an exception carrying its rule
-identifier. Detectors are two-sided: each has a clean-path test that passes and a
-deliberately broken fixture that fails.}
+\caption{The nineteen contract rules; Fig.~\ref{fig:coverage} names the violation injected for
+each, and every violation raises an exception carrying its rule identifier.
+\textbf{Evidence}---\emph{clean\,+\,red}: both a passing clean-path test and a broken fixture on
+which the rule fails; \emph{clean only}: implemented and clean-path-exercised, but tripped by no
+fault here, which by our own standard is not yet evidence it \emph{can} fail.
+$^{\dagger}$\rulename{L4.7} also \emph{abstains} below its declared minimum group structure.}
 \label{tab:rules}
 \centering
-\footnotesize
-\begin{tabular}{@{}llp{4.6cm}p{4.3cm}l@{}}
+\scriptsize
+\begin{tabular}{@{}llp{9.4cm}l@{}}
 \toprule
-\textbf{Rule} & \textbf{Protected object} & \textbf{Violation example} &
-\textbf{Mechanical check} & \textbf{Failure action}\\
+\textbf{Rule} & \textbf{Protected object} & \textbf{Mechanical check} &
+\textbf{Evidence}\\
 \midrule
-\rulename{L1.1} & feature availability & feature spans two past timestamps, one published later & recompute features with state after $t$ truncated; require bit-identity & halt \\
-\rulename{L1.2} & availability clock & selection by descriptive rather than publication time & assert selected item's publication $\le t_d$ & halt \\
-\rulename{L1.3} & label closure & label used before its closure time & mask by $t_c \le t_d$ & halt \\
-\rulename{L1.4} & row membership & schedule extent taken from available data & rebuild from truncated source, same declared window & halt \\
-\rulename{L1.5} & comparison boundary & availability test strict where it must be inclusive & probe before, exactly at, and after $t_d$ & halt \\
-\rulename{L2.1} & sampling geometry & schedule sampled on a clock grid & assert every sample above the declared mask & halt \\
-\rulename{L2.2} & physical scale & target below instrument resolution or above plausibility & ratio against a floor \emph{and} a ceiling & label, retain \\
-\rulename{L2.3} & hidden state & error integrates over the window & late/early magnitude ratio & halt \\
-\rulename{L2.4} & declared relation & config and code agree only where fitted & compare over domain \emph{plus} extrapolation margin & halt \\
-\rulename{L3.1} & state channels & tracker observes outcomes past the freeze & six-channel mutation canary & halt \\
-\rulename{L3.2} & canary effectiveness & probe mutation is a no-op & require the mutation to change an observable & halt \\
-\rulename{L3.3} & negative control & zero-effect cell admits a learned branch & admission rate at every covariate level & halt \\
-\rulename{L4.1} & fold chronology & folds overlap in time & compare fold time extents & halt \\
-\rulename{L4.2} & paired randomness & condition label enters the seed & assert arms bit-identical off-intervention & halt \\
-\rulename{L4.3} & repeated measures & replicates counted as observations & within-group correlation before aggregation & halt \\
-\rulename{L4.4} & seed hygiene & burned seed re-enters evaluation & namespace disjointness & halt \\
-\rulename{L4.5} & provenance hashes & artifact unhashed & manifest and self-hash present & halt \\
-\rulename{L4.6} & provenance completeness & behaviour-changing input uncovered & differing outputs under one manifest hash & halt \\
-\rulename{L4.7} & statistical unit & unit finer than the exchangeable one & residual correlation at the next coarser grouping & halt \\
+\rulename{L1.1} & feature availability & recompute features with state after $t$ truncated; require bit-identity & clean\,+\,red \\
+\rulename{L1.2} & availability clock & assert the selected item's \emph{publication} time $\le t_d$, not its epoch & clean\,+\,red \\
+\rulename{L1.3} & label closure & mask by $t_c \le t_d$ & clean\,+\,red \\
+\rulename{L1.4} & row membership & rebuild from a truncated source against the same declared window & clean\,+\,red \\
+\rulename{L1.5} & comparison boundary & probe before, exactly at, and after $t_d$ & clean\,+\,red \\
+\rulename{L2.1} & sampling geometry & assert every scheduled sample lies above the declared mask & clean\,+\,red \\
+\rulename{L2.2} & physical scale & ratio against a resolution floor \emph{and} a plausibility ceiling & clean only \\
+\rulename{L2.3} & hidden state & late/early magnitude ratio, bounding unbounded integration & clean only \\
+\rulename{L2.4} & declared relation & compare declared against implemented over the domain \emph{plus} an extrapolation margin & clean\,+\,red \\
+\rulename{L3.1} & state channels & six-channel mutation canary (features, scaler, coefficients, tracker, metadata, gate) & clean\,+\,red \\
+\rulename{L3.2} & canary effectiveness & require the probe mutation to change an observable & clean\,+\,red \\
+\rulename{L3.3} & negative control & admission rate at every covariate level, injected effect at zero & clean\,+\,red \\
+\rulename{L4.1} & fold chronology & compare fold time extents for order and disjointness & clean\,+\,red \\
+\rulename{L4.2} & paired randomness & assert arms bit-identical away from the intervention & clean\,+\,red \\
+\rulename{L4.3} & repeated measures & within-group correlation before aggregation & clean\,+\,red \\
+\rulename{L4.4} & seed hygiene & disjointness of the burned, debug and evaluation namespaces & clean\,+\,red \\
+\rulename{L4.5} & provenance hashes & manifest and self-hash present for every artifact & clean only \\
+\rulename{L4.6} & provenance completeness & differing outputs under one manifest hash, Eq.~\eqref{eq:prov} & clean\,+\,red \\
+\rulename{L4.7} & statistical unit & unit-level $\mathrm{ICC}(1)$ against a permutation null at $\alpha=0.05$ & clean\,+\,red$^{\dagger}$ \\
 \bottomrule
 \end{tabular}
 \end{table*}

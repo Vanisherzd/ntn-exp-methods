@@ -35,13 +35,12 @@
   fill=white,inner sep=1pt]{\rulename{L1.3} label used before closure} (val.south east);
 \end{tikzpicture}}
 \caption{The deployment-causality contract. Solid paths are permitted: state available
-before the decision instant $t_d$ populates a registry whose rows are frozen and
-hashed, a model and admission decision are fixed at the freeze, deployment reads only
-frozen state, and retrospective labels close afterwards. Prohibited paths are enforced by
-named rules. The three \emph{dashed} paths are the point of this paper: each is
-\emph{chronologically consistent} in the sense a train/validation/test split checks---the
-timestamps are correctly ordered---so a split does not exclude them. The single
-\emph{dotted} path (\rulename{L1.3}) is drawn for contrast: it \emph{is} an ordering
-violation, and it is the one class a chronological split already catches.}
+before the decision instant $t_d$ populates a registry whose rows are frozen and hashed, a
+model and admission decision are fixed at the freeze, deployment reads only frozen state,
+and retrospective labels close afterwards. The three \emph{dashed} paths are the point of
+this paper: each is \emph{chronologically consistent} in the sense a train/validation/test
+split checks---the timestamps are correctly ordered---so ordering cannot express them. The
+\emph{dotted} path (\rulename{L1.3}) is the contrast case: it \emph{is} an ordering
+violation, and the one class a chronological split already catches.}
 \label{fig:contract}
 \end{figure*}
