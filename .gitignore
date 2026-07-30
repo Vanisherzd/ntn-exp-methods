@@ -137,3 +137,8 @@ hardware_conducted_iq/board_inventory/**/*.bin
 # Firmware build artifacts
 build/
 firmware_patches/**/build/
+
+# exp15 visible-causal derived arrays (~50 MB, fully regenerable from the
+# committed builders; JSON summaries and audit reports ARE committed)
+experiments/exp15_visible_causal/registry/*/
+experiments/exp15_visible_causal/labels/
