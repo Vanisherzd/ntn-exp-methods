@@ -169,6 +169,10 @@ def artifact_numbers() -> list[tuple[str, str]]:
         (re.escape(str(c["nominal_alpha"])), "L4.7 nominal alpha"),
         (_digit_or_word(c["clean_paths_evaluated"]),
          f"L4.7 clean paths={c['clean_paths_evaluated']}"),
+        (_digit_or_word(c["clean_false_halts"]), f"L4.7 false halts={c['clean_false_halts']}"),
+        # A quoted confidence interval must come from the artifact like everything else.
+        (re.escape(f"[{c['clean_false_halt_wilson_95'][0]},{c['clean_false_halt_wilson_95'][1]}]").replace(r"\,", r",\s*"),
+         f"L4.7 Wilson interval {c['clean_false_halt_wilson_95']}"),
         (_digit_or_word(s["detectors_with_red_fixture"]),
          f"detectors_with_red_fixture={s['detectors_with_red_fixture']}"),
     ]

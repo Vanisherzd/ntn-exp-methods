@@ -60,9 +60,14 @@ ALL_FAULTS = DEV_FAULTS + LATE_SPECIFIED
 class Env:
     """A deterministic environment. Varies only reproducibility-relevant settings."""
     name: str
+    # ONLY the generator family varies. `dtype` and `config_order` were declared
+    # here and read NOWHERE, so the pre-registration's claim that environments vary
+    # dtype and declared-config order was false in implementation. The dead fields
+    # are removed rather than left to imply an axis that does not exist. The
+    # consequence is disclosed in the paper: for fourteen of seventeen classes the
+    # object handed to the detector is bit-identical across environments, so the 51
+    # cells are 17 computations plus a determinism check.
     rng_family: str = "PCG64"
-    dtype: str = "float64"
-    config_order: int = 0
 
     def rng(self, seed: int) -> np.random.Generator:
         bg = {"PCG64": np.random.PCG64, "SFC64": np.random.SFC64,
@@ -70,9 +75,9 @@ class Env:
         return np.random.Generator(bg(seed))
 
 
-ENVS = (Env("E1", "PCG64", "float64", 0),
-        Env("E2", "SFC64", "float64", 1),
-        Env("E3", "Philox", "float64", 2))
+ENVS = (Env("E1", "PCG64"),
+        Env("E2", "SFC64"),
+        Env("E3", "Philox"))
 
 
 def analytic_propagator(a_km: float, incl_deg: float, raan_deg: float = 40.0,

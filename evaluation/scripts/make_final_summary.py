@@ -43,6 +43,11 @@ L47_CALIBRATION = {
     # Reproduce: python evaluation/scripts/calibrate_l47.py
     "discarded_fixed_threshold_null_size": 0.17,
     "discarded_fixed_threshold": 0.2,
+    # Wilson score interval (UNCORRECTED) for 19/450. Recorded because the paper
+    # quotes it, and a quoted interval that no artifact carries cannot be checked --
+    # the previous pair mixed the corrected and uncorrected conventions.
+    "clean_false_halt_wilson_95": [0.027, 0.065],
+    "clean_false_halts": 19,
 }
 
 
