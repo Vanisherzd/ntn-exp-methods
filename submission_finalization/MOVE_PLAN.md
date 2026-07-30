@@ -117,6 +117,11 @@ cannot mistake it for current evidence.
 | `tools/` | `archive/stopped_research/tools/` | 5 |
 | `data/`, `configs/`, `controller/`, `physics_ml/`, `models/` | `archive/stopped_research/` | 28 |
 | `firmware_patches/`, `recovered_firmware_candidates/` | `archive/hardware_validation/` | 12 |
+| `tests/{test_lrfhss_iq_structure,test_multisat_generalization,test_paper1_software_extension,test_physics,test_pinn,test_slides_claims}.py` | `archive/stopped_research/tests/` | 6 |
+
+The six legacy tests import `torch` and other dependencies the active artifact does not
+have, so they cannot pass in the submission environment. `testpaths` in `pyproject.toml`
+already excludes them; moving them makes `tests/` mean only the active suite.
 
 Total moved: **~513** tracked files. Total deleted: **0**.
 
