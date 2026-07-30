@@ -4,7 +4,8 @@
 % LAYOUT NOTE. An earlier version carried a \tiny sublabel under every node naming the
 % satellite object that stage owns, on a canvas squeezed to 0.64 -- which put that layer at
 % 3.2 pt while the caption told the reader to read it. The sublabels are now in the caption
-% and the canvas is sized to the column, so nothing here renders below ~6 pt.
+% and the canvas is sized to the column. Measured: nothing renders below 6.6 pt.
+% \textsc was replaced by \textbf in the halt boxes -- small caps rendered at 5.28 pt.
 %
 % VERB NOTE. These are retrospective accounts, not executed runs of the released contract.
 % The boxes therefore say WOULD HALT, not HALT.
@@ -31,7 +32,7 @@
   {element-epoch gap as a feature} (a3.north);
 \draw[bad] (a5.south) to[out=-118,in=-62] node[lab,pos=0.5,below]
   {membership set by later publication} (a3.south);
-\node[stop] at (4.6,-1.28) {\textsc{would halt} \rulename{L1.1} \rulename{L1.4}};
+\node[stop] at (4.6,-1.28) {\textbf{would halt} \rulename{L1.1} \rulename{L1.4}};
 \draw[red!65!black,line width=0.8pt] (4.6,0.9) -- (4.6,-0.95);
 % ---------------- panel (b)
 \node[anchor=west,font=\scriptsize\bfseries] at (-0.2,-2.1) {(b) learning and gating pipeline};
@@ -47,7 +48,7 @@
   {tracker state advances past the freeze} (b3.south);
 \node[font=\scriptsize,text=red!65!black,anchor=west] at (-0.2,-5.15)
   {zero-effect control admits $\Rightarrow$ target not null};
-\node[stop] at (6.5,-6.0) {\textsc{would halt} \rulename{L3.1} \rulename{L3.3}
+\node[stop] at (6.5,-6.0) {\textbf{would halt} \rulename{L3.1} \rulename{L3.3}
   \rulename{L4.2}};
 \draw[red!65!black,line width=0.8pt] (6.5,-3.65) -- (6.5,-5.65);
 \end{tikzpicture}}
@@ -55,8 +56,8 @@
 not executed runs}: both pipelines predate the released contract, hence \emph{would halt}, and no
 artifact survives for (b). Satellite objects, left to right in (a): element publication versus
 epoch, visible-pass scheduling, the frozen registry fixing row membership, later catalogue
-publication, label closure; in (b) validation selection, frozen model/gate/tracker state, per-pass
-deployment. Dashed arrows are the defects, each chronologically consistent. No model-performance
-quantity is reported.}
+publication, label closure; in (b) the physics baseline, the learned branch, validation selection,
+the frozen model/gate/tracker state, per-pass deployment. Dashed arrows are the defects, each
+chronologically consistent. No model-performance quantity is reported.}
 \label{fig:cases}
 \end{figure}

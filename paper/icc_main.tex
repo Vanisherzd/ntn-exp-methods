@@ -268,9 +268,9 @@ explicit abstention, not a pass, though no condition here is small enough to exe
 \emph{Mutation canaries.} Six channels are probed, separating two easily conflated questions:
 whether a channel is \emph{guarded}, and whether the probe mutation was \emph{effective}---an inert
 mutation reads as an undetectable leak, which \rulename{L3.2} catches. \emph{Provenance and seeds.} Seeds live in three disjoint namespaces---burned, debug,
-evaluation---and a seed whose outcomes have been inspected is burned for good. Compared
-conditions draw one seed per invariant cell, with pairing asserted on the realised arrays rather
-than inferred from the derivation rule.
+evaluation---and a seed whose outcomes have been inspected is burned for good. Compared conditions
+draw one seed per invariant cell, with pairing asserted on the realised arrays rather than inferred
+from the derivation rule.
 
 \section{Curated Regression Evaluation}
 
@@ -291,8 +291,9 @@ bijection---one rule can be violated several ways, and some are represented by n
 
 \subsection{Results}
 
-Fig.~\ref{fig:coverage} gives the coverage matrix. Every number below is generated from one
-machine-readable artifact, \texttt{final\_summary.json}, derived from the committed matrix result.
+Fig.~\ref{fig:coverage} gives the coverage matrix, Fig.~\ref{fig:cases} the case studies of
+\S\ref{sec:cases}. Every number below comes from one artifact,
+\texttt{final\_summary.json}, derived from the committed matrix result.
 
 The chronological baseline is \emph{implemented and executed}, not reasoned about: three checks
 assert that fold time-extents are ordered and disjoint, that no row sits in a fold whose span it
@@ -305,19 +306,19 @@ precisely the two that \emph{are} ordering properties---and fires on no clean pa
 fifteen lie outside what ordering can express. The contract detects $17/17$, identically in all
 three environments. We report \num{17} distinct computations rather than $51$ as the coverage
 denominator: the environments differ only in generator family, and the object handed to the
-detector is bit-identical across them for fourteen of the seventeen classes. Only the repeated-
-measures, fold-order and statistical-unit faults actually move. The $51/51$ figure is therefore
+detector is bit-identical across them for fourteen of the seventeen classes. Only the repeated-measures, fold-order and
+statistical-unit faults actually move. The $51/51$ figure is therefore
 a \emph{determinism} statement---every cell agrees---not seventeen results times three.
 
 \input{figures/fig_fault_matrix.tex}
 
 Clean reference paths were accepted: no rule fired on any of the three at the committed seed, and
 clean verdicts were identical across environments. For the one rule with a stochastic reference
-distribution the single clean run is not the evidence---the measured $0.042$ false-halt rate over
-\num{450} clean paths is. Sixteen of the nineteen rules are demonstrated red by a fault fixture;
-three (\rulename{L2.2}, \rulename{L2.3}, \rulename{L4.5}) are exercised only on the clean path.
-Three faults additionally raise \rulename{L3.2}: an unguarded state channel also renders the
-mutation aimed at it inert, a true positive rather than noise. The full sweep is \num{18} conditions per environment over both pipelines and three
+distribution the single clean run is not the evidence---the measured $0.042$ false-halt rate is.
+Sixteen of the nineteen rules are demonstrated red by a fault fixture; three (\rulename{L2.2},
+\rulename{L2.3}, \rulename{L4.5}) are exercised only on the clean path. Three faults additionally
+raise \rulename{L3.2}: an unguarded state channel also renders the mutation aimed at it inert, a
+true positive rather than noise. The full sweep is \num{18} conditions per environment over both pipelines and three
 environments. It runs in under \qty{2}{\second} on one core of a commodity laptop, under
 \qty{30}{\milli\second} per condition, dominated by \rulename{L4.7}'s permutation null. With
 \texttt{numpy} as the only dependency it is affordable as a per-commit gate rather than a
@@ -330,20 +331,16 @@ We repaired the fixture, changed no detector, and preserved both records. The se
 matters: adjusting the rule instead would have bought the clean-path rate by weakening the
 contract.
 
+\balance
 \section{Case Studies}
 \label{sec:cases}
 
 Both case studies are pipelines from a \emph{stopped} research programme, built with chronological
 splitting and passed by it. They are \emph{retrospective accounts}: both predate the contract
 released here, so we report which rule \emph{names} each defect rather than a halt we executed, and
-no artifact survives for the second. Three of that programme's own checks were later found
-incapable of failing---one compared two arrays built from the same object, one pinned the parameter
-whose influence it tested, one attached no threshold---which is where the red-fixture requirement
-comes from. They are also not independent of Fig.~\ref{fig:coverage}: the fixtures were modelled on these
-pipelines and the fault classes derived from their defects, so the two are not separate lines of
-evidence. No model-performance quantity is reported.
-
-\subsection{Retrospective-label pipeline}
+no artifact survives for the second. Three of that programme's own checks were later found incapable of failing---one compared two arrays built from the same object, one pinned the parameter whose influence it tested, one attached no threshold---which is where the red-fixture requirement comes from. They are also not independent of Fig.~\ref{fig:coverage}: the fixtures were modelled on
+these pipelines and the fault classes derived from their defects. No model-performance quantity is
+reported. \subsection{Retrospective-label pipeline}
 
 A system holds a stale orbital element set and predicts open-loop; labels come from a later,
 better-determined element set in the same catalogue; folds are split chronologically by reference
@@ -380,7 +377,6 @@ chronologically forward at every step and still wrong, because it crossed the fr
 
 \input{figures/fig_case_studies.tex}
 
-\balance
 \section{Threats to Validity, Limitations and Conclusion}
 \label{sec:threats}
 
@@ -393,13 +389,12 @@ the suite lacks, so we make none. What it establishes is regression coverage of 
 faults: these violations, once fixed, cannot silently return. Nor is the ratio a
 sensitivity---the denominator is curated, not a sample from a natural fault distribution.
 
-\emph{Injection is at contract-input level, and the fixtures are check-scoped.} Each fault selects
-a pre-shaped input rather than mutating pipeline source, and the fixtures hand every rule its own
+\emph{Injection is at contract-input level, and the fixtures are check-scoped.} Each fault selects a
+pre-shaped input rather than mutating pipeline source, and the fixtures hand every rule its own
 input attribute: of the seventeen mutated objects only six reach more than one consumer. For the
 other eleven the mutated object is consumed by its own detector alone, so those conditions show a
-rule firing when handed a broken input rather than catching a defect inside a working pipeline.
-This is the sharpest limit on the evaluation, and it is why $17/17$ is stated as regression
-coverage. \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} fire in no condition at all, which
+rule firing when handed a broken input rather than catching a defect in a working pipeline. This is
+the sharpest limit on the evaluation, and why $17/17$ is stated as regression coverage. \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} fire in no condition at all, which
 by our own standard is not evidence they \emph{can} fail. And \rulename{L4.3} still decides by a
 fixed correlation threshold gated on a self-reported aggregation flag---the uncalibrated
 construction we corrected in \rulename{L4.7}. Its null size depends on group structure: $0.00$ at
@@ -408,11 +403,11 @@ repair it, because editing a detector after its outcome is known is precisely wh
 standing of \rulename{L4.7}'s own result.
 
 \emph{Two objects the contract names but does not check.} Covariate-coupled label availability is
-called the harder failure in \S\ref{sec:whysat}, yet no rule detects it and no fault represents it.
-It was found by an \emph{ad hoc} thresholded diagnostic---a standardised mean difference between
-labelled and censored rows on pre-decision covariates, which fired on the study covariate in the
-stopped pipeline of \S\ref{sec:cases} and is recorded in the archived audit---never promoted to a
-rule, so it has no identifier and no red fixture.
+called the harder failure in the threat model, yet no rule detects it. It was found by an
+\emph{ad hoc} thresholded diagnostic---a standardised mean difference between labelled and censored
+rows on pre-decision covariates, which fired on the study covariate in the stopped pipeline of
+\S\ref{sec:cases} and is recorded in the archived audit---never promoted to a rule, so it has no
+identifier and no red fixture.
 And $t_d$ itself is declared, not checked: every L1 rule is conditional on it, but under periodic
 provisioning the defensible $t_d$ is the refresh instant rather than the transmission instant, and
 declaring the latter makes every availability check pass while admitting up to one refresh
@@ -421,12 +416,11 @@ sufficient.
 
 \emph{The axes of variation are narrow.} Both fixtures come from this programme, so reuse across
 independent projects is argued rather than demonstrated, and the environments differ in generator
-family alone. No radio-frequency behaviour, packet-level outcome, deployed-system property or
-learned method is established here; the fixtures exercise rules, they do not simulate. Nor is the
-contract complete: it covers six protected objects we found necessary. Fault diversity in
-particular matters, and a regression suite protects exactly what it represents: showing that a rule
-catches defects nobody anticipated needs faults authored independently of the detectors, frozen
-before the rules exist and injected at program level.
+family alone. No radio-frequency, packet-level, deployed-system or learned-method result is
+established here. Nor is the contract complete: it covers six protected objects we found
+necessary. Fault diversity in particular matters, and a regression suite protects exactly what it
+represents: showing that a rule catches defects nobody anticipated needs faults authored
+independently of the detectors and injected at program level.
 
 What the evidence supports is narrow and, we think, useful. Chronological splitting addresses
 ordering and only ordering, and the fifteen classes it misses here are ordinary consequences of two

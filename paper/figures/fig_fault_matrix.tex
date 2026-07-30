@@ -6,11 +6,11 @@
 \begin{figure}[!t]
 \centering
 \resizebox{\columnwidth}{!}{%
-\begin{tikzpicture}[font=\scriptsize,x=8.4mm,y=2.25mm]
+\begin{tikzpicture}[font=\scriptsize,x=8.4mm,y=2.15mm]
 \def\hit#1#2{\fill[green!55!black] (#1-0.36,#2-0.30) rectangle (#1+0.36,#2+0.30);
-  \node[white,font=\tiny\bfseries] at (#1,#2) {D};}
+  \node[white,font=\scriptsize\bfseries] at (#1,#2) {D};}
 \def\mis#1#2{\draw[red!60!black,line width=0.5pt] (#1-0.36,#2-0.30) rectangle
-  (#1+0.36,#2+0.30); \node[red!60!black,font=\tiny] at (#1,#2) {--};}
+  (#1+0.36,#2+0.30); \node[red!60!black,font=\scriptsize] at (#1,#2) {--};}
 \foreach \c/\lab in {0/{chrono.}, 1/{L1}, 2/{L2}, 3/{L3}, 4/{L4}}
   \node[rotate=40,anchor=west,font=\scriptsize] at (\c,0.75) {\lab};
 \foreach \r/\nm in {%
