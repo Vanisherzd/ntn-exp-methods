@@ -21,89 +21,113 @@ Satellite Communication Software}
 \maketitle
 
 \begin{abstract}
-Learning-assisted satellite communication software is routinely validated with a
-chronological train/validation/test split. Ordering, however, is only one of the
-properties a deployment claim rests on. We show that a pipeline can satisfy
-chronological splitting exactly and still be uninterpretable, because ordering
+Chronological train/validation/test splitting is a common and necessary evaluation practice
+for temporal learning pipelines, but ordering is only one property a deployment claim rests
+on. A pipeline can satisfy it exactly and still be uninterpretable, because ordering
 constrains neither whether a past-dated quantity was \emph{available} at the decision
-instant, nor which rows \emph{exist}, nor what a learner's hidden state has already
-observed. We formalise six protected objects---decision time, feature availability,
-row membership, label closure, state channels and statistical units---as an executable
-experiment contract in four mechanically checkable layers, and release
-\emph{Orbit-Evidence}, a dependency-light implementation. In a fault-injection
-evaluation over two pipelines, seventeen fault classes and three deterministic
-environments, an implemented chronological baseline detects $2/17$ classes while the
-contract detects $17/17$, with a clean-path false-halt rate of $0.042$ against a nominal
-$0.05$ and a sweep under \qty{2}{\second}, suitable for per-commit use. One of the four
-mutations withheld from the detectors survives full scrutiny as such; we report that
-reduction rather than the headline count. Two case studies show chronology-compliant experiments halted by a
-contract rule before any conclusion was drawn. We make no claim about physical-layer
-performance; the contribution is the contract and its fault-detection evidence.
+instant, nor which rows \emph{exist}, nor what a learner's hidden state has observed, nor
+whether the unit over which intervals are computed is exchangeable. Satellite communication
+software makes these distinctions concrete: an orbital element set carries an epoch and a
+separate publication time, a schedule is meaningful only inside predicted-visible geometry,
+retrospective labels arrive when a catalogue chooses to publish them, and samples from one
+pass are repeated measures. We formalise six protected objects---decision time, feature
+availability, row membership, label closure, state channels and statistical units---as an
+executable contract of nineteen rules in four mechanically checkable layers, and release
+\emph{Orbit-Evidence}, a dependency-light implementation. A curated regression suite of
+seventeen fault classes over two minimal pipelines and three deterministic environments
+gives: an implemented chronological baseline detects the $2/17$ classes that are ordering
+properties, the contract detects $17/17$, clean reference paths are accepted with a measured
+false-halt rate of $0.042$ against a nominal $0.05$ for the statistical-unit rule, and the
+sweep runs in under \qty{2}{\second}---cheap enough for per-commit use. The suite
+demonstrates \emph{represented-fault} regression coverage; it establishes neither
+completeness over leakage classes nor generalisation to faults it does not contain. We make
+no radio-frequency, packet-level or learned-method performance claim.
 \end{abstract}
 
 \begin{IEEEkeywords}
 experiment validity, data leakage, reproducibility, non-terrestrial networks,
-learning-assisted communication, mutation testing
+learning-assisted communication, regression testing
 \end{IEEEkeywords}
 
 \section{Introduction}
 
-Learning components are increasingly proposed as assistants to physical models in
-satellite and non-terrestrial communication software: correcting a propagated orbital
-prediction, adapting a link parameter, or deciding whether a learned branch should
-override a model-based default~\cite{lin2021ntn}. Because such systems are
-inherently temporal, the community's standard remedy against optimistic evaluation is
-the chronological split: train on the past, validate on the near future, test on the
-far future~\cite{bergmeir2012crossval}.
+Learning components are increasingly proposed as assistants to physical models in satellite
+and non-terrestrial communication software: correcting a propagated orbital prediction,
+adapting a link parameter, or deciding whether a learned branch should override a model-based
+default~\cite{lin2021ntn}. Because such systems are temporal, evaluation is normally
+organised as a chronological split---train on the past, validate on the near future, test on
+the far future. That is a common and necessary practice for temporal learning pipelines, and
+the conditions under which ordered splitting is valid are well
+established~\cite{bergmeir2012crossval}.
 
-Chronological splitting is necessary. Our claim is that it is not sufficient, and that
-the gap is not a matter of degree but of kind. A chronological split constrains the
-\emph{order} of quantities already present in a dataset. It is silent on at least
-three further questions. First, \emph{availability}: a quantity may be dated in the
-past and yet not have been published, so a system could not have held it. Catalogue-fed
-pipelines carry at least two clocks---when an item describes, and when it was
-released---and a difference of two past timestamps passes every ordering test while
-still being unknowable at the decision instant. Second, \emph{membership}: which rows
-exist can itself be decided by later data, in both directions, and a split cannot
-examine rows that were never created. Third, \emph{hidden state}: a split governs rows,
-whereas leakage can travel through a scaler, a coefficient vector, a tracker's latent
-state, selection metadata, or an admission bit---none of which is a column.
+Our claim is that it is not sufficient, and that the gap is one of kind rather than degree. A
+chronological split constrains the \emph{order} of quantities already present in a dataset,
+and is silent on four further questions. \emph{Availability}: a quantity may be past-dated
+and still unpublished, so no system could have held it. \emph{Membership}: which rows exist
+can itself be decided by later data, in both directions, and a split cannot examine rows
+never created. \emph{Hidden state}: a split governs rows, whereas information travels through
+a scaler, a coefficient vector, a tracker's latent state, selection metadata, or an admission
+bit---none of which is a column. \emph{Statistical units}: a split says nothing about whether
+the unit over which uncertainty is computed is exchangeable.
 
-These channels are not exotic. They are the operational reality of any online-learning
-system fed by a published data source, and the satellite case makes them unusually
-crisp: element sets have an epoch and a publication time that differ by hours,
-retrospective labels arrive only when the catalogue chooses to publish, and a link
-budget is meaningful only for geometry that can actually carry a link.
+\subsection{Why the satellite domain makes this concrete}
+\label{sec:whysat}
 
-We therefore propose treating experimental validity as an \emph{executable contract}
-rather than a protocol description. Each contract rule protects a named object, states
-a violation, and is enforced by a mechanical check that identifies the rule it broke.
-Following mutation-testing practice~\cite{jia2011mutation}, we evaluate the contract by
-injecting faults and measuring detection, including mutations withheld from the
-detectors' authors.
+These gaps are abstract in general and specific here. Six properties of satellite
+communication software give each protected object an operational meaning, and are why we
+develop the contract in this domain rather than as generic tooling.
+
+\emph{(i) Two clocks.} An orbital element set has an \emph{element epoch}---the instant
+its state vector describes---and a separate \emph{publication time} at which a catalogue
+released it~\cite{vallado2006revisiting}; these differ by hours. A feature formed from
+two element epochs is a difference of two past timestamps, so it passes every ordering
+test, and is still unavailable if either element was published after the decision
+instant. \emph{(ii) A decision instant that is a real endpoint.} Open-loop transmission
+decisions use the state an endpoint or ground system \emph{holds}, not the best state
+that exists; staleness is the normal operating condition, so availability is a
+first-class property rather than an edge case. \emph{(iii) Schedules live inside
+predicted geometry.} A transmission opportunity exists only where the link is predicted
+visible above an elevation mask, so sampling a uniform time grid and filtering
+afterwards yields rows no scheduler would have emitted. \emph{(iv) Labels arrive
+retrospectively, from a publisher.} A better-determined later element set can serve as a
+label, but whether and when it appears is the catalogue's decision; later data may set a
+label's value, uncertainty or closure time, and must never decide whether a transmission
+row existed. \emph{(v) Passes are repeated measures.} Samples within one pass share
+geometry and one propagation state, so the pass or deployment episode is usually the
+exchangeable unit, and treating samples as independent understates every interval.
+\emph{(vi) State survives a nominal freeze.} Stateful link adaptation and residual trackers
+update at their own refresh events, which can fall after a model is declared frozen---so the
+learner keeps observing outcomes even when the feature tensor is verifiably clean.
+
+We therefore treat experimental validity as an \emph{executable contract} rather than a
+protocol description: each rule protects a named object, states a violation, and is enforced
+by a check reporting the rule it broke. Our thesis: Orbit-Evidence turns deployment-time
+availability, row membership, model-state and statistical-unit assumptions into executable CI
+checks for satellite communication experiments, and a curated regression suite demonstrates
+those checks on seventeen known fault classes that chronological ordering alone is not
+designed to detect.
 
 \textbf{Contributions.}
 \begin{enumerate}
-\item \textbf{A threat model and contract.} Six protected objects and the
-deployment-causality violations each admits, organised as four mechanically checkable
-layers: availability (L1), physical and scheduling validity (L2), model-state causality
-(L3), and independence and reproducibility (L4). Nineteen rules, Table~\ref{tab:rules};
-note that rules and fault classes are distinct counts, and three rules are exercised
-only on the clean path.
-\item \textbf{Orbit-Evidence, an executable implementation.} A dependency-light
-toolkit (739 lines in four modules plus a 399-line test suite,
-\texttt{numpy} only) providing visible-pass scheduling, a
-freeze-then-label transmission registry, reference-ensemble labelling with published
-uncertainty, a six-channel mutation canary, and seed and provenance controls. Sixteen of the
-nineteen rules are demonstrated red by a fault fixture; three (L2.2, L2.3, L4.5) are
-exercised only on the clean path, and we say so rather than claiming otherwise.
-\item \textbf{A fault-injection evaluation, and an honest account of its limits.}
-Thirteen development faults and four withheld mutations, injected into two pipelines
-across three deterministic environments, reporting detection rate, a \emph{measured}
-clean-path false-halt rate under seed variation, determinism and runtime---together
-with the reasons only one withheld mutation supports the generalisation claim
-(\S\ref{sec:threats}); plus two case studies of chronology-compliant experiments
-halted by a rule.
+\item \textbf{A deployment-causality threat model and contract.} Six protected objects
+and the violations each admits, organised as nineteen executable rules in four
+mechanically checkable layers: availability and closure (L1), physical and scheduling
+validity (L2), model-state causality (L3), and statistical independence and
+reproducibility (L4). Table~\ref{tab:rules}.
+\item \textbf{Orbit-Evidence, an implementation.} A dependency-light toolkit
+(\num{780} lines across four modules, \texttt{numpy} only) providing visible-pass
+scheduling, a freeze-then-label row registry, reference-ensemble labelling with
+published uncertainty, canaries over six state channels---feature tensor, scaler,
+model coefficients, tracker state, selected-model metadata and gate bit---and seed,
+provenance and statistical-unit controls.
+\item \textbf{A curated fault-injection regression evaluation.} Seventeen curated fault
+classes in two minimal pipelines and three deterministic environments. An implemented
+chronological protocol check detects $2/17$; the contract detects $17/17$; clean reference
+paths are accepted; the sweep is deterministic and runs in under \qty{2}{\second}; and two
+case studies show defects chronology does not constrain. We report this as
+\emph{represented-fault} coverage---regression evidence that the implemented rules catch the
+violations the suite contains, not an estimate of sensitivity over faults it lacks
+(\S\ref{sec:threats}).
 \end{enumerate}
 
 We claim nothing about radio-frequency or packet-level performance. No learned
@@ -114,351 +138,324 @@ experiment, not the model.
 
 \subsection{Decision time and the six protected objects}
 
-Let $t_d$ be the \emph{decision instant}: the moment at which a deployed system must
-act using only state it already holds. A deployment claim is interpretable only if
-every quantity entering the decision was obtainable before $t_d$. We call the
-following six objects \emph{protected}; Fig.~\ref{fig:contract} shows their
-relationship in time.
+Let $t_d$ be the \emph{decision instant}: the moment a deployed system must act using only
+state it already holds---for an open-loop satellite endpoint, when a transmission is
+committed from the element set on board. A deployment claim is interpretable only if every
+quantity entering the decision was obtainable before $t_d$. Six objects are therefore
+\emph{protected}; Fig.~\ref{fig:contract} shows their relationship in time.
 
-\emph{Feature availability.} A feature must be computable from state available at
-$t_d$. The adversarial case is not a future-dated feature---that is caught by
-ordering---but a feature built from two past timestamps, one of which belongs to an
-item published after $t_d$.
+\emph{Feature availability} and the \emph{availability clock} (\S\ref{sec:whysat}\,i). A feature
+must be computable from state available at $t_d$. The adversarial case is not a future-dated
+feature---ordering catches that---but one built from two past timestamps, one belonging to an
+item published after $t_d$. Descriptive and publication timestamps are distinct clocks and
+selection must use publication; conflating them admits data the system could not have held, and
+the error is silent because both values lie in the past.
 
-\emph{Availability clock.} An item's descriptive timestamp and its publication
-timestamp are distinct clocks. Selection must use publication. Conflating them admits
-data the system could not have held, and the error is silent because both values lie
-in the past.
+\emph{Row membership} (\S\ref{sec:whysat}\,iv). Later information may change a label's
+status, value, uncertainty or closure time, but never whether a row exists. Violations run
+both ways: rows dropped when a later reference fails to appear, and rows created when a
+schedule's extent is derived from the data on hand rather than declared.
 
-\emph{Row membership.} Later information may change a label's status, value,
-uncertainty or closure time. It must never change whether a row exists. Violations
-occur in both directions: rows dropped when a later reference fails to appear, and rows
-created when a schedule's extent is derived from the data on hand rather than declared.
+\emph{Label closure.} A retrospective label becomes usable only at a closure time $t_c$.
+Its use before $t_c$ is an ordering violation and \emph{is} caught by a split---the one
+class in our suite for which that holds, drawn dotted in Fig.~\ref{fig:contract} for
+contrast. The harder failure is when the \emph{probability} of a label existing depends on
+the covariate under study: a publication outage makes the held element stale and
+simultaneously removes the elements needed to label that staleness, a missingness property
+no split addresses.
 
-\emph{Label closure.} A retrospective label becomes usable only at a closure time
-$t_c$. Its use before $t_c$ is an ordering violation and \emph{is} caught by a split---the
-one class in our taxonomy for which that is true, drawn dotted in
-Fig.~\ref{fig:contract} for contrast. The harder failure is when the \emph{probability}
-of a label existing depends on the covariate under study, which is a missingness property
-that no split addresses.
-
-\emph{State channels.} Beyond the feature tensor, information can enter through the
-scaler, model coefficients, a tracker's latent state, selected-model metadata, or the
-gate bit. A canary scoped to features misses five of these six.
-
-\emph{Statistical units.} Replicates of one physical event are not independent
-observations, and aggregating at some level does not establish that the level chosen is
-the exchangeable one.
+\emph{State channels} (\S\ref{sec:whysat}\,vi). Beyond the feature tensor, information can
+enter through the scaler, model coefficients, a tracker's latent state, selected-model
+metadata, or the gate bit; a canary scoped to features misses five of these six.
+\emph{Statistical units} (\S\ref{sec:whysat}\,v). Replicates of one physical event are not
+independent observations, and aggregating at some level does not establish that the level
+chosen is the exchangeable one.
 
 \subsection{Four layers}
 
-L1 protects availability, the clock distinction, closure and membership. L2 protects
-physical validity: a schedule must lie inside geometry that can carry the link, the
-target must lie between a resolution floor and a plausibility ceiling, declared
-relations must match implementations, and hidden state must not diverge without bound.
-L3 protects model-state causality through effective mutation canaries and a negative
-control. L4 protects fold chronology, paired randomness, repeated-measure aggregation,
-seed hygiene and provenance completeness. Table~\ref{tab:rules} lists all rules.
+L1 protects availability, the clock distinction, closure and membership. L2 protects physical
+validity: a schedule must lie inside geometry that can carry the link
+(\S\ref{sec:whysat}\,iii), the target between a resolution floor and a plausibility ceiling,
+declared relations must match implementations, and hidden state must not diverge without bound.
+L3 protects model-state causality through effective mutation canaries and a negative control.
+L4 protects fold chronology, paired randomness, repeated-measure aggregation, seed hygiene and
+provenance completeness.
 
-Two design commitments make the contract usable. Every violation raises an exception
-carrying its \emph{rule identifier}, so a finding names what it broke rather than
-surfacing a bare assertion failure. And every detector must be demonstrated to fail on
-a deliberately broken fixture: a check that cannot go red is not evidence, a point we
-return to in Section~\ref{sec:cases}.
+Two design commitments make the contract usable. Every violation raises an exception carrying
+its \emph{rule identifier}, so a finding names what it broke rather than surfacing a bare
+assertion failure. And a detector is trusted only once demonstrated to fail on a deliberately
+broken fixture: a check that cannot go red is not evidence, a point we return to in
+Section~\ref{sec:cases}. Table~\ref{tab:rules} distinguishes rules with such a fixture from
+those exercised only on the clean path, and marks the one rule that can abstain.
 
 \subsection{Relation to existing practice}
 
-Leakage taxonomies in data mining catalogue how information about a target reaches a
-model illegitimately~\cite{kaufman2012leakage}, and recent surveys document its
-prevalence in machine-learning-based science~\cite{kapoor2023leakage}. Our threat model
-is narrower and operational: it asks not only whether a quantity is legitimate but
-whether the deployed system could have \emph{held} it, which turns a modelling concern
-into a scheduling and provenance concern. Time-series evaluation work establishes when
-ordered splitting is valid~\cite{bergmeir2012crossval}; we take that as given and
-address the properties it does not cover. The hidden-state channels we guard are
-instances of the configuration and state coupling identified as technical debt in
-production learning systems~\cite{sculley2015debt}, made checkable here. Our evaluation
-method is mutation testing~\cite{jia2011mutation} applied to an experimental protocol
-rather than to program logic, and the provenance manifests follow the documentation
-discipline urged for datasets~\cite{gebru2021datasheets}. The orbital element
-conventions are standard~\cite{vallado2006revisiting}.
+Leakage taxonomies catalogue how information about a target reaches a model
+illegitimately~\cite{kaufman2012leakage}, and recent surveys document its prevalence in
+machine-learning-based science~\cite{kapoor2023leakage}. Our threat model is narrower and
+operational: it asks not whether a quantity is legitimate but whether the deployed system
+could have \emph{held} it, turning a modelling concern into a scheduling and provenance
+one. Time-series work establishes when ordered splitting is
+valid~\cite{bergmeir2012crossval}; we take that as given and address what it does not
+cover. The hidden-state channels we guard are instances of the configuration and state
+coupling identified as technical debt in production learning
+systems~\cite{sculley2015debt}, made checkable here. Our evaluation method is fault
+injection in the tradition of mutation testing~\cite{jia2011mutation} applied to a
+protocol rather than to program logic, and the provenance manifests follow the discipline
+urged for datasets~\cite{gebru2021datasheets}. Orbital element conventions are
+standard~\cite{vallado2006revisiting}.
 
 \input{figures/fig_contract.tex}
 
+\input{tables/contract_rules.tex}
+
 \section{Orbit-Evidence Toolkit}
 
-\emph{Visible-pass scheduler.} Transmissions are \emph{generated} from intervals
-predicted by the state the system holds, located by a coarse scan and refined by
-bisection to both threshold crossings. Both crossings are refined to the
-above-threshold side of the final bracket, so no scheduled sample can fall below the
-mask through refinement error. Elevation uses the geodetic normal, not the geocentric
-radius. The operative visibility criterion, including the minimum pass duration, is
-declared rather than left implicit.
+\emph{Visible-pass scheduler.} Transmissions are \emph{generated} from intervals predicted by the
+state the system holds, located by a coarse scan and refined by bisection to both threshold
+crossings---each to the above-threshold side of the final bracket, so no scheduled sample can
+fall below the mask through refinement error. Elevation uses the geodetic normal, not the
+geocentric radius. The visibility \emph{criterion} (elevation mask, minimum pass duration) is
+declared, and so are the \emph{solver} settings locating its boundaries: coarse step, bisection
+tolerance and iteration cap all enter the provenance manifest, since the schedule is a numerical
+solution and claiming otherwise would be the undeclared dependence the contract exists to catch.
+The coarse step may not exceed the minimum pass duration---a shortest-admissible pass could
+otherwise hide between two grid points---and a regression test measures the stability of the
+recovered extents over the declared range.
 
-\emph{Freeze-then-label registry.} Rows are assembled and hashed before any label
-source is consulted, against an \emph{absolute declared} window. Deriving either bound
-from the data on hand makes the schedule a property of the download; the falsifiable
-form of the invariant compares a registry built from full data against one built from
-truncated data using the same declared window.
+\emph{Freeze-then-label registry.} Rows are assembled and hashed before any label source
+is consulted, against an \emph{absolute declared} window---deriving either bound from the
+data on hand makes the schedule a property of the download. The falsifiable form compares a
+registry built from full data against one from truncated data under the same window.
 
-\emph{Reference ensemble.} Where a label must be assembled from several later
-observations, the toolkit canonicalises them deterministically, takes the median, and
-publishes a median-absolute-deviation uncertainty and a closure time. Rows whose spread
-is large are marked and \emph{retained}: deleting them selects on the outcome. The
-module documents its own limitation---when members share a systematic error, a mutual
-deviation statistic cannot see it---and exposes a split-half diagnostic so the
-published uncertainty is treated as a lower bound.
+\emph{Reference ensemble.} Where a label must be assembled from several later observations,
+the toolkit canonicalises them deterministically, takes the median, and publishes a
+median-absolute-deviation uncertainty and a closure time. The row status is
+\emph{coverage-only and diagnostic}: a function of member count and mutual spread against a
+declared ceiling, never of the labelled value or a physics baseline. That is a corrected
+defect, not a design flourish---an earlier version compared the uncertainty to the residual,
+making the annotation a function of the quantity under study and biasing every completeness
+rate computed from it. The status never creates or deletes a row: large-spread rows are marked
+and \emph{retained}, since dropping them selects on the outcome, and membership belongs to the
+frozen registry alone. The module also documents that a mutual-deviation statistic cannot see
+a systematic error shared by all members, and exposes a split-half diagnostic so the published
+uncertainty is read as a lower bound.
 
 \subsection{Two rules that are not checks on values}
 
-Most contract rules inspect a quantity. Two inspect a \emph{relation between runs}, and
-we state them precisely because they are the least obvious and, in our evaluation, the
-two for which no detector previously existed.
-
-\emph{Provenance completeness} (\rulename{L4.6}) cannot be verified by examining a
-manifest, since a manifest is silent about what it omits. It is verifiable
-differentially. Let $R$ be a run producing output digest $o(R)$ and manifest hash
-$h(R)$. Over a set of input variations $\{c_i\}$,
+Most rules inspect a quantity; two inspect a \emph{relation between runs}, and we state those
+precisely because they are the least obvious. \emph{Provenance completeness} (\rulename{L4.6}) cannot be verified by examining a manifest,
+which is silent about what it omits---but it is verifiable differentially. Let run $R$
+produce output digest $o(R)$ and manifest hash $h(R)$; over input variations $\{c_i\}$, with
+$o_i = o(R_{c_i})$ and $h_i = h(R_{c_i})$,
 \begin{equation}
 \exists\, i,j:\; o_i \neq o_j \;\wedge\; h_i = h_j
 \;\Longrightarrow\; \text{manifest incomplete},
 \label{eq:prov}
 \end{equation}
-writing $o_i = o(R_{c_i})$ and $h_i = h(R_{c_i})$,
-since two runs that differ in output must differ in provenance. The converse is not
-an error: identical outputs under differing manifests is merely redundant. This
-asymmetry is what makes the rule checkable without enumerating every possible input.
+since two runs differing in output must differ in provenance. The converse is not an error:
+identical outputs under differing manifests is merely redundant. That asymmetry is what makes
+the rule checkable without enumerating every input.
 
 \emph{Statistical unit selection} (\rulename{L4.7}) asks not whether replicates were
-aggregated but whether the level they were aggregated \emph{to} is the exchangeable one.
-Aggregating correctly at some level says nothing about that level's adequacy. Given
-values $y$, chosen unit identifiers $u$, and the next coarser grouping $g$, we aggregate
-$\bar{y}_u$ and then measure the intraclass correlation of $\bar{y}_u$ \emph{within} $g$:
-\begin{equation}
-\rho\!\left(\bar{y}_u \mid g\right) > \rho_{\max}
-\;\Longrightarrow\; \text{unit finer than exchangeable.}
-\label{eq:unit}
-\end{equation}
-Residual correlation at the coarser level means the chosen unit shares state with its
-neighbours, so intervals computed over it are optimistic. A pipeline can pass a
-conventional replicate check and fail this one, which is precisely the case we injected.
+aggregated but whether the level they were aggregated \emph{to} is exchangeable---correct
+aggregation at some level says nothing about that level's adequacy. Given values $y$, unit
+identifiers $u$ and the next coarser grouping $g$ (for a satellite experiment: samples
+aggregated to a pass, grouped by deployment episode), we aggregate to $\bar{y}_u$ and measure
+its intraclass correlation \emph{within} $g$. Residual correlation there means the chosen
+unit shares state with its neighbours, so intervals over it are optimistic.
 
-Two properties of the estimator are load-bearing and were not obvious to us. It must be an
-unbiased variance-components ICC: a raw between-over-total scatter ratio has null
-expectation $\approx 1/m$ for $m$ observations per group, so any fixed threshold below that
-value halts on correct designs. And the rule must \emph{decline to judge} when it cannot
-estimate---below a declared minimum number of coarser groups it reports indeterminate and
-raises nothing, since a rule that halts on an unestimable statistic is worse than no rule.
-We found both only after making the clean fixture non-degenerate; the degenerate clean path
-had been silently short-circuiting the check.
+Estimator and reference distribution are both load-bearing, and neither was obvious to us. The
+estimator is the unbiased one-way random-effects $\mathrm{ICC}(1)$ from variance components,
+$\hat{\rho} = (\mathrm{MS_B}-\mathrm{MS_W})/(\mathrm{MS_B}+(\bar{m}-1)\mathrm{MS_W})$, whose
+expectation under independence is $0$ at every group size; a raw between-over-total scatter ratio
+has null expectation $\approx 1/\bar{m}$, so any fixed threshold below that halts on correct
+designs. The decision is then referenced to a \emph{permutation null}: unit values are permuted
+across coarser groups---the exchangeability hypothesis under test---and the critical value is the
+$1-\alpha$ quantile of $\hat{\rho}$ over \num{400} permutations at the observed group count and
+balance, $\alpha=0.05$. A fixed threshold controls the null \emph{mean}, not its \emph{tail}: at
+a fixed $0.2$ the measured null size was $0.17$, so the rule halted on about one correct design
+in six and any clean-path pass was a property of the seed. Because specificity is a rate we
+measure it as one---over \num{450} clean paths spanning \num{150} fixture seeds and three
+environments the false-halt rate is $0.042$ against the nominal $0.05$, with the injected
+wrong-unit fault detected on \num{150} of \num{150} paths. Finally the rule \emph{declines to
+judge} below four coarser groups or eight units, returning \textsc{indeterminate} and raising
+nothing: an explicit abstention, not a pass. We found that only after making the clean fixture
+non-degenerate, which had been silently short-circuiting the check.
 
-\emph{Mutation canaries.} Six channels are probed. The toolkit separates two questions
-that are easily conflated: whether a channel is \emph{guarded}, and whether the
-mutation used to probe it was \emph{effective}. An inert mutation changes nothing and
-can be misread as an undetectable leak; \rulename{L3.2} exists to catch that.
+\emph{Mutation canaries.} Six channels are probed, and the toolkit separates two easily
+conflated questions: whether a channel is \emph{guarded}, and whether the probe mutation was
+\emph{effective}. An inert mutation changes nothing and reads as an undetectable leak;
+\rulename{L3.2} catches that. \emph{Provenance and seeds.} Seeds live in three disjoint
+namespaces---burned, debug, evaluation---and a seed whose outcomes have been inspected is
+burned for good. Compared conditions draw one seed per invariant cell so only the
+intervention differs, with pairing asserted on the realised arrays rather than inferred from
+the derivation rule.
 
-\emph{Provenance and seeds.} Seeds live in three disjoint namespaces---burned, debug,
-evaluation. A seed whose outcomes have been inspected is burned and can never re-enter
-evaluation. Compared conditions draw one seed per invariant cell so that only the
-intervention differs, and pairing is asserted on the realised arrays rather than
-inferred from the derivation rule.
-
-\section{Fault-Injection Evaluation}
+\section{Curated Regression Evaluation}
 
 \subsection{Design}
 
-Two pipelines are used as minimal deterministic fixtures. \textsc{Case A} exercises a
+Two pipelines serve as minimal deterministic fixtures. \textsc{Case A} exercises a
 retrospective-label chain: held state, visible-pass scheduling, frozen registry, later
 reference construction, closure. \textsc{Case B} exercises a learning and gating chain:
-physics baseline, optional learned branch, validation selection, frozen
-model/scaler/gate state, held-out deployment. They carry no physical claim; they exist
-to exercise rules.
+physics baseline, optional learned branch, validation selection, frozen model/scaler/gate
+state, later deployment window. Neither carries a physical claim; they exist to exercise
+rules.
 
-We inject thirteen \emph{development} faults, drawn from defects that motivated the
-detectors, and four \emph{withheld} mutations whose definitions were frozen before the
-corresponding rules were written. Two of the four---incomplete provenance and a statistical unit chosen
-at the wrong nesting level---had \emph{no} predecessor detector of any kind, so they
-test whether a general rule can be written for a defect it was not designed against.
-Each condition runs in three environments differing only in pseudo-random generator
-family.
+The suite contains \num{17} \emph{curated} fault classes---one per violation the contract
+names, drawn from the defects that motivated the rules plus several written for propositions
+no predecessor detector covered. Each is injected in three environments differing in
+pseudo-random generator family, giving \num{51} injected condition-environment cells, plus
+one clean reference path per environment reported separately. Three denominators are easily
+conflated, so we fix them: \num{19} contract \emph{rules}, \num{17} fault \emph{classes},
+\num{18} \emph{conditions} per environment (the faults plus the clean path). Rules are
+obligations and fault classes are injections, not in bijection---one rule can be violated
+several ways, and some rules are represented by no fault here.
 
 \subsection{Results}
 
-Fig.~\ref{fig:coverage} gives the coverage matrix; Fig.~\ref{fig:cases} shows where each
-case study was halted.
+Fig.~\ref{fig:coverage} gives the coverage matrix and Fig.~\ref{fig:cases} where each case study
+was halted. Every number below is generated from one machine-readable artifact,
+\texttt{evaluation/results/final\_summary.json}, derived from the committed matrix result.
 
-The chronological baseline is \emph{implemented and executed}, not reasoned about: three
-checks assert that fold time-extents are ordered and disjoint, that no row sits in a fold
-whose span it does not belong to, and that no label used at a decision point postdates it.
-It runs inside the same sweep, over the same fixtures, in the same three environments. We
-stress that it is not a competing detector suite: chronological splitting is a
-\emph{protocol property} of intentionally limited scope, and the comparison measures how
-much of the fault space that property covers, not tool against tool.
-
-Measured, it detects $2/17$ fault classes---invalid label-closure timing and a violated
-fold order, precisely the two that \emph{are} ordering properties---and fires on no clean
-path. The remaining fifteen are invisible to ordering by construction. The contract
-detects $17/17$ classes in all three environments, $51/51$ condition-environment cells.
-
-\input{tables/contract_rules.tex}
+The chronological baseline is \emph{implemented and executed}, not reasoned about: three checks
+assert that fold time-extents are ordered and disjoint, that no row sits in a fold whose span it
+does not belong to, and that no label used at a decision point postdates it. It runs inside the
+same sweep, over the same fixtures and environments. It is not a competing detector suite:
+chronological splitting is a \emph{protocol property} of intentionally limited scope, so the
+comparison measures how much of this fault space that property covers, not tool against tool.
+Measured, it detects $2/17$ classes---invalid label-closure timing and a violated fold order,
+precisely the two that \emph{are} ordering properties---and fires on no clean path; the remaining
+fifteen lie outside what ordering can express. The contract detects $17/17$ in all three
+environments, that is $51/51$ injected cells.
 
 \input{figures/fig_fault_matrix.tex}
 
-All four withheld mutations were detected, in every environment. Clean paths produced no
-rule firing at the committed seed, and clean verdicts were identical across the three
-environments; more informatively, over 450 clean paths spanning 150 fixture seeds the
-false-halt rate of the size-controlled L4.7 rule is $0.042$ against its nominal $0.05$.
-Three faults additionally raise \rulename{L3.2}: when a state channel is unguarded, the
-mutation aimed at it is also inert, which is a true positive rather than noise.
+Clean reference paths were accepted: no rule fired on any of the three at the committed
+seed, and clean verdicts were identical across environments. For the one rule with a
+stochastic reference distribution the single clean run is not the evidence---the measured
+$0.042$ false-halt rate over \num{450} clean paths is. Sixteen of the nineteen rules are
+demonstrated red by a fault fixture; three (\rulename{L2.2}, \rulename{L2.3},
+\rulename{L4.5}) are exercised only on the clean path and marked as such in
+Table~\ref{tab:rules}, rather than manufacturing fixtures to recover a round number. Three
+faults additionally raise \rulename{L3.2}: an unguarded state channel also renders the
+mutation aimed at it inert, a true positive rather than noise. The full sweep---\num{18}
+conditions per environment over both pipelines and three environments---runs in
+under \qty{2}{\second} on one core of a commodity laptop---about \qty{30}{\milli\second} per
+condition, dominated by L4.7's permutation null---with \texttt{numpy} the only dependency:
+affordable as a per-commit gate rather than a periodic audit.
 
-The full sweep---eighteen conditions per environment, being the seventeen fault classes
-plus one clean path---over both pipelines and three environments runs
-in under \qty{2}{\second} on a single core of a commodity laptop---about
-\qty{28}{\milli\second} per condition, dominated by L4.7's permutation null---with
-\texttt{numpy} as the only dependency, so it is affordable as a per-commit gate rather
-than a periodic audit.
-
-\subsection{A false positive we did not design}
-
-The first matrix run reported three clean-path false positives, all of
-\rulename{L4.4}, one per environment. The cause was the fixture, not the detector: the
-clean pipeline declared it was about to execute a seed still present in its own
-evaluation namespace, which is a genuine violation. We repaired the fixture, changed no
-detector, and preserved both records. We report this because the sequence matters: had
-we adjusted the rule instead, the reported clean-path false-positive rate would have
-been achieved by weakening the contract.
+One clean-path false positive was not designed: the first run reported three, all
+\rulename{L4.4}, one per environment---caused by the fixture, not the detector, since the
+clean pipeline declared it was about to execute a seed still in its own evaluation namespace.
+We repaired the fixture, changed no detector, and preserved both records. The sequence
+matters: adjusting the rule instead would have bought the clean-path rate by weakening the
+contract.
 
 \section{Case Studies and Lessons}
 \label{sec:cases}
 
-Both case studies are software pipelines that were built with chronological splitting
-and passed it. We report which rule halted each and why ordering did not, and no
+Both case studies are software pipelines that were built with chronological splitting and
+passed it. We report which rule halted each and why ordering did not, and no
 model-performance quantity from either.
 
 \subsection{Retrospective-label pipeline}
 
-A system holds a stale orbital element set and predicts open-loop; labels are formed by
-comparison against a later, better-determined element set from the same catalogue;
-folds are split chronologically by reference time. Three defects were present. A feature
-was the interval between the held element's epoch and the \emph{reference} element's
-epoch---a difference of two past timestamps, and therefore ordering-consistent, but
-containing an item the system had not received (\rulename{L1.1}). Row membership
-depended on the future catalogue, because a transmission entered the dataset only if a
-qualifying later element was subsequently published (\rulename{L1.4}). And label
-availability was coupled to the covariate under study, because a publication outage
-simultaneously makes the held element stale and removes the elements needed to label
-that staleness. An intermediate version additionally scheduled transmissions on a clock
-grid rather than inside predicted-visible geometry (\rulename{L2.1}).
+A system holds a stale orbital element set and predicts open-loop; labels come from a
+later, better-determined element set in the same catalogue; folds are split
+chronologically by reference time. Three defects were present. A feature was the interval
+between the held element's \emph{epoch} and the \emph{reference} element's epoch---a
+difference of two past timestamps, hence ordering-consistent, but containing an item the
+system had not been sent (\rulename{L1.1}). Row membership depended on the future
+catalogue, since a transmission entered the dataset only if a qualifying later element was
+subsequently published (\rulename{L1.4}). And label availability was coupled to the
+covariate under study, because a publication outage simultaneously makes the held element
+stale and removes the elements needed to label that staleness. An intermediate version
+also scheduled on a clock grid rather than inside predicted-visible geometry, so most rows
+described a satellite below the horizon (\rulename{L2.1}).
 
-Ordering cannot see any of these: none of them violates ordering. The consequence is
-that a reported improvement could not be attributed to information the system would
-actually hold, so the defects would invalidate any deployment interpretation. Under the
-third defect the comparison is not merely biased but undetermined, because the baseline
-is not pinned down more tightly than the effect sought. The contract prevented formal
-evaluation from proceeding.
+Ordering sees none of these, because none violates ordering. A reported improvement therefore
+could not be attributed to information the system would hold, invalidating any deployment
+interpretation; under the third defect the comparison is not merely biased but undetermined,
+the baseline being less tightly pinned than the effect sought.
 
 \subsection{Learning and gating pipeline}
 
 A physics baseline, an optional learned branch, selection on a chronologically prior
-validation window, an admission decision frozen before the held-out window, and
-fallback to the baseline. The feature tensor was clean and verified so by perturbation.
-Nevertheless future information entered through a non-feature state channel: a stateful
-tracker continued to advance at refresh events falling inside the held-out window, so
-the learner kept observing outcomes after its own freeze (\rulename{L3.1}). Separately,
-the negative control exposed undeclared deterministic signal---a rate frozen at one
-epoch while the reference continued to evolve leaves a residual that is a deterministic
-function of the covariate, hence learnable, with the injected effect at exactly zero
-(\rulename{L3.3}). Compared conditions also failed to share a realisation, because the
-condition label had entered the seed derivation (\rulename{L4.2}).
+validation window, an admission decision frozen before the deployment window, and fallback
+to the baseline. The feature tensor was clean and verified so by perturbation. Future
+information nevertheless entered through a non-feature state channel: a stateful tracker
+kept advancing at refresh events inside the deployment window, so the learner observed
+outcomes after its own freeze (\rulename{L3.1}). The negative control separately exposed
+undeclared deterministic signal---a rate frozen at one epoch while the reference continues
+to evolve leaves a residual that is a deterministic function of the covariate, hence
+learnable, with the injected effect at exactly zero (\rulename{L3.3}). Compared conditions
+failed to share a realisation, the condition label having entered the seed derivation
+(\rulename{L4.2}). And samples were pooled below the deployment episode, which is the
+exchangeable unit here (\rulename{L4.7}).
 
-A row-level split governs rows and so cannot constrain model state; the tracker's
-update was chronologically forward at every step and still wrong, because it crossed
-the freeze. The control involves no leakage at all---its rows are perfectly ordered and
-its target is simply not null. Blind evaluation seeds remained unexecuted after
-qualification failed, so no result exists to be misread.
+A row-level split governs rows and cannot constrain model state: the tracker's update was
+chronologically forward at every step and still wrong, because it crossed the freeze. The
+control involves no leakage at all---its rows are perfectly ordered, its target simply not
+null. Blind evaluation seeds stayed unexecuted after qualification failed.
 
 \subsection{The lesson we did not expect}
 
-Across four independent review cycles of these two pipelines, five successive
-corrective changes each introduced a new defect, and in every cycle the new defect was
-found by an independent check rather than by the author's own review. We draw a
-procedural conclusion rather than a technical one: a fix is itself a change and carries
-its own defect rate. Budget an independent adversarial check per fix, and fix a stop
-count in advance. Relatedly, three checks in the original suites were found to be
-incapable of failing---one compared two arrays built from the same object, one pinned
-the very parameter whose influence it tested, and one attached no threshold to the
-quantity it reported. Every detector in this work is therefore required to be
-demonstrated red on a broken fixture before it is trusted.
-
+Across four review cycles, five successive corrective changes each introduced a new defect,
+and every time an independent check found it rather than the author's own review. The
+conclusion is procedural: a fix is itself a change and carries its own defect rate, so budget
+an independent adversarial check per fix and set a stop count in advance. Relatedly, three
+checks in the original suites proved incapable of failing---one compared two arrays built from
+the same object, one pinned the very parameter whose influence it tested, one attached no
+threshold to what it reported. Hence the requirement that a detector be demonstrated red
+before it is trusted.
 
 \input{figures/fig_case_studies.tex}
 
-\section{Threats to Validity}
+\section{Threats to Validity, Limitations and Conclusion}
 \label{sec:threats}
 
-We state the bounds on our evaluation explicitly, because several are severe enough to
-change how the detection counts should be read.
+Several bounds change how the detection counts should be read. \emph{The faults and the rules
+share an origin}: both were largely developed in one programme, mostly by the same hand, so
+$17/17$ measures detector \emph{reachability}---a fixture written to trip rule $X$ trips rule
+$X$---not mutation adequacy in the sense of~\cite{jia2011mutation}, and hand-authored mutants
+are known to overstate suite strength. Only one fault was specified before any detector for it
+existed and left untouched afterwards, far too few to support a claim about faults the suite
+lacks, so we make none. What it establishes is regression coverage of \emph{represented}
+faults: these violations, once fixed, cannot silently return. Nor is the ratio a
+sensitivity---the denominator is a curated suite, not a sample from a natural fault
+distribution.
 
-\emph{The fault set is not independent of the detectors.} Thirteen of seventeen classes are
-drawn from the defects that motivated the rules. For those, $17/17$ measures detector
-\emph{reachability}---that a fixture written to trip rule $X$ trips rule $X$---and not
-mutation adequacy in the sense of~\cite{jia2011mutation}. Hand-authored mutants are known
-to overstate suite strength, and ours are authored by the same hand as the rules.
+\emph{Injection is partly at fixture or contract-input level.} Each fault selects a pre-shaped
+input rather than mutating pipeline source. For most classes that input flows through the
+pipeline, but for two---\rulename{L1.5}'s availability predicate and \rulename{L2.4}'s declared
+and implemented relations---the mutated object is consumed only by its own detector, so those
+show a rule firing when handed a broken input, not catching a defect inside a working pipeline.
+\rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} fire in no condition at all, which by our
+own standard is not evidence they \emph{can} fail. \emph{The axes of variation are narrow}: both
+fixtures come from this programme, so reuse across independent projects is argued rather than
+demonstrated, and the three environments differ in generator family and execution
+determinism---not in satellite system, ground segment or catalogue---so for rules whose inputs
+do not depend on random draws the three cells are one computation three times. Finally, no
+radio-frequency behaviour, packet-level outcome, deployed-system property or learned method is
+established anywhere here; the fixtures exercise rules, they do not simulate. Nor is the
+contract complete: it covers six protected objects we found necessary, and further channels are
+likely rather than excluded.
 
-\emph{Injection is at fixture-input level, not program level.} Each fault selects a
-pre-shaped input rather than mutating pipeline source. For most classes the input then
-flows through the pipeline, but for two of the four withheld mutations it does not: L1.5's
-availability predicate and L2.4's declared and implemented relations are objects consumed
-only by their own detector. Those two therefore demonstrate that a rule fires when handed a
-broken input, not that it catches the defect inside a working pipeline.
+Fault diversity nevertheless matters, and it is worth saying why we cannot supply it here: a
+regression suite protects exactly what it represents. Showing that a rule catches defects nobody
+anticipated needs faults authored independently of the detectors---frozen and hashed before the
+rules exist, injected at program level, ideally contributed by another group. That measurement
+would upgrade represented-fault coverage into a generalisation claim; it is future work.
 
-\emph{One withheld mutation, not four.} Of the four, two are the fixture-local cases just
-described; a third (the statistical-unit mutation) had its detector rewritten after its
-outcome was recorded, when a reviewer showed the original statistic was uncalibrated---so
-its withheld status is void, and we report it as a development fault in all but name. Only
-the provenance-completeness mutation was defined before its rule existed, injected through
-the pipeline, and left untouched afterwards. \textbf{The generalisation claim rests on
-$n=1$.} We report this rather than the headline four.
-
-\emph{Two faults postdate the freeze.} The pre-registration froze eleven development
-faults; two more, targeting rules that already existed, were added afterwards. They do not
-bear on the withheld set, but the pre-registered counts differ from the reported ones.
-
-\emph{No independent temporal evidence.} The pre-registration, the detectors and both
-result records were committed within one short window, so the ordering that makes a
-withheld mutation meaningful rests on our attestation and not on anything a third party can
-check. A paper arguing that validity claims must be differentially checkable rather than
-asserted should not ask for an exception here, and we do not.
-
-\emph{Three rules are never demonstrated red.} L2.2, L2.3 and L4.5 fire in no condition.
-They are exercised only on the clean path, which by our own standard is insufficient.
-
-\emph{The environment axis is narrow.} The three environments differ in pseudo-random
-generator family alone, so for the rules whose inputs do not depend on random draws the
-three cells are the same computation three times.
-
-\section{Limitations and Conclusion}
-
-This is a software-methodology contribution. We validate no radio-frequency behaviour,
-no packet-level outcome, and no learned communication method; the fixtures are
-deterministic constructions for exercising rules, not simulators, and no physical
-conclusion should be drawn from them. We make no completeness claim: the contract
-covers six protected objects we found necessary, and the existence of further channels is
-likely rather than excluded. Section~\ref{sec:threats} bounds the evaluation; the short
-version is that a detection rate over a self-authored fault set measures reachability, and
-the generalisation evidence is one mutation. The two case studies come from one programme,
-so the threat model generalises by argument rather than by demonstration across independent
-projects.
-
-What the evidence supports is narrow and, we think, useful. Chronological splitting
-addresses ordering and only ordering; on our matrix it detects $2$ of $18$ fault
-classes, and the sixteen it misses include every availability, membership, hidden-state
-and unit-selection defect we injected. An executable contract detected all eighteen,
-including four mutations written before their detectors, at a cost small enough to run
-on every commit. The natural next step is to apply the same machinery where labels come
-from measurement rather than from a published catalogue, which removes the
-covariate-coupled censoring that halted our first case study; that application is
-future work and is not claimed here.
+What the evidence supports is narrow and, we think, useful. Chronological splitting addresses
+ordering and only ordering, and the fifteen classes it misses here are ordinary consequences of
+two clocks, a publisher-controlled label, predicted-visible geometry, pass-level dependence, or
+state outliving a freeze. An executable contract catches them cheaply enough to run on every
+commit, and names the obligation broken rather than reporting that something failed. The next
+step is to apply the same machinery where labels come from measurement rather than a published
+catalogue, removing the covariate-coupled censoring that halted our first case study.
 
 \balance
 \bibliographystyle{IEEEtran}
