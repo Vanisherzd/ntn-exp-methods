@@ -57,17 +57,29 @@ def canonicalise(members: Sequence[dict], key_fn: Callable[[dict], str],
 def build_label(member_values: Sequence[float], closure_time: float,
                 k_min: int = 2, member_ids: Sequence[str] = (),
                 propagation_distance: Sequence[float] | None = None,
-                baseline: float = 0.0) -> EnsembleLabel:
-    """Median-of-ensemble label with MAD uncertainty and a status.
+                sigma_max: float | None = None) -> EnsembleLabel:
+    """Median-of-ensemble label with MAD uncertainty and a COVERAGE-ONLY status.
 
-    `baseline` is the physics prediction; the residual is `value - baseline`.
-    Rows with large spread are marked AMBIGUOUS_HIGH_SPREAD and RETAINED -- never
-    deleted, because deleting them selects on the outcome.
+    The status depends only on how many members were available (`k_min`) and on
+    their mutual spread against a DECLARED ceiling (`sigma_max`). It never depends
+    on the labelled value, on a physics baseline, or on the residual between them.
 
-    Caution carried from the stopped line: classifying COMPLETE by comparing sigma to
-    the residual makes the status OUTCOME-DEPENDENT, which biases every completeness
-    rate computed from it (median target inflated 4-11x in one measurement). Prefer
-    a coverage-only definition and report the spread flag separately.
+    Why this signature has no `baseline`: an earlier version classified COMPLETE by
+    comparing sigma to the residual `median - baseline`, which makes the status
+    OUTCOME-DEPENDENT -- rows are annotated according to the very quantity under
+    study, so every completeness rate computed from it is biased (median target
+    inflated 4-11x in one measurement on the stopped line). That predecessor is the
+    reason this docstring exists; the parameter is removed so the defect cannot
+    return through a default argument.
+
+    `sigma_max` must be declared by the caller from instrument or catalogue
+    knowledge, never fitted to the data at hand. Left as None, no spread
+    classification is made and the caller is expected to read `sigma` directly.
+
+    The status is DIAGNOSTIC: it annotates uncertainty. It never creates or deletes
+    a row, and it never changes the evaluation population -- AMBIGUOUS_HIGH_SPREAD
+    rows are marked and RETAINED, because dropping them selects on the outcome.
+    Row membership is owned by the frozen registry, not by this function.
     """
     v = np.asarray(member_values, dtype=float)
     if v.size < k_min:
@@ -75,14 +87,14 @@ def build_label(member_values: Sequence[float], closure_time: float,
                              LabelStatusName.CENSORED, tuple(member_ids))
     med = float(np.median(v))
     sigma = float(MAD_TO_SIGMA * np.median(np.abs(v - med)))
-    resid = med - baseline
     shs = None
     if propagation_distance is not None and v.size >= 4:
         d = np.asarray(propagation_distance, dtype=float)
         near, far = v[d <= np.median(d)], v[d > np.median(d)]
         if near.size and far.size:
             shs = float(abs(np.median(near) - np.median(far)))
-    status = (LabelStatusName.AMBIGUOUS if sigma > abs(resid)
+    status = (LabelStatusName.AMBIGUOUS
+              if sigma_max is not None and sigma > sigma_max
               else LabelStatusName.COMPLETE)
     return EnsembleLabel(med, sigma, int(v.size), closure_time, status,
                          tuple(member_ids), shs)

@@ -176,7 +176,7 @@ def test_exit_crossing_bisection_bracket():
 def test_reference_ensemble_uncertainty():
     """Single arbitrary reference vs ensemble median with published uncertainty."""
     members = [100.0, 103.0, 97.0, 101.0]
-    lab = RE.build_label(members, closure_time=48.0, k_min=2, baseline=90.0)
+    lab = RE.build_label(members, closure_time=48.0, k_min=2, sigma_max=10.0)
     assert lab.n_members == 4
     assert lab.value == pytest.approx(float(np.median(members)))
     assert lab.sigma > 0.0
@@ -190,11 +190,102 @@ def test_reference_ensemble_uncertainty():
     # and the ensemble PUBLISHES that uncertainty, which a single reference cannot
     assert math.isfinite(lab.sigma) and lab.sigma > 0.0
     # large spread is RETAINED, not deleted
-    amb = RE.build_label([0.0, 200.0], closure_time=48.0, k_min=2, baseline=99.0)
+    amb = RE.build_label([0.0, 200.0], closure_time=48.0, k_min=2, sigma_max=10.0)
     assert amb.status == RE.LabelStatusName.AMBIGUOUS
     assert math.isfinite(amb.value), "ambiguous rows must be retained with a value"
-    thin = RE.build_label([5.0], closure_time=48.0, k_min=2, baseline=0.0)
+    thin = RE.build_label([5.0], closure_time=48.0, k_min=2, sigma_max=10.0)
     assert thin.status == RE.LabelStatusName.CENSORED
+
+
+def test_label_status_is_not_outcome_dependent():
+    """The status must depend on member coverage and spread ONLY -- never on the
+    labelled value or on a physics baseline.
+
+    Predecessor defect (found by review, not by us): status was assigned by
+    `sigma > abs(median - baseline)`, i.e. by comparing the uncertainty to the
+    RESIDUAL. That makes the annotation a function of the quantity under study, so
+    rows with small residuals are preferentially marked ambiguous and any
+    completeness rate computed from the status is biased -- 4-11x inflation of the
+    median target was measured on the stopped research line.
+
+    Two-sided: the same members under a shifted baseline must yield an IDENTICAL
+    status, and the declared ceiling must still be able to produce AMBIGUOUS.
+    """
+    members = [100.0, 103.0, 97.0, 101.0]
+    base = RE.build_label(members, closure_time=1.0, k_min=2, sigma_max=10.0)
+
+    # The residual is the only thing that changes across these; nothing may move.
+    for shifted_baseline in (0.0, 90.0, 100.0, 1e6):
+        offset = [m - shifted_baseline for m in members]
+        got = RE.build_label(offset, closure_time=1.0, k_min=2, sigma_max=10.0)
+        assert got.status == base.status, (
+            f"status moved with the baseline ({shifted_baseline}): "
+            f"{got.status} != {base.status} -- status is outcome-dependent")
+        assert got.sigma == pytest.approx(base.sigma), \
+            "sigma must be translation-invariant"
+
+    # `baseline` must not be reachable at all, or the defect returns via a default.
+    with pytest.raises(TypeError):
+        RE.build_label(members, closure_time=1.0, baseline=90.0)
+
+    # Red path: the declared ceiling, and only it, decides AMBIGUOUS.
+    assert RE.build_label(members, closure_time=1.0, k_min=2,
+                          sigma_max=0.1).status == RE.LabelStatusName.AMBIGUOUS
+    # No declared ceiling => no spread classification is invented.
+    assert RE.build_label([0.0, 500.0], closure_time=1.0, k_min=2,
+                          sigma_max=None).status == RE.LabelStatusName.COMPLETE
+
+
+def test_label_status_never_changes_row_membership():
+    """The status is diagnostic. Every input row must appear in the output
+    population regardless of status, including CENSORED and AMBIGUOUS rows."""
+    rows = [[100.0, 101.0, 99.0],   # tight     -> COMPLETE
+            [0.0, 400.0],           # wide      -> AMBIGUOUS
+            [7.0]]                  # too few   -> CENSORED
+    out = [RE.build_label(r, closure_time=1.0, k_min=2, sigma_max=10.0) for r in rows]
+    assert len(out) == len(rows), "labelling changed the number of rows"
+    assert {o.status for o in out} == {RE.LabelStatusName.COMPLETE,
+                                       RE.LabelStatusName.AMBIGUOUS,
+                                       RE.LabelStatusName.CENSORED}
+    # A censored row still occupies its slot: value is nan, the ROW is not dropped.
+    assert math.isnan(out[2].value) and out[2].n_members == 1
+
+
+def test_scheduler_convergence_over_declared_step_range():
+    """`coarse_step_s` is a solver setting, so its influence must be bounded by
+    measurement over a pre-declared range rather than asserted away.
+
+    Declared range: 10-60 s, i.e. up to `min_pass_s`. Across it the recovered pass
+    extents must agree to within the bisection tolerance, and the count must not
+    change. Also two-sided: a step COARSER than `min_pass_s` is rejected at
+    construction, because a shortest-admissible pass can hide between grid points.
+    """
+    prop = circular_propagator(6878.0, 97.4)
+    declared_steps = (10.0, 15.0, 30.0, 60.0)
+    ref = None
+    for step in declared_steps:
+        cfg = VP.PassFinderConfig(mask_deg=10.0, coarse_step_s=step,
+                                  bisect_tol_s=1.0, min_pass_s=60.0)
+        iv = VP.find_passes(prop, ST, T0, T0 + 86400.0, cfg)
+        assert iv, f"no passes at coarse_step_s={step}"
+        # Every reported boundary is inside the true pass, at every step size.
+        for a, b in iv:
+            el, _, _, _ = VP.look_angles(prop, ST, np.array([a, b]), 1.0)
+            assert el.min() >= cfg.mask_deg - 1e-6, \
+                f"boundary below mask at step {step}"
+        if ref is None:
+            ref = iv
+            continue
+        assert len(iv) == len(ref), \
+            f"pass count changed with the solver step: {len(iv)} vs {len(ref)} at {step}"
+        for (a, b), (ra, rb) in zip(iv, ref):
+            assert abs(a - ra) <= 2 * cfg.bisect_tol_s, \
+                f"entry moved {abs(a - ra):.3f} s at step {step}"
+            assert abs(b - rb) <= 2 * cfg.bisect_tol_s, \
+                f"exit moved {abs(b - rb):.3f} s at step {step}"
+
+    with pytest.raises(ValueError, match="exceeds min_pass_s"):
+        VP.PassFinderConfig(mask_deg=10.0, coarse_step_s=120.0, min_pass_s=60.0)
 
 
 def test_label_closure_precedes_training():
