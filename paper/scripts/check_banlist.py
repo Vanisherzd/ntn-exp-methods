@@ -97,21 +97,30 @@ def _clause_before(text: str, pos: int) -> str:
     return text[start:pos]
 
 
-def _exempt(text: str, pos: int) -> str | None:
+def _exempt(text: str, pos: int, is_manuscript: bool) -> str | None:
     """Return the reason this match is permitted, or None to flag it.
 
     (a) a negation governs it inside its own clause and within the window; or
-    (b) the enclosing paragraph documents the withdrawal itself, which is how CLAIMS.md
-        and the pre-registration notice are allowed to name the claim they retract.
+    (b) DOCS ONLY: the enclosing paragraph documents the withdrawal or lists prohibited
+        claims, which is how CLAIMS.md, the submission README and the pre-registration
+        notice are allowed to name the claim they retract.
+
+    (b) is deliberately unavailable in the manuscript. A self-check found that
+    `fig_contract.tex` contains the figure label \textsc{prohibited} inside a TikZ block
+    with no blank lines, so the whole block counted as a "prohibition context" and would
+    have exempted any withdrawn claim planted in that figure. The manuscript never needs
+    the exemption -- it states its scope under negation -- so it does not get one.
     """
     clause = _clause_before(text, pos)
     if len(clause) <= NEGATION_WINDOW and NEGATION.search(clause):
         return "negated in-clause"
+    if is_manuscript:
+        return None
     para_start = text.rfind("\n\n", 0, pos) + 1
     para_end = text.find("\n\n", pos)
     para = text[para_start:para_end if para_end != -1 else len(text)]
     if re.search(r"withdraw|prohibit|banned|retract", para, re.IGNORECASE):
-        return "withdrawal/prohibition context"
+        return "withdrawal/prohibition context (doc)"
     return None
 
 
@@ -190,7 +199,7 @@ def main() -> int:
         for pat, label in BANNED_PATTERNS + WITHDRAWN_CLAIMS:
             for m in re.finditer(pat, text, flags=re.IGNORECASE):
                 line = text[:m.start()].count("\n") + 1
-                why = _exempt(text, m.start())
+                why = _exempt(text, m.start(), p.suffix in (".tex", ".bib"))
                 if why:
                     exempt.append(f"{rel}:{line}: [{label}] {m.group(0)!r} ({why})")
                     continue
