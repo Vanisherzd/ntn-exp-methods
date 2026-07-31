@@ -27,28 +27,21 @@ import pipelines as P                  # noqa: E402
 MATRIX = ROOT / "evaluation" / "results" / "matrix_result.json"
 OUT = ROOT / "evaluation" / "results" / "final_summary.json"
 
-# Measured L4.7 calibration sweep, recorded here so the paper can cite one artifact.
-# Reproduce with: python evaluation/scripts/calibrate_l47.py
-L47_CALIBRATION = {
-    "nominal_alpha": 0.05,
-    "clean_paths_evaluated": 450,
-    "fixture_seeds": 150,
-    "environments": 3,
-    "measured_clean_false_halt_rate": 0.042,
-    "injected_detection_rate": 1.000,
-    "injected_paths_evaluated": 150,
-    # Size of the DISCARDED fixed-threshold rule, on iid data at eight groups of three.
-    # Cited in the manuscript to justify the permutation null, and still the size of the
-    # construction L4.3 ships -- a disclosed limitation, so it belongs in the artifact.
-    # Reproduce: python evaluation/scripts/calibrate_l47.py
-    "discarded_fixed_threshold_null_size": 0.17,
-    "discarded_fixed_threshold": 0.2,
-    # Wilson score interval (UNCORRECTED) for 19/450. Recorded because the paper
-    # quotes it, and a quoted interval that no artifact carries cannot be checked --
-    # the previous pair mixed the corrected and uncorrected conventions.
-    "clean_false_halt_wilson_95": [0.027, 0.065],
-    "clean_false_halts": 19,
-}
+# Measured L4.7 calibration, READ from the artifact calibrate_l47.py writes -- never
+# transcribed. It was transcribed until 2026-07-31, and a reviewer demonstrated the
+# consequence: an incidental change to the permutation-stream derivation moved the measured
+# false-halt count from 19/450 to 14/450 while `make gate` kept reporting the stale 0.042,
+# because the gate was comparing the paper against this literal rather than against a run.
+# `make matrix` runs calibrate_l47.py before this script, so the file is always current.
+L47_CALIB_PATH = ROOT / "evaluation" / "results" / "l47_calibration.json"
+
+
+def _l47_calibration() -> dict:
+    if not L47_CALIB_PATH.exists():
+        raise SystemExit(
+            f"missing {L47_CALIB_PATH.relative_to(ROOT)} -- run "
+            "evaluation/scripts/calibrate_l47.py (make matrix does this)")
+    return json.loads(L47_CALIB_PATH.read_text())
 
 
 def loc(paths) -> int:
@@ -280,7 +273,7 @@ def main() -> int:
         "detectors_with_red_fixture": len(red),
         "detectors_without_red_fixture": no_red,
         "deterministic_across_environments": d["clean_verdicts_identical_across_envs"],
-        "l47_calibration": L47_CALIBRATION,
+        "l47_calibration": _l47_calibration(),
         # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
         # runtime_s, so this anchor could never match between two runs of the same tree --
         # an integrity checksum that is always different is not an integrity checksum.

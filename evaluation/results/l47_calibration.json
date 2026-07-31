@@ -1,0 +1,21 @@
+{
+ "nominal_alpha": 0.05,
+ "clean_paths_evaluated": 450,
+ "fixture_seeds": 150,
+ "environments": 3,
+ "clean_false_halts": 14,
+ "measured_clean_false_halt_rate": 0.031,
+ "clean_false_halt_wilson_95": [
+  0.018,
+  0.052
+ ],
+ "injected_paths_evaluated": 150,
+ "injected_detection_rate": 1.0,
+ "discarded_fixed_threshold": 0.2,
+ "discarded_fixed_threshold_null_size": 0.17,
+ "discarded_fixed_threshold_null_size_by_groups": {
+  "8": 0.167,
+  "20": 0.064,
+  "96": 0.0
+ }
+}
