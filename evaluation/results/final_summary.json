@@ -17,8 +17,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.407,
- "runtime_ms_per_condition": 26.1,
+ "runtime_seconds": 1.581,
+ "runtime_ms_per_condition": 29.3,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -180,6 +180,35 @@
    "L4.5"
   ]
  },
+ "external_consequence": {
+  "upstream_frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
+  "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+  "detector_unmodified": true,
+  "data_source_status": "CHECKSUM_VERIFIED_MIRROR",
+  "channel": "A-1",
+  "n_seeds": 5,
+  "overlap_original_pct_of_validation_support": 100.0,
+  "overlap_corrected_shared_timesteps": 0,
+  "boundary_windows_dropped": 259,
+  "l41_original": "HALT",
+  "l41_corrected": "PASS",
+  "n_seeds_selection_changed": 5,
+  "detected_original": 3,
+  "detected_corrected": 4,
+  "d_recall_median": 0.0,
+  "d_recall_range": [
+   -1.0,
+   1.0
+  ],
+  "d_recall_signs": {
+   "+": 2,
+   "0": 2,
+   "-": 1
+  },
+  "outcome_class": "B",
+  "outcome_label": "SELECTION-ONLY CONSEQUENCE",
+  "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two in test), so the reported metric is effectively binary and cannot express a small stable shift."
+ },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "e9166369be58373895336cad78d1c0ea1228ad53"
+ "commit": "1feb943febeb03ec96731ad619a5622597bf7152"
 }

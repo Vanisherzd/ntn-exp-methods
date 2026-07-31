@@ -195,6 +195,11 @@ def artifact_values() -> dict[str, str]:
         "ext_indet": str(ex["indeterminate"]),
         "ext_na": str(ex["not_applicable"]),
         "ext_nobs": str(ex["not_observable"]),
+        "cons_seeds": str(s["external_consequence"]["n_seeds"]),
+        "cons_sel_changed": str(s["external_consequence"]["n_seeds_selection_changed"]),
+        "cons_overlap_pct": str(s["external_consequence"]["overlap_original_pct_of_validation_support"]),
+        "cons_det_orig": str(s["external_consequence"]["detected_original"]),
+        "cons_det_corr": str(s["external_consequence"]["detected_corrected"]),
         "lag_records": str(g["n_records"]),
         "lag_object_median_h": str(g["median_lag_h_object_level"]),
         # DELIBERATELY NOT REQUIRED: the record-pooled epoch-ahead percentage, the largest
@@ -267,7 +272,15 @@ def check_artifact_sites(manuscript: str) -> list[str]:
             continue
         seen.add(key)
         got, expect = _norm(rendered), _norm(want[key])
-        if got != expect:
+        # Numeric equality where both sides parse as numbers, so 100 and 100.0 agree. String
+        # comparison still applies to intervals, ratios and spelled-out counts.
+        same = got == expect
+        if not same:
+            try:
+                same = float(got) == float(expect)
+            except ValueError:
+                same = False
+        if not same:
             bad.append(f"ARTIFACT SITE: \\artv{{{key}}} renders {rendered!r} "
                        f"(= {got}) but the artifact says {want[key]!r}")
     for key in sorted(set(want) - seen):
@@ -312,6 +325,16 @@ def main() -> int:
     # Assert instead that the artifact still satisfies the bound the paper states.
     s = json.loads(SUMMARY.read_text())
     ex = s["external_artifact_study"]
+    co = s["external_consequence"]
+    if not co["detector_unmodified"]:
+        bad.append("CONSEQUENCE: the detector hash differs from the pre-registration, so the "
+                   "external-consequence experiment is void")
+    if co["data_source_status"] not in ("CHECKSUM_VERIFIED_MIRROR", "ORIGINAL_SOURCE"):
+        bad.append(f"CONSEQUENCE: data source status is {co['data_source_status']}, not a "
+                   "qualified source")
+    if (co["l41_original"], co["l41_corrected"]) != ("HALT", "PASS"):
+        bad.append(f"CONSEQUENCE: L4.1 went {co['l41_original']} -> {co['l41_corrected']}, not "
+                   "HALT -> PASS, so the intervention did not do what the paper says")
     if not ex["detector_unmodified"]:
         bad.append("EXTERNAL: contract_layers.py sha256 differs from the pre-registration hash "
                    "-- a detector was changed after the external artifact was inspected, which "
@@ -325,9 +348,14 @@ def main() -> int:
     if s["runtime_seconds"] >= 2.0:
         bad.append(f"RUNTIME: artifact reports {s['runtime_seconds']} s, but the "
                    "manuscript claims the sweep runs in under 2 s")
-    if s["runtime_ms_per_condition"] >= 30.0:
+    # 40 ms, not 30. The measured figure ranges about 26-31 ms across runs on the same machine,
+    # so a 30 ms bound is not a bound -- it passed on a quiet machine and failed once the machine
+    # was busy, which the gate caught. A stated bound has to hold under the load the measurement
+    # actually sees, and re-running until a tight bound passes would be tuning a claim to a
+    # measurement rather than the other way round.
+    if s["runtime_ms_per_condition"] >= 40.0:
         bad.append(f"RUNTIME: artifact reports {s['runtime_ms_per_condition']} ms per "
-                   "condition, but the manuscript claims under 30 ms")
+                   "condition, but the manuscript claims under 40 ms")
 
     # The banlist permits citing the labelled-vs-censored SMD observation ONLY with its
     # framing (INVALID_RESULT_BANLIST.md): a stopped pipeline, never a general rate. Grepping

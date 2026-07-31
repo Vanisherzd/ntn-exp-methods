@@ -16,7 +16,9 @@ nineteen-rule table in the artifact. \textbf{Bottom: evidence from outside this 
 frozen \rulename{L4.7} on real Space-Track records under two declared groupings plus a sensitivity
 analysis at a third (protocol pre-registered), and the unmodified contract on one public
 third-party artifact frozen before any rule ran. n/obs is what keeps that honest: the obligation applies but the artifact
-does not expose enough to decide, and is never scored as compliance. Per-rule locations are in the artifact.}
+does not expose enough to decide, and is never scored as compliance. The last block corrects one
+detected halt under a pre-registered intervention with the detector frozen. Per-rule locations and
+the full protocol are in the artifact.}
 \label{tab:rules}
 \centering
 \scriptsize
@@ -47,6 +49,15 @@ accepted; $<$\qty{2}{\second}.}\\
 \multicolumn{6}{@{}l@{}}{\artv{ext_pass}{5} P\quad\artv{ext_halt}{3} H
 (\rulename{L2.4}, \rulename{L4.1}, \rulename{L4.5})\quad\artv{ext_indet}{1}
 I\quad\artv{ext_na}{5} n/a\quad\artv{ext_nobs}{5} n/obs}\\
+\midrule
+\multicolumn{6}{@{}l@{}}{\emph{Correcting one of those halts}, \artv{cons_seeds}{5} paired
+seeds, detector frozen:}\\
+\multicolumn{6}{@{}l@{}}{\quad\rulename{L4.1} H$\rightarrow$P, overlap
+\qty{\artv{cons_overlap_pct}{100}}{\percent}$\rightarrow$0; model selection changed
+\artv{cons_sel_changed}{5}/5}\\
+\multicolumn{6}{@{}l@{}}{\quad reported detection
+\artv{cons_det_orig}{3}/5$\rightarrow$\artv{cons_det_corr}{4}/5, both signs, median 0: no stable
+downstream change}\\
 \bottomrule
 \end{tabular}
 \end{table}

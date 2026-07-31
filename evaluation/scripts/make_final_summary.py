@@ -152,6 +152,44 @@ def _alongtrack() -> dict:
     }
 
 
+CONSEQ_DIR = ROOT / "evaluation" / "external_consequence" / "results"
+
+
+def _external_consequence() -> dict:
+    """Terminal experiment: does the external L4.1 halt change a reported quantity when fixed?"""
+    mech = json.loads((CONSEQ_DIR / "mechanical.json").read_text())
+    pair = json.loads((CONSEQ_DIR / "paired.json").read_text())
+    gate = json.loads((CONSEQ_DIR / "data_gate.json").read_text())
+    o, c = mech["overlap"]["original"], mech["overlap"]["corrected"]
+    det = {a: sum(1 for r in pair["runs"] if r["arm"] == a and r["true_positives"] > 0)
+           for a in ("original", "corrected")}
+    return {
+        "upstream_frozen_commit": mech["upstream_frozen_commit"],
+        "contract_layers_sha256": mech["contract_layers_sha256"],
+        "detector_unmodified": mech["detector_unmodified"],
+        "data_source_status": gate["DATA_SOURCE_STATUS"],
+        "channel": mech["channel"],
+        "n_seeds": len(pair["pairs"]),
+        "overlap_original_pct_of_validation_support": round(
+            o["shared_fraction_of_validation_support"] * 100, 1),
+        "overlap_corrected_shared_timesteps": c["shared_source_timesteps"],
+        "boundary_windows_dropped": c["exclusion_boundary_windows_dropped"],
+        "l41_original": mech["l41_verdict"]["original"]["verdict"],
+        "l41_corrected": mech["l41_verdict"]["corrected"]["verdict"],
+        "n_seeds_selection_changed": pair["n_seeds_selection_changed"],
+        "detected_original": det["original"], "detected_corrected": det["corrected"],
+        "d_recall_median": pair["paired_summary"]["d_recall"]["median"],
+        "d_recall_range": [pair["paired_summary"]["d_recall"]["min"],
+                           pair["paired_summary"]["d_recall"]["max"]],
+        "d_recall_signs": pair["paired_summary"]["d_recall"]["signs"],
+        "outcome_class": "B",
+        "outcome_label": "SELECTION-ONLY CONSEQUENCE",
+        "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two "
+                            "in test), so the reported metric is effectively binary and cannot "
+                            "express a small stable shift.",
+    }
+
+
 def _object_timing() -> dict:
     d = json.loads(TIMING_PATH.read_text())
     return {k: d[k] for k in (
@@ -404,6 +442,7 @@ def main() -> int:
         "real_l47_application": _real_l47(),
         "real_l47_alongtrack": _alongtrack(),
         "external_artifact_study": _external_evidence(),
+        "external_consequence": _external_consequence(),
         # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
         # runtime_s, so this anchor could never match between two runs of the same tree --
         # an integrity checksum that is always different is not an integrity checksum.
