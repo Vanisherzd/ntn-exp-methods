@@ -31,7 +31,7 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 | rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` |
 | sweep runtime | **under 2 s**; under 30 ms per condition (both bounds, both gated) | `runtime_seconds` |
 | toolkit size | 833 lines | `source_loc` |
-| test suite size | 984 lines | `test_suite_loc` |
+| test suite size | 988 lines | `test_suite_loc` |
 | tests | 62 passing | `test_count` |
 <!-- END GENERATED CLAIMS TABLE -->
 

@@ -123,6 +123,35 @@ def _real_l47() -> dict:
     }
 
 
+ALONGTRACK_PATH = ROOT / "evaluation" / "real_data" / "l47_alongtrack.json"
+
+
+def _alongtrack() -> dict:
+    """Analysis D: the along-track observable, added after two reviewers correctly objected that
+    elevation is deterministic given the grouping and so could not test the section I-A(v) claim.
+    """
+    if not ALONGTRACK_PATH.exists():
+        raise SystemExit(f"missing {ALONGTRACK_PATH.relative_to(ROOT)} -- run "
+                         "evaluation/scripts/real_l47_alongtrack.py")
+    d = json.loads(ALONGTRACK_PATH.read_text())
+    m, a = d["manifest"], d["analyses"]
+    keep = ("verdict", "n_units", "n_coarser_groups", "icc", "p_value",
+            "icc_upper_95_one_sided", "icc_truncated_at_zero")
+    return {
+        "contract_layers_sha256": m["contract_layers_sha256"],
+        "observable": m["observable"],
+        "n_passes_used": m["n_passes_used"],
+        "n_passes_dropped_no_successor": m["n_passes_dropped_no_successor"],
+        "n_objects": m["n_objects"], "n_elsets": m["n_elsets"],
+        "intrack_abs_km": m["intrack_abs_km"],
+        "D1_pass_in_elementset": {k: a["D1_pass_in_elementset"].get(k) for k in keep},
+        "D2_pass_in_object": {k: a["D2_pass_in_object"].get(k) for k in keep},
+        "D3_elementset_in_object": {k: a["D3_elementset_in_object"].get(k) for k in keep},
+        "attainability_floor": d["attainability_floor"],
+        "multiplicity": d["multiplicity"],
+    }
+
+
 def _object_timing() -> dict:
     d = json.loads(TIMING_PATH.read_text())
     return {k: d[k] for k in (
@@ -373,6 +402,7 @@ def main() -> int:
         "publication_lag": _publication_lag(),
         "object_level_timing": _object_timing(),
         "real_l47_application": _real_l47(),
+        "real_l47_alongtrack": _alongtrack(),
         "external_artifact_study": _external_evidence(),
         # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
         # runtime_s, so this anchor could never match between two runs of the same tree --

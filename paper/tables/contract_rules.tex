@@ -35,17 +35,13 @@ novelty result:}\\
 accepted; $<$\qty{2}{\second}.}\\
 \midrule
 \multicolumn{6}{@{}l@{}}{\emph{Real catalogue records}, \artv{real_objects}{11} objects,
-\artv{real_elsets}{109} element sets, \artv{real_passes}{331} passes; unit $\rightarrow$ coarser:}\\
-\multicolumn{2}{@{}l}{element set $\rightarrow$ object, publication lag}
-  & \multicolumn{2}{c}{ICC $0.000$} & \multicolumn{2}{c@{}}{P}\\
-\multicolumn{2}{@{}l}{pass $\rightarrow$ element set, elevation}
-  & \multicolumn{2}{c}{ICC $0.000$} & \multicolumn{2}{c@{}}{P}\\
-\multicolumn{2}{@{}l}{pass $\rightarrow$ object, \emph{sensitivity}}
-  & \multicolumn{2}{c}{ICC $0.017$} & \multicolumn{2}{c@{}}{P}\\
-\multicolumn{2}{@{}l}{pass $\rightarrow$ element set, per object}
-  & \multicolumn{2}{c}{ICC $\le0.638$}
-  & \multicolumn{2}{c@{}}{\artv{real_pass}{10}\,P, \artv{real_halt}{1}\,H}\\
-\midrule
+\artv{real_elsets}{109} element sets, \artv{real_passes}{331} passes:}\\
+\multicolumn{2}{@{}l}{pass $\rightarrow$ element set, in-track}
+  & \multicolumn{2}{c}{$\hat{\rho}$ \artv{at_icc_d1}{0.498}} & \multicolumn{2}{c@{}}{H}\\
+\multicolumn{2}{@{}l}{element set $\rightarrow$ object, in-track}
+  & \multicolumn{2}{c}{$\hat{\rho}$ \artv{at_icc_d3}{0.284}} & \multicolumn{2}{c@{}}{H}\\
+\multicolumn{2}{@{}l}{geometric and timing observables}
+  & \multicolumn{2}{c}{$\hat{\rho}\le0.017$} & \multicolumn{2}{c@{}}{P}\\
 \multicolumn{6}{@{}l@{}}{\emph{Third-party artifact}~\cite{hundman2018telemanom},
 \texttt{2e6c5b6c}, \artv{ext_classified}{19} rules, detector \texttt{sha256} unchanged:}\\
 \multicolumn{6}{@{}l@{}}{\artv{ext_pass}{5} P\quad\artv{ext_halt}{3} H

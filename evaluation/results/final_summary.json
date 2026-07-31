@@ -17,12 +17,12 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.391,
- "runtime_ms_per_condition": 25.8,
+ "runtime_seconds": 1.407,
+ "runtime_ms_per_condition": 26.1,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
- "test_suite_loc": 984,
+ "test_suite_loc": 988,
  "test_count": 62,
  "detectors_with_red_fixture": 16,
  "detectors_without_red_fixture": [
@@ -112,6 +112,57 @@
   "B_per_object_n_halt": 1,
   "B_per_object_n_pass": 10
  },
+ "real_l47_alongtrack": {
+  "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+  "observable": "in-track component of the position difference between an element set and its successor, both propagated to the pass midpoint, km. No model is fitted.",
+  "n_passes_used": 269,
+  "n_passes_dropped_no_successor": 59,
+  "n_objects": 11,
+  "n_elsets": 90,
+  "intrack_abs_km": {
+   "median": 0.223,
+   "p90": 19.119,
+   "max": 559.022
+  },
+  "D1_pass_in_elementset": {
+   "verdict": "HALT",
+   "n_units": 269,
+   "n_coarser_groups": 90,
+   "icc": 0.498,
+   "p_value": null,
+   "icc_upper_95_one_sided": 0.636,
+   "icc_truncated_at_zero": false
+  },
+  "D2_pass_in_object": {
+   "verdict": "HALT",
+   "n_units": 269,
+   "n_coarser_groups": 11,
+   "icc": 0.241,
+   "p_value": null,
+   "icc_upper_95_one_sided": 0.306,
+   "icc_truncated_at_zero": false
+  },
+  "D3_elementset_in_object": {
+   "verdict": "HALT",
+   "n_units": 90,
+   "n_coarser_groups": 11,
+   "icc": 0.284,
+   "p_value": null,
+   "icc_upper_95_one_sided": 0.403,
+   "icc_truncated_at_zero": false
+  },
+  "attainability_floor": {
+   "note": "The abstention floor is an ATTAINABILITY precondition, not a power one: below it the nominal level cannot be reached by any permutation reference. The paper previously mislabelled it.",
+   "min_p_3_groups_of_2": 0.0667,
+   "min_p_4_groups_of_2": 0.0095,
+   "alpha": 0.05
+  },
+  "multiplicity": {
+   "n_decisions_in_analyses_A_to_C": 14,
+   "p_at_least_one_halt_under_global_null": 0.512,
+   "note": "Eleven per-object tests plus three pooled. One halt is at chance level under the global null, so the single halt in analyses A-C is not evidence of dependence and the paper must not present it as such."
+  }
+ },
  "external_artifact_study": {
   "repository": "https://github.com/khundman/telemanom",
   "frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
@@ -130,5 +181,5 @@
   ]
  },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "b6e328dd1e9b453b80ea1c0f1f59961b09d54db3"
+ "commit": "e9166369be58373895336cad78d1c0ea1228ad53"
 }
