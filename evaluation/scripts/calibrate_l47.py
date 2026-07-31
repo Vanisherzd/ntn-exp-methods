@@ -70,3 +70,38 @@ def fixed_threshold_null_size(thresh: float = 0.2, k: int = 8, m: int = 3,
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def power_curve(effects=(2.0, 1.0, 0.5, 0.3, 0.2, 0.1, 0.05), n_seeds: int = 40) -> dict:
+    """Detection rate vs the strength of the shared state L4.7 exists to find.
+
+    The suite reported 150/150 injected detection at ONE effect size -- the fixture's, far
+    above the pass-level noise. That is a saturated point, not a power curve, and reporting
+    size without power overstates what is known about the rule.
+
+    The alternative L4.7 targets is dependence that SURVIVES aggregation to the chosen
+    unit: a component shared across units within the next coarser group. Injecting at the
+    unit level instead is the null, and yields zero detection at every effect size -- a
+    mistake worth recording, since it is the same level confusion the rule exists to catch.
+
+    Unit-level values are drawn as (coarser-group effect) + (unit noise, SD 1). No detector,
+    fault or denominator changes.
+    """
+    rng0 = np.random.default_rng(BASE + 5000)
+    out = {}
+    for eff in effects:
+        hits = total = 0
+        for sd in range(n_seeds):
+            rng = np.random.default_rng(BASE + 5000 + sd)
+            n_coarse, per = 8, 3
+            grp = np.repeat(np.arange(n_coarse), per)
+            unit = np.arange(n_coarse * per)
+            shared = rng.normal(0.0, eff, size=n_coarse)
+            vals = shared[grp] + rng.normal(0.0, 1.0, size=grp.size)
+            total += 1
+            try:
+                CL.check_statistical_unit(vals, unit, grp)
+            except CL.ContractViolation:
+                hits += 1
+        out[f"{eff:g}"] = round(hits / total, 3)
+    return out

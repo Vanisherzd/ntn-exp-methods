@@ -1,0 +1,66 @@
+{
+ "source": "dataraw/spacetrack (Space-Track GP records, untracked local data)",
+ "n_records": 63727,
+ "n_satellites": 11,
+ "median_lag_h": 1.68,
+ "frac_over_24h": 0.1366,
+ "frac_epoch_ahead_of_publication": 0.2762,
+ "median_lead_when_ahead_h": 5.12,
+ "per_satellite": {
+  "black_kite_1_66741": {
+   "n": 531,
+   "median_lag_h": 6.44,
+   "frac_epoch_ahead": 0.0
+  },
+  "black_kite_2_68474": {
+   "n": 308,
+   "median_lag_h": 6.75,
+   "frac_epoch_ahead": 0.0
+  },
+  "flock_4h_1_66704": {
+   "n": 749,
+   "median_lag_h": 6.36,
+   "frac_epoch_ahead": 0.0
+  },
+  "flock_4h_2_66705": {
+   "n": 755,
+   "median_lag_h": 6.0,
+   "frac_epoch_ahead": 0.0
+  },
+  "iridium_177_56727": {
+   "n": 3042,
+   "median_lag_h": 6.37,
+   "frac_epoch_ahead": 0.0
+  },
+  "iridium_181_56726": {
+   "n": 3017,
+   "median_lag_h": 6.19,
+   "frac_epoch_ahead": 0.0
+  },
+  "iss_zarya_25544": {
+   "n": 52538,
+   "median_lag_h": 1.03,
+   "frac_epoch_ahead": 0.335
+  },
+  "oneweb_0015_61594": {
+   "n": 1929,
+   "median_lag_h": 5.93,
+   "frac_epoch_ahead": 0.0
+  },
+  "sentinel_6b_66514": {
+   "n": 838,
+   "median_lag_h": 5.81,
+   "frac_epoch_ahead": 0.0
+  },
+  "starlink_37711_100002": {
+   "n": 9,
+   "median_lag_h": 7.82,
+   "frac_epoch_ahead": 0.0
+  },
+  "starlink_38128_100001": {
+   "n": 11,
+   "median_lag_h": 6.63,
+   "frac_epoch_ahead": 0.0
+  }
+ }
+}

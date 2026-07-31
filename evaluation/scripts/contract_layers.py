@@ -19,8 +19,12 @@ evidence of generalisation. That claim has been WITHDRAWN; it does not survive s
   L4.7        its detector was REWRITTEN after its fault's outcome had been recorded
               (the original statistic was uncalibrated), which voids the ordering that
               would have made it held-out evidence.
-  L4.6        the one rule that was specified before its detector existed, injected
-              through the pipeline, and left untouched. n=1 supports nothing general.
+  L4.6        the one rule specified before its detector existed and left untouched. It is
+              NOT injected through the pipeline: `manifest_run_fn` is consumed by this
+              detector alone, like the other check-scoped faults (ARTIFACTS.md). And the
+              general idea is not new -- refuting a declared input closure by perturbing
+              inputs is how reproducible-build tooling detects undeclared dependencies. What
+              is new here is the transfer to ML provenance. n=1 supports nothing general.
 
 This suite therefore measures REPRESENTED-FAULT regression coverage: the rules catch
 the violations the suite contains, and those violations cannot silently return. It does
@@ -353,10 +357,20 @@ def check_provenance_hashes(manifest: Mapping[str, Any]) -> None:
 def check_provenance_completeness(
         run_fn: Callable[[Mapping[str, Any]], tuple[Any, Mapping[str, Any]]],
         input_variations: Sequence[Mapping[str, Any]]) -> None:
-    """L4.6 -- general rule. No predecessor detector of any kind existed for this
-    proposition, and this rule was not edited after its fault's outcome was recorded.
-    It is the only rule in the suite for which both hold; one case supports no claim
-    about faults the suite does not contain.
+    """L4.6 -- general rule, not edited after its fault's outcome was recorded. It is the only
+    rule in the suite for which that holds, and one case supports no claim about faults the
+    suite does not contain.
+
+    "No predecessor detector of any kind" was claimed here and is too strong: refuting a
+    declared input closure by perturbing inputs and watching the output move is how
+    reproducible-build tooling finds undeclared dependencies. The transfer to ML provenance
+    is what is new, not the asymmetry itself.
+
+    LIMIT, and it is the important one: all the power lives in `input_variations`, which the
+    caller supplies. This refutes a manifest omitting an input someone already suspected. The
+    input nobody thought of is absent from the sweep by construction, so a clean result here
+    is not evidence of completeness. The non-circular form perturbs the environment blanketly
+    rather than enumerating suspects.
 
     Differential test: run under each variation, collect (output_digest, manifest_hash).
     If two variations produce DIFFERENT outputs under the SAME manifest hash, the

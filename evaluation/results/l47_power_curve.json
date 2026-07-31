@@ -1,0 +1,41 @@
+{
+ "design": "8 coarser groups of 3 units, unit noise SD 1.0, alpha 0.05, 400 permutations",
+ "note": "power decays to the nominal size below ICC ~0.1; the suite's single injected point sits at ICC ~0.8, which is saturated and says nothing about this regime",
+ "curve": [
+  {
+   "effect_sd": 2.0,
+   "icc": 0.8,
+   "detection_rate": 1.0
+  },
+  {
+   "effect_sd": 1.0,
+   "icc": 0.5,
+   "detection_rate": 0.8
+  },
+  {
+   "effect_sd": 0.5,
+   "icc": 0.2,
+   "detection_rate": 0.275
+  },
+  {
+   "effect_sd": 0.3,
+   "icc": 0.083,
+   "detection_rate": 0.05
+  },
+  {
+   "effect_sd": 0.2,
+   "icc": 0.038,
+   "detection_rate": 0.05
+  },
+  {
+   "effect_sd": 0.1,
+   "icc": 0.01,
+   "detection_rate": 0.05
+  },
+  {
+   "effect_sd": 0.05,
+   "icc": 0.002,
+   "detection_rate": 0.05
+  }
+ ]
+}

@@ -36,9 +36,13 @@ establish and that we therefore check \emph{relationally}: whether a provenance 
 complete, decided by differing outputs under an identical manifest hash rather than by
 inspection; and whether the chosen statistical unit is the exchangeable one, decided against a
 permutation reference with an explicit \textsc{indeterminate} outcome when the design cannot
-support the test. The statistical-unit rule is the one component with a measured operating
-characteristic: a false-halt rate of $0.042$ (Wilson $[0.027,0.065]$) against a nominal $0.05$
-over \num{450} clean designs. A curated seventeen-fault regression suite exercises the surrounding
+support the test. The statistical-unit rule is the one component whose error rates we measure rather than
+assume. Its false-halt rate is $0.042$ (Wilson $[0.027,0.065]$) against a nominal $0.05$ over
+\num{450} clean replicates---a confirmation that the permutation reference is implemented
+correctly, since on an exchangeable fixture that size holds by construction. Its power is the
+more informative half and the less flattering: detection is $1.00$ at intraclass correlation
+$0.8$, $0.80$ at $0.5$, $0.28$ at $0.2$, and indistinguishable from the false-halt rate below
+about $0.1$. The rule finds gross unit errors and misses subtle ones. A curated seventeen-fault regression suite exercises the surrounding
 contract in under \qty{2}{\second}, and we report it as represented-fault coverage: it establishes
 that these violations cannot silently return, not completeness, not generalisation to faults the
 suite lacks, and no radio-frequency or learned-method performance claim.
@@ -157,7 +161,7 @@ value, uncertainty or closure time, but never whether a row exists---violations 
 rows dropped when a later reference fails to appear, rows created when a schedule's extent comes
 from the data on hand rather than a declaration.
 
-\emph{Label closure.} A retrospective label becomes usable only at a closure time $t_c$.
+\emph{Label closure} (\S\ref{sec:whysat}\,iv). A retrospective label becomes usable only at a closure time $t_c$.
 Its use before $t_c$ is an ordering violation and \emph{is} caught by a split---one of the
 two classes in our suite for which that holds, drawn dotted in Fig.~\ref{fig:contract} for
 contrast. The harder failure is when the \emph{probability} of a label existing depends on
@@ -371,45 +375,45 @@ state: the tracker's update was chronologically forward at every step and still 
 the same hand, so $17/17$ measures detector \emph{reachability}---a fixture written to trip rule
 $X$ trips rule $X$---not mutation adequacy~\cite{jia2011mutation}, and hand-authored mutants are
 known to overstate suite strength~\cite{just2014mutants}. Only one fault was specified before any
-detector for it existed and left untouched afterwards, far too few to support a claim about faults
-the suite lacks, so we make none. What it establishes is regression coverage of \emph{represented}
-faults: these violations, once fixed, cannot silently return. Nor is the ratio a
-sensitivity---the denominator is curated, not a sample from a natural fault distribution.
+detector for it existed, far too few to support a claim about faults the suite lacks, so we make
+none. What it establishes is regression coverage of \emph{represented} faults: these violations,
+once fixed, cannot silently return. The denominator is curated, not sampled, so the ratio is not a
+sensitivity.
 
-\emph{Injection is at contract-input level, and the fixtures are check-scoped.} Each fault selects a
-pre-shaped input rather than mutating pipeline source, and the fixtures hand every rule its own
-input attribute: of the seventeen mutated objects only six reach more than one consumer. For the
-other eleven the mutated object is consumed by its own detector alone, so those conditions show a
-rule firing when handed a broken input rather than catching a defect in a working pipeline. This is
-the sharpest limit on the evaluation, and why $17/17$ is stated as regression coverage. \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} fire in no condition at all, which
-by our own standard is not evidence they \emph{can} fail. And \rulename{L4.3} still decides by a
-fixed correlation threshold gated on a self-reported aggregation flag---the uncalibrated
-construction we corrected in \rulename{L4.7}. Its null size depends on group structure: $0.00$ at
-this fixture's ninety-six groups, $0.17$ at eight groups of three. We disclose it rather than
-repair it, because editing a detector after its outcome is known is precisely what voided the
-standing of \rulename{L4.7}'s own result.
+\emph{Injection is at contract-input level.} The fixtures hand every rule its own input attribute:
+of the seventeen mutated objects only six reach more than one consumer, so for the other eleven a
+condition shows a rule firing on a broken input rather than catching a defect in a working
+pipeline. This is the sharpest limit on the evaluation. \rulename{L2.2}, \rulename{L2.3} and
+\rulename{L4.5} fire in no condition at all, which by our own standard is not evidence they
+\emph{can} fail.
 
-\emph{Two objects the contract names but does not check.} Covariate-coupled label availability is
-called the harder failure in the threat model, yet no rule detects it. It was found by an
+\emph{Three rules are weaker than their statement.} \rulename{L4.6} draws its power from the input
+variations the caller supplies, so it refutes a manifest omitting an input already suspected; the
+input nobody thought of is absent from the sweep by construction, and the non-circular form
+perturbs the environment blanketly, as reproducible-build tooling does. \rulename{L4.3} is gated on
+a self-reported aggregation flag, so a pipeline declaring it aggregated silences the rule---closer
+to inert than uncalibrated---and it still uses the fixed threshold whose null size we measured at
+$0.17$. And \rulename{L4.7}, though size-controlled, has power only against gross unit errors.
+
+\emph{Three objects the contract names but does not check.} Covariate-coupled label availability,
+called the harder failure in \S\ref{sec:whysat}, has no rule and no fault: it was found by an
 \emph{ad hoc} thresholded diagnostic---a standardised mean difference between labelled and censored
-rows on pre-decision covariates, which fired on the study covariate in the stopped pipeline of
-\S\ref{sec:cases} and is recorded in the archived audit---never promoted to a rule, so it has no
-identifier and no red fixture.
-And three availability premises are declared rather than checked. $t_d$ itself: every L1 rule is
-conditional on it, yet under periodic provisioning the defensible $t_d$ is the refresh instant, and
-declaring the transmission instant lets every availability check pass while admitting a refresh
-interval of unheld state. Epoch~$\le$~publication: an assumption, not an invariant, since sets
-fitted to predicted ephemerides can carry epochs ahead of their creation time---a twentieth rule we
-do not have. And the classic two-line format carries no publication field at all, so on most
-archived public data \rulename{L1.2} is unauditable rather than satisfied.
+rows on pre-decision covariates, which fired in the stopped pipeline of \S\ref{sec:cases} and is
+recorded in the archived audit---never promoted, so it has no identifier and no red fixture. $t_d$
+is declared, not checked: under periodic provisioning the defensible $t_d$ is the refresh instant,
+and declaring the transmission instant lets every availability check pass while admitting a refresh
+interval of unheld state. Epoch~$\le$~publication is not merely unchecked but often false---across
+the \num{63727} catalogue records used here the epoch leads publication in \qty{27.6}{\percent} of
+cases, by a median of \qty{5.1}{\hour}, concentrated in one object.
 
 \emph{The axes of variation are narrow.} Both fixtures come from this programme, so reuse across
 independent projects is argued rather than demonstrated, and the environments differ in generator
 family alone. No radio-frequency, packet-level, deployed-system or learned-method result is
-established here. Nor is the contract complete: it covers six protected objects we found
-necessary. Fault diversity in particular matters, and a regression suite protects exactly what it
-represents: showing that a rule catches defects nobody anticipated needs faults authored
-independently of the detectors and injected at program level.
+established here; the fixtures exercise rules, they do not simulate. Nor is the contract complete:
+six protected objects is what we found necessary. Fault diversity in particular matters---a
+regression suite protects exactly what it represents, and showing that a rule catches defects
+nobody anticipated needs faults authored independently of the detectors and injected at program
+level.
 
 What the evidence supports is narrow and, we think, useful. Chronological splitting addresses
 ordering and only ordering, and the fifteen classes it misses here are ordinary consequences of two
