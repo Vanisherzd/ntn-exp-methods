@@ -150,32 +150,99 @@ def _digit_or_word(n: int) -> str:
     return "|".join(alts)
 
 
-def artifact_numbers() -> list[tuple[str, str]]:
-    """Headline values the manuscript must quote, read from the summary artifact."""
+def _norm(rendered: str) -> str:
+    r"""Reduce a rendered LaTeX value to a comparable string.
+
+    Strips \num{}, thin spaces and whitespace, and maps a spelled-out count to its digits,
+    so `\num{450}`, `450` and `four hundred and fifty` all compare equal to 450.
+    """
+    s = re.sub(r"\\num\{([^}]*)\}", r"\1", rendered)
+    s = s.replace(r"\,", "").replace(r"\%", "%")
+    s = re.sub(r"\s+", "", s).strip()
+    low = s.lower().rstrip(".")
+    for n, w in _WORDS.items():
+        if low == w:
+            return str(n)
+    return s
+
+
+def artifact_values() -> dict[str, str]:
+    """key -> the value the manuscript must render at the \artv site carrying that key.
+
+    Read from the summary artifact, never typed here.
+    """
     s = json.loads(SUMMARY.read_text())
     n, c = s["fault_class_count"], s["l47_calibration"]
-    return [
-        (_digit_or_word(s["rule_count"]), f"rule_count={s['rule_count']}"),
-        (rf"{s['chronological_detected_count']}\s*/\s*{n}",
-         f"baseline {s['chronological_detected_count']}/{n}"),
-        (rf"{s['contract_detected_count']}\s*/\s*{n}",
-         f"contract {s['contract_detected_count']}/{n}"),
-        (rf"{s['injected_cell_count']}\s*/\s*{s['injected_cell_count']}",
-         f"injected cells {s['injected_cell_count']}/{s['injected_cell_count']}"),
-        (rf"num\{{{s['source_loc']}\}}|\b{s['source_loc']} lines\b",
-         f"source_loc={s['source_loc']}"),
-        (re.escape(str(c["measured_clean_false_halt_rate"])),
-         "L4.7 measured clean false-halt rate"),
-        (re.escape(str(c["nominal_alpha"])), "L4.7 nominal alpha"),
-        (_digit_or_word(c["clean_paths_evaluated"]),
-         f"L4.7 clean paths={c['clean_paths_evaluated']}"),
-        (_digit_or_word(c["clean_false_halts"]), f"L4.7 false halts={c['clean_false_halts']}"),
-        # A quoted confidence interval must come from the artifact like everything else.
-        (re.escape(f"[{c['clean_false_halt_wilson_95'][0]},{c['clean_false_halt_wilson_95'][1]}]").replace(r"\,", r",\s*"),
-         f"L4.7 Wilson interval {c['clean_false_halt_wilson_95']}"),
-        (_digit_or_word(s["detectors_with_red_fixture"]),
-         f"detectors_with_red_fixture={s['detectors_with_red_fixture']}"),
-    ]
+    lo, hi = c["clean_false_halt_wilson_95"]
+    return {
+        "rule_count": str(s["rule_count"]),
+        "fault_class_count": str(n),
+        "chronological": f"{s['chronological_detected_count']}/{n}",
+        "contract": f"{s['contract_detected_count']}/{n}",
+        "injected_cells": f"{s['injected_cell_count']}/{s['injected_cell_count']}",
+        "source_loc": str(s["source_loc"]),
+        "red_fixture": str(s["detectors_with_red_fixture"]),
+        "l47_clean_paths": str(c["clean_paths_evaluated"]),
+        "l47_false_halts": str(c["clean_false_halts"]),
+        "l47_rate": str(c["measured_clean_false_halt_rate"]),
+        "l47_alpha": str(c["nominal_alpha"]),
+        "l47_wilson": f"[{lo},{hi}]",
+    }
+
+
+# \artv{key}{rendered}. The rendered argument may itself contain braces (\num{450}), so
+# match one level of nesting rather than [^}]*.
+_ARTV = re.compile(r"\\artv\{([a-z0-9_]+)\}\{((?:[^{}]|\{[^{}]*\})*)\}")
+
+
+def _strip_tex_comments(tex: str) -> str:
+    """Drop % comments, keeping escaped \% intact."""
+    out = []
+    for line in tex.splitlines():
+        i, n = 0, len(line)
+        while i < n:
+            if line[i] == "\\" and i + 1 < n:
+                i += 2
+                continue
+            if line[i] == "%":
+                line = line[:i]
+                break
+            i += 1
+        out.append(line)
+    return "\n".join(out)
+
+
+def check_artifact_sites(manuscript: str) -> list[str]:
+    """Assert every headline number AGREES with the artifact at its own claim site.
+
+    This replaced a required-PRESENCE check that asked only whether the artifact's value
+    appeared somewhere in the sources. A reviewer defeated that twice in one sitting: the
+    count 17 was satisfied by the seventeen fault classes regardless of what it was meant to
+    report, and after the measured false-halt rate moved to 0.038 the check still passed
+    because Fig. 2 contains the ICC coordinate (0.038,0.05). A number is bound to the
+    sentence that claims it, or it is not bound.
+    """
+    want = artifact_values()
+    bad: list[str] = []
+    seen: set[str] = set()
+    # Commented-out text is not a claim. Without this the gate matched the preamble comment
+    # that documents the \artv convention and reported its literal placeholder as a bad key.
+    manuscript = _strip_tex_comments(manuscript)
+    for m in _ARTV.finditer(manuscript):
+        key, rendered = m.group(1), m.group(2)
+        if key not in want:
+            bad.append(f"ARTIFACT SITE: \\artv{{{key}}} names no artifact field; "
+                       f"expected one of {sorted(want)}")
+            continue
+        seen.add(key)
+        got, expect = _norm(rendered), _norm(want[key])
+        if got != expect:
+            bad.append(f"ARTIFACT SITE: \\artv{{{key}}} renders {rendered!r} "
+                       f"(= {got}) but the artifact says {want[key]!r}")
+    for key in sorted(set(want) - seen):
+        bad.append(f"ARTIFACT SITE: no \\artv{{{key}}} anywhere in the manuscript -- "
+                   f"the artifact reports {want[key]!r} and nothing claims it")
+    return bad
 
 
 def main() -> int:
@@ -239,10 +306,7 @@ def main() -> int:
     # scans above plus the runtime bound).
     manuscript = "\n".join(p.read_text() for p in srcs
                            if p.suffix == ".tex" or p.suffix == ".bib")
-    for pat, label in artifact_numbers():
-        if not re.search(pat, manuscript):
-            bad.append(f"MISSING: [{label}] nothing matches {pat!r} -- the manuscript "
-                       "does not quote the current artifact value")
+    bad += check_artifact_sites(manuscript)
 
     if bad:
         print("BANLIST / CLAIM GATE VIOLATION -- build refused:")
@@ -253,7 +317,7 @@ def main() -> int:
         print(f"  permitted: {e}")
     print(f"check_banlist: {len(srcs)} file(s) clean; {len(BANNED_PATTERNS)} banned + "
           f"{len(WITHDRAWN_CLAIMS)} withdrawn patterns, "
-          f"{len(artifact_numbers())} artifact numbers bound to the artifact, "
+          f"{len(artifact_values())} artifact numbers bound at named claim sites, "
           f"{len(exempt)} permitted mention(s)")
     return 0
 

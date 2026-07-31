@@ -106,7 +106,7 @@ def test_gate_passes_on_the_committed_tree(repo):
     assert r.returncode == 0, r.stdout + r.stderr
     # Legitimate mentions are permitted AND reported, never silently dropped.
     assert "permitted:" in r.stdout
-    assert "artifact numbers bound to the artifact" in r.stdout
+    assert "artifact numbers bound at named claim sites" in r.stdout
 
 
 # ---------------------------------------------------------------- withdrawn claims
@@ -181,7 +181,64 @@ def test_rejects_an_artifact_value_the_manuscript_does_not_quote(repo, field, va
     _drift(repo, field, value)
     r = _gate(repo)
     assert r.returncode != 0, f"{field}={value} accepted:\n{r.stdout}"
-    assert "MISSING" in r.stdout
+    assert "ARTIFACT SITE" in r.stdout
+
+
+def _drift_l47(repo: Path, field: str, value) -> None:
+    p = repo / SUMMARY
+    s = json.loads(p.read_text())
+    s["l47_calibration"][field] = value
+    p.write_text(json.dumps(s, indent=1))
+
+
+@pytest.mark.parametrize("field,value", [
+    ("clean_false_halts", 17),
+    ("measured_clean_false_halt_rate", 0.038),
+    ("clean_false_halt_wilson_95", [0.027, 0.065]),
+    ("clean_paths_evaluated", 900),
+    ("nominal_alpha", 0.01),
+])
+def test_rejects_a_drifted_l47_calibration_value(repo, field, value):
+    """The operating characteristic was outside the gate entirely.
+
+    Its numbers were hand-typed literals in make_final_summary.py, so the gate compared the
+    paper against a transcription; a reviewer moved the measured false-halt count 19 -> 14 by
+    rederiving the permutation stream and `make gate` kept reporting the stale 0.042. The
+    rate 0.038 is in this list for a second reason: under the old required-presence check it
+    passed even once the artifact carried it, because Fig. 2 contains the ICC coordinate
+    (0.038,0.05) and presence anywhere counted as agreement.
+    """
+    _drift_l47(repo, field, value)
+    r = _gate(repo)
+    assert r.returncode != 0, f"l47 {field}={value} accepted:\n{r.stdout}"
+    assert "ARTIFACT SITE" in r.stdout
+
+
+@pytest.mark.parametrize("old,new", [
+    (r"\artv{l47_wilson}{[0.018,0.052]}", r"\artv{l47_wilson}{[0.027,0.065]}"),
+    (r"\artv{chronological}{2/17}", r"\artv{chronological}{3/17}"),
+    (r"\artv{l47_rate}{0.031}", r"\artv{l47_rate}{0.042}"),
+])
+def test_rejects_a_manuscript_number_that_drifts_from_the_artifact(repo, old, new):
+    """The other direction, which required-presence could not express at all: the artifact is
+    correct and the PAPER is wrong."""
+    p = repo / "paper/icc_main.tex"
+    t = p.read_text()
+    assert old in t, f"claim site {old!r} not present"
+    p.write_text(t.replace(old, new))
+    r = _gate(repo)
+    assert r.returncode != 0, f"manuscript drift {new!r} accepted:\n{r.stdout}"
+    assert "ARTIFACT SITE" in r.stdout
+
+
+def test_rejects_dropping_a_claim_site(repo):
+    """A headline number must be CLAIMED, not merely consistent. Deleting the sentence that
+    reports it is a way to make the gate vacuous."""
+    p = repo / "paper/icc_main.tex"
+    t = p.read_text()
+    p.write_text(t.replace(r"\artv{contract}{17/17}", "17/17"))
+    r = _gate(repo)
+    assert r.returncode != 0 and "no \\artv{contract}" in r.stdout, r.stdout
 
 
 def test_rejects_a_runtime_that_breaks_the_stated_bound(repo):
