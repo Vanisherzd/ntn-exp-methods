@@ -174,7 +174,13 @@ def artifact_values() -> dict[str, str]:
     s = json.loads(SUMMARY.read_text())
     n, c = s["fault_class_count"], s["l47_calibration"]
     lo, hi = c["clean_false_halt_wilson_95"]
+    g = s["publication_lag"]
     return {
+        "lag_records": str(g["n_records"]),
+        "lag_pooled_epoch_ahead_pct": f"{g['frac_epoch_ahead_record_pooled'] * 100:.1f}",
+        "lag_largest_object_share_pct": f"{g['largest_object_record_share'] * 100:.0f}",
+        "lag_object_median_h": str(g["median_lag_h_object_level"]),
+        "lag_pooled_median_h": str(g["median_lag_h_record_pooled"]),
         "rule_count": str(s["rule_count"]),
         "fault_class_count": str(n),
         "chronological": f"{s['chronological_detected_count']}/{n}",

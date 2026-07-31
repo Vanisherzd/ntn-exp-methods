@@ -36,6 +36,34 @@ OUT = ROOT / "evaluation" / "results" / "final_summary.json"
 L47_CALIB_PATH = ROOT / "evaluation" / "results" / "l47_calibration.json"
 
 
+# Object-level view of the committed publication-lag measurement. The manuscript quoted only
+# the record-pooled figures until a satellite reviewer pointed out they are the wrong unit by the
+# paper's own L4.7 argument: one object supplies 82% of the 63,727 records, and it is the only
+# object where the epoch ever leads publication. Derived here rather than re-measured -- same
+# artifact, correct unit -- so the numbers the paper now quotes are gated like every other.
+PUB_LAG_PATH = ROOT / "evaluation" / "results" / "publication_lag.json"
+
+
+def _publication_lag() -> dict:
+    d = json.loads(PUB_LAG_PATH.read_text())
+    per = d["per_satellite"]
+    meds = sorted(v["median_lag_h"] for v in per.values())
+    mid = len(meds) // 2
+    obj_median = meds[mid] if len(meds) % 2 else (meds[mid - 1] + meds[mid]) / 2.0
+    ahead = [v["frac_epoch_ahead"] for v in per.values()]
+    top = max(per.values(), key=lambda v: v["n"])
+    return {
+        "n_records": d["n_records"],
+        "n_objects": d["n_satellites"],
+        "median_lag_h_record_pooled": d["median_lag_h"],
+        "median_lag_h_object_level": round(obj_median, 2),
+        "all_object_medians_positive": all(m > 0 for m in meds),
+        "frac_epoch_ahead_record_pooled": d["frac_epoch_ahead_of_publication"],
+        "n_objects_with_epoch_ahead": sum(1 for a in ahead if a > 0),
+        "largest_object_record_share": round(top["n"] / d["n_records"], 3),
+    }
+
+
 def _l47_calibration() -> dict:
     if not L47_CALIB_PATH.exists():
         raise SystemExit(
@@ -274,6 +302,7 @@ def main() -> int:
         "detectors_without_red_fixture": no_red,
         "deterministic_across_environments": d["clean_verdicts_identical_across_envs"],
         "l47_calibration": _l47_calibration(),
+        "publication_lag": _publication_lag(),
         # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
         # runtime_s, so this anchor could never match between two runs of the same tree --
         # an integrity checksum that is always different is not an integrity checksum.
