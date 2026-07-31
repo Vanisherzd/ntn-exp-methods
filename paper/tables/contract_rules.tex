@@ -1,37 +1,28 @@
-% Table I -- contract rules
-% Included by paper/icc_main.tex via \input.
-% The Evidence column must agree with detectors_with_red_fixture /
-% detectors_without_red_fixture in evaluation/results/final_summary.json.
+% Table I -- compact rule map. The full nineteen-row table lives in the artifact.
+% Counts must agree with final_summary.json: 19 rules, 16 with a red fixture,
+% detectors_without_red_fixture = L2.2, L2.3, L4.5.
 %
-% LAYOUT NOTE. Laid out as two side-by-side blocks of rules rather than one 19-row list:
-% as a single column of rows this table plus Fig. 1 left its page ~70 % float, and the
-% paper does not have the budget. Concrete violation instances are not repeated here --
-% Fig. 2 names all seventeen by row -- and the full mechanical check for every rule is in
-% the artifact's rule_table().
-\begin{table*}[!t]
-\caption{The nineteen rules and what is demonstrated for each. $\bullet$ marks the six that
-protect a protected object directly; the rest are the layers those obligations need to be
-checkable. \textbf{clean\,+\,red} = a passing clean-path test \emph{and} a broken fixture on which
-the rule fails; \textbf{clean only} = implemented and clean-path-exercised but tripped by no fault
-here. $^{\dagger}$\rulename{L4.7} also abstains below its declared minimum group structure.}
+% LAYOUT NOTE. Compressed from a 19-row full-width table once the taxonomy stopped being the
+% novelty centre: it was the largest object in a six-page paper describing the least novel
+% part of the work.
+\begin{table}[!t]
+\caption{The contract by layer. \textbf{Core} obligations enforce a protected object or a
+relational invariant; \textbf{support} rules make the experiment auditable and block known-invalid
+states---we do not claim all nineteen follow from deployment causality. Sixteen of nineteen have a
+demonstrated red fixture; \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} do not, and are
+exercised only on the clean path. \rulename{L4.3} is a cheap self-reported guard;
+\rulename{L4.7} is the calibrated decision. Outcomes: P \textsc{pass}, H \textsc{halt}, L label-and-retain, I \textsc{indeterminate}. Full nineteen-rule table in the artifact.}
 \label{tab:rules}
 \centering
 \scriptsize
-\begin{tabular}{@{}lll@{\hspace{7mm}}lll@{}}
+\begin{tabular}{@{}llcccc@{}}
 \toprule
-\textbf{Rule} & \textbf{Protected object} & \textbf{Evidence} &
-\textbf{Rule} & \textbf{Protected object} & \textbf{Evidence}\\
+& \textbf{obligation} & \textbf{kind} & \textbf{rules} & \textbf{red} & \textbf{outcome}\\
 \midrule
-$\bullet$\,\rulename{L1.1} & feature availability   & clean\,+\,red & \rulename{L3.2} & canary effectiveness    & clean\,+\,red \\
-$\bullet$\,\rulename{L1.2} & availability clock     & clean\,+\,red & \rulename{L3.3} & negative control        & clean\,+\,red \\
-$\bullet$\,\rulename{L1.3} & label closure          & clean\,+\,red & \rulename{L4.1} & fold chronology         & clean\,+\,red \\
-$\bullet$\,\rulename{L1.4} & row membership         & clean\,+\,red & \rulename{L4.2} & paired randomness       & clean\,+\,red \\
-\rulename{L1.5} & comparison boundary    & clean\,+\,red & \rulename{L4.3} & repeated measures       & clean\,+\,red \\
-\rulename{L2.1} & sampling geometry      & clean\,+\,red & \rulename{L4.4} & seed hygiene            & clean\,+\,red \\
-\rulename{L2.2} & physical scale         & clean only    & \rulename{L4.5} & provenance hashes       & clean only \\
-\rulename{L2.3} & hidden state           & clean only    & \rulename{L4.6} & provenance completeness & clean\,+\,red \\
-\rulename{L2.4} & declared relation      & clean\,+\,red & $\bullet$\,\rulename{L4.7} & statistical unit        & clean\,+\,red$^{\dagger}$ \\
-$\bullet$\,\rulename{L3.1} & state channels         & clean\,+\,red & & & \\
+\rulename{L1} & availability, closure, membership & core    & 5 & 5 & H \\
+\rulename{L2} & physical, scheduling support     & support & 4 & 2 & H, L \\
+\rulename{L3} & state causality                   & core    & 3 & 3 & H \\
+\rulename{L4} & reproducibility and unit          & mixed   & 7 & 6 & P, H, I \\
 \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
