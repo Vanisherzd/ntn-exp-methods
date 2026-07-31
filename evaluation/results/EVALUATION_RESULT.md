@@ -33,8 +33,8 @@ so they are not independent systems or populations.
 | clean verdicts identical across environments | **True** |
 | rules with a demonstrated red fixture | **16/19** |
 | rules with no red fixture | L2.2, L2.3, L4.5 |
-| total runtime | 1.599 s (claim: under 2 s) |
-| per-condition runtime | 29.6 ms |
+| total runtime | 1.545 s (claim: under 3 s) |
+| per-condition runtime | 28.6 ms |
 | toolkit source lines | 833 |
 | test suite lines | 988 |
 

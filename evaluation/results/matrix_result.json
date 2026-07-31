@@ -13,8 +13,8 @@
  "high_severity_detection": "33/33",
  "late_specified_detection": "12/12",
  "false_negatives": [],
- "total_runtime_s": 1.599,
- "mean_runtime_per_condition_s": 0.0296,
+ "total_runtime_s": 1.545,
+ "mean_runtime_per_condition_s": 0.0286,
  "per_fault": {
   "D1": {
    "expected": "L1.1",
@@ -228,7 +228,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0429
+   "runtime_s": 0.0403
   },
   {
    "env": "E1",
@@ -241,7 +241,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0401
+   "runtime_s": 0.0441
   },
   {
    "env": "E1",
@@ -254,7 +254,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0436
+   "runtime_s": 0.042
   },
   {
    "env": "E1",
@@ -267,7 +267,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0419
+   "runtime_s": 0.0374
   },
   {
    "env": "E1",
@@ -280,7 +280,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0275
+   "runtime_s": 0.0367
   },
   {
    "env": "E1",
@@ -295,7 +295,7 @@
     "B3"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0281
+   "runtime_s": 0.0261
   },
   {
    "env": "E1",
@@ -311,7 +311,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0281
+   "runtime_s": 0.0261
   },
   {
    "env": "E1",
@@ -324,7 +324,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0255
+   "runtime_s": 0.0247
   },
   {
    "env": "E1",
@@ -353,7 +353,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0262
+   "runtime_s": 0.0246
   },
   {
    "env": "E1",
@@ -369,7 +369,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0267
+   "runtime_s": 0.0245
   },
   {
    "env": "E1",
@@ -378,35 +378,6 @@
     "L4.3"
    ],
    "expected": "L4.3",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0258
-  },
-  {
-   "env": "E1",
-   "fault": "D13",
-   "fired": [
-    "L4.1"
-   ],
-   "expected": "L4.1",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [
-    "B1",
-    "B2"
-   ],
-   "baseline_detected": true,
-   "runtime_s": 0.0252
-  },
-  {
-   "env": "E1",
-   "fault": "D14",
-   "fired": [
-    "L4.4"
-   ],
-   "expected": "L4.4",
    "detected": true,
    "extra": [],
    "baseline_fired": [],
@@ -415,6 +386,35 @@
   },
   {
    "env": "E1",
+   "fault": "D13",
+   "fired": [
+    "L4.1"
+   ],
+   "expected": "L4.1",
+   "detected": true,
+   "extra": [],
+   "baseline_fired": [
+    "B1",
+    "B2"
+   ],
+   "baseline_detected": true,
+   "runtime_s": 0.0247
+  },
+  {
+   "env": "E1",
+   "fault": "D14",
+   "fired": [
+    "L4.4"
+   ],
+   "expected": "L4.4",
+   "detected": true,
+   "extra": [],
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0247
+  },
+  {
+   "env": "E1",
    "fault": "HO1",
    "fired": [
     "L1.5"
@@ -424,7 +424,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0257
+   "runtime_s": 0.0251
   },
   {
    "env": "E1",
@@ -437,7 +437,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0258
+   "runtime_s": 0.0245
   },
   {
    "env": "E1",
@@ -450,7 +450,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0609
+   "runtime_s": 0.0598
   },
   {
    "env": "E1",
@@ -463,7 +463,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0257
+   "runtime_s": 0.0265
   },
   {
    "env": "E2",
@@ -474,7 +474,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0256
+   "runtime_s": 0.0293
   },
   {
    "env": "E2",
@@ -487,7 +487,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0255
+   "runtime_s": 0.0257
   },
   {
    "env": "E2",
@@ -500,7 +500,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0249
+   "runtime_s": 0.0255
   },
   {
    "env": "E2",
@@ -513,7 +513,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0255
+   "runtime_s": 0.0248
   },
   {
    "env": "E2",
@@ -526,7 +526,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0275
+   "runtime_s": 0.025
   },
   {
    "env": "E2",
@@ -541,69 +541,11 @@
     "B3"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0249
+   "runtime_s": 0.0246
   },
   {
    "env": "E2",
    "fault": "D6",
-   "fired": [
-    "L3.1",
-    "L3.2"
-   ],
-   "expected": "L3.1",
-   "detected": true,
-   "extra": [
-    "L3.2"
-   ],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0251
-  },
-  {
-   "env": "E2",
-   "fault": "D7",
-   "fired": [
-    "L4.2"
-   ],
-   "expected": "L4.2",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0264
-  },
-  {
-   "env": "E2",
-   "fault": "D8",
-   "fired": [
-    "L3.3"
-   ],
-   "expected": "L3.3",
-   "detected": true,
-   "extra": [],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0256
-  },
-  {
-   "env": "E2",
-   "fault": "D9",
-   "fired": [
-    "L3.1",
-    "L3.2"
-   ],
-   "expected": "L3.1",
-   "detected": true,
-   "extra": [
-    "L3.2"
-   ],
-   "baseline_fired": [],
-   "baseline_detected": false,
-   "runtime_s": 0.0249
-  },
-  {
-   "env": "E2",
-   "fault": "D10",
    "fired": [
     "L3.1",
     "L3.2"
@@ -619,6 +561,64 @@
   },
   {
    "env": "E2",
+   "fault": "D7",
+   "fired": [
+    "L4.2"
+   ],
+   "expected": "L4.2",
+   "detected": true,
+   "extra": [],
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0246
+  },
+  {
+   "env": "E2",
+   "fault": "D8",
+   "fired": [
+    "L3.3"
+   ],
+   "expected": "L3.3",
+   "detected": true,
+   "extra": [],
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0244
+  },
+  {
+   "env": "E2",
+   "fault": "D9",
+   "fired": [
+    "L3.1",
+    "L3.2"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2"
+   ],
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0244
+  },
+  {
+   "env": "E2",
+   "fault": "D10",
+   "fired": [
+    "L3.1",
+    "L3.2"
+   ],
+   "expected": "L3.1",
+   "detected": true,
+   "extra": [
+    "L3.2"
+   ],
+   "baseline_fired": [],
+   "baseline_detected": false,
+   "runtime_s": 0.0249
+  },
+  {
+   "env": "E2",
    "fault": "D11",
    "fired": [
     "L4.3"
@@ -628,7 +628,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0248
+   "runtime_s": 0.0249
   },
   {
    "env": "E2",
@@ -644,7 +644,7 @@
     "B2"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0257
+   "runtime_s": 0.0254
   },
   {
    "env": "E2",
@@ -657,7 +657,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0251
+   "runtime_s": 0.0249
   },
   {
    "env": "E2",
@@ -670,7 +670,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0255
+   "runtime_s": 0.0244
   },
   {
    "env": "E2",
@@ -683,7 +683,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0266
+   "runtime_s": 0.025
   },
   {
    "env": "E2",
@@ -696,7 +696,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0621
+   "runtime_s": 0.06
   },
   {
    "env": "E2",
@@ -709,7 +709,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0262
+   "runtime_s": 0.0254
   },
   {
    "env": "E3",
@@ -720,7 +720,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0251
+   "runtime_s": 0.0255
   },
   {
    "env": "E3",
@@ -733,7 +733,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0355
+   "runtime_s": 0.0246
   },
   {
    "env": "E3",
@@ -746,7 +746,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0276
+   "runtime_s": 0.0245
   },
   {
    "env": "E3",
@@ -759,7 +759,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0287
+   "runtime_s": 0.0242
   },
   {
    "env": "E3",
@@ -772,7 +772,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0272
+   "runtime_s": 0.0249
   },
   {
    "env": "E3",
@@ -787,7 +787,7 @@
     "B3"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0274
+   "runtime_s": 0.0252
   },
   {
    "env": "E3",
@@ -803,7 +803,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0272
+   "runtime_s": 0.025
   },
   {
    "env": "E3",
@@ -816,7 +816,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0269
+   "runtime_s": 0.0245
   },
   {
    "env": "E3",
@@ -829,7 +829,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0265
+   "runtime_s": 0.0245
   },
   {
    "env": "E3",
@@ -845,7 +845,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0273
+   "runtime_s": 0.0248
   },
   {
    "env": "E3",
@@ -861,7 +861,7 @@
    ],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0267
+   "runtime_s": 0.0244
   },
   {
    "env": "E3",
@@ -874,7 +874,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0268
+   "runtime_s": 0.0246
   },
   {
    "env": "E3",
@@ -890,7 +890,7 @@
     "B2"
    ],
    "baseline_detected": true,
-   "runtime_s": 0.0269
+   "runtime_s": 0.037
   },
   {
    "env": "E3",
@@ -903,7 +903,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0263
+   "runtime_s": 0.0281
   },
   {
    "env": "E3",
@@ -916,7 +916,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0272
+   "runtime_s": 0.0249
   },
   {
    "env": "E3",
@@ -929,7 +929,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0269
+   "runtime_s": 0.0246
   },
   {
    "env": "E3",
@@ -942,7 +942,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0645
+   "runtime_s": 0.0592
   },
   {
    "env": "E3",
@@ -955,7 +955,7 @@
    "extra": [],
    "baseline_fired": [],
    "baseline_detected": false,
-   "runtime_s": 0.0268
+   "runtime_s": 0.0245
   }
  ],
  "chronological_baseline": {

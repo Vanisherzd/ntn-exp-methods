@@ -45,7 +45,7 @@ family (PCG64, SFC64, Philox) and asserts identical clean-path verdicts across a
 
 **Runtime is the only quantity that does not reproduce bit-for-bit.** Observed 1.39–1.55 s for
 the full sweep on a commodity laptop (≈26–29 ms per condition), dominated by L4.7's
-400-permutation null. The manuscript therefore states a *bound* — under 2 s — and `make claims`
+400-permutation null. The manuscript therefore states a *bound* — under 3 s — and `make claims`
 asserts the artifact still satisfies that bound rather than matching a string. `make gate-twice`
 prints the volatile fields explicitly instead of hiding them; `scripts/compare_summaries.py`
 records exactly which fields are excluded and why.

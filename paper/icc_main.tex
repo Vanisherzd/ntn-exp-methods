@@ -296,7 +296,7 @@ properties---and fires on no clean path; the contract detects $\artv{contract}{1
 in all three environments. We report \num{17} computations, not
 $51$: the object handed to the detector is bit-identical across environments for fourteen classes,
 so $\artv{injected_cells}{51/51}$ states \emph{determinism}. Clean paths were accepted with
-identical verdicts, and \artv{red_fixture}{Sixteen} of nineteen rules are demonstrated red by a
+identical verdicts, and \artv{red_fixture}{sixteen} of nineteen rules are demonstrated red by a
 fixture. The sweep runs in under \qty{3}{\second} on one laptop core, under \qty{60}{\milli\second} per condition on an otherwise loaded machine, \texttt{numpy} the only dependency---but that figure is the
 \emph{checker}: \rulename{L1.1}, \rulename{L1.4} and \rulename{L4.6} each re-execute the pipeline
 per variation, so their true cost is a multiple of pipeline runtime and is excluded.
@@ -382,7 +382,8 @@ from halt to pass. Across \artv{cons_seeds}{\num{5}} paired seeds it changed whi
 stopping selected \artv{cons_sel_changed}{\num{5}} times out of five, every checkpoint differing;
 re-running one seed under identical conditions reproduces its checkpoint bit for bit, so this is the
 intervention and not training noise. The reported detection metric moved on three seeds in
-\emph{both} directions. We do not call that a null: with five paired seeds the smallest attainable
+\emph{both} directions: an anomaly was flagged in \artv{cons_det_orig}{3} of five seeds before the
+correction and \artv{cons_det_corr}{4} after, one seed losing a detection and two gaining one. We do not call that a null: with five paired seeds the smallest attainable
 two-sided $p$ is $\artv{cons_minp}{0.0625}$, above $\alpha$, so by the same attainability argument
 that makes \rulename{L4.7} abstain, this endpoint is \emph{not observable}---and the channel
 compounds it, its target taking one value in training and two in test. Selection consequence

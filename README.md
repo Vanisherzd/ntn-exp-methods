@@ -60,7 +60,7 @@ archive/                stopped research lines, retired manuscript, invalid resu
   over 450 clean paths against a nominal α = 0.05.
 - **16 of 19** rules have a demonstrated broken fixture. L2.2, L2.3 and L4.5 are exercised
   only on the clean path, and the paper says so rather than claiming otherwise.
-- The full sweep runs in under 2 s, cheap enough for a per-commit gate.
+- The full sweep runs in under 3 s, cheap enough for a per-commit gate.
 
 ## What it does not claim
 

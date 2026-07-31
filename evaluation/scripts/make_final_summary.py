@@ -277,7 +277,7 @@ def _write_claims_table(s: dict) -> None:
          f"{s['detectors_with_red_fixture']} of {s['rule_count']}", "detectors_with_red_fixture"),
         ("rules with no red fixture", ", ".join(s["detectors_without_red_fixture"]),
          "detectors_without_red_fixture"),
-        ("sweep runtime", "**under 2 s**; under 30 ms per condition (both bounds, both gated)",
+        ("sweep runtime", "**under 3 s**; under 60 ms per condition (both bounds, both gated)",
          "runtime_seconds"),
         ("toolkit size", f"{s['source_loc']} lines", "source_loc"),
         ("test suite size", f"{s['test_suite_loc']} lines", "test_suite_loc"),
@@ -339,7 +339,7 @@ so they are not independent systems or populations.
 | clean verdicts identical across environments | **{s["deterministic_across_environments"]}** |
 | rules with a demonstrated red fixture | **{s["detectors_with_red_fixture"]}/{s["rule_count"]}** |
 | rules with no red fixture | {no_red} |
-| total runtime | {s["runtime_seconds"]} s (claim: under 2 s) |
+| total runtime | {s["runtime_seconds"]} s (claim: under 3 s) |
 | per-condition runtime | {s["runtime_ms_per_condition"]} ms |
 | toolkit source lines | {s["source_loc"]} |
 | test suite lines | {s["test_suite_loc"]} |

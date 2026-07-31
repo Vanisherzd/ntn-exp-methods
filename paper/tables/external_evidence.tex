@@ -1,8 +1,12 @@
 % Table II -- EXTERNAL EVIDENCE. Results only; the methodology is Table I.
 %
-% Every number is an \artv site bound to evaluation/results/final_summary.json. The detection
-% counts (cons_det_orig, cons_det_corr) live only here, so removing this table would drop two
-% bound claims and the gate would refuse the build -- which is the intended safety property.
+% Every number is an \artv site bound to evaluation/results/final_summary.json.
+%
+% The per-seed detection counts are deliberately NOT in this table. Read first, `3/5 -> 4/5` looks
+% like a detection improvement, which is the one reading the evidence does not support: the smallest
+% attainable two-sided p at five paired seeds is 0.0625, above alpha, so the downstream endpoint is
+% N/OBS. The table states that verdict; the counts stay in the Sec. V prose that explains why they
+% move in both directions, still bound as \artv sites. Do not promote them back into this cell.
 \begin{table}[!t]
 \caption{External evaluation of the frozen contract.}
 \label{tab:external}
@@ -27,7 +31,7 @@ The contract yields five-valued decisions outside the originating project.\\
 Pre-registered partition intervention &
 \rulename{L4.1} &
 HALT $\rightarrow$ PASS; selected checkpoint changed \artv{cons_sel_changed}{5}/\artv{cons_seeds}{5};
-detection \artv{cons_det_orig}{3}/5 $\rightarrow$ \artv{cons_det_corr}{4}/5 &
+downstream endpoint N/OBS &
 Removing validation overlap changes model selection; the downstream metric stays statistically
 indeterminate.\\
 \bottomrule
