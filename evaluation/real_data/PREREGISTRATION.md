@@ -78,3 +78,53 @@ whether the gate produces an interpretable decision on real data, not whether it
 No new detector. No new fault class. No change to L4.7 or any other rule. No model training.
 No performance claim of any kind. No RF or packet-level quantity. If the analysis is
 uninformative, that is the finding.
+
+---
+
+# Addendum — analysis D, the along-track observable
+
+Added after analyses A–C were run and reported, in response to two independent reviewers making
+the same correct objection: **elevation is a deterministic function of the grouping**, so on that
+observable both PASS and HALT are uninformative about the claim in §I-A(v). That claim is about
+along-track prediction *error*, and A–C could not test it.
+
+This addendum is written before the analysis script for D exists, and `contract_layers.py` remains
+byte-identical to `07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b`.
+
+## Why this is a measurement and not a model
+
+No model is fitted, trained, or selected. For consecutive element sets $k$ and $k+1$ of the same
+object, SGP4 propagates set $k$ forward to a time and the position is differenced against set
+$k+1$ propagated to the same time. The in-track component of that difference is the standard
+element-set-to-element-set consistency residual. The catalogue supplies both states; nothing is
+learned. This does not reopen the stopped residual-learning line, which fitted a correction to
+such residuals — here they are only measured and grouped.
+
+## Frozen design
+
+Same window, same objects, same element sets as A–C. For each visible pass already computed in
+analysis B, the value is the in-track difference between its generating element set $k$ and the
+next element set $k+1$ of the same object, both propagated to the pass midpoint, in kilometres.
+Passes whose generating set has no successor in the window are dropped, and the count dropped is
+reported.
+
+| | unit | coarser level | observable |
+|---|---|---|---|
+| **D1** | visible pass | element set that generated it | in-track residual at pass midpoint, km |
+| **D2** | visible pass | object | same observable (sensitivity, as C is to B) |
+| **D3** | element set | object | mean in-track residual over the set's passes, km |
+
+## Prediction recorded in advance
+
+**D1: HALT, and with a large ICC.** Every pass generated from element set $k$ inherits that set's
+in-track error, so the residual should be near-constant within a set and differ between sets. If
+D1 does *not* halt, the paper's §I-A(v) argument is not supported by its own data and must be
+weakened rather than defended.
+
+**D2 and D3: no prediction.**
+
+## What will be reported either way
+
+The verdict, ICC, permutation $p$, unit and effective-group counts, the number of passes dropped
+for lack of a successor element set, and the residual magnitudes. A failure of D1 is a reportable
+result about this paper's own premise, not a reason to change the observable again.
