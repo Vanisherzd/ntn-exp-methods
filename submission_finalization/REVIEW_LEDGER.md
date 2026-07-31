@@ -167,8 +167,17 @@ R-N3 and R-N4 received only the PDF and the artifact summary a real reviewer wou
 |---|---|---|---|---|---|---|---|
 | R-N1 | novelty and positioning, code-reading | WEAK ACCEPT | 2 | 3 | 3 | 4 | 3 |
 | R-N2 | statistics and experimental methodology | WEAK ACCEPT | 3 | 3 | 4 | 2 | 4 |
-| R-N3 | satellite / NTN | *dispatched* | — | — | — | — | — |
-| R-N4 | flagship-workshop reject advocate | *dispatched* | — | — | — | — | — |
+| R-N3 | satellite / NTN | **WEAK REJECT** | 2.5 | 2.5 | 3.5 | 2 | 3 |
+| R-N4 | flagship-workshop reject advocate | **WEAK REJECT** | 2 | 2 | 4 | 2 | 3 |
+
+R-N3 also scored venue fit 2.5. Both saw only the PDF and the artifact summary.
+
+**The internal-debugging-report question split.** R-N3 answered **NO** ("Sections I-A, I-C and
+II are roughly two and a half pages of transferable formulation with an explicit prior-art
+delta, and a reader with no knowledge of the authors' programme can take the protected-object
+decomposition, the relational-versus-predicate distinction, and the three-valued unit gate and
+use them"). R-N4 answered **YES**, on the grounds that the *claim* is field-directed while the
+*support* is entirely internal. That is the first time this question has drawn a NO.
 
 ## R-N2 verified the core statistics line by line and found them correct
 
@@ -258,3 +267,74 @@ recorded above so it is not lost.
 **Adding size under mild exchangeability violations, or a second (k, m̄).** This is new
 measurement, forbidden this cycle. The gap is now stated in the manuscript rather than left
 for a reader to find.
+
+
+## R-N3 (satellite / NTN) — confirmed findings
+
+Verified independently before acting. R-N3 also checked the orbital content and found the
+sharp parts correct: the two-clock semantics and the `CREATION_DATE` field name against CCSDS
+502.0-B and Space-Track GP; predicted- versus truth-visible sampling ("the paper gets the
+subtle version right"); the along-track argument for the element set as exchangeable unit
+("orbital physics doing real statistical work"); state surviving a nominal freeze; and every
+reference real and correctly attributed, with no citation padding. It recomputed the Wilson
+interval and confirmed [0.018, 0.052] as a conservative rendering of [0.0186, 0.0515].
+
+| finding | status |
+|---|---|
+| `CREATION_DATE` is a lower bound on retrievability, not the publication time; batch publication and reprocessing add unmeasured lag, so L1 has **one-sided error** | fixed — named in the limitations. The most consequential of the four, because it is the instrument for the paper's first protected object |
+| the 27.6% epoch-ahead figure is a **unit error by the paper's own §I-A(v)**: pooled over records across eleven objects with unequal counts | fixed, and it changed the paper in our favour — see the commit. Per object the figure is 0 in ten of eleven; the object-level median lag is 6.36 h against the pooled 1.68 h |
+| L4.7 presumes a unique next coarser level; element sets and deployment episodes cross-cut rather than nest, and the paper never said what happens then | fixed |
+| the space-weather level is absent entirely — drag driven by solar and geomagnetic activity is common-mode across every object and element set in an interval, and the words drag, B*, F10.7, Ap appear nowhere | fixed in prose |
+| the 27.6% anomaly is undiagnosed | left undiagnosed and now reported per object; diagnosing it would need the ingest pipeline, which is not in scope |
+| swap test: **~2 of 9 obligations are genuinely satellite-load-bearing** (v fully, iii and L4.7's level choice partially); 7 of 9 are domain-neutral with satellite examples | consistent with R-SA3's earlier ~2 of 19 by a different accounting. The paper's weaker in-text claim (the domain gives each object an *operational meaning*) is what we retain; we did not write the stronger one |
+| 16 of 20 references are software engineering or statistics | recorded, not changed — it is an accurate reflection of where the prior art is, and the paper says so |
+
+**Declined: retire L2.2, L2.3, L4.5 and ship sixteen rules.** R-N3 is right that by our own
+stated standard three shipped rules are untrusted, and right that this is the most visible
+self-inconsistency. Declined because the governing constraint for this cycle forbids modifying
+the evaluation denominators, and 19 → 16 moves every one of them. The gap is disclosed in the
+abstract-adjacent text, in Table I's caption, in §VI and in the artifact
+(`detectors_without_red_fixture`).
+
+**Declined: run L4.7 on the eleven-object dataset and report measured ICC.** This is R-N3's
+single best suggestion and I want to record that plainly — it uses data already committed and
+would tell a reader whether the rule's blind zone below ICC 0.1 is even relevant to the
+flagship use case. It is a new measurement, which this cycle forbids. Recorded as the first
+thing to do next.
+
+**Declined: one link-layer rule, or a link-budget scope statement.** The paper already states
+that no radio-frequency or packet-level result is established. A new rule is a new detector
+family, forbidden.
+
+## R-N4 (reject advocate) — confirmed findings
+
+R-N4 found no overclaim and no substantive inconsistency: it reconciled every headline number
+in the PDF against the artifact summary independently, including Table I summing to 19 rules
+and 16 red fixtures with the missing entries matching L2.2, L2.3 and L4.5 exactly. Three
+findings stood.
+
+| finding | status |
+|---|---|
+| "six probed channels" enumerated as **five** in two places, omitting the feature tensor, while three other sites assert six | fixed — `STATE_CHANNELS` has six entries |
+| the nineteen rules are **not enumerable from the submission**: Table I is a four-row aggregate and only ~14 identifiers appear in the text; L1.2, L2.1, L2.4, L4.1 never defined | fixed — the rule column carries ID ranges. This was a regression introduced by compressing Table I earlier in this same cycle |
+| the abstract kept the flattering power point (1.00 at ICC 0.8) and omitted 0.25 at 0.2 | fixed |
+
+R-N4's arithmetic on the novelty claim is worth recording because it is the sharpest version
+of the criticism: the relational class covers **5 of 19 rules**, every member has a conceded
+antecedent, and what survives subtraction is a taxonomy, the INDETERMINATE outcome, and the
+two-clock observation — of which it grants only INDETERMINATE as genuinely absent from the
+cited literature. It is one sentence long and it is real.
+
+## Why the loop stops here
+
+Both reject verdicts turn on the same thing, and it is the one thing this cycle forbids:
+
+- R-N3: "One revision cycle adding a third-party artifact study and L4.7 results on the
+  eleven-object dataset would move this to ACCEPT, and I would want to see it again."
+- R-N4: "Run the contract, unmodified, against at least one pipeline the authors did not
+  write... **Yes, this requires new experiments.**"
+
+Neither asked for a reframing. Across eight reviewers over three cycles the request has been
+identical and unchanging: contact with an artifact the authors did not produce. Presentation
+work cannot supply it, and the standing instruction for every cycle has been that new
+scientific experiments are out of scope.
