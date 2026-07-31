@@ -11,5 +11,14 @@
     "tensorflow==2.0.1"
   ],
   "note": "Upstream pins keras==2.3.1 / tensorflow==2.0.1, which import keras.layers.recurrent and keras.layers.core -- module paths removed in later Keras. Neither pinned version has an arm64 macOS wheel. The arms are therefore run through a PORT that reproduces the upstream architecture, optimizer, loss, batch size, dropout, epoch cap, early-stopping patience and min_delta exactly as read from upstream config.yaml, on a modern TensorFlow. The port is identical between the two arms, so it cannot favour either; it is recorded here because it is a deviation from running upstream code verbatim.",
-  "tensorflow_installed_for_this_study": "2.16.2"
+  "tensorflow_installed_for_this_study": "2.16.2",
+  "amendment_1": {
+    "date": "2026-07-31",
+    "what": "The pre-registration declared that both arms would run through a PORT of upstream modeling.py, because upstream imports keras.layers.recurrent and keras.layers.core, module paths removed in later Keras.",
+    "finding": "A port is not necessary. Registering two alias modules that re-export LSTM, Dense, Activation and Dropout from modern keras.layers makes upstream modeling.py, errors.py and detector.py all import VERBATIM. Verified by import.",
+    "effect": "Strictly REDUCES deviation from upstream: the architecture, training loop, thresholding and scoring are now upstream's own code rather than a reimplementation. The arms, channel, seeds and endpoints are untouched.",
+    "why_recorded": "The pre-registration promised to declare deviations in advance rather than discover them in results. Finding that a declared deviation is unnecessary is the same obligation running the other way.",
+    "shim": "evaluation/external_consequence/keras_compat.py"
+  },
+  "port_used": false
 }
