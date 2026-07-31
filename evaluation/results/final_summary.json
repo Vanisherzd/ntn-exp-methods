@@ -17,13 +17,13 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.421,
- "runtime_ms_per_condition": 26.3,
+ "runtime_seconds": 1.414,
+ "runtime_ms_per_condition": 26.2,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
- "test_suite_loc": 877,
- "test_count": 51,
+ "test_suite_loc": 984,
+ "test_count": 62,
  "detectors_with_red_fixture": 16,
  "detectors_without_red_fixture": [
   "L2.2",
@@ -36,17 +36,22 @@
   "clean_paths_evaluated": 450,
   "fixture_seeds": 150,
   "environments": 3,
-  "measured_clean_false_halt_rate": 0.042,
-  "injected_detection_rate": 1.0,
-  "injected_paths_evaluated": 150,
-  "discarded_fixed_threshold_null_size": 0.17,
-  "discarded_fixed_threshold": 0.2,
+  "clean_false_halts": 14,
+  "measured_clean_false_halt_rate": 0.031,
   "clean_false_halt_wilson_95": [
-   0.027,
-   0.065
+   0.018,
+   0.052
   ],
-  "clean_false_halts": 19
+  "injected_paths_evaluated": 150,
+  "injected_detection_rate": 1.0,
+  "discarded_fixed_threshold": 0.2,
+  "discarded_fixed_threshold_null_size": 0.17,
+  "discarded_fixed_threshold_null_size_by_groups": {
+   "8": 0.167,
+   "20": 0.064,
+   "96": 0.0
+  }
  },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "c67d83aa3dcaceca5b835fa7fed57f0bcd881be5"
+ "commit": "cd8202a2f3eb1bf5f095d8ca06387d587f5084ba"
 }

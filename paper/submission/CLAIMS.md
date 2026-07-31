@@ -25,20 +25,37 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 | chronological baseline coverage | 2/17 (**measured**) | `chronological_detected_count` |
 | contract coverage | 17/17 | `contract_detected_count` |
 | clean-path rule firings | 0 | `clean_false_halt_count` |
-| L4.7 clean false-halt rate | **19/450 = 0.042**, Wilson [0.027, 0.065], nominal alpha = 0.05 | `l47_calibration` |
+| L4.7 clean false-halt rate | **14/450 = 0.031**, Wilson [0.018, 0.052], nominal alpha = 0.05 | `l47_calibration` |
 | L4.7 injected detection | 150/150 | `l47_calibration` |
 | rules with a demonstrated red fixture | 16 of 19 | `detectors_with_red_fixture` |
 | rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` |
 | sweep runtime | **under 2 s**; under 30 ms per condition (both bounds, both gated) | `runtime_seconds` |
 | toolkit size | 833 lines | `source_loc` |
-| test suite size | 877 lines | `test_suite_loc` |
-| tests | 51 passing | `test_count` |
+| test suite size | 984 lines | `test_suite_loc` |
+| tests | 62 passing | `test_count` |
 <!-- END GENERATED CLAIMS TABLE -->
 
-Runtime is the one figure that does **not** reproduce bit-for-bit: it varies by a few
-percent between runs and machines. The manuscript therefore states a *bound* (under 2 s),
-and the claim gate asserts the artifact still satisfies that bound rather than matching a
-string. `make gate-twice` reports the volatile fields explicitly instead of hiding them.
+### What reproduces, and what only reproduces conditionally
+
+Runtime does **not** reproduce bit-for-bit: it varies by a few percent between runs and
+machines. The manuscript therefore states a *bound* (under 2 s), and the claim gate asserts
+the artifact still satisfies that bound rather than matching a string. `make gate-twice`
+reports the volatile fields explicitly instead of hiding them.
+
+The **L4.7 false-halt count is bit-reproducible but implementation-conditional**, and this is
+a stronger caveat than it sounds. The permutation stream is seeded from a SHA-256 digest of a
+design key, so it is stable across platforms and Python builds — but it is *one* arbitrary
+derivation among many equally valid ones. Rederiving it moved the measured count from 19/450
+to 14/450 without altering the protocol, the effect grid, the group counts, the number of
+clean designs, the fault definitions, the seeds, or alpha. Both values sit inside the Wilson
+interval and both are at or below the nominal 0.05, so no reported conclusion depends on
+which one you get. The paper accordingly claims the *interval* and the qualitative statement
+("consistent with nominal, not better than it"), never the point estimate as a constant.
+
+That episode is also why the calibration numbers are now READ from
+`evaluation/results/l47_calibration.json`, which `calibrate_l47.py` writes during `make
+matrix`, instead of being transcribed into `make_final_summary.py`. While they were literals
+the gate compared the manuscript against a transcription and passed on a stale 0.042.
 
 ## Distinctions the paper must not blur
 

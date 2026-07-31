@@ -1,7 +1,6 @@
 {
  "design": "8 coarser groups of 3 units, unit noise SD 1.0, alpha 0.05, 400 permutations, finite-B corrected p=(1+#{T*>=T})/(B+1)",
- "abstention_boundary": "n_coarser_groups < 4 or n_units < 8 -> INDETERMINATE (deterministic)",
- "note": "power decays to the nominal size below ICC ~0.1; the suite's single injected point sits at ICC ~0.8 and is saturated",
+ "abstention_boundary": "n_coarser_groups < 4 or n_units < 8 -> INDETERMINATE (deterministic precondition, asserted not derived)",
  "curve": [
   {
    "effect_sd": 2.0,
@@ -16,12 +15,12 @@
   {
    "effect_sd": 0.5,
    "icc": 0.2,
-   "halt_prob": 0.275
+   "halt_prob": 0.25
   },
   {
    "effect_sd": 0.3,
    "icc": 0.083,
-   "halt_prob": 0.075
+   "halt_prob": 0.05
   },
   {
    "effect_sd": 0.2,
@@ -36,7 +35,7 @@
   {
    "effect_sd": 0.05,
    "icc": 0.002,
-   "halt_prob": 0.025
+   "halt_prob": 0.05
   }
  ]
 }

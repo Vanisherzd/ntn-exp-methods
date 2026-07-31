@@ -33,10 +33,10 @@ so they are not independent systems or populations.
 | clean verdicts identical across environments | **True** |
 | rules with a demonstrated red fixture | **16/19** |
 | rules with no red fixture | L2.2, L2.3, L4.5 |
-| total runtime | 1.421 s (claim: under 2 s) |
-| per-condition runtime | 26.3 ms |
+| total runtime | 1.414 s (claim: under 2 s) |
+| per-condition runtime | 26.2 ms |
 | toolkit source lines | 833 |
-| test suite lines | 877 |
+| test suite lines | 984 |
 
 ## L4.7 size control
 
@@ -47,7 +47,7 @@ measured **rate**, not a single clean run:
 |---|---|
 | nominal alpha | 0.05 |
 | clean paths evaluated | 450 (150 seeds x 3 envs) |
-| **measured clean false-halt rate** | **0.042** |
+| **measured clean false-halt rate** | **0.031** |
 | injected detection rate | 1.0 over 150 paths |
 
 Reproduce with `python evaluation/scripts/calibrate_l47.py`.
