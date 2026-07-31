@@ -1,0 +1,37 @@
+% MERGED into paper/tables/contract_rules.tex as its lower panel. Kept for reference: a
+% separate float cost a caption and a float separation the six-page budget did not have.
+% Table II -- external evidence. Every cell is read from evaluation/results/final_summary.json
+% via \artv sites in the manuscript; nothing here is typed by hand.
+%
+% This table exists because eight reviewers across three cycles asked for the same thing and only
+% that thing: contact with an artifact the authors did not produce. It replaced the case-study
+% figure rather than being appended, so the page count is unchanged.
+\begin{table}[!t]
+\caption{Evidence from outside this project. \textbf{Top:} the frozen \rulename{L4.7} on real
+Space-Track records---eleven objects, the only window where all eleven have element sets---under
+two declared groupings plus a sensitivity analysis at a third; protocol pre-registered.
+\textbf{Bottom:} the unmodified contract on one public third-party artifact frozen before any rule
+ran. \textsc{n/obs} is what keeps this honest---the obligation applies but the artifact does not
+expose enough to decide, and is never scored as compliance. Per-rule locations in the artifact.}
+\label{tab:external}
+\centering
+\scriptsize
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{unit $\rightarrow$ coarser} & \textbf{observable} & \textbf{ICC} & \textbf{outcome}\\
+\midrule
+\multicolumn{4}{@{}l@{}}{\emph{Real catalogue records}: \artv{real_objects}{11} objects,
+\artv{real_elsets}{109} element sets, \artv{real_passes}{331} passes}\\
+element set $\rightarrow$ object & publication lag & $0.000$ & \textsc{pass}\\
+pass $\rightarrow$ element set   & elevation       & $0.000$ & \textsc{pass}\\
+pass $\rightarrow$ object        & elevation, \emph{sens.} & $0.017$ & \textsc{pass}\\
+pass $\rightarrow$ element set   & per object      & $\le0.638$ & \artv{real_pass}{10}\,p, \artv{real_halt}{1}\,h\\
+\midrule
+\multicolumn{4}{@{}l@{}}{\emph{Third-party artifact}~\cite{hundman2018telemanom},
+\texttt{2e6c5b6c}, \artv{ext_classified}{19} rules, detector \texttt{sha256} unchanged}\\
+\multicolumn{4}{@{}l@{}}{\artv{ext_pass}{5} \textsc{pass}\quad\artv{ext_halt}{3} \textsc{halt}
+(\rulename{L2.4}, \rulename{L4.1}, \rulename{L4.5})\quad\artv{ext_indet}{1}
+\textsc{indet}\quad\artv{ext_na}{5} \textsc{n/a}\quad\artv{ext_nobs}{5} \textsc{n/obs}}\\
+\bottomrule
+\end{tabular}
+\end{table}

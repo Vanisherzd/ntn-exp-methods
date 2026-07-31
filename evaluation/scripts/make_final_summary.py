@@ -64,6 +64,74 @@ def _publication_lag() -> dict:
     }
 
 
+# External evidence: the frozen third-party artifact study and the real-catalogue L4.7
+# application. Both are read from the artifacts their own scripts write, never transcribed.
+EXTERNAL_PATH = ROOT / "evaluation" / "external" / "external_study.json"
+REAL_L47_PATH = ROOT / "evaluation" / "real_data" / "l47_real_application.json"
+TIMING_PATH = ROOT / "evaluation" / "real_data" / "object_level_timing.json"
+
+
+def _external_evidence() -> dict:
+    if not EXTERNAL_PATH.exists():
+        raise SystemExit(f"missing {EXTERNAL_PATH.relative_to(ROOT)} -- run "
+                         "evaluation/scripts/external_artifact_study.py")
+    d = json.loads(EXTERNAL_PATH.read_text())
+    c = d["counts"]
+    return {
+        "repository": d["artifact"]["repository"],
+        "frozen_commit": d["artifact"]["frozen_commit"],
+        "contract_layers_sha256": d["contract"]["contract_layers_sha256"],
+        "detector_unmodified": (d["contract"]["contract_layers_sha256"]
+                                == d["contract"]["unmodified_since_prereg_sha256"]),
+        "n_rules_classified": d["n_classified"],
+        "pass": c.get("PASS", 0), "halt": c.get("HALT", 0),
+        "indeterminate": c.get("INDETERMINATE", 0),
+        "not_applicable": c.get("NOT_APPLICABLE", 0),
+        "not_observable": c.get("NOT_OBSERVABLE", 0),
+        "halted_rules": [r["rule"] for r in d["inspected"] if r["outcome"] == "HALT"],
+    }
+
+
+def _real_l47() -> dict:
+    if not REAL_L47_PATH.exists():
+        raise SystemExit(f"missing {REAL_L47_PATH.relative_to(ROOT)} -- run "
+                         "evaluation/scripts/real_l47_application.py")
+    d = json.loads(REAL_L47_PATH.read_text())
+    m, a = d["manifest"], d["analyses"]
+    per = a["B_per_object"]
+    halts = [k for k, v in per.items() if v["verdict"] == "HALT"]
+    return {
+        "protocol": m["protocol"],
+        "contract_layers_sha256": m["contract_layers_sha256"],
+        "window_epoch": m["window_epoch"],
+        "n_objects": m["n_objects"],
+        "n_element_sets": m["n_element_sets"],
+        "n_passes": m["n_passes_total"],
+        "n_pass_samples": m["n_pass_samples_total"],
+        "A_elementset_in_object": {
+            k: a["A_elementset_in_object__publication_lag"].get(k)
+            for k in ("verdict", "n_units", "n_coarser_groups", "icc", "p_value")},
+        "B_pass_in_elementset_pooled": {
+            k: a["B_pass_in_elementset__elevation_pooled"].get(k)
+            for k in ("verdict", "n_units", "n_coarser_groups", "icc", "p_value")},
+        "C_pass_in_object_pooled": {
+            k: a["C_pass_in_object__elevation_pooled"].get(k)
+            for k in ("verdict", "n_units", "n_coarser_groups", "icc", "p_value")},
+        "B_per_object_halts": halts,
+        "B_per_object_n_halt": len(halts),
+        "B_per_object_n_pass": sum(1 for v in per.values() if v["verdict"] == "PASS"),
+    }
+
+
+def _object_timing() -> dict:
+    d = json.loads(TIMING_PATH.read_text())
+    return {k: d[k] for k in (
+        "n_objects", "n_records_total", "object_level_median_lag_h_full_history",
+        "object_level_median_lag_h_in_window", "all_object_medians_positive_full_history",
+        "all_object_medians_positive_in_window", "objects_with_any_epoch_after_creation",
+        "n_objects_with_any_epoch_after_creation")}
+
+
 def _l47_calibration() -> dict:
     if not L47_CALIB_PATH.exists():
         raise SystemExit(
@@ -303,6 +371,9 @@ def main() -> int:
         "deterministic_across_environments": d["clean_verdicts_identical_across_envs"],
         "l47_calibration": _l47_calibration(),
         "publication_lag": _publication_lag(),
+        "object_level_timing": _object_timing(),
+        "real_l47_application": _real_l47(),
+        "external_artifact_study": _external_evidence(),
         # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
         # runtime_s, so this anchor could never match between two runs of the same tree --
         # an integrity checksum that is always different is not an integrity checksum.

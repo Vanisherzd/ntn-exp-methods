@@ -175,12 +175,33 @@ def artifact_values() -> dict[str, str]:
     n, c = s["fault_class_count"], s["l47_calibration"]
     lo, hi = c["clean_false_halt_wilson_95"]
     g = s["publication_lag"]
+    ot, rl, ex = (s["object_level_timing"], s["real_l47_application"],
+                  s["external_artifact_study"])
     return {
+        "lag_objects": str(ot["n_objects"]),
+        "timing_outlier_objects": str(ot["n_objects_with_any_epoch_after_creation"]),
+        "real_objects": str(rl["n_objects"]),
+        "real_elsets": str(rl["n_element_sets"]),
+        "real_passes": str(rl["n_passes"]),
+        "real_pass": str(rl["B_per_object_n_pass"]),
+        "real_halt": str(rl["B_per_object_n_halt"]),
+        "ext_classified": str(ex["n_rules_classified"]),
+        "ext_pass": str(ex["pass"]),
+        "ext_halt": str(ex["halt"]),
+        "ext_indet": str(ex["indeterminate"]),
+        "ext_na": str(ex["not_applicable"]),
+        "ext_nobs": str(ex["not_observable"]),
         "lag_records": str(g["n_records"]),
-        "lag_pooled_epoch_ahead_pct": f"{g['frac_epoch_ahead_record_pooled'] * 100:.1f}",
-        "lag_largest_object_share_pct": f"{g['largest_object_record_share'] * 100:.0f}",
         "lag_object_median_h": str(g["median_lag_h_object_level"]),
-        "lag_pooled_median_h": str(g["median_lag_h_record_pooled"]),
+        # DELIBERATELY NOT REQUIRED: the record-pooled epoch-ahead percentage, the largest
+        # object's record share, and the record-pooled median lag. The manuscript no longer
+        # quotes any of them, because pooling over records across eleven objects with unequal
+        # record counts is the wrong unit -- the largest object supplies most of the records, so
+        # a pooled figure is that object's. They remain in the artifact
+        # (publication_lag.{frac_epoch_ahead_record_pooled, largest_object_record_share,
+        # median_lag_h_record_pooled}) so the object-level figures can be checked against them.
+        # Removing a key here is how a number could silently stop being claimed, so the reason
+        # is recorded rather than left to a reader to infer from a diff.
         "rule_count": str(s["rule_count"]),
         "fault_class_count": str(n),
         "chronological": f"{s['chronological_detected_count']}/{n}",
@@ -286,6 +307,17 @@ def main() -> int:
     # and machines, so pinning an exact figure would make the build fail elsewhere.
     # Assert instead that the artifact still satisfies the bound the paper states.
     s = json.loads(SUMMARY.read_text())
+    ex = s["external_artifact_study"]
+    if not ex["detector_unmodified"]:
+        bad.append("EXTERNAL: contract_layers.py sha256 differs from the pre-registration hash "
+                   "-- a detector was changed after the external artifact was inspected, which "
+                   "invalidates the external study")
+    if ex["frozen_commit"] != "2e6c5b6c3558e7835601519b7bdef37c649bdbdc":
+        bad.append(f"EXTERNAL: frozen third-party commit is {ex['frozen_commit']}, not the "
+                   "commit the study was registered against")
+    if s["real_l47_application"]["contract_layers_sha256"] != ex["contract_layers_sha256"]:
+        bad.append("EXTERNAL: the real-data application and the external study ran against "
+                   "different versions of the contract")
     if s["runtime_seconds"] >= 2.0:
         bad.append(f"RUNTIME: artifact reports {s['runtime_seconds']} s, but the "
                    "manuscript claims the sweep runs in under 2 s")

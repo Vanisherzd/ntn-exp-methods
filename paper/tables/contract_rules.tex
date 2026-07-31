@@ -6,12 +6,17 @@
 % novelty centre: it was the largest object in a six-page paper describing the least novel
 % part of the work.
 \begin{table}[!t]
-\caption{The contract by layer. \textbf{Core} obligations enforce a protected object or a
+\caption{\textbf{Top: the contract by layer.} \textbf{Core} obligations enforce a protected object or a
 relational invariant; \textbf{support} rules make the experiment auditable and block known-invalid
 states---we do not claim all nineteen follow from deployment causality. Sixteen of nineteen have a
 demonstrated red fixture; \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} do not, and are
 exercised only on the clean path. \rulename{L4.5} checks manifest presence, not hash correctness, and \rulename{L4.3} is a cheap self-reported guard;
-\rulename{L4.7} is the calibrated decision. Outcomes: P \textsc{pass}, H \textsc{halt}, L label-and-retain, I \textsc{indeterminate}. Full nineteen-rule table in the artifact.}
+\rulename{L4.7} is the calibrated decision. Outcomes: P \textsc{pass}, H \textsc{halt}, L label-and-retain, I \textsc{indeterminate}, n/a not applicable, n/obs not observable. Full
+nineteen-rule table in the artifact. \textbf{Bottom: evidence from outside this project}---the
+frozen \rulename{L4.7} on real Space-Track records under two declared groupings plus a sensitivity
+analysis at a third (protocol pre-registered), and the unmodified contract on one public
+third-party artifact frozen before any rule ran. n/obs is what keeps that honest: the obligation applies but the artifact
+does not expose enough to decide, and is never scored as compliance. Per-rule locations are in the artifact.}
 \label{tab:rules}
 \centering
 \scriptsize
@@ -28,6 +33,24 @@ exercised only on the clean path. \rulename{L4.5} checks manifest presence, not 
 novelty result:}\\
 \multicolumn{6}{@{}l@{}}{17 faults, 2 ordering-expressible, 17 detected; clean paths
 accepted; $<$\qty{2}{\second}.}\\
+\midrule
+\multicolumn{6}{@{}l@{}}{\emph{Real catalogue records}, \artv{real_objects}{11} objects,
+\artv{real_elsets}{109} element sets, \artv{real_passes}{331} passes; unit $\rightarrow$ coarser:}\\
+\multicolumn{2}{@{}l}{element set $\rightarrow$ object, publication lag}
+  & \multicolumn{2}{c}{ICC $0.000$} & \multicolumn{2}{c@{}}{P}\\
+\multicolumn{2}{@{}l}{pass $\rightarrow$ element set, elevation}
+  & \multicolumn{2}{c}{ICC $0.000$} & \multicolumn{2}{c@{}}{P}\\
+\multicolumn{2}{@{}l}{pass $\rightarrow$ object, \emph{sensitivity}}
+  & \multicolumn{2}{c}{ICC $0.017$} & \multicolumn{2}{c@{}}{P}\\
+\multicolumn{2}{@{}l}{pass $\rightarrow$ element set, per object}
+  & \multicolumn{2}{c}{ICC $\le0.638$}
+  & \multicolumn{2}{c@{}}{\artv{real_pass}{10}\,P, \artv{real_halt}{1}\,H}\\
+\midrule
+\multicolumn{6}{@{}l@{}}{\emph{Third-party artifact}~\cite{hundman2018telemanom},
+\texttt{2e6c5b6c}, \artv{ext_classified}{19} rules, detector \texttt{sha256} unchanged:}\\
+\multicolumn{6}{@{}l@{}}{\artv{ext_pass}{5} P\quad\artv{ext_halt}{3} H
+(\rulename{L2.4}, \rulename{L4.1}, \rulename{L4.5})\quad\artv{ext_indet}{1}
+I\quad\artv{ext_na}{5} n/a\quad\artv{ext_nobs}{5} n/obs}\\
 \bottomrule
 \end{tabular}
 \end{table}

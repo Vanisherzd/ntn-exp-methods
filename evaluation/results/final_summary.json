@@ -17,8 +17,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.403,
- "runtime_ms_per_condition": 26.0,
+ "runtime_seconds": 1.41,
+ "runtime_ms_per_condition": 26.1,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -62,6 +62,73 @@
   "n_objects_with_epoch_ahead": 1,
   "largest_object_record_share": 0.824
  },
+ "object_level_timing": {
+  "n_objects": 11,
+  "n_records_total": 63727,
+  "object_level_median_lag_h_full_history": 6.36,
+  "object_level_median_lag_h_in_window": 7.0,
+  "all_object_medians_positive_full_history": true,
+  "all_object_medians_positive_in_window": true,
+  "objects_with_any_epoch_after_creation": [
+   "iss_zarya_25544"
+  ],
+  "n_objects_with_any_epoch_after_creation": 1
+ },
+ "real_l47_application": {
+  "protocol": "evaluation/real_data/PREREGISTRATION.md",
+  "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+  "window_epoch": [
+   "2026-07-22",
+   "2026-07-27"
+  ],
+  "n_objects": 11,
+  "n_element_sets": 109,
+  "n_passes": 331,
+  "n_pass_samples": 4901,
+  "A_elementset_in_object": {
+   "verdict": "PASS",
+   "n_units": 101,
+   "n_coarser_groups": 11,
+   "icc": 0.0,
+   "p_value": 1.0
+  },
+  "B_pass_in_elementset_pooled": {
+   "verdict": "PASS",
+   "n_units": 305,
+   "n_coarser_groups": 101,
+   "icc": 0.0,
+   "p_value": 1.0
+  },
+  "C_pass_in_object_pooled": {
+   "verdict": "PASS",
+   "n_units": 305,
+   "n_coarser_groups": 11,
+   "icc": 0.01735454958399193,
+   "p_value": 0.1546134663341646
+  },
+  "B_per_object_halts": [
+   "iridium_177_56727"
+  ],
+  "B_per_object_n_halt": 1,
+  "B_per_object_n_pass": 10
+ },
+ "external_artifact_study": {
+  "repository": "https://github.com/khundman/telemanom",
+  "frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
+  "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+  "detector_unmodified": true,
+  "n_rules_classified": 19,
+  "pass": 5,
+  "halt": 3,
+  "indeterminate": 1,
+  "not_applicable": 5,
+  "not_observable": 5,
+  "halted_rules": [
+   "L2.4",
+   "L4.1",
+   "L4.5"
+  ]
+ },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "4ccb0b7d50b6a60176062deb824238e223588d97"
+ "commit": "ac05833e8c913bc1c8678815c9bdfe47981979b3"
 }
