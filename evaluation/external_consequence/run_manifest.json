@@ -1,0 +1,63 @@
+{
+  "upstream_repository": "https://github.com/khundman/telemanom",
+  "upstream_frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
+  "upstream_paper": "Hundman et al., KDD 2018, arXiv:1802.04431",
+  "upstream_source_sha256": {
+    "config.yaml": "3d2caeda9f8e84f15fadd50d7e77924700a2c611bd255831c75aa9182aae3353",
+    "example.py": "d7da4c43407f361ec28a87c1047b34e06b8e25467904e25a3de8adefef5b7e0e",
+    "labeled_anomalies.csv": "057ce2d6c8875982bf4e5404aefea14efdcbce413d80826d2b737c95b59b7539",
+    "telemanom/channel.py": "f43d34ac332117c569e68bdb36f349529362f4f75696bf790656217815d73050",
+    "telemanom/modeling.py": "77d1c62a77c7ef6baa451369ee9ba01d4af84fb6f5c51d86a11d1c5d4cccaf4a",
+    "telemanom/errors.py": "eb27e3dbc524a5252301e21835fb063ec7e1794eb4b252184c1a8a48a047b4aa",
+    "telemanom/detector.py": "33af1ad594468b0515c5db72860c62ee90e63daec5efb0e23a52d41aaf586003",
+    "telemanom/helpers.py": "c592d4f975144caeb81fa629a0a64b5649b062fad88600efa454f07bcd2190fa",
+    "requirements.txt": "d947d38dd23c73a2ef910ab409eb244b73b89bff0d41d6a0a6f03335bafa1c78"
+  },
+  "original_training_command": "python example.py -l labeled_anomalies.csv  (config.yaml train: True, predict: True)",
+  "original_evaluation_command": "same invocation; Detector.run() -> evaluate_sequences() writes results/<run_id>.csv",
+  "model_configuration_from_upstream_config": {
+    "layers": "[80,80]",
+    "dropout": "0.3",
+    "optimizer": "'adam'",
+    "loss_metric": "'mse'",
+    "lstm_batch_size": "64",
+    "epochs": "35",
+    "patience": "10",
+    "min_delta": "0.0003",
+    "validation_split": "0.2",
+    "l_s": "250",
+    "n_predictions": "10",
+    "batch_size": "70",
+    "window_size": "30",
+    "smoothing_perc": "0.05",
+    "error_buffer": "100",
+    "p": "0.13"
+  },
+  "channel_selection_rule": "Step 3 rule B. Upstream defines no canonical worked-example channel: the only channel-specific reference in the code is an anomaly-position carve-out (errors.py:62, 'if not channel.id == C-2'), which is not a worked example. Rule B therefore applies: the lexicographically first channel in the upstream default evaluation list (labeled_anomalies.csv) with complete train/test data and labels.",
+  "selected_channel": "A-1",
+  "selected_channel_record": {
+    "spacecraft": "SMAP",
+    "num_values": 8640,
+    "anomaly_sequences": "[[4690, 4774]]",
+    "class": "[point]"
+  },
+  "metrics": [
+    "true_positives",
+    "false_positives",
+    "false_negatives",
+    "precision",
+    "recall",
+    "f1",
+    "n_predicted_anoms",
+    "normalized_pred_error"
+  ],
+  "metric_source": "upstream Detector.evaluate_sequences and log_final_stats; no metric is invented for this study",
+  "paired_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "min_paired_seeds": 3
+}

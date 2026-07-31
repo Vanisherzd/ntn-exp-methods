@@ -1,0 +1,94 @@
+{
+ "protocol": "evaluation/external_consequence/PREREGISTRATION.md",
+ "upstream_frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
+ "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+ "detector_unmodified": true,
+ "channel": "A-1",
+ "channel_selection_rule": "Step 3 rule B, lexicographically first in labeled_anomalies.csv; upstream has no canonical worked example",
+ "upstream_config": {
+  "l_s": 250,
+  "n_predictions": 10,
+  "validation_split": 0.2,
+  "layers": [
+   80,
+   80
+  ],
+  "dropout": 0.3,
+  "optimizer": "adam",
+  "loss_metric": "mse",
+  "lstm_batch_size": 64,
+  "epochs": 35,
+  "patience": 10,
+  "min_delta": 0.0003,
+  "batch_size": 70
+ },
+ "data": {
+  "available": false,
+  "missing_input": "data/train/A-1.npy and data/test/A-1.npy",
+  "why": "Not in the repository. At the frozen commit the README directs users to the Kaggle dataset patrickfleith/nasa-anomaly-detection-dataset-smap-msl, which needs an API token; the older JPL mirror s3-us-west-2.amazonaws.com/telemanom/data.zip returns HTTP 403.",
+  "minimum_to_unblock": "a Kaggle API token in ~/.kaggle/kaggle.json, or any reachable copy of the per-channel arrays",
+  "stream_length_used_for_the_mechanical_half": 8640,
+  "stream_length_source": "labeled_anomalies.csv num_values for A-1 (the TEST stream length, documented upstream). Used only for the geometry measurement, which is a function of length and window span."
+ },
+ "overlap": {
+  "n_raw_timesteps": 8640,
+  "window_span": 260,
+  "n_windows": 8380,
+  "validation_fraction_declared": 0.2,
+  "original": {
+   "n_train_windows": 6704,
+   "n_val_windows": 1676,
+   "validation_fraction_actual": 0.2,
+   "shared_source_timesteps": 8632,
+   "shared_fraction_of_validation_support": 1.0,
+   "val_windows_touching_a_train_window": 1676,
+   "val_windows_touching_fraction": 1.0,
+   "max_shared_timesteps_between_two_adjacent_windows": 259,
+   "chronological": false
+  },
+  "corrected": {
+   "n_train_windows": 6445,
+   "n_val_windows": 1676,
+   "validation_fraction_actual": 0.2064,
+   "shared_source_timesteps": 0,
+   "shared_fraction_of_validation_support": 0.0,
+   "exclusion_boundary_windows_dropped": 259,
+   "boundary_width_windows": 259,
+   "chronological": true
+  }
+ },
+ "l41_verdict": {
+  "original": {
+   "fold_extents": {
+    "0": [
+     0,
+     8639
+    ],
+    "1": [
+     3,
+     8635
+    ]
+   },
+   "extents_disjoint": false,
+   "train_precedes_validation": false,
+   "verdict": "HALT",
+   "rule": "L4.1"
+  },
+  "corrected": {
+   "fold_extents": {
+    "0": [
+     0,
+     6704
+    ],
+    "1": [
+     6704,
+     8639
+    ]
+   },
+   "extents_disjoint": true,
+   "train_precedes_validation": true,
+   "verdict": "PASS",
+   "rule": "L4.1"
+  }
+ }
+}

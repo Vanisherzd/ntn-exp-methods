@@ -1,0 +1,19 @@
+{
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeded": [
+    "python random",
+    "numpy default_rng and legacy global",
+    "tensorflow global",
+    "keras weight initialisers",
+    "dropout sampling",
+    "the window shuffle"
+  ],
+  "policy": "A seed is never replaced because of its outcome. An infrastructure failure may be rerun under the same seed and is documented in results/.",
+  "pairing": "For each seed both arms share the initialisation seed, the preprocessing, the architecture, the optimizer, the test data, the thresholding procedure and the evaluation code. The only difference is how the early-stopping validation set is formed."
+}

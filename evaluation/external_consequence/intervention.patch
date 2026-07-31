@@ -1,0 +1,54 @@
+--- a/telemanom/channel.py
++++ b/telemanom/channel.py
+@@ shape_data (upstream, ORIGINAL arm -- unchanged)
+         data = []
+         for i in range(len(arr) - self.config.l_s - self.config.n_predictions):
+             data.append(arr[i:i + self.config.l_s + self.config.n_predictions])
+         data = np.array(data)
+ 
+         if train:
+-            np.random.shuffle(data)                      # ORIGINAL: shuffle ALL windows,
+-            self.X_train = data[:, :-self.config.n_predictions, :]   # then Keras
+-            self.y_train = data[:, -self.config.n_predictions:, 0]   # validation_split=0.2
+-                                                         # slices the END of the shuffled array
++            # CORRECTED: carve the validation block chronologically from the RAW stream BEFORE
++            # any shuffle, and drop the (l_s + n_predictions - 1) = 259 windows immediately
++            # before it so that no training window and no validation window share a single
++            # source timestep. Window i spans raw [i, i + 260), so two windows share a timestep
++            # iff |i - j| < 260; a 259-window gap is exactly sufficient and no wider.
++            span = self.config.l_s + self.config.n_predictions
++            n_win = len(data)
++            n_val = int(round(n_win * self.config.validation_split))
++            val_start = n_win - n_val
++            train_end = val_start - (span - 1)
++
++            train_idx = np.arange(0, max(train_end, 0))
++            val_idx = np.arange(val_start, n_win)
++
++            np.random.shuffle(train_idx)       # upstream shuffles training order; we keep that
++                                              # and leave the validation block ordered.
++            self.X_train = data[train_idx][:, :-self.config.n_predictions, :]
++            self.y_train = data[train_idx][:, -self.config.n_predictions:, 0]
++            self.X_val   = data[val_idx][:, :-self.config.n_predictions, :]
++            self.y_val   = data[val_idx][:, -self.config.n_predictions:, 0]
+         else:
+             self.X_test = data[:, :-self.config.n_predictions, :]
+             self.y_test = data[:, -self.config.n_predictions:, 0]
+
+--- a/telemanom/modeling.py
++++ b/telemanom/modeling.py
+@@ train_new (only the validation source changes)
+         self.model.fit(channel.X_train,
+                        channel.y_train,
+                        batch_size=self.config.lstm_batch_size,
+                        epochs=self.config.epochs,
+-                       validation_split=self.config.validation_split,   # ORIGINAL
++                       validation_data=(channel.X_val, channel.y_val),  # CORRECTED
+                        callbacks=cbs,
+                        verbose=True)
+
+NOT CHANGED IN EITHER ARM: architecture (two LSTM layers of 80 with dropout 0.3, dense
+n_predictions, linear activation), optimizer (adam), loss (mse), lstm_batch_size 64, epochs 35,
+EarlyStopping patience 10 / min_delta 0.0003, l_s 250, n_predictions 10, batch_size 70,
+window_size 30, smoothing_perc 0.05, error_buffer 100, p 0.13, the thresholding and anomaly
+scoring in errors.py, the test split, the labels, and the evaluation code in detector.py.

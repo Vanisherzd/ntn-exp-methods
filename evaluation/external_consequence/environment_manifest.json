@@ -1,0 +1,15 @@
+{
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "python": "3.11.0",
+  "upstream_pinned_requirements": [
+    "numpy==1.17.4",
+    "pandas==0.25.3",
+    "pyyaml==5.1.2",
+    "more_itertools==7.2.0",
+    "keras==2.3.1",
+    "tensorflow==2.0.1"
+  ],
+  "note": "Upstream pins keras==2.3.1 / tensorflow==2.0.1, which import keras.layers.recurrent and keras.layers.core -- module paths removed in later Keras. Neither pinned version has an arm64 macOS wheel. The arms are therefore run through a PORT that reproduces the upstream architecture, optimizer, loss, batch size, dropout, epoch cap, early-stopping patience and min_delta exactly as read from upstream config.yaml, on a modern TensorFlow. The port is identical between the two arms, so it cannot favour either; it is recorded here because it is a deviation from running upstream code verbatim.",
+  "tensorflow_installed_for_this_study": "2.16.2"
+}
