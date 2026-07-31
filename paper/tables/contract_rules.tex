@@ -10,7 +10,7 @@
 relational invariant; \textbf{support} rules make the experiment auditable and block known-invalid
 states---we do not claim all nineteen follow from deployment causality. Sixteen of nineteen have a
 demonstrated red fixture; \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} do not, and are
-exercised only on the clean path. \rulename{L4.3} is a cheap self-reported guard;
+exercised only on the clean path. \rulename{L4.5} checks manifest presence, not hash correctness, and \rulename{L4.3} is a cheap self-reported guard;
 \rulename{L4.7} is the calibrated decision. Outcomes: P \textsc{pass}, H \textsc{halt}, L label-and-retain, I \textsc{indeterminate}. Full nineteen-rule table in the artifact.}
 \label{tab:rules}
 \centering
@@ -23,6 +23,11 @@ exercised only on the clean path. \rulename{L4.3} is a cheap self-reported guard
 \rulename{L2} & physical, scheduling support     & support & 4 & 2 & H, L \\
 \rulename{L3} & state causality                   & core    & 3 & 3 & H \\
 \rulename{L4} & reproducibility and unit          & mixed   & 7 & 6 & P, H, I \\
+\midrule
+\multicolumn{6}{@{}l@{}}{\emph{Curated regression coverage}---a regression artifact, not the
+novelty result:}\\
+\multicolumn{6}{@{}l@{}}{17 faults, 2 ordering-expressible, 17 detected; clean paths
+accepted; $<$\qty{2}{\second}.}\\
 \bottomrule
 \end{tabular}
 \end{table}
