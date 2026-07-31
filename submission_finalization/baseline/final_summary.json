@@ -1,0 +1,52 @@
+{
+ "generated_by": "evaluation/scripts/make_final_summary.py",
+ "source_artifact": "evaluation/results/matrix_result.json",
+ "rule_count": 19,
+ "fault_class_count": 17,
+ "development_fault_count": 13,
+ "late_specified_fault_count": 4,
+ "curated_regression_fault_count": 17,
+ "environment_count": 3,
+ "injected_cell_count": 51,
+ "clean_path_count": 3,
+ "chronological_detected_count": 2,
+ "chronological_checks": [
+  "B1",
+  "B2",
+  "B3"
+ ],
+ "contract_detected_count": 17,
+ "clean_false_halt_count": 0,
+ "runtime_seconds": 1.41,
+ "runtime_ms_per_condition": 26.1,
+ "conditions_per_environment": 18,
+ "source_loc": 833,
+ "source_loc_excluding_init": 819,
+ "test_suite_loc": 877,
+ "test_count": 51,
+ "detectors_with_red_fixture": 16,
+ "detectors_without_red_fixture": [
+  "L2.2",
+  "L2.3",
+  "L4.5"
+ ],
+ "deterministic_across_environments": true,
+ "l47_calibration": {
+  "nominal_alpha": 0.05,
+  "clean_paths_evaluated": 450,
+  "fixture_seeds": 150,
+  "environments": 3,
+  "measured_clean_false_halt_rate": 0.042,
+  "injected_detection_rate": 1.0,
+  "injected_paths_evaluated": 150,
+  "discarded_fixed_threshold_null_size": 0.17,
+  "discarded_fixed_threshold": 0.2,
+  "clean_false_halt_wilson_95": [
+   0.027,
+   0.065
+  ],
+  "clean_false_halts": 19
+ },
+ "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
+ "commit": "b08d52c7f2358aeaa19a4305b4a12f5017890bdb"
+}
