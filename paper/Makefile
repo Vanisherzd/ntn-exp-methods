@@ -26,6 +26,9 @@ banlist:
 # no LaTeX errors, no overfull boxes. Fails the build if any is violated.
 verify: $(PDF)
 	@python3 scripts/verify_build.py
+# Minimum rendered glyph size. Separate script because it needs PyMuPDF, which the rest of
+# the gate does not; it prints SKIP rather than passing silently when that is absent.
+	@python3 scripts/check_glyphs.py
 
 # Removes ONLY regenerable products. Never touches icc_main.tex, refs.bib,
 # figure or table sources, evaluation results, or archival evidence.

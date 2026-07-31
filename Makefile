@@ -42,6 +42,8 @@ test:
 matrix:
 	@echo "== fault-injection matrix"
 	@$(PY) evaluation/scripts/run_matrix.py >/dev/null
+	@echo "== L4.7 calibration and operating curve (Fig. 2)"
+	@$(PY) evaluation/scripts/calibrate_l47.py >/dev/null
 	@$(MAKE) --no-print-directory summary
 
 summary:
