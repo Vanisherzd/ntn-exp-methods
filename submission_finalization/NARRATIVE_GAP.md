@@ -90,3 +90,55 @@ related-work paragraph, and say plainly what would be lost without the work.
 - The contributions lead with the two relational checks; the nineteen rules become the
   instantiation rather than the headline.
 - The counterfactual is stated, so F does not have to be assembled by the reader.
+
+
+---
+
+# P14/P15 — wisdom reviewers, after revision
+
+Four fresh reviewers, one read each, fixed short format, assigned different questions.
+
+| | R-W1 comms | R-W2 ML systems | R-W3 statistics | R-W4 skeptic |
+|---|---|---|---|---|
+| problem = not a predicate on one realised run | match, **explicit** | match, **explicit** | match, **explicit** | match, **explicit** |
+| insight = falsify via relations across runs / levels | match, **explicit** | match, **explicit** | match, **explicit** | match, **explicit** |
+| method in ≤ 3 steps | match, **explicit** | match, **explicit** | match, **explicit** | match, **explicit** |
+| wisdom = change what is tested | match, *reconstructed* | match, *reconstructed* | match, *reconstructed* | match, *reconstructed* |
+| verdict | WEAK ACCEPT | WEAK ACCEPT | WEAK ACCEPT | WEAK ACCEPT |
+| answered "19 rules" / "ICC+permutation" / "debugging toolkit" as the problem, insight or method? | **no** | **no** | **no** | **no** |
+
+**Gate: met.** 4/4 converge on problem, insight and method, and all four now mark them explicit —
+against P0, where 4/4 marked what-is-new, why-not-assembled and what-would-be-lost as *inferred*.
+None gave a P15 failure answer.
+
+## The one unanimous residual, and what was done
+
+All four converged on the *content* of the wisdom and all four said they had to reconstruct it:
+
+> "nobody assembles them into the single design stance that drives all three" (R-W1)
+> "never says that the abstention semantics ... is the load-bearing design decision" (R-W2)
+> "the paper never singles out *which* of its many claims is load-bearing" (R-W3)
+> "its status as the single load-bearing judgement ... is my reconstruction" (R-W4)
+
+Fixed with one sentence at the head of §III, naming the judgement that generates both checks:
+neither obligation can be *certified*, so the paper accepts checks that can only *refuse*, which
+makes failures proofs, successes uninformative, and the collapse of an undecidable design into
+`PASS` forbidden. That is the second and last authorised revision cycle.
+
+## Residual framing complaint, recorded not fixed
+
+Three of four still call the rule catalogue padding: "wearing a nineteen-rule contract and an
+833-line toolkit as costume ... the taxonomy is padding" (R-W1); "regrettably wrapped in a
+nineteen-rule catalogue and a toolkit it did not need" (R-W4); "nineteen validity rules plus an
+833-line toolkit, and the authors know that fifteen of the rules are known practice restated"
+(R-W2). This is a genuine shift from P0 — the catalogue is no longer mistaken *for* the
+contribution — but the reviewers would prefer the paper drop the framework framing entirely. That
+is a structural change to what the paper claims to be, not a narrative pass, so it is recorded here
+rather than acted on.
+
+## What no reviewer disputes any more
+
+All four now state the contribution without prompting: the row-local/relational distinction, the
+one-sided provenance falsifier, and an abstention verdict anchored in the exact cardinality of the
+permutation reference. R-W4 answered the hard question — strip the toolkit and every number and a
+publishable idea remains — with "Yes ... which is more than most tooling papers can say."

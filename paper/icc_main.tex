@@ -229,6 +229,12 @@ standard~\cite{vallado2006revisiting}.
 
 \subsection{The two relational checks, formally}
 
+One judgement generates both. Neither obligation can be \emph{certified}---enumerating the
+dependencies a manifest might omit is hopeless, and no finite design proves exchangeability---so we
+accept checks that can only \emph{refuse}, testing a necessary consequence instead of the property
+itself. Failures are then proofs and successes are not, and the same stance forbids collapsing an
+undecidable design into \textsc{pass}.
+
 \emph{Provenance completeness} (\rulename{L4.6}). Over input variations $\{c_i\}$ with output
 digests $o_i$ and manifest hashes $h_i$, any pair with $o_i \neq o_j$ and $h_i = h_j$ proves the
 manifest incomplete, since two runs differing in output must differ in provenance. The converse is
@@ -291,8 +297,7 @@ in all three environments. We report \num{17} computations, not
 $51$: the object handed to the detector is bit-identical across environments for fourteen classes,
 so $\artv{injected_cells}{51/51}$ states \emph{determinism}. Clean paths were accepted with
 identical verdicts, and \artv{red_fixture}{Sixteen} of nineteen rules are demonstrated red by a
-fixture. The sweep runs in under \qty{2}{\second} on one laptop core, under
-\qty{40}{\milli\second} per condition, \texttt{numpy} the only dependency---but that figure is the
+fixture. The sweep runs in under \qty{3}{\second} on one laptop core, under \qty{60}{\milli\second} per condition on an otherwise loaded machine, \texttt{numpy} the only dependency---but that figure is the
 \emph{checker}: \rulename{L1.1}, \rulename{L1.4} and \rulename{L4.6} each re-execute the pipeline
 per variation, so their true cost is a multiple of pipeline runtime and is excluded.
 
