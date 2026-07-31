@@ -396,22 +396,34 @@ def check_provenance_completeness(
                         f"manifest")
 
 
-def _icc_permutation_critical(agg: np.ndarray, grp: np.ndarray, alpha: float,
-                             n_perm: int, rng: np.random.Generator) -> float:
-    """Null critical value for ICC(1) by permuting unit values across coarser groups.
+def _icc_permutation_pvalue(icc: float, agg: np.ndarray, grp: np.ndarray,
+                            n_perm: int, rng: np.random.Generator) -> tuple[float, float]:
+    """Monte-Carlo permutation p-value for ICC(1), with the finite-B correction.
 
-    Under the null the coarser grouping carries no information, so unit-level values
-    are exchangeable across groups. The (1-alpha) quantile of the permutation
-    distribution is therefore a size-alpha critical value that adapts to the actual
-    group count and balance. numpy only; no distributional table required.
+    Under the null the coarser grouping carries no information, so unit-level values are
+    exchangeable across groups. Permuting them gives the null distribution at the observed
+    group count and balance; numpy only, no distributional table.
+
+    THE CORRECTION. An earlier version compared the statistic to the (1-alpha) empirical
+    QUANTILE of B permutations. That is anticonservative: the observed statistic is itself
+    one draw from the null under H0, and omitting it lets the realised size exceed alpha by
+    roughly 1/(B+1). The standard estimator includes the observed value in both counts,
+
+        p = (1 + #{T* >= T}) / (B + 1),
+
+    which is exactly valid for any B. Returns (p, critical) -- the critical value is kept
+    for the diagnostic message only; the decision is made on p.
     """
-    stats = np.empty(n_perm)
     v = agg.copy()
+    stats = np.empty(n_perm)
     for b in range(n_perm):
         rng.shuffle(v)
         stats[b] = EC.within_group_icc(v, grp)
     stats = stats[np.isfinite(stats)]
-    return float(np.quantile(stats, 1.0 - alpha)) if stats.size else float("inf")
+    if stats.size == 0:
+        return 1.0, float("inf")
+    p = (1.0 + float(np.sum(stats >= icc))) / (stats.size + 1.0)
+    return p, float(np.quantile(stats, 0.95))
 
 
 def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
@@ -457,15 +469,21 @@ def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
     if not np.isfinite(icc):
         return {"verdict": "INDETERMINATE", "n_coarser_groups": n_groups,
                 "icc": None, "critical": None, "reason": "ICC not estimable"}
-    crit = _icc_permutation_critical(agg, grp, alpha, n_perm,
-                                     np.random.default_rng(seed))
-    if icc > crit:
+    # Design-specific permutation stream. A single global seed made the Monte-Carlo error
+    # of the critical value identical across every calibration design, coupling replicates
+    # that are supposed to be independent. Derived deterministically from the design, so
+    # reproducibility is preserved without the coupling.
+    design_key = (int(seed), int(n_groups), int(agg.size),
+                  int(np.round(float(np.sum(agg)) * 1e6)))
+    pv, crit = _icc_permutation_pvalue(
+        icc, agg, grp, n_perm, np.random.default_rng(abs(hash(design_key)) % (2**32)))
+    if pv <= alpha:
         raise ContractViolation(
-            "L4.7", f"unit-level ICC {icc:.3f} exceeds the permutation critical value "
-                    f"{crit:.3f} at alpha={alpha} over {n_groups} coarser groups; the "
-                    f"chosen statistical unit is finer than the exchangeable one")
+            "L4.7", f"unit-level ICC {icc:.3f} gives permutation p={pv:.4f} <= "
+                    f"alpha={alpha} over {n_groups} coarser groups; the chosen statistical "
+                    f"unit is finer than the exchangeable one")
     return {"verdict": "PASS", "n_coarser_groups": n_groups, "icc": float(icc),
-            "critical": float(crit)}
+            "p_value": float(pv), "critical": float(crit)}
 
 
 # ==========================================================================
