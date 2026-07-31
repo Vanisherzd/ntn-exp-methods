@@ -17,8 +17,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.602,
- "runtime_ms_per_condition": 29.7,
+ "runtime_seconds": 1.598,
+ "runtime_ms_per_condition": 29.6,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -213,5 +213,5 @@
   "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two in test), so the endpoint has about two attainable states. With 5 paired seeds the minimum attainable two-sided p is 0.0625 > alpha, below this paper's own attainability floor, so the downstream endpoint is NOT OBSERVABLE rather than null."
  },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "8734f780aadd5f88ca0264749ca74ae6155b76d2"
+ "commit": "b39755ed7a0ef9f1c763361187e44c49468939a9"
 }
