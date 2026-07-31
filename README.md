@@ -4,8 +4,11 @@ A deployment-causality and falsifiability contract for learning-assisted satelli
 communication software, plus the toolkit that implements it and the regression suite that
 exercises it.
 
-**Active paper:** *Beyond Chronological Splits: A Deployment-Causality and Falsifiability
-Contract for Learning-Assisted Satellite Communication Software* — `paper/icc_main.tex`.
+**Active paper:** *Orbit-Evidence: Relational Validity Checks for Learning-Assisted Satellite
+Communication Experiments* — `paper/icc_main.tex`, built to `paper/icc_main.pdf` by `make paper`.
+Anything titled "Beyond Chronological Splits" is the superseded title; see
+[THE_PAPER.md](THE_PAPER.md) for every other `icc_main` in the tree and why it is not the
+submission.
 
 Chronological train/validation/test splitting is necessary for temporal learning
 pipelines, but ordering is only one of the properties a deployment claim rests on. A

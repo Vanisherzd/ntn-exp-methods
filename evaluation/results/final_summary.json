@@ -17,8 +17,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.387,
- "runtime_ms_per_condition": 25.7,
+ "runtime_seconds": 1.403,
+ "runtime_ms_per_condition": 26.0,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -63,5 +63,5 @@
   "largest_object_record_share": 0.824
  },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "253857be6be6f98a5ad0a5d5928b187ba680a880"
+ "commit": "4ccb0b7d50b6a60176062deb824238e223588d97"
 }
