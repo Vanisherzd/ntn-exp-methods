@@ -338,3 +338,99 @@ Neither asked for a reframing. Across eight reviewers over three cycles the requ
 identical and unchanging: contact with an artifact the authors did not produce. Presentation
 work cannot supply it, and the standing instruction for every cycle has been that new
 scientific experiments are out of scope.
+
+---
+
+# External-validation cycle — R-E1 to R-E4
+
+Four fresh reviewers, PDF and artifact summary only. **They reviewed the PDF as it stood before
+analysis D existed.** D was written in direct response to R-E1 and R-E3 making the same objection,
+so no reviewer has seen the result that answers their shared Q3. That is stated here rather than
+allowed to read as endorsement.
+
+| | R-E1 satellite | R-E2 methodology | R-E3 ML systems | R-E4 reject advocate |
+|---|---|---|---|---|
+| **verdict** | WEAK ACCEPT | **WEAK REJECT** | WEAK ACCEPT | WEAK ACCEPT |
+| novelty | 3 | 3 | 2 | 3 |
+| significance | 3 | 2 | 3 | 3 |
+| technical | 4 | 3.5 | 4 | 4 |
+| evidence | 3 | 2 | 2 | 2 |
+| clarity | 4 | 2.5 | 4 | 3 |
+| venue fit | 3 | — | — | — |
+
+| question | R-E1 | R-E2 | R-E3 | R-E4 |
+|---|---|---|---|---|
+| Q1 evidence still primarily internal? | Yes | Yes | Yes, overwhelmingly | Yes |
+| Q2 third party changes external validity? | Yes, narrowly, n=1 | No | Marginally | Partially — zero to nonzero |
+| Q3 L4.7 demonstrated on real orbital data? | No — applied, not demonstrated | No | Executed, not demonstrated | Runs and decides; not shown to work |
+| Q4 novelty ≥ 3? | Yes, exactly 3 | Barely, 3 | No, 2 | Yes, exactly 3 |
+| Q5 ACCEPT-worthy? | Marginally | Not as submitted | Marginally | Yes, low end |
+
+## Step L target: NOT MET
+
+| criterion | result |
+|---|---|
+| no reviewer below WEAK ACCEPT | **FAIL** — R-E2 returned WEAK REJECT |
+| ≥ 2 reviewers ACCEPT or better | **FAIL** — zero |
+| median novelty ≥ 3 | PASS — median 3 |
+| median technical ≥ 4 | PASS — median 4 |
+| ≥ 3 of 4 say evidence no longer purely internal | **FAIL** — all four say it remains primarily internal |
+| no detector changed after external outcomes | PASS — sha256 identical to the pre-registration, gate-asserted |
+| six-page build clean | PASS |
+
+Three of seven fail, so the return is **SUBMISSION READY — EXTERNAL VALIDATION DID NOT LIFT REVIEW
+SCORE**.
+
+## The one objection all four made, and what was done about it
+
+R-E1 and R-E3 independently identified the same flaw in analyses A–C, and they were right:
+**elevation is a deterministic function of the grouping**, so a PASS and a HALT there are both
+uninformative about §I-A(v), which is about along-track *error*. R-E1 named the fix and correctly
+said it needed no new data: difference each element set against its successor and take the in-track
+component.
+
+Done, pre-registered first, prediction stated in advance. The frozen rule **halts** in all three
+groupings — pass→element set at $\hat{\rho}=0.498$ (95% upper 0.636), pass→object 0.241, element
+set→object 0.284. The registered prediction held. This is the first real-data result in the
+campaign that bears on the paper's own premise, and it exists because two reviewers were right and
+the objection was cheap to answer.
+
+## Everything else confirmed and fixed
+
+| finding | reviewer | status |
+|---|---|---|
+| abstention floor mislabelled a *power* precondition; it is *attainability* — 3 groups of 2 admit 15 assignments so min $p=0.067>\alpha$, 4 groups of 2 admit 105 | R-E2 | fixed, and now derived in two lines rather than asserted |
+| `PASS` glossed as "the condition is supported" — null-acceptance fallacy refuted by the paper's own power 0.25 at $\rho=0.2$ | R-E2 | fixed to "not rejected", with the 3-in-4 consequence stated |
+| undisclosed attrition 109→101 element sets, 331→305 passes | R-E1, R-E2, R-E4 | fixed; cause is republished element sets sharing an epoch. R-E4 rightly called this the failure of the paper's own denominator standard that the paper did not catch |
+| the gate passed *because* the analysed n was never claimed | R-E1 | a real ceiling of per-claim binding, now stated |
+| ICC truncation at zero, so $p=1.000$ is a ties signature and 0.000 is not an effect size | R-E1, R-E2 | fixed |
+| no upper confidence bound on any real ICC | R-E2 | added, computed in the analysis script — **not** in the rule, since changing a detector after seeing external outcomes is what this campaign forbids |
+| multiplicity: 1 halt across 14 decisions, $P(\ge 1)=0.51$ under the null | R-E2 | fixed; no longer presented as dependence |
+| contribution 1 claimed five relational rules, abstract said two | R-E3 | reconciled: two are the contribution, three are recastings |
+| "L2.2, L2.3, L4.5 fire in no condition" — but L4.5 halted externally | R-E4 | fixed; scoped to the curated suite. This *understated* our own evidence |
+| "inflated compliance by a third" reproduces from no denominator | R-E2 | replaced with counts |
+| the under-2-second figure measures the checker, not the relational rules' pipeline reruns | R-E3 | stated |
+| literate computing is stronger prior art for number binding — it makes disagreement impossible rather than detected | R-E3 | cited |
+| station, mask value, sample interval, horizon absent from the paper | R-E1 | added |
+
+## Declined, with reasons
+
+**R-E4's headline ask — show once, end to end, that a HALT changes a reported number**, ideally by
+re-running the frozen third-party artifact's evaluation with and without the defect the contract
+found. R-E4 is right that this is the single change that would move Evidence from 2 to 4, and right
+that it is bounded. Declined: it requires training a model and re-running a third party's published
+evaluation, and every cycle of this campaign has placed new model training out of scope. It is the
+first thing to do next, and it needs no new data.
+
+**R-E1's second ask — one leak inflating a communications-relevant number.** Same reason: it
+requires fitting a predictor. Recorded as the second thing to do next.
+
+**R-E1's suggestion to pick objects with public POD/SLR truth.** New data collection.
+
+## What the four reviewers agree on, and it is not resolvable by presentation
+
+All four answered **yes** to Q1. Twelve reviewers across four cycles have now converged on the same
+sentence: the quantified evidence is internal. This cycle moved external evidence from zero to
+nonzero — one artifact, one real-data halt — and every reviewer registered that as a change in
+kind while declining to call it a change in degree. R-E4 put it most precisely: *"It is no longer
+exclusively internal — that is the genuine delta — but the load remains internal."*
