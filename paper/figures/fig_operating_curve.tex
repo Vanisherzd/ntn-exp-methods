@@ -1,0 +1,53 @@
+% Fig. 2 -- L4.7 operating characteristic.
+% Included by paper/icc_main.tex via \input.
+%
+% This REPLACES the 17-class coverage matrix, which gave the largest visual allocation to
+% the weakest result -- a matrix of assertions firing on inputs shaped to trip them. The
+% numbers below come from evaluation/results/l47_power_curve.json and the l47_calibration
+% block of final_summary.json, both generated before this figure existed.
+\begin{figure}[!t]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}[font=\footnotesize,x=20mm,y=15mm]
+% axes
+\draw[->,black!70] (0,0) -- (3.35,0) node[below left=1pt and -6mm]{ };
+\draw[->,black!70] (0,0) -- (0,1.22);
+\foreach \x/\lab in {0/{0}, 1/{0.2}, 2/{0.5}, 3/{0.8}}
+  {\draw[black!70] (\x,0) -- (\x,-0.04); \node[below,font=\scriptsize] at (\x,-0.05) {\lab};}
+\foreach \y/\lab in {0/{0}, 0.5/{0.5}, 1/{1.0}}
+  {\draw[black!70] (0,\y) -- (-0.03,\y); \node[left,font=\scriptsize] at (-0.04,\y) {\lab};}
+\node[below,font=\scriptsize,align=center] at (1.65,-0.34)
+  {intraclass correlation at the coarser level};
+\node[rotate=90,font=\scriptsize] at (-0.40,0.6) {P(\textsc{halt})};
+% nominal alpha reference
+\draw[dashed,black!55] (0,0.05) -- (3.35,0.05);
+\node[font=\scriptsize,text=black!60,anchor=west] at (1.95,0.135)
+  {nominal $\alpha=0.05$};
+% low-correlation region: power is indistinguishable from size
+\fill[black!7] (0,0) rectangle (0.42,1.15);
+\node[font=\scriptsize,text=black!55,rotate=90,anchor=south] at (0.20,0.30)
+  {blind: P(\textsc{halt}) $\approx\alpha$};
+% measured curve. x is ICC, y is measured HALT probability.
+\draw[line width=1.1pt,black!85]
+  (0.00,0.03) -- (0.05,0.05) -- (0.20,0.05) -- (0.42,0.07)
+  -- (1.00,0.28) -- (2.50,0.80) -- (4.00,1.00);
+\clip (0,-0.06) rectangle (3.35,1.22);
+\foreach \x/\y in {0.00/0.03, 0.20/0.05, 0.42/0.07, 1.00/0.28, 2.50/0.80}
+  {\fill[black!85] (\x,\y) circle (1.5pt);}
+% the clean-path measurement, with its Wilson interval
+\draw[line width=1.0pt,red!65!black] (0.02,0.027) -- (0.02,0.065);
+\draw[line width=1.0pt,red!65!black] (-0.02,0.027) -- (0.06,0.027);
+\draw[line width=1.0pt,red!65!black] (-0.02,0.065) -- (0.06,0.065);
+\fill[red!65!black] (0.02,0.042) circle (1.7pt);
+\node[font=\scriptsize,text=red!65!black,anchor=west,align=left] at (0.14,0.62)
+  {measured false halt\\$19/450=0.042$\\Wilson $[0.027,0.065]$};
+\end{tikzpicture}}
+\caption{\rulename{L4.7}'s operating characteristic---the only component of the contract whose
+error rates are measured rather than assumed. Specificity: \num{19} false halts over \num{450}
+clean replicates, $0.042$ against nominal $0.05$ (red, Wilson interval). Power: $1.00$ at
+intraclass correlation $0.8$, $0.28$ at $0.2$, and indistinguishable from the false-halt rate below
+about $0.1$ (shaded). A gate needs both halves; reporting specificity alone would hide that the
+rule finds gross unit errors and misses subtle ones. Below four coarser groups or eight units it returns
+\textsc{indeterminate}, not \textsc{pass}.}
+\label{fig:opcurve}
+\end{figure}
