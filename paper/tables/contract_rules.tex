@@ -17,12 +17,12 @@ exercised only on the clean path. \rulename{L4.5} checks manifest presence, not 
 \scriptsize
 \begin{tabular}{@{}llcccc@{}}
 \toprule
-& \textbf{obligation} & \textbf{kind} & \textbf{rules} & \textbf{red} & \textbf{outcome}\\
+\textbf{rules} & \textbf{obligation} & \textbf{kind} & \textbf{n} & \textbf{red} & \textbf{outcome}\\
 \midrule
-\rulename{L1} & availability, closure, membership & core    & 5 & 5 & H \\
-\rulename{L2} & physical, scheduling support     & support & 4 & 2 & H, L \\
-\rulename{L3} & state causality                   & core    & 3 & 3 & H \\
-\rulename{L4} & reproducibility and unit          & mixed   & 7 & 6 & P, H, I \\
+\rulename{L1.1--1.5} & availability, closure, membership & core    & 5 & 5 & H \\
+\rulename{L2.1--2.4} & physical, scheduling support     & support & 4 & 2 & H, L \\
+\rulename{L3.1--3.3} & state causality                  & core    & 3 & 3 & H \\
+\rulename{L4.1--4.7} & reproducibility and unit         & mixed   & 7 & 6 & P, H, I \\
 \midrule
 \multicolumn{6}{@{}l@{}}{\emph{Curated regression coverage}---a regression artifact, not the
 novelty result:}\\

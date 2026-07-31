@@ -15,7 +15,7 @@
 \begin{figure}[!t]
 \centering
 \resizebox{\columnwidth}{!}{%
-\begin{tikzpicture}[font=\footnotesize,x=88mm,y=12mm]
+\begin{tikzpicture}[font=\footnotesize,x=88mm,y=10mm]
 % axes. x runs past the last datum (ICC 0.8) so the curve ends inside its own axis.
 \draw[->,black!70] (0,0) -- (0.88,0);
 \draw[->,black!70] (0,0) -- (0,1.22);
@@ -48,12 +48,12 @@
 \node[font=\scriptsize,text=red!65!black,anchor=west,align=left] at (0.105,0.62)
   {measured false halt\\$14/450=0.031$\\Wilson $[0.018,0.052]$};
 \end{tikzpicture}}
-\caption{\rulename{L4.7}'s operating characteristic, on one synthetic design (eight coarser groups
+\caption{\rulename{L4.7}'s operating characteristic on one synthetic design (eight coarser groups
 of three units). Specificity: \num{14} false halts over \num{450} clean replicates, $0.031$ against
-nominal $0.05$ (red, Wilson interval)---consistent with $\alpha$, not better than it. Power: $1.00$
-at intraclass correlation $0.8$ and $0.25$ at $0.2$, each over \num{40} seeds, decaying to the
-false-halt rate below about $0.1$ (shaded). A gate needs both halves; reporting specificity alone
-would hide that the rule finds gross unit errors and misses subtle ones. Below four coarser groups
-or eight units it returns \textsc{indeterminate}, not \textsc{pass}.}
+nominal $0.05$ (red, Wilson interval)---consistent with $\alpha$, not better. Power: $1.00$ at
+intraclass correlation $0.8$, $0.25$ at $0.2$, each over \num{40} seeds, decaying to the false-halt
+rate below about $0.1$ (shaded). A gate needs both halves; specificity alone would hide that the
+rule finds gross unit errors and misses subtle ones. Below four coarser groups or eight units it
+returns \textsc{indeterminate}, not \textsc{pass}.}
 \label{fig:opcurve}
 \end{figure}

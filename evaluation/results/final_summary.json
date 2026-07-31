@@ -17,8 +17,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.414,
- "runtime_ms_per_condition": 26.2,
+ "runtime_seconds": 1.387,
+ "runtime_ms_per_condition": 25.7,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -52,6 +52,16 @@
    "96": 0.0
   }
  },
+ "publication_lag": {
+  "n_records": 63727,
+  "n_objects": 11,
+  "median_lag_h_record_pooled": 1.68,
+  "median_lag_h_object_level": 6.36,
+  "all_object_medians_positive": true,
+  "frac_epoch_ahead_record_pooled": 0.2762,
+  "n_objects_with_epoch_ahead": 1,
+  "largest_object_record_share": 0.824
+ },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "cd8202a2f3eb1bf5f095d8ca06387d587f5084ba"
+ "commit": "253857be6be6f98a5ad0a5d5928b187ba680a880"
 }
