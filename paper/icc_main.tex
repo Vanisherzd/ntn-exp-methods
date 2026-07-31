@@ -126,12 +126,13 @@ We claim nothing about radio-frequency or packet-level performance. No learned c
 method is shown here to work or to fail; the object of study is the experiment, not the model.
 
 \emph{Availability.} The toolkit, fixtures, fault suite and summary artifact accompany this
-submission anonymously. \texttt{make gate} regenerates the evaluation, \rulename{L4.7}'s
-operating characteristic included, and refuses to build if any headline number \emph{disagrees}
-with the artifact at the sentence claiming it, if such a sentence is missing, if a retracted claim
-reappears, or if a stated bound is exceeded---agreement per claim, not presence somewhere in the
-sources. It is still a regression guard, not a proof of correctness: a wrong number that no rule
-names would pass it.
+submission anonymously. \texttt{make gate} regenerates the fault matrix and \rulename{L4.7}'s operating characteristic and
+refuses to build if a headline number \emph{disagrees} with the artifact at the sentence claiming
+it, if such a sentence is missing, or if a retracted claim reappears---agreement per claim, not
+presence somewhere. The two studies of \S\ref{sec:external} it reads rather than reruns, their
+inputs not shipping; it refuses if the contract's hash or the frozen third-party commit differ from
+the registered ones. Weaker than regeneration, and we say so. It is a regression guard throughout,
+not a proof of correctness.
 
 \section{Threat Model and Experiment Contract}
 

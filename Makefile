@@ -6,7 +6,19 @@
 #     make matrix        re-run the fault-injection matrix and the summary artifact
 #     make paper         build paper/icc_main.pdf
 #     make verify        assert the six-page submission invariants
+#     make realdata      re-run the real-catalogue L4.7 application (needs dataraw/, local)
+#     make external      re-run the third-party artifact study (needs a network clone)
 #     make clean         remove regenerable products only (never sources or evidence)
+#
+# WHAT `make gate` DOES AND DOES NOT REGENERATE. It regenerates the fault matrix, the L4.7
+# calibration and the operating curve on every run. It does NOT regenerate the two external
+# evidence artifacts, because neither input ships with the repository: the real-data application
+# needs dataraw/ (Space-Track records, untracked local data) and the third-party study needs a
+# network clone at a frozen commit. Their artifacts are committed and the gate READS them, and it
+# refuses to build if the contract's sha256 differs from the pre-registration hash, if the frozen
+# third-party commit is not the registered one, or if the two studies disagree about which
+# contract version they ran against. That is weaker than regeneration and is stated as such --
+# claiming otherwise is the exact defect that let a stale calibration through once already.
 #
 # `clean` never removes: paper/icc_main.tex, paper/refs.bib, figure or table sources,
 # anything under evaluation/results/, or anything under archive/.
@@ -14,7 +26,7 @@
 PY      := python3
 SUMMARY := evaluation/results/final_summary.json
 
-.PHONY: all gate gate-twice test matrix summary claims paper verify clean
+.PHONY: all gate gate-twice test matrix summary claims paper verify clean realdata external
 
 all: paper
 
@@ -62,6 +74,21 @@ paper:
 verify:
 	@echo "== paper build and submission invariants"
 	@$(MAKE) --no-print-directory -C paper verify
+
+# Re-derivable only where the inputs are present. Both print what they need rather than
+# failing obscurely, and both refuse to run against a different contract than the registered one.
+realdata:
+	@echo "== real-catalogue L4.7 application (needs dataraw/)"
+	@test -d dataraw/spacetrack || { echo "   dataraw/spacetrack absent -- untracked local data, skipping"; exit 0; }
+	@$(PY) evaluation/scripts/real_l47_application.py
+	@$(PY) evaluation/scripts/object_level_timing.py
+	@$(MAKE) --no-print-directory summary
+
+external:
+	@echo "== third-party artifact study (needs a clone at the frozen commit)"
+	@test -n "$(TELEMANOM)" || { echo "   set TELEMANOM=/path/to/clone; see evaluation/external/SELECTION.md"; exit 1; }
+	@$(PY) evaluation/scripts/external_artifact_study.py --repo "$(TELEMANOM)"
+	@$(MAKE) --no-print-directory summary
 
 clean:
 	@$(MAKE) --no-print-directory -C paper clean
