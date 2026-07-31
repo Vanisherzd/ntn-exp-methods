@@ -1,113 +1,145 @@
 % Fig. 1 -- Orbit-Evidence architecture. Included by paper/icc_main.tex via \input.
 %
-% Replaces a timeline-only figure (kept as fig_contract_TIMELINE_ARCHIVED.tex) that showed the
-% experiment's time axis and its prohibited paths but not the contract, the layers, or the decision
-% semantics -- so a reviewer could not understand the method from Fig. 1 alone.
+% ROUTING RULE, absolute: every connector is orthogonal. No to[out=..,in=..], no bend left/right,
+% no splines, no line jumps. Curved violation arcs in the previous version dominated the figure and
+% consumed the vertical whitespace the architecture needed; three straight rails carry the same
+% information in a fraction of the height.
 %
-% SIZING, and it is load-bearing. There is deliberately NO \resizebox here. The unit vectors are set
-% so the picture is naturally about \textwidth, which means every declared font size reaches the
-% page unscaled: \small is 9 pt and \scriptsize is 7 pt, both above the 6.4 pt floor that
-% paper/scripts/check_glyphs.py enforces. A first version of this figure drew on a 25 cm canvas and
-% let \resizebox squeeze it into \textwidth, a 0.71 factor that put a subscript at 3.56 pt. If this
-% figure needs more room, MOVE NODES CLOSER or cut content -- do not add \resizebox back.
+% BOX BORDERS. Every stage box is exactly 7mm tall (the two-line boxes overflow a 6.2mm minimum,
+% the one-line box does not, so a single minimum makes them unequal). Half-height is 0.5185 units,
+% so rails and observation connectors terminate at y = +-0.52: on the border, not 1mm inside it,
+% where they rendered as dashed stubs floating in the box interior.
 %
-% STYLE. IEEE conventions: rectangular grouping, one arrow weight for normal flow, academic
-% blue/grey, restrained red for prohibited flow only, white background. No gradients, shadows,
-% icons or dashboard cards.
+% GRID. Stage centres sit on a 3.8-unit pitch at x = 1.6, 5.4, 9.2, 13.0, 16.8, 20.6. Layer boxes
+% sit at exactly the stage x they observe, so every observation connector is one vertical segment.
+% Keep that invariant: if a layer moves, move it to another stage's x, never between two.
+%
+% RAIL SEPARATION. Three violation rails run right-to-left at distinct heights on distinct risers,
+% so no rail crosses another:
+%   L1.1  riser x=21.4  rail y=3.15  descends at x=1.6   (longest span, highest rail)
+%   L1.4  riser x=19.8  rail y=2.25  descends at x=9.2
+%   L3.1  riser x=16.8  rail y=1.35  descends at x=13.0  (shortest span, lowest rail)
+% L1.3, the ordering-catchable contrast, runs below the pipeline at y=-0.95 on riser x=17.6, clear
+% of the deployment observation connector at x=16.8.
+%
+% SIZING. No \resizebox: the unit vectors make the picture about \textwidth so declared font sizes
+% reach the page unscaled. paper/scripts/check_glyphs.py fails the build below 6.4 pt for author-set
+% text. If this figure needs room, move nodes -- do not scale it down.
 \begin{figure*}[!t]
 \centering
 \begin{tikzpicture}[
   x=6.75mm, y=6.75mm,
   font=\small,
-  >={Latex[length=1.9mm]},
-  stage/.style={draw=black!65,line width=0.6pt,align=center,minimum height=6.5mm,
+  >={Latex[length=1.8mm]},
+  stage/.style={draw=black!65,line width=0.6pt,align=center,minimum height=7mm,
                 text width=17.5mm,inner sep=1.5pt,fill=blue!4,font=\scriptsize},
-  layer/.style={draw=black!55,line width=0.6pt,align=left,text width=25mm,
+  % Uniform 13.2mm: L1 wraps to four lines and the others to three, so without a minimum the
+  % four frames had four different tops and the band did not read as a grid.
+  layer/.style={draw=black!55,line width=0.6pt,align=left,text width=23mm,minimum height=13.2mm,
                 inner sep=2.5pt,fill=black!3,font=\scriptsize},
-  rel/.style={draw=black!60,line width=0.6pt,align=left,text width=38mm,
+  rel/.style={draw=black!60,line width=0.6pt,align=left,text width=36mm,
               inner sep=2.5pt,fill=blue!3,font=\scriptsize},
-  dec/.style={draw=black!65,line width=0.6pt,align=center,text width=20mm,
-              minimum height=4.2mm,inner sep=1pt,fill=white,font=\scriptsize},
+  dec/.style={draw=black!65,line width=0.6pt,align=center,text width=21mm,
+              minimum height=4mm,inner sep=1pt,fill=white,font=\scriptsize},
   grp/.style={draw=black!30,line width=0.5pt,dash pattern=on 2pt off 1.5pt,inner sep=4pt},
   ok/.style={->,line width=0.7pt,black!70},
-  obs/.style={->,line width=0.5pt,black!35},
+  obs/.style={->,line width=0.5pt,black!40},
+  bus/.style={line width=0.5pt,black!40},
   no/.style={->,line width=0.7pt,red!60!black,dashed},
   noord/.style={->,line width=0.7pt,blue!50!black,densely dotted},
   tie/.style={<->,line width=0.6pt,black!55},
-  lab/.style={font=\scriptsize,fill=white,inner sep=1.2pt},
-  hdr/.style={font=\scriptsize\bfseries,text=black!75,anchor=west}]
+  lab/.style={font=\scriptsize,inner sep=1.2pt},
+  % fill=white knocks the band border out from behind a legend: the contract and decision
+  % headers sit on their dashed frames, which otherwise strike straight through the text.
+  hdr/.style={font=\scriptsize\bfseries,text=black!75,anchor=west,fill=white,inner sep=1.5pt}]
 
-% ---------------------------------------------------------------- top: the experiment
-\node[hdr] at (0,3.35) {Learning-assisted satellite experiment};
-\node[stage] (pub) at ( 1.6,1.6) {published\\orbital state};
-\node[stage] (vis) at ( 5.4,1.6) {predicted\\visibility};
-\node[stage] (reg) at ( 9.2,1.6) {frozen\\registry};
-\node[stage] (mod) at (13.0,1.6) {model, tracker,\\selection, gate};
-\node[stage] (dep) at (16.8,1.6) {deployment};
-\node[stage] (lab) at (20.6,1.6) {label\\closure};
+% ---------------------------------------------------------------- the experiment, one baseline
+% Band headers sit at x positions no connector occupies. At x=0 this one was struck through by the
+% L1.1 riser descending at x=1.6, and the contract header by the L1 observation connector; both were
+% invisible in the source and obvious in the render. If a connector moves, re-check these two.
+\node[hdr] at (2.2,0.95) {Learning-assisted satellite experiment};
+\node[stage] (pub) at ( 1.6,0) {published\\orbital state};
+\node[stage] (vis) at ( 5.4,0) {predicted\\visibility};
+\node[stage] (reg) at ( 9.2,0) {frozen\\registry};
+\node[stage] (mod) at (13.0,0) {model, tracker,\\selection, gate};
+\node[stage] (dep) at (16.8,0) {deployment};
+\node[stage] (lab) at (20.6,0) {label\\closure};
 \foreach \a/\b in {pub/vis, vis/reg, reg/mod, mod/dep, dep/lab} \draw[ok] (\a) -- (\b);
 
-\draw[black!55,line width=0.6pt] (7.3,0.85) -- (7.3,2.35);
-\node[font=\scriptsize,text=black!65,anchor=south] at (7.3,2.4) {decision};
-\draw[black!55,line width=0.6pt] (14.9,0.85) -- (14.9,2.35);
-\node[font=\scriptsize,text=black!65,anchor=south] at (14.9,2.4) {freeze};
+% decision and freeze markers, on the baseline and clear of every rail
+\draw[black!55,line width=0.6pt] (7.3,-0.52) -- (7.3,0.52);
+\node[font=\scriptsize,text=black!65,anchor=north] at (7.3,-0.55) {decision};
+\draw[black!55,line width=0.6pt] (14.9,-0.52) -- (14.9,0.52);
+\node[font=\scriptsize,text=black!65,anchor=north] at (14.9,-0.55) {freeze};
 
-% Prohibited paths: three red dashed, one blue dotted contrast. Deliberately FLAT arcs. A first
-% version used out=95/in=85, which swept the L1.1 arc far above the flow and let the violations
-% occupy roughly half the figure's height -- the architecture has to dominate, not the violations.
-\draw[no] (lab.north) to[out=140,in=40] node[lab,pos=0.5,above,inner sep=1pt]
-  {\rulename{L1.1} future publication $\rightarrow$ deployment feature} (pub.north);
-\draw[no] (lab.north) to[out=125,in=55] node[lab,pos=0.5,above,inner sep=1pt]
-  {\rulename{L1.4} later reference $\rightarrow$ frozen row membership} (reg.north);
-\draw[no] (dep.south) to[out=-145,in=-35] node[lab,pos=0.5,below,inner sep=1pt,yshift=-0.4mm]
-  {\rulename{L3.1} post-freeze observation $\rightarrow$ model state} (mod.south);
-% L1.3 is the contrast: a label consumed at a decision before its closure time. It runs from the
-% label stage back to deployment. An earlier version drew it from `lab` to `lab`, a degenerate
-% self-loop whose label floated free of any path.
-\draw[noord] (lab.south) to[out=-150,in=-30] node[lab,pos=0.5,below,inner sep=1pt]
-  {\rulename{L1.3} label used before closure} (dep.south east);
+% ---------------------------------------------------------------- violation rails, orthogonal only
+\draw[no] (21.4,0.52) -- (21.4,3.15) -- (1.6,3.15) -- (1.6,0.52);
+\node[lab,text=red!60!black,anchor=south] at (11.5,3.20)
+  {\rulename{L1.1} future publication $\rightarrow$ deployment feature};
+\draw[no] (19.8,0.52) -- (19.8,2.25) -- (9.2,2.25) -- (9.2,0.52);
+\node[lab,text=red!60!black,anchor=south] at (14.5,2.30)
+  {\rulename{L1.4} later reference $\rightarrow$ frozen row membership};
+\draw[no] (16.8,0.52) -- (16.8,1.35) -- (13.0,1.35) -- (13.0,0.52);
+\node[lab,text=red!60!black,anchor=south] at (14.9,1.40)
+  {\rulename{L3.1} post-freeze observation $\rightarrow$ model state};
+\draw[noord] (20.6,-0.52) -- (20.6,-0.95) -- (17.6,-0.95) -- (17.6,-0.52);
+\node[lab,text=blue!50!black,anchor=north] at (19.1,-1.00)
+  {\rulename{L1.3} label used before closure};
 
-% ---------------------------------------------------------------- middle: the contract
-\node[hdr] at (0,-0.95) {Orbit-Evidence contract};
-\node[layer] (l1) at ( 2.3,-2.65) {\textbf{\rulename{L1}} availability and membership\\[0.5pt]
+% ---------------------------------------------------------------- the contract, gridded
+\node[layer] (l1) at ( 1.6,-3.45) {\textbf{\rulename{L1}} availability and membership\\[0.5pt]
   publication clock, row membership, label closure};
-\node[layer] (l2) at ( 6.6,-2.65) {\textbf{\rulename{L2}} physical and scheduling validity\\[0.5pt]
+\node[layer] (l2) at ( 5.4,-3.45) {\textbf{\rulename{L2}} physical and scheduling validity\\[0.5pt]
   predicted visibility, physical bounds};
-\node[layer] (l3) at (10.9,-2.65) {\textbf{\rulename{L3}} model-state causality\\[0.5pt]
+\node[layer] (l3) at (13.0,-3.45) {\textbf{\rulename{L3}} model-state causality\\[0.5pt]
   state canaries, probe effectiveness, control};
-\node[layer] (l4) at (15.2,-2.65) {\textbf{\rulename{L4}} independence and reproducibility\\[0.5pt]
+\node[layer] (l4) at (16.8,-3.45) {\textbf{\rulename{L4}} independence and reproducibility\\[0.5pt]
   fold chronology, provenance, unit};
-\node[grp,fit=(l1)(l2)(l3)(l4)] {};
+\node[grp,fit=(l1)(l2)(l3)(l4)] (contract) {};
+% After the frame, so the white knockout wins. Drawn before it, the dashes struck through the text.
+\node[hdr] at (6.4,-2.15) {Orbit-Evidence contract};
 
-% One observation arrow per layer, so none crosses another.
-\foreach \s/\l in {pub/l1, vis/l2, mod/l3, dep/l4}
-  \draw[obs] (\s.south) -- (\l.north);
+% One vertical observation connector per layer: each layer sits at the x of the stage it observes,
+% so no connector bends and none crosses another. An earlier version routed a second L1 branch from
+% the registry at x=9.2 leftwards along y=-1.65, which necessarily crossed the L2 connector at
+% x=5.4 -- no orthogonal route between those two points avoids it. The registry stays visibly
+% bound to L1 through the L1.4 rail, which descends at exactly x=9.2.
+% Terminated on the node borders, not on a hand-computed y: box heights depend on how the text
+% wraps, and a literal left the arrowheads floating short of some boxes and inside others.
+\draw[obs] ( 1.6,-0.52) -- (l1.north);
+\draw[obs] ( 5.4,-0.52) -- (l2.north);
+\draw[obs] (13.0,-0.52) -- (l3.north);
+\draw[obs] (16.8,-0.52) -- (l4.north);
 
-% ---------------------------------------------------------------- bottom: relational validity
-\node[hdr] at (0,-4.55) {Relational validity} ;
-\node[rel] (r1) at (3.4,-5.65) {\textbf{run A} $\leftrightarrow$ \textbf{run B}\\[0.5pt]
+% ---------------------------------------------------------------- relational validity, one baseline
+\node[hdr] at (0,-5.45) {Relational validity};
+\node[rel] (r1) at ( 3.6,-6.55) {\textbf{run A} $\leftrightarrow$ \textbf{run B}\\[0.5pt]
   provenance completeness (\rulename{L4.6}), registry invariance (\rulename{L1.4})};
-\node[rel] (r2) at (10.4,-5.65) {\textbf{declared unit} $\leftrightarrow$ \textbf{coarser level}\\[0.5pt]
+\node[rel] (r2) at (11.6,-6.55) {\textbf{declared unit} $\leftrightarrow$ \textbf{coarser level}\\[0.5pt]
   $\mathrm{ICC}(1)$ against a permutation reference (\rulename{L4.7})};
 \draw[tie] (r1.east) -- (r2.west);
-\draw[obs] (l1.south) -- (r1.north);
-\draw[obs] (l4.south) -- (r2.north);
+% One vertical trunk from the contract band, then a horizontal bus into both relational boxes.
+% The trunk alone previously ended between the two boxes, pointing at nothing.
+\draw[bus] (7.6,-4.63) -- (7.6,-5.15) -- (3.6,-5.15);
+\draw[bus] (7.6,-5.15) -- (11.6,-5.15);
+\draw[obs] ( 3.6,-5.15) -- (r1.north);
+\draw[obs] (11.6,-5.15) -- (r2.north);
 
-% ---------------------------------------------------------------- right: decision
-\node[hdr,anchor=west] at (16.4,-4.55) {Decision};
-\node[dec] (dp) at (18.6,-5.15) {PASS};
-\node[dec] (dh) at (18.6,-5.75) {HALT};
-\node[dec] (di) at (18.6,-6.35) {INDETERMINATE};
+% ---------------------------------------------------------------- decision, one horizontal arrow
+\node[dec] (dp) at (19.9,-5.85) {PASS};
+\node[dec] (dh) at (19.9,-6.55) {HALT};
+\node[dec] (di) at (19.9,-7.25) {INDETERMINATE};
 \node[grp,fit=(dp)(dh)(di)] (decbox) {};
+\node[hdr,anchor=west] at (18.3,-5.28) {Decision};
 \draw[ok] (r2.east) -- (decbox.west);
 \end{tikzpicture}
 \caption{Orbit-Evidence architecture. A learning-assisted satellite experiment acts from state
 available at the decision instant $t_d$, freezes row and model state before deployment, and closes
-retrospective labels later. Four executable validity layers run alongside it. Most rules inspect a
-single execution; relational rules compare executions or aggregation levels. Applicable checks
-resolve to \textsc{pass} or \textsc{halt}, while statistically unsupported decisions return
-\textsc{indeterminate} rather than \textsc{pass}. Red dashed paths are prohibited and each is
-\emph{chronologically consistent}, so an ordering check cannot express it; the blue dotted path is
+retrospective labels later. Four executable validity layers observe it. Most rules inspect a single
+execution; the relational rules compare executions or aggregation levels. Applicable checks resolve
+to \textsc{pass} or \textsc{halt}, while statistically unsupported decisions return
+\textsc{indeterminate} rather than \textsc{pass}. Red dashed rails are prohibited paths, each
+\emph{chronologically consistent} so an ordering check cannot express it; the blue dotted rail is
 one of the two classes ordering does catch.}
 \label{fig:contract}
 \end{figure*}
