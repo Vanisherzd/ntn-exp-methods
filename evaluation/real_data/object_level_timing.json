@@ -1,0 +1,334 @@
+{
+ "creation_date_semantics": "OMM message creation time. An optimistic LOWER BOUND on retrievability: batch publication adds unmeasured lag, and the same element set is republished under a new GP_ID with a later CREATION_DATE. The availability clock built on it can only be too generous.",
+ "unit_note": "Per object. Record-pooled percentages are not reported as headline figures: the largest object supplies most of the records, so a pooled figure is that object's.",
+ "n_objects": 11,
+ "n_records_total": 63727,
+ "full_history": {
+  "black_kite_1_66741": {
+   "n": 531,
+   "median_lag_h": 6.44,
+   "iqr_h": [
+    4.53,
+    9.31
+   ],
+   "iqr_width_h": 4.78,
+   "min_h": 1.27,
+   "max_h": 1046.86,
+   "frac_epoch_after_creation": 0.0
+  },
+  "black_kite_2_68474": {
+   "n": 308,
+   "median_lag_h": 6.75,
+   "iqr_h": [
+    4.46,
+    8.77
+   ],
+   "iqr_width_h": 4.31,
+   "min_h": 1.74,
+   "max_h": 39.67,
+   "frac_epoch_after_creation": 0.0
+  },
+  "flock_4h_1_66704": {
+   "n": 749,
+   "median_lag_h": 6.36,
+   "iqr_h": [
+    4.46,
+    8.27
+   ],
+   "iqr_width_h": 3.81,
+   "min_h": 1.59,
+   "max_h": 42.72,
+   "frac_epoch_after_creation": 0.0
+  },
+  "flock_4h_2_66705": {
+   "n": 755,
+   "median_lag_h": 6.0,
+   "iqr_h": [
+    4.38,
+    7.9
+   ],
+   "iqr_width_h": 3.53,
+   "min_h": 1.31,
+   "max_h": 51.51,
+   "frac_epoch_after_creation": 0.0
+  },
+  "iridium_177_56727": {
+   "n": 3042,
+   "median_lag_h": 6.37,
+   "iqr_h": [
+    4.49,
+    9.07
+   ],
+   "iqr_width_h": 4.57,
+   "min_h": 0.73,
+   "max_h": 77.3,
+   "frac_epoch_after_creation": 0.0
+  },
+  "iridium_181_56726": {
+   "n": 3017,
+   "median_lag_h": 6.19,
+   "iqr_h": [
+    4.36,
+    8.85
+   ],
+   "iqr_width_h": 4.49,
+   "min_h": 0.8,
+   "max_h": 1134.79,
+   "frac_epoch_after_creation": 0.0
+  },
+  "iss_zarya_25544": {
+   "n": 52538,
+   "median_lag_h": 1.03,
+   "iqr_h": [
+    -4.16,
+    5.92
+   ],
+   "iqr_width_h": 10.08,
+   "min_h": -7.7,
+   "max_h": 50336.54,
+   "frac_epoch_after_creation": 0.335
+  },
+  "oneweb_0015_61594": {
+   "n": 1929,
+   "median_lag_h": 5.93,
+   "iqr_h": [
+    4.02,
+    8.55
+   ],
+   "iqr_width_h": 4.53,
+   "min_h": 0.6,
+   "max_h": 444.94,
+   "frac_epoch_after_creation": 0.0
+  },
+  "sentinel_6b_66514": {
+   "n": 838,
+   "median_lag_h": 5.81,
+   "iqr_h": [
+    4.13,
+    8.84
+   ],
+   "iqr_width_h": 4.72,
+   "min_h": 1.34,
+   "max_h": 217.09,
+   "frac_epoch_after_creation": 0.0
+  },
+  "starlink_37711_100002": {
+   "n": 9,
+   "median_lag_h": 7.82,
+   "iqr_h": [
+    6.48,
+    8.57
+   ],
+   "iqr_width_h": 2.08,
+   "min_h": 3.28,
+   "max_h": 11.1,
+   "frac_epoch_after_creation": 0.0
+  },
+  "starlink_38128_100001": {
+   "n": 11,
+   "median_lag_h": 6.63,
+   "iqr_h": [
+    5.84,
+    7.84
+   ],
+   "iqr_width_h": 2.0,
+   "min_h": 3.99,
+   "max_h": 11.08,
+   "frac_epoch_after_creation": 0.0
+  }
+ },
+ "analysis_window": {
+  "window_epoch": [
+   "2026-07-22",
+   "2026-07-27"
+  ],
+  "per_object": {
+   "black_kite_1_66741": {
+    "n": 9,
+    "median_lag_h": 6.96,
+    "iqr_h": [
+     6.31,
+     12.76
+    ],
+    "iqr_width_h": 6.45,
+    "min_h": 5.96,
+    "max_h": 14.82,
+    "frac_epoch_after_creation": 0.0
+   },
+   "black_kite_2_68474": {
+    "n": 7,
+    "median_lag_h": 9.17,
+    "iqr_h": [
+     6.87,
+     10.12
+    ],
+    "iqr_width_h": 3.26,
+    "min_h": 4.81,
+    "max_h": 14.45,
+    "frac_epoch_after_creation": 0.0
+   },
+   "flock_4h_1_66704": {
+    "n": 9,
+    "median_lag_h": 7.29,
+    "iqr_h": [
+     6.2,
+     8.93
+    ],
+    "iqr_width_h": 2.73,
+    "min_h": 5.84,
+    "max_h": 17.63,
+    "frac_epoch_after_creation": 0.0
+   },
+   "flock_4h_2_66705": {
+    "n": 10,
+    "median_lag_h": 6.26,
+    "iqr_h": [
+     5.72,
+     8.25
+    ],
+    "iqr_width_h": 2.52,
+    "min_h": 4.81,
+    "max_h": 11.74,
+    "frac_epoch_after_creation": 0.0
+   },
+   "iridium_177_56727": {
+    "n": 12,
+    "median_lag_h": 6.86,
+    "iqr_h": [
+     5.22,
+     9.69
+    ],
+    "iqr_width_h": 4.47,
+    "min_h": 3.37,
+    "max_h": 10.57,
+    "frac_epoch_after_creation": 0.0
+   },
+   "iridium_181_56726": {
+    "n": 11,
+    "median_lag_h": 7.59,
+    "iqr_h": [
+     4.11,
+     11.12
+    ],
+    "iqr_width_h": 7.01,
+    "min_h": 3.23,
+    "max_h": 15.84,
+    "frac_epoch_after_creation": 0.0
+   },
+   "iss_zarya_25544": {
+    "n": 14,
+    "median_lag_h": 8.47,
+    "iqr_h": [
+     7.58,
+     9.15
+    ],
+    "iqr_width_h": 1.56,
+    "min_h": 2.68,
+    "max_h": 15.95,
+    "frac_epoch_after_creation": 0.0
+   },
+   "oneweb_0015_61594": {
+    "n": 8,
+    "median_lag_h": 7.0,
+    "iqr_h": [
+     5.44,
+     10.09
+    ],
+    "iqr_width_h": 4.65,
+    "min_h": 2.24,
+    "max_h": 12.72,
+    "frac_epoch_after_creation": 0.0
+   },
+   "sentinel_6b_66514": {
+    "n": 9,
+    "median_lag_h": 6.48,
+    "iqr_h": [
+     4.36,
+     8.46
+    ],
+    "iqr_width_h": 4.1,
+    "min_h": 3.9,
+    "max_h": 11.3,
+    "frac_epoch_after_creation": 0.0
+   },
+   "starlink_37711_100002": {
+    "n": 9,
+    "median_lag_h": 7.82,
+    "iqr_h": [
+     6.48,
+     8.57
+    ],
+    "iqr_width_h": 2.08,
+    "min_h": 3.28,
+    "max_h": 11.1,
+    "frac_epoch_after_creation": 0.0
+   },
+   "starlink_38128_100001": {
+    "n": 11,
+    "median_lag_h": 6.63,
+    "iqr_h": [
+     5.84,
+     7.84
+    ],
+    "iqr_width_h": 2.0,
+    "min_h": 3.99,
+    "max_h": 11.08,
+    "frac_epoch_after_creation": 0.0
+   }
+  }
+ },
+ "object_level_median_lag_h_full_history": 6.36,
+ "object_level_median_lag_h_in_window": 7.0,
+ "all_object_medians_positive_full_history": true,
+ "all_object_medians_positive_in_window": true,
+ "objects_with_any_epoch_after_creation": [
+  "iss_zarya_25544"
+ ],
+ "n_objects_with_any_epoch_after_creation": 1,
+ "republished_element_sets_in_window": {
+  "black_kite_1_66741": {
+   "duplicate_epoch_groups": 2,
+   "all_identical_elements": true
+  },
+  "black_kite_2_68474": {
+   "duplicate_epoch_groups": 1,
+   "all_identical_elements": true
+  },
+  "flock_4h_1_66704": {
+   "duplicate_epoch_groups": 0,
+   "all_identical_elements": true
+  },
+  "flock_4h_2_66705": {
+   "duplicate_epoch_groups": 0,
+   "all_identical_elements": true
+  },
+  "iridium_177_56727": {
+   "duplicate_epoch_groups": 1,
+   "all_identical_elements": true
+  },
+  "iridium_181_56726": {
+   "duplicate_epoch_groups": 1,
+   "all_identical_elements": true
+  },
+  "iss_zarya_25544": {
+   "duplicate_epoch_groups": 3,
+   "all_identical_elements": true
+  },
+  "oneweb_0015_61594": {
+   "duplicate_epoch_groups": 0,
+   "all_identical_elements": true
+  },
+  "sentinel_6b_66514": {
+   "duplicate_epoch_groups": 0,
+   "all_identical_elements": true
+  },
+  "starlink_37711_100002": {
+   "duplicate_epoch_groups": 0,
+   "all_identical_elements": true
+  },
+  "starlink_38128_100001": {
+   "duplicate_epoch_groups": 0,
+   "all_identical_elements": true
+  }
+ }
+}

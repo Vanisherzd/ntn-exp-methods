@@ -1,0 +1,198 @@
+{
+ "manifest": {
+  "protocol": "evaluation/real_data/PREREGISTRATION.md",
+  "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+  "l47_defaults_used": {
+   "alpha": 0.05,
+   "n_perm": 400,
+   "min_coarser_groups": 4,
+   "seed": 0
+  },
+  "window_epoch": [
+   "2026-07-22",
+   "2026-07-27"
+  ],
+  "station": {
+   "lat_deg": 24.7961,
+   "lon_deg": 120.9967,
+   "alt_m": 100.0,
+   "elev_mask_deg": 10.0
+  },
+  "sample_interval_s": 30,
+  "horizon_h": 24,
+  "objects": {
+   "black_kite_1_66741": 9,
+   "black_kite_2_68474": 7,
+   "flock_4h_1_66704": 9,
+   "flock_4h_2_66705": 10,
+   "iridium_177_56727": 12,
+   "iridium_181_56726": 11,
+   "iss_zarya_25544": 14,
+   "oneweb_0015_61594": 8,
+   "sentinel_6b_66514": 9,
+   "starlink_37711_100002": 9,
+   "starlink_38128_100001": 11
+  },
+  "n_objects": 11,
+  "n_element_sets": 109,
+  "n_passes_total": 331,
+  "n_pass_samples_total": 4901
+ },
+ "analyses": {
+  "A_elementset_in_object__publication_lag": {
+   "analysis": "A: element set -> object, publication lag (h)",
+   "n_samples": 109,
+   "n_units": 101,
+   "n_labelled_coarser": 11,
+   "verdict": "PASS",
+   "n_coarser_groups": 11,
+   "icc": 0.0,
+   "p_value": 1.0,
+   "critical": 0.09950355121709355
+  },
+  "B_pass_in_elementset__elevation_pooled": {
+   "analysis": "B pooled: pass -> element set, elevation (deg)",
+   "n_samples": 4901,
+   "n_units": 305,
+   "n_labelled_coarser": 101,
+   "verdict": "PASS",
+   "n_coarser_groups": 101,
+   "icc": 0.0,
+   "p_value": 1.0,
+   "critical": 0.09812803360166301
+  },
+  "B_per_object": {
+   "black_kite_1_66741": {
+    "analysis": "B[black_kite_1_66741]: pass -> element set",
+    "n_samples": 279,
+    "n_units": 18,
+    "n_labelled_coarser": 7,
+    "verdict": "PASS",
+    "n_coarser_groups": 7,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.49728972659404136
+   },
+   "black_kite_2_68474": {
+    "analysis": "B[black_kite_2_68474]: pass -> element set",
+    "n_samples": 271,
+    "n_units": 17,
+    "n_labelled_coarser": 6,
+    "verdict": "PASS",
+    "n_coarser_groups": 6,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.47829374013952175
+   },
+   "flock_4h_1_66704": {
+    "analysis": "B[flock_4h_1_66704]: pass -> element set",
+    "n_samples": 288,
+    "n_units": 25,
+    "n_labelled_coarser": 9,
+    "verdict": "PASS",
+    "n_coarser_groups": 9,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.39210705223625403
+   },
+   "flock_4h_2_66705": {
+    "analysis": "B[flock_4h_2_66705]: pass -> element set",
+    "n_samples": 319,
+    "n_units": 27,
+    "n_labelled_coarser": 10,
+    "verdict": "PASS",
+    "n_coarser_groups": 10,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.3598612572898534
+   },
+   "iridium_177_56727": {
+    "analysis": "B[iridium_177_56727]: pass -> element set",
+    "n_samples": 465,
+    "n_units": 28,
+    "n_labelled_coarser": 11,
+    "verdict": "HALT",
+    "icc": 0.6385,
+    "n_coarser_groups": 11,
+    "message": "[L4.7] unit-level ICC 0.639 gives permutation p=0.0025 <= alpha=0.05 over 11 coarser groups; the chosen statistical unit is finer than the exchangeable one"
+   },
+   "iridium_181_56726": {
+    "analysis": "B[iridium_181_56726]: pass -> element set",
+    "n_samples": 594,
+    "n_units": 34,
+    "n_labelled_coarser": 10,
+    "verdict": "PASS",
+    "n_coarser_groups": 10,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.26558580106935853
+   },
+   "iss_zarya_25544": {
+    "analysis": "B[iss_zarya_25544]: pass -> element set",
+    "n_samples": 482,
+    "n_units": 38,
+    "n_labelled_coarser": 11,
+    "verdict": "PASS",
+    "n_coarser_groups": 11,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.26883963468066574
+   },
+   "oneweb_0015_61594": {
+    "analysis": "B[oneweb_0015_61594]: pass -> element set",
+    "n_samples": 768,
+    "n_units": 34,
+    "n_labelled_coarser": 8,
+    "verdict": "PASS",
+    "n_coarser_groups": 8,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.280882109870087
+   },
+   "sentinel_6b_66514": {
+    "analysis": "B[sentinel_6b_66514]: pass -> element set",
+    "n_samples": 1043,
+    "n_units": 40,
+    "n_labelled_coarser": 9,
+    "verdict": "PASS",
+    "n_coarser_groups": 9,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.18311610799538458
+   },
+   "starlink_37711_100002": {
+    "analysis": "B[starlink_37711_100002]: pass -> element set",
+    "n_samples": 176,
+    "n_units": 20,
+    "n_labelled_coarser": 9,
+    "verdict": "PASS",
+    "n_coarser_groups": 9,
+    "icc": 0.0,
+    "p_value": 1.0,
+    "critical": 0.4554138813965455
+   },
+   "starlink_38128_100001": {
+    "analysis": "B[starlink_38128_100001]: pass -> element set",
+    "n_samples": 216,
+    "n_units": 24,
+    "n_labelled_coarser": 11,
+    "verdict": "PASS",
+    "n_coarser_groups": 11,
+    "icc": 0.07980899903301696,
+    "p_value": 0.3790523690773067,
+    "critical": 0.42351121514722767
+   }
+  },
+  "C_pass_in_object__elevation_pooled": {
+   "analysis": "C pooled: pass -> object, elevation (deg)",
+   "n_samples": 4901,
+   "n_units": 305,
+   "n_labelled_coarser": 11,
+   "verdict": "PASS",
+   "n_coarser_groups": 11,
+   "icc": 0.01735454958399193,
+   "p_value": 0.1546134663341646,
+   "critical": 0.0296502372899638
+  }
+ }
+}
