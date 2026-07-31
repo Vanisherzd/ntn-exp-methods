@@ -44,12 +44,10 @@
 \draw[noord] (lab.south) to[out=-78,in=-102] node[lab,pos=0.5,below,yshift=-5.6mm]
   {\rulename{L1.3} label used before closure} (val.south east);
 \end{tikzpicture}}
-\caption{The deployment-causality contract; axis ticks mark availability, the decision
-instant $t_d$, the freeze, deployment and closure $t_c$. Solid paths are permitted: published
-state held before $t_d$ populates a registry whose rows are hashed before any label exists, model and gate
-are fixed at the freeze, deployment reads frozen state only, labels close retrospectively. The three red \emph{dashed}
-paths are the point of this paper---each is \emph{chronologically consistent}, so an ordering check
-cannot express it. The blue \emph{dotted} path (\rulename{L1.3}) is the contrast case: one of the
-two classes ordering already catches.}
+\caption{The deployment-causality contract. Solid paths are permitted: published state held
+before $t_d$ populates a registry hashed before any label exists, model and gate are fixed at the
+freeze, labels close retrospectively. The three red \emph{dashed} paths are the point of this
+paper---each is \emph{chronologically consistent}, so an ordering check cannot express it. The blue
+\emph{dotted} path (\rulename{L1.3}) is the contrast: one of the two classes ordering catches.}
 \label{fig:contract}
 \end{figure*}

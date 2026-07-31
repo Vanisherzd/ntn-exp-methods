@@ -9,11 +9,11 @@
 % Fig. 2 names all seventeen by row -- and the full mechanical check for every rule is in
 % the artifact's rule_table().
 \begin{table*}[!t]
-\caption{The nineteen rules and what is demonstrated for each.
-\textbf{clean\,+\,red} = a passing clean-path test \emph{and} a broken fixture on which the rule
-fails; \textbf{clean only} = implemented and clean-path-exercised but tripped by no fault here,
-which by our own standard is not yet evidence it can fail. $^{\dagger}$\rulename{L4.7} also
-abstains below its declared minimum group structure.}
+\caption{The nineteen rules and what is demonstrated for each. $\bullet$ marks the six that
+protect a protected object directly; the rest are the layers those obligations need to be
+checkable. \textbf{clean\,+\,red} = a passing clean-path test \emph{and} a broken fixture on which
+the rule fails; \textbf{clean only} = implemented and clean-path-exercised but tripped by no fault
+here. $^{\dagger}$\rulename{L4.7} also abstains below its declared minimum group structure.}
 \label{tab:rules}
 \centering
 \scriptsize
@@ -22,16 +22,16 @@ abstains below its declared minimum group structure.}
 \textbf{Rule} & \textbf{Protected object} & \textbf{Evidence} &
 \textbf{Rule} & \textbf{Protected object} & \textbf{Evidence}\\
 \midrule
-\rulename{L1.1} & feature availability   & clean\,+\,red & \rulename{L3.2} & canary effectiveness    & clean\,+\,red \\
-\rulename{L1.2} & availability clock     & clean\,+\,red & \rulename{L3.3} & negative control        & clean\,+\,red \\
-\rulename{L1.3} & label closure          & clean\,+\,red & \rulename{L4.1} & fold chronology         & clean\,+\,red \\
-\rulename{L1.4} & row membership         & clean\,+\,red & \rulename{L4.2} & paired randomness       & clean\,+\,red \\
+$\bullet$\,\rulename{L1.1} & feature availability   & clean\,+\,red & \rulename{L3.2} & canary effectiveness    & clean\,+\,red \\
+$\bullet$\,\rulename{L1.2} & availability clock     & clean\,+\,red & \rulename{L3.3} & negative control        & clean\,+\,red \\
+$\bullet$\,\rulename{L1.3} & label closure          & clean\,+\,red & \rulename{L4.1} & fold chronology         & clean\,+\,red \\
+$\bullet$\,\rulename{L1.4} & row membership         & clean\,+\,red & \rulename{L4.2} & paired randomness       & clean\,+\,red \\
 \rulename{L1.5} & comparison boundary    & clean\,+\,red & \rulename{L4.3} & repeated measures       & clean\,+\,red \\
 \rulename{L2.1} & sampling geometry      & clean\,+\,red & \rulename{L4.4} & seed hygiene            & clean\,+\,red \\
 \rulename{L2.2} & physical scale         & clean only    & \rulename{L4.5} & provenance hashes       & clean only \\
 \rulename{L2.3} & hidden state           & clean only    & \rulename{L4.6} & provenance completeness & clean\,+\,red \\
-\rulename{L2.4} & declared relation      & clean\,+\,red & \rulename{L4.7} & statistical unit        & clean\,+\,red$^{\dagger}$ \\
-\rulename{L3.1} & state channels         & clean\,+\,red & & & \\
+\rulename{L2.4} & declared relation      & clean\,+\,red & $\bullet$\,\rulename{L4.7} & statistical unit        & clean\,+\,red$^{\dagger}$ \\
+$\bullet$\,\rulename{L3.1} & state channels         & clean\,+\,red & & & \\
 \bottomrule
 \end{tabular}
 \end{table*}
