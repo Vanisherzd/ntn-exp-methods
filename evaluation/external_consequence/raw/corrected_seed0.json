@@ -1,0 +1,43 @@
+{
+ "arm": "corrected",
+ "seed": 0,
+ "stopped_epoch": 14,
+ "selected_epoch": 13,
+ "best_val_loss": 3.6e-05,
+ "final_val_loss": 0.000747,
+ "val_loss_curve": [
+  0.009715,
+  0.002298,
+  0.00158,
+  0.000123,
+  8.9e-05,
+  0.000164,
+  0.000551,
+  0.001028,
+  0.00118,
+  0.000178,
+  0.000655,
+  0.000242,
+  3.6e-05,
+  0.000747
+ ],
+ "checkpoint_sha256": "f04b8500f6ffaf7b4c513b56048c597fc4dd8ed7c40ee2dface0c34f72677993",
+ "train_seconds": 79.6,
+ "n_train_windows": 1837,
+ "n_val_windows": 524,
+ "boundary_windows_dropped": 259,
+ "n_predicted_anom_sequences": 1,
+ "normalized_pred_error": 0.014811,
+ "predicted_sequences": [
+  [
+   4730,
+   4869
+  ]
+ ],
+ "true_positives": 1,
+ "false_positives": 0,
+ "false_negatives": 0,
+ "precision": 1.0,
+ "recall": 1.0,
+ "f1": 1.0
+}

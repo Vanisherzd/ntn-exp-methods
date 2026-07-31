@@ -20,5 +20,33 @@
     "why_recorded": "The pre-registration promised to declare deviations in advance rather than discover them in results. Finding that a declared deviation is unnecessary is the same obligation running the other way.",
     "shim": "evaluation/external_consequence/keras_compat.py"
   },
-  "port_used": false
+  "port_used": false,
+  "amendment_2": {
+    "what": "Three version bridges were needed to run upstream code on current libraries. All three are in this study's own files; the upstream clone stays byte-identical and `git status` on it is empty, so the per-file sha256 in run_manifest.json still verify.",
+    "bridges": [
+      "keras.layers.recurrent / keras.layers.core alias modules re-exporting LSTM, Dense, Activation, Dropout from modern keras.layers. Upstream imports those removed paths.",
+      "np.delete index cast. errors.py:407 creates i_to_remove as np.array([]) -- float64 -- and it stays float after np.append. numpy 1.17.4 (upstream's pin) accepted a float index array with a deprecation; numpy 2 raises. The values are always integral positions so the cast changes nothing. It applies ONLY when the array is floating AND every value is integral, so a genuinely fractional index still raises rather than being rounded away.",
+      "pandas Series built with dtype=object in this study's scoring wrapper. Upstream evaluate_sequences replaces a string cell with a list; pandas 0.25.3 (upstream's pin) had object dtype there, pandas 3 infers strict str and rejects it. The Series is constructed by this wrapper, not by upstream."
+    ],
+    "not_a_behaviour_change": "None of the three alters a threshold, a hyperparameter, an architecture, the anomaly scoring, or the metrics. Each is a library-version incompatibility in a 2018 artifact, and each is applied identically to both arms so it cannot favour either.",
+    "upstream_clone_unmodified": true
+  },
+  "data_source": {
+    "resolved": true,
+    "mirror": "https://huggingface.co/datasets/appleparan/telemanom",
+    "files_used": [
+      "data/data/train/A-1.npy",
+      "data/data/test/A-1.npy",
+      "labeled_anomalies.csv"
+    ],
+    "independently_verified": [
+      "test/A-1.npy sha256 7509b72cd170003c3135e12d1f4c67b263dc5be58aabedf12ed14e7561fe6dc2, which equals the Git-LFS oid declared independently by two unrelated GitHub mirrors, so the file is the canonical one rather than a re-derivation",
+      "train/A-1.npy sha256 ae426533f9d4c6247a5cc1eab89438fed8bf768b0a41d60d42f3a65a7ebc80b0",
+      "labeled_anomalies.csv byte-identical (cmp) to the live official copy at raw.githubusercontent.com/khundman/telemanom/master/labeled_anomalies.csv",
+      "shapes train (2880, 25) and test (8640, 25); test rows equal the num_values 8640 that labeled_anomalies.csv documents for A-1"
+    ],
+    "credentials_required": false,
+    "licence": "BSD-3-clause, bundled Caltech / NASA JPL 2018 notice",
+    "note": "The frozen commit's README points to Kaggle, which needs a token; the older JPL S3 mirror returns HTTP 403, which is what that commit (fix/data_source_documentation) was recording."
+  }
 }

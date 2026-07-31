@@ -1,0 +1,203 @@
+{
+ "protocol": "evaluation/external_consequence/PREREGISTRATION.md",
+ "upstream_frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
+ "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
+ "detector_unmodified": true,
+ "channel": "A-1",
+ "seeds": [
+  0
+ ],
+ "upstream_code_verbatim": true,
+ "runs": [
+  {
+   "arm": "original",
+   "seed": 0,
+   "stopped_epoch": 21,
+   "selected_epoch": 18,
+   "best_val_loss": 3e-05,
+   "final_val_loss": 0.000506,
+   "val_loss_curve": [
+    0.006468,
+    0.000477,
+    0.001781,
+    0.000349,
+    0.000262,
+    0.000237,
+    0.00111,
+    0.000651,
+    0.001089,
+    0.001705,
+    9e-05,
+    0.000344,
+    0.001131,
+    6.4e-05,
+    0.000901,
+    0.000682,
+    0.000599,
+    3e-05,
+    0.000246,
+    0.000285,
+    0.000506
+   ],
+   "checkpoint_sha256": "9f6d076a5835c5609ce7eae23db91861fc3e3266e6326947fe2c7950655e6c78",
+   "train_seconds": 129.9,
+   "n_train_windows": 2096,
+   "n_val_windows": 524,
+   "boundary_windows_dropped": 0,
+   "n_predicted_anom_sequences": 1,
+   "normalized_pred_error": 0.012388,
+   "predicted_sequences": [
+    [
+     4730,
+     4869
+    ]
+   ],
+   "true_positives": 1,
+   "false_positives": 0,
+   "false_negatives": 0,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  },
+  {
+   "arm": "corrected",
+   "seed": 0,
+   "stopped_epoch": 14,
+   "selected_epoch": 13,
+   "best_val_loss": 3.6e-05,
+   "final_val_loss": 0.000747,
+   "val_loss_curve": [
+    0.009715,
+    0.002298,
+    0.00158,
+    0.000123,
+    8.9e-05,
+    0.000164,
+    0.000551,
+    0.001028,
+    0.00118,
+    0.000178,
+    0.000655,
+    0.000242,
+    3.6e-05,
+    0.000747
+   ],
+   "checkpoint_sha256": "f04b8500f6ffaf7b4c513b56048c597fc4dd8ed7c40ee2dface0c34f72677993",
+   "train_seconds": 77.0,
+   "n_train_windows": 1837,
+   "n_val_windows": 524,
+   "boundary_windows_dropped": 259,
+   "n_predicted_anom_sequences": 1,
+   "normalized_pred_error": 0.014811,
+   "predicted_sequences": [
+    [
+     4730,
+     4869
+    ]
+   ],
+   "true_positives": 1,
+   "false_positives": 0,
+   "false_negatives": 0,
+   "precision": 1.0,
+   "recall": 1.0,
+   "f1": 1.0
+  }
+ ],
+ "pairs": [
+  {
+   "seed": 0,
+   "selection_changed": true,
+   "d_selected_epoch": -5,
+   "d_stopped_epoch": -7,
+   "d_best_val_loss": 6e-06,
+   "d_n_sequences": 0,
+   "d_normalized_pred_error": 0.002423,
+   "d_precision": 0.0,
+   "d_recall": 0.0,
+   "d_f1": 0.0
+  }
+ ],
+ "paired_summary": {
+  "d_selected_epoch": {
+   "median": -5.0,
+   "min": -5,
+   "max": -5,
+   "signs": {
+    "+": 0,
+    "0": 0,
+    "-": 1
+   }
+  },
+  "d_stopped_epoch": {
+   "median": -7.0,
+   "min": -7,
+   "max": -7,
+   "signs": {
+    "+": 0,
+    "0": 0,
+    "-": 1
+   }
+  },
+  "d_best_val_loss": {
+   "median": 6e-06,
+   "min": 6e-06,
+   "max": 6e-06,
+   "signs": {
+    "+": 1,
+    "0": 0,
+    "-": 0
+   }
+  },
+  "d_n_sequences": {
+   "median": 0.0,
+   "min": 0,
+   "max": 0,
+   "signs": {
+    "+": 0,
+    "0": 1,
+    "-": 0
+   }
+  },
+  "d_normalized_pred_error": {
+   "median": 0.002423,
+   "min": 0.002423,
+   "max": 0.002423,
+   "signs": {
+    "+": 1,
+    "0": 0,
+    "-": 0
+   }
+  },
+  "d_precision": {
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "signs": {
+    "+": 0,
+    "0": 1,
+    "-": 0
+   }
+  },
+  "d_recall": {
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "signs": {
+    "+": 0,
+    "0": 1,
+    "-": 0
+   }
+  },
+  "d_f1": {
+   "median": 0.0,
+   "min": 0.0,
+   "max": 0.0,
+   "signs": {
+    "+": 0,
+    "0": 1,
+    "-": 0
+   }
+  }
+ },
+ "n_seeds_selection_changed": 1
+}

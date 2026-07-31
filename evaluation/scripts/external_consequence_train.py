@@ -135,7 +135,7 @@ def run_arm(repo: Path, data_dir: Path, arm: str, seed: int, cfg) -> dict:
             yhat = np.append(yhat, [np.flipud(pb[s:t + 1]).diagonal()[0]])
     ch.y_hat = np.reshape(yhat, (yhat.size,))
 
-    run_dir = OUT / "raw" / f"{arm}_seed{seed}"
+    run_dir = OUT / "raw" / "data" / f"{arm}_seed{seed}"
     for sub in ("smoothed_errors", "y_hat", "models"):
         (run_dir / sub).mkdir(parents=True, exist_ok=True)
     cwd = os.getcwd()
@@ -158,10 +158,10 @@ def run_arm(repo: Path, data_dir: Path, arm: str, seed: int, cfg) -> dict:
         "n_predicted_anom_sequences": len(err.E_seq),
         "normalized_pred_error": round(float(err.normalized), 6),
         "predicted_sequences": [[int(a), int(b)] for a, b in err.E_seq],
-    }
+    }, err
 
 
-def score(repo: Path, seq, labels_row) -> dict:
+def score(repo: Path, err, labels_row) -> dict:
     """Upstream Detector.evaluate_sequences, called without constructing a Detector."""
     sys.path.insert(0, str(repo))
     from telemanom.detector import Detector
@@ -169,9 +169,16 @@ def score(repo: Path, seq, labels_row) -> dict:
     d.result_tracker = {"true_positives": 0, "false_positives": 0, "false_negatives": 0}
     d.labels_path = "x"
     import pandas as pd
-    row = pd.Series(dict(labels_row))
-    e = type("E", (), {"E_seq": [tuple(s) for s in seq]})()
-    r = d.evaluate_sequences(e, row)
+    # dtype=object: upstream evaluate_sequences does
+    #   label_row['anomaly_sequences'] = eval(label_row['anomaly_sequences'])
+    # i.e. it replaces a string cell with a list. Upstream pins pandas 0.25.3, where the column
+    # was object dtype and that assignment was fine; pandas 3 infers a strict `str` dtype and
+    # rejects it. The Series is built HERE, in this wrapper, so constructing it as object dtype
+    # keeps upstream's scoring code running verbatim and unmodified.
+    row = pd.Series(dict(labels_row), dtype=object)
+    # The REAL Errors instance, not a stub: upstream evaluate_sequences reads E_seq and
+    # anom_scores off it, and passing the genuine object is what upstream does.
+    r = d.evaluate_sequences(err, row)
     tp, fp, fn = r["true_positives"], r["false_positives"], r["false_negatives"]
     prec = tp / (tp + fp) if tp + fp else float("nan")
     rec = tp / (tp + fn) if tp + fn else float("nan")
@@ -214,8 +221,8 @@ def main() -> int:
     for s in args.seeds:
         per = {}
         for arm in ("original", "corrected"):
-            r = run_arm(args.repo, args.data, arm, s, cfg)
-            r.update(score(args.repo, r["predicted_sequences"], lrow))
+            r, err = run_arm(args.repo, args.data, arm, s, cfg)
+            r.update(score(args.repo, err, lrow))
             (OUT / "raw" / f"{arm}_seed{s}.json").write_text(json.dumps(r, indent=1) + "\n")
             runs.append(r); per[arm] = r
             print(f"  seed {s} {arm:9s} stop_ep {r['stopped_epoch']:2d} "
