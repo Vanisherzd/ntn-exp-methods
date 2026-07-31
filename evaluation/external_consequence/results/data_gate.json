@@ -1,0 +1,69 @@
+{
+ "mirror": "https://huggingface.co/datasets/appleparan/telemanom",
+ "download_utc": "2026-07-31T12:04:38+00:00",
+ "files": {
+  "train/A-1.npy": {
+   "sha256": "ae426533f9d4c6247a5cc1eab89438fed8bf768b0a41d60d42f3a65a7ebc80b0",
+   "bytes": 576128,
+   "expected_sha256": "ae426533f9d4c6247a5cc1eab89438fed8bf768b0a41d60d42f3a65a7ebc80b0",
+   "expected_bytes": 576128,
+   "matches_two_independent_lfs_oids": true
+  },
+  "test/A-1.npy": {
+   "sha256": "7509b72cd170003c3135e12d1f4c67b263dc5be58aabedf12ed14e7561fe6dc2",
+   "bytes": 1728128,
+   "expected_sha256": "7509b72cd170003c3135e12d1f4c67b263dc5be58aabedf12ed14e7561fe6dc2",
+   "expected_bytes": 1728128,
+   "matches_two_independent_lfs_oids": true
+  }
+ },
+ "structural": {
+  "test_shape_is_8640x25": true,
+  "train_shape_is_2880x25": true,
+  "second_dim_identical": true,
+  "dtype_float64_both": true,
+  "no_nan_or_inf": true,
+  "values_within_pm1_as_documented": true,
+  "cols1plus_are_binary_command_onehot": true
+ },
+ "labels": {
+  "whole_file_byte_identical_to_frozen_commit": true,
+  "a1_row": {
+   "chan_id": "A-1",
+   "spacecraft": "SMAP",
+   "anomaly_sequences": "[[4690, 4774]]",
+   "class": "[point]",
+   "num_values": "8640"
+  },
+  "test_rows_equal_documented_num_values": true
+ },
+ "loader": {
+  "upstream_shape_data_ok": true,
+  "X_train": [
+   2620,
+   250,
+   25
+  ],
+  "X_test": [
+   8380,
+   250,
+   25
+  ],
+  "no_transformation_applied": true
+ },
+ "channel_conditioning": {
+  "finding": "A-1's telemetry column (index 0, the regression target) is near-degenerate.",
+  "train_col0_unique_values": 1,
+  "train_col0_value": 0.999,
+  "train_col0_variance": 1.232595164407831e-32,
+  "test_col0_unique_values": 2,
+  "test_col0_values": [
+   -1.0,
+   1.0
+  ],
+  "consequence_for_this_experiment": "The LSTM is trained to predict a constant, so validation loss is ~3e-5 and the reported detection metric has no headroom: on a channel with a single point anomaly F1 is either exactly 1.0 or undefined (zero sequences predicted). A-1 is therefore a WEAK probe for a downstream consequence, and this is a property of the channel the pre-registered selection rule chose, not of the mirror. The rule is not being changed -- switching channels after seeing this would be exactly the cherry-picking Step 3 forbids.",
+  "is_this_a_mirror_defect": false,
+  "why_not": "The per-file sha256 of both arrays match checksums published independently by two unrelated third-party repositories, so these are the canonical NASA/JPL files."
+ },
+ "DATA_SOURCE_STATUS": "CHECKSUM_VERIFIED_MIRROR"
+}

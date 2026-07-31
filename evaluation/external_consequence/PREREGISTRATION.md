@@ -148,3 +148,31 @@ After the pre-registered paired runs the experiment stops. No further channels, 
 seeds, no hyperparameter changes, no alternative split widths, no new metrics, no detector
 changes, no second repository. If the frozen detector's source hash changes at any point the
 experiment aborts.
+
+---
+
+# AMENDMENT 2 — DATA SOURCE
+
+The original upstream data endpoint documented by the frozen repository is inaccessible. A
+provenance-qualified mirror of the original Telemanom A-1 `.npy` arrays is used solely as a
+transport substitute. No transformation of the arrays is permitted.
+
+Qualification is recorded in `DATA_PROVENANCE.md` and `results/data_gate.json`:
+`DATA_SOURCE_STATUS = CHECKSUM_VERIFIED_MIRROR`, reached because the per-file `sha256` of both
+arrays match checksums published independently by two unrelated third-party repositories, and
+`labeled_anomalies.csv` is byte-identical to the frozen commit's own copy.
+
+**This amendment changes data access only.** It does not alter: the A-1 selection, the
+original/corrected arms, the five paired seeds, the endpoints, the early-stopping procedure, the
+test set, the anomaly labels, the detector code, or the stopping rule. All remain exactly as
+registered above.
+
+Two facts are recorded against my own conduct rather than buried. First, the paired runs were
+started before `DATA_PROVENANCE.md` was written; the substantive checks had been done and recorded
+in `environment_manifest.json`, but the formal gate came afterwards, and it passed. Had it failed
+the runs would have been discarded. Second, the gate surfaced that **A-1's telemetry column is
+near-degenerate** — a single value in training, two values in test — so the model is trained to
+predict a constant and the reported metric has almost no headroom. That bounds this experiment's
+sensitivity and is the principal caveat on the consequence classification. The channel is not being
+changed: the selection rule was pre-registered and switching after seeing this would be the
+cherry-picking Step 3 exists to prevent.
