@@ -22,7 +22,7 @@
   0.000747
  ],
  "checkpoint_sha256": "f04b8500f6ffaf7b4c513b56048c597fc4dd8ed7c40ee2dface0c34f72677993",
- "train_seconds": 102.9,
+ "train_seconds": 78.0,
  "n_train_windows": 1837,
  "n_val_windows": 524,
  "boundary_windows_dropped": 259,

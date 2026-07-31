@@ -186,7 +186,12 @@ def artifact_values() -> dict[str, str]:
         "real_pass": str(rl["B_per_object_n_pass"]),
         "at_passes": str(s["real_l47_alongtrack"]["n_passes_used"]),
         "at_icc_d1": str(s["real_l47_alongtrack"]["D1_pass_in_elementset"]["icc"]),
-        "at_icc_d1_up": str(s["real_l47_alongtrack"]["D1_pass_in_elementset"]["icc_upper_95_one_sided"]),
+        # DELIBERATELY NOT REQUIRED: the one-sided UPPER bound on the along-track ICCs. Two
+        # reviewers pointed out that an upper bound is the statistic that supports a PASS -- it
+        # bounds how large the dependence could be -- whereas a HALT needs a bound excluding zero.
+        # The manuscript therefore quotes the LOWER bound (at_icc_d1_lo). Both remain in the
+        # artifact under icc_{lower,upper}_95_one_sided. Recorded rather than left to a diff,
+        # because dropping a key is otherwise how a number silently stops being claimed.
         "at_icc_d3": str(s["real_l47_alongtrack"]["D3_elementset_in_object"]["icc"]),
         "real_halt": str(rl["B_per_object_n_halt"]),
         "ext_classified": str(ex["n_rules_classified"]),
@@ -200,6 +205,13 @@ def artifact_values() -> dict[str, str]:
         "cons_overlap_pct": str(s["external_consequence"]["overlap_original_pct_of_validation_support"]),
         "cons_det_orig": str(s["external_consequence"]["detected_original"]),
         "cons_det_corr": str(s["external_consequence"]["detected_corrected"]),
+        "cons_minp": str(s["external_consequence"]["downstream_min_attainable_p"]),
+        "at_p": str(json.loads((ROOT / "evaluation" / "real_data" /
+                               "l47_alongtrack.json").read_text())
+                    ["analyses"]["D1_pass_in_elementset"]["p_value"]),
+        "at_icc_d1_lo": str(json.loads((ROOT / "evaluation" / "real_data" /
+                                        "l47_alongtrack.json").read_text())
+                            ["analyses"]["D1_pass_in_elementset"]["icc_lower_95_one_sided"]),
         "lag_records": str(g["n_records"]),
         "lag_object_median_h": str(g["median_lag_h_object_level"]),
         # DELIBERATELY NOT REQUIRED: the record-pooled epoch-ahead percentage, the largest

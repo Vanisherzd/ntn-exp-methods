@@ -228,7 +228,28 @@ def main() -> int:
                                     "measurement, which is a function of length and window span.",
         }
 
+    # Applying this paper's OWN attainability logic to its OWN terminal endpoint. Three reviewers
+    # independently observed that a negative was asserted where no attainable data could have
+    # refuted it: with 5 paired seeds and a two-sided paired-randomisation reference the minimum
+    # attainable p is 2/2^5 = 0.0625 > alpha, and 0.25 conditional on the 3 discordant pairs
+    # realised. That is the same regime L4.7 formalises abstention for (3 groups of 2 -> 0.067).
+    # So the downstream endpoint is NOT OBSERVABLE, using this paper's own fifth outcome value,
+    # and the earlier "no stable downstream change" was a claim the design could not support.
+    attain = {
+        "n_paired_seeds": 5,
+        "reference": "two-sided paired randomisation over sign flips",
+        "min_attainable_p": round(2 * 0.5 ** 5, 4),
+        "min_p_conditional_on_3_discordant_pairs": 0.25,
+        "alpha": 0.05,
+        "attainable": False,
+        "consequence": "The downstream endpoint could not have reached the nominal level in "
+                       "either direction. It is reported as NOT OBSERVABLE rather than as a null.",
+        "comparison": "L4.7 abstains at 3 coarser groups of 2 because min p = 0.0667 > alpha. "
+                      "The same arithmetic applies here and the same answer follows.",
+    }
+
     res = {
+        "downstream_attainability": attain,
         "protocol": "evaluation/external_consequence/PREREGISTRATION.md",
         "upstream_frozen_commit": head,
         "contract_layers_sha256": have,

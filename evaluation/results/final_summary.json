@@ -17,8 +17,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.581,
- "runtime_ms_per_condition": 29.3,
+ "runtime_seconds": 1.601,
+ "runtime_ms_per_condition": 29.7,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -115,30 +115,30 @@
  "real_l47_alongtrack": {
   "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
   "observable": "in-track component of the position difference between an element set and its successor, both propagated to the pass midpoint, km. No model is fitted.",
-  "n_passes_used": 269,
+  "n_passes_used": 272,
   "n_passes_dropped_no_successor": 59,
   "n_objects": 11,
   "n_elsets": 90,
   "intrack_abs_km": {
-   "median": 0.223,
-   "p90": 19.119,
+   "median": 0.226,
+   "p90": 18.906,
    "max": 559.022
   },
   "D1_pass_in_elementset": {
    "verdict": "HALT",
-   "n_units": 269,
+   "n_units": 272,
    "n_coarser_groups": 90,
-   "icc": 0.498,
-   "p_value": null,
-   "icc_upper_95_one_sided": 0.636,
+   "icc": 0.501,
+   "p_value": 0.0025,
+   "icc_upper_95_one_sided": 0.638,
    "icc_truncated_at_zero": false
   },
   "D2_pass_in_object": {
    "verdict": "HALT",
-   "n_units": 269,
+   "n_units": 272,
    "n_coarser_groups": 11,
    "icc": 0.241,
-   "p_value": null,
+   "p_value": 0.0025,
    "icc_upper_95_one_sided": 0.306,
    "icc_truncated_at_zero": false
   },
@@ -147,7 +147,7 @@
    "n_units": 90,
    "n_coarser_groups": 11,
    "icc": 0.284,
-   "p_value": null,
+   "p_value": 0.0025,
    "icc_upper_95_one_sided": 0.403,
    "icc_truncated_at_zero": false
   },
@@ -205,10 +205,13 @@
    "0": 2,
    "-": 1
   },
-  "outcome_class": "B",
-  "outcome_label": "SELECTION-ONLY CONSEQUENCE",
-  "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two in test), so the reported metric is effectively binary and cannot express a small stable shift."
+  "outcome_class": "B-selection-decided / downstream-not-observable",
+  "outcome_label": "SELECTION CONSEQUENCE DEMONSTRATED; DOWNSTREAM ENDPOINT NOT OBSERVABLE",
+  "selection_determinism_controlled": true,
+  "downstream_min_attainable_p": 0.0625,
+  "downstream_attainable": false,
+  "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two in test), so the endpoint has about two attainable states. With 5 paired seeds the minimum attainable two-sided p is 0.0625 > alpha, below this paper's own attainability floor, so the downstream endpoint is NOT OBSERVABLE rather than null."
  },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "1feb943febeb03ec96731ad619a5622597bf7152"
+ "commit": "c3e6928f5ee11ca87a79a94b9e5ffb14e9e97fe5"
 }

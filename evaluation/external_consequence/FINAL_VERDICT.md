@@ -1,12 +1,27 @@
 # Final verdict — external-consequence experiment
 
-## OUTCOME B — SELECTION-ONLY CONSEQUENCE
+## SELECTION CONSEQUENCE DEMONSTRATED; DOWNSTREAM ENDPOINT NOT OBSERVABLE
 
-> The violation materially affected model selection, but we did not observe a stable downstream
-> change in the reported test metric.
+This is a **revision of the first verdict**, which read "OUTCOME B — SELECTION-ONLY CONSEQUENCE:
+the violation materially affected model selection, but we did not observe a stable downstream change
+in the reported test metric." Three independent reviewers made the same correct objection, and it
+holds: **the second half asserted a negative that no attainable data could have refuted.**
 
-That is the pre-registered wording for outcome B and it is what the data support. Outcome A was
-not obtained and is not claimed.
+With five paired seeds and a two-sided paired-randomisation reference the smallest attainable $p$
+is $2/2^{5} = 0.0625 > \alpha$, and $0.25$ conditional on the three discordant pairs actually
+realised. That is the same regime this paper formalises abstention for: `L4.7` refuses to decide at
+three coarser groups of two because the smallest attainable $p$ there is $0.0667 > \alpha$. The
+same arithmetic applies to our own terminal endpoint, so the same answer must follow. The paper's
+own fifth outcome value is the right label, and it is now used: **not observable**.
+
+So the honest verdict has two halves, decided separately:
+
+- **Selection endpoint: consequence demonstrated.** Changed in 5 of 5 paired seeds, and now
+  controlled — re-running one seed under identical conditions reproduces its checkpoint bit for
+  bit, so the change is the intervention and not training noise.
+- **Downstream endpoint: not observable.** Undecidable by design, not null.
+
+Outcome A was not obtained and is not claimed.
 
 ## What was run
 
@@ -50,7 +65,7 @@ Every checkpoint hash differs. Selected-epoch delta spans −5 to +7; stopped-ep
 This is a large, reproducible effect: correcting the partition changes which model early stopping
 picks, every time.
 
-## Endpoint B — reported test metric: moves, but not stably
+## Endpoint B — reported test metric: NOT OBSERVABLE
 
 Upstream's own `evaluate_sequences` and `Errors`, unmodified.
 
@@ -69,8 +84,9 @@ median 0, range [−1, +1]. Δ`normalized_pred_error` median +0.0027, range [−
 signs {+4, −1}. Precision is 1.0 whenever anything is predicted and undefined otherwise, so its
 delta is 0 in the two comparable seeds.
 
-The metric changes on three of five seeds and **in both directions**. The median is zero and the
-sign is not consistent, so this is within paired stochastic variation. That is outcome B, not A.
+The metric changes on three of five seeds and **in both directions**. But the design could not have
+shown otherwise: minimum attainable two-sided $p = 0.0625$, above $\alpha$, so neither a
+consequence nor its absence was reachable. Reported as **not observable**, not as a null.
 
 ## The principal caveat: A-1 is a weak probe, and we say so
 
@@ -105,6 +121,15 @@ pre-registered channel we did not observe a stable change in the reported detect
 invalid; that Orbit-Evidence improves telemetry anomaly detection; that chronological validation
 improves F1; that this shows general effectiveness across satellite ML. None of those follow from
 one channel, five seeds and a bimodal endpoint.
+
+## Determinism control — added after review, and it passes
+
+A reviewer correctly noted that "every checkpoint hash differs" has no null: two runs of the *same*
+protocol at the same seed might also differ under training nondeterminism, in which case 5/5 would
+be unattributable. Re-running seed 0 in both arms under identical conditions reproduced
+`9f6d076a` and `f04b8500` **bit for bit**. Training is deterministic at a fixed seed, so the
+selection change is attributable to the intervention. Without this the selection claim was
+unsupported; with it, it stands.
 
 ## Protocol compliance
 

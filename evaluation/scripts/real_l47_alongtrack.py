@@ -67,9 +67,17 @@ def rtn_intrack_km(rec_a: dict, rec_b: dict, jd: float) -> float | None:
     return float((ra - rb) @ intrack)
 
 
-def icc_upper_bound(agg: np.ndarray, grp: np.ndarray, alpha: float = 0.05,
-                    n_boot: int = 2000, seed: int = 20260731) -> float:
-    """One-sided upper 1-alpha bound on ICC by resampling coarser GROUPS with replacement.
+def _stream(agg: np.ndarray, grp: np.ndarray) -> int:
+    """The frozen rule's own design-specific seed derivation, so p matches its decision."""
+    import hashlib
+    n_groups = len({str(g) for g in grp.tolist()})
+    key = f"0|{n_groups}|{agg.size}|{np.round(float(np.sum(agg)) * 1e6):.0f}"
+    return int.from_bytes(hashlib.sha256(key.encode()).digest()[:4], "big")
+
+
+def icc_bound(agg: np.ndarray, grp: np.ndarray, side: str = "upper", alpha: float = 0.05,
+              n_boot: int = 2000, seed: int = 20260731) -> float:
+    """One-sided 1-alpha bound on ICC by resampling coarser GROUPS with replacement.
 
     A permutation reference tests a null; it does not bound an effect. The claim a PASS wants
     to support is an equivalence claim -- dependence small enough that the unit is adequate --
@@ -95,7 +103,9 @@ def icc_upper_bound(agg: np.ndarray, grp: np.ndarray, alpha: float = 0.05,
         r = EC.within_group_icc(v, gg)
         if np.isfinite(r):
             draws.append(float(r))
-    return float(np.quantile(draws, 1.0 - alpha)) if draws else float("nan")
+    if not draws:
+        return float("nan")
+    return float(np.quantile(draws, 1.0 - alpha if side == "upper" else alpha))
 
 
 def min_attainable_p(n_groups: int, per_group: int) -> float:
@@ -129,15 +139,24 @@ def run(values, unit_ids, coarser_ids, label: str) -> dict:
         v = CL.check_statistical_unit(values, unit_ids, coarser_ids)
         out = {**base, **v}
     except CL.ContractViolation as exc:
-        out = {**base, "verdict": "HALT",
-               "icc": round(float(EC.within_group_icc(agg, grp)), 4),
+        # Recompute p with the FROZEN rule's own permutation helper, at its own defaults, so the
+        # reported statistic is the one the decision was made on rather than parsed from a string.
+        icc_h = float(EC.within_group_icc(agg, grp))
+        pv, crit = CL._icc_permutation_pvalue(icc_h, agg, grp, 400,
+                                              np.random.default_rng(_stream(agg, grp)))
+        out = {**base, "verdict": "HALT", "icc": round(icc_h, 4),
+               "p_value": round(float(pv), 4), "permutation_critical": round(float(crit), 4),
                "n_coarser_groups": eff, "message": str(exc)}
     icc = out.get("icc")
     out["icc_truncated_at_zero"] = (icc is not None and icc == 0.0)
     # Three decimals: the precision a paper quotes, so the manuscript and the artifact can be
     # required to agree exactly rather than approximately.
     out["icc_upper_95_one_sided"] = (None if icc is None else
-                                     round(icc_upper_bound(agg, grp), 3))
+                                     round(icc_bound(agg, grp, "upper"), 3))
+    # A HALT is an argument that rho exceeds zero, so it needs the LOWER bound; the upper bound is
+    # what a PASS needs. Two reviewers flagged that only the upper was reported. Both now are.
+    out["icc_lower_95_one_sided"] = (None if icc is None else
+                                     round(icc_bound(agg, grp, "lower"), 3))
     if icc is not None:
         out["icc"] = round(float(icc), 3)
     return out
@@ -151,7 +170,7 @@ def main() -> int:
                          "-- the rule changed, so this analysis is not the registered one")
 
     recs = RA.load_records()
-    rows, dropped = [], 0
+    rows, dropped, sgp4_fail = [], 0, 0
     for obj, rs in recs.items():
         for i, r in enumerate(rs):
             nxt = rs[i + 1] if i + 1 < len(rs) else None
@@ -171,11 +190,29 @@ def main() -> int:
                     if k - start >= 2:
                         mid = (secs[start] + secs[k - 1]) / 2.0
                         d = rtn_intrack_km(r, nxt, jd0 + mid / 86400.0)
-                        if d is not None:
+                        if d is None:
+                            # SGP4 error code at the midpoint. Counted, not silently skipped:
+                            # three reviewers independently found that 269 + 59 did not reconcile
+                            # to 331, and this is the missing three.
+                            sgp4_fail += 1
+                        else:
                             rows.append({"object": obj, "elset": f"{obj}|{r['EPOCH']}",
                                          "pass_id": f"{obj}|{r['EPOCH']}|{start}",
                                          "intrack_km": d})
                     start = None
+            # A run still above the mask when the 24 h window ends. passes_for() closes it and
+            # counts it; this loop only appended on a falling edge, so those passes were silently
+            # absent -- exactly the 331 - 328 that three reviewers independently found did not
+            # reconcile. Closed the same way passes_for does.
+            if start is not None and len(above) - start >= 2:
+                mid = (secs[start] + secs[len(above) - 1]) / 2.0
+                d = rtn_intrack_km(r, nxt, jd0 + mid / 86400.0)
+                if d is None:
+                    sgp4_fail += 1
+                else:
+                    rows.append({"object": obj, "elset": f"{obj}|{r['EPOCH']}",
+                                 "pass_id": f"{obj}|{r['EPOCH']}|{start}",
+                                 "intrack_km": d})
 
     v = [x["intrack_km"] for x in rows]
     res = {
@@ -187,6 +224,9 @@ def main() -> int:
                           "No model is fitted.",
             "n_passes_used": len(rows),
             "n_passes_dropped_no_successor": dropped,
+            "n_passes_dropped_sgp4_error": sgp4_fail,
+            "n_passes_raw": len(rows) + dropped + sgp4_fail,
+            "pass_accounting": "raw = used + dropped_no_successor + dropped_sgp4_error",
             "n_objects": len({r["object"] for r in rows}),
             "n_elsets": len({r["elset"] for r in rows}),
             "intrack_abs_km": {"median": round(float(np.median(np.abs(v))), 3),

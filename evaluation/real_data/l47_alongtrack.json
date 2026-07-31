@@ -3,38 +3,47 @@
   "protocol": "evaluation/real_data/PREREGISTRATION.md (addendum, analysis D)",
   "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
   "observable": "in-track component of the position difference between an element set and its successor, both propagated to the pass midpoint, km. No model is fitted.",
-  "n_passes_used": 269,
+  "n_passes_used": 272,
   "n_passes_dropped_no_successor": 59,
+  "n_passes_dropped_sgp4_error": 0,
+  "n_passes_raw": 331,
+  "pass_accounting": "raw = used + dropped_no_successor + dropped_sgp4_error",
   "n_objects": 11,
   "n_elsets": 90,
   "intrack_abs_km": {
-   "median": 0.223,
-   "p90": 19.119,
+   "median": 0.226,
+   "p90": 18.906,
    "max": 559.022
   }
  },
  "analyses": {
   "D1_pass_in_elementset": {
    "grouping": "D1: pass -> element set, in-track residual (km)",
-   "n_units": 269,
+   "n_units": 272,
    "n_labelled_coarser": 90,
    "verdict": "HALT",
-   "icc": 0.498,
+   "icc": 0.501,
+   "p_value": 0.0025,
+   "permutation_critical": 0.172,
    "n_coarser_groups": 90,
-   "message": "[L4.7] unit-level ICC 0.498 gives permutation p=0.0025 <= alpha=0.05 over 90 coarser groups; the chosen statistical unit is finer than the exchangeable one",
+   "message": "[L4.7] unit-level ICC 0.501 gives permutation p=0.0025 <= alpha=0.05 over 90 coarser groups; the chosen statistical unit is finer than the exchangeable one",
    "icc_truncated_at_zero": false,
-   "icc_upper_95_one_sided": 0.636
+   "icc_upper_95_one_sided": 0.638,
+   "icc_lower_95_one_sided": 0.376
   },
   "D2_pass_in_object": {
    "grouping": "D2: pass -> object, in-track residual (km)",
-   "n_units": 269,
+   "n_units": 272,
    "n_labelled_coarser": 11,
    "verdict": "HALT",
    "icc": 0.241,
+   "p_value": 0.0025,
+   "permutation_critical": 0.0299,
    "n_coarser_groups": 11,
    "message": "[L4.7] unit-level ICC 0.241 gives permutation p=0.0025 <= alpha=0.05 over 11 coarser groups; the chosen statistical unit is finer than the exchangeable one",
    "icc_truncated_at_zero": false,
-   "icc_upper_95_one_sided": 0.306
+   "icc_upper_95_one_sided": 0.306,
+   "icc_lower_95_one_sided": 0.154
   },
   "D3_elementset_in_object": {
    "grouping": "D3: element set -> object, mean in-track residual (km)",
@@ -42,10 +51,13 @@
    "n_labelled_coarser": 11,
    "verdict": "HALT",
    "icc": 0.284,
+   "p_value": 0.0025,
+   "permutation_critical": 0.0873,
    "n_coarser_groups": 11,
    "message": "[L4.7] unit-level ICC 0.285 gives permutation p=0.0025 <= alpha=0.05 over 11 coarser groups; the chosen statistical unit is finer than the exchangeable one",
    "icc_truncated_at_zero": false,
-   "icc_upper_95_one_sided": 0.403
+   "icc_upper_95_one_sided": 0.403,
+   "icc_lower_95_one_sided": 0.124
   }
  },
  "attainability_floor": {

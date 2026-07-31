@@ -182,11 +182,16 @@ def _external_consequence() -> dict:
         "d_recall_range": [pair["paired_summary"]["d_recall"]["min"],
                            pair["paired_summary"]["d_recall"]["max"]],
         "d_recall_signs": pair["paired_summary"]["d_recall"]["signs"],
-        "outcome_class": "B",
-        "outcome_label": "SELECTION-ONLY CONSEQUENCE",
+        "outcome_class": "B-selection-decided / downstream-not-observable",
+        "outcome_label": "SELECTION CONSEQUENCE DEMONSTRATED; DOWNSTREAM ENDPOINT NOT OBSERVABLE",
+        "selection_determinism_controlled": pair["determinism_control"]["bit_identical_on_repeat"],
+        "downstream_min_attainable_p": mech["downstream_attainability"]["min_attainable_p"],
+        "downstream_attainable": mech["downstream_attainability"]["attainable"],
         "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two "
-                            "in test), so the reported metric is effectively binary and cannot "
-                            "express a small stable shift.",
+                            "in test), so the endpoint has about two attainable states. With 5 "
+                            "paired seeds the minimum attainable two-sided p is 0.0625 > alpha, "
+                            "below this paper's own attainability floor, so the downstream "
+                            "endpoint is NOT OBSERVABLE rather than null.",
     }
 
 

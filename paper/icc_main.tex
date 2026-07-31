@@ -320,23 +320,25 @@ generate collapse onto units already present.
 
 \emph{The observable decides whether the rule can say anything.} Grouping element sets by object on
 publication lag, and passes by element set on mean elevation, both passed at
-$\hat{\rho}=0.000,\ p=1.000$---a ties signature, the estimator truncating at zero, so not an effect
-size---against our predicted halts. Every object's lag sits at \qtyrange{6.3}{9.2}{\hour} here,
-consecutive element sets are propagated a day apart so their passes overlap in geometry, and
-elevation is a deterministic function of the grouping, so neither could speak to
-\S\ref{sec:whysat}\,v, which is about along-track \emph{error}. One object halted, but across the
-fourteen decisions those groupings make $P(\ge 1$ halt$)$ under the global null is $0.51$.
+$\hat{\rho}=0.000,\ p=1.000$ against our predicted halts---a ties signature, the estimator
+truncating at zero, so not an effect size. Elevation is a deterministic function of the grouping,
+so neither could speak to \S\ref{sec:whysat}\,v, which is about along-track \emph{error}. One
+object halted, but $P(\ge 1)$ under the global null across those fourteen decisions is $0.51$.
 
 \emph{On the observable that claim is about, the rule halts.} Differencing each element set against
 its successor---both propagated to a pass midpoint, in-track component, no model fitted---gives
-\artv{at_passes}{\num{269}} passes, median $\lvert$in-track$\rvert$ \qty{0.22}{\kilo\metre} with a
-tail to \qty{559}{\kilo\metre}. Grouped by generating element set, \rulename{L4.7} \textsc{halts} at
-$\hat{\rho}=\artv{at_icc_d1}{0.498}$, one-sided $95\%$ upper bound $\artv{at_icc_d1_up}{0.636}$;
-element sets within objects halt at $\artv{at_icc_d3}{0.284}$. The registered prediction held here,
-and this is the one real-data result bearing on the premise: for an error-valued quantity the pass
-is too fine a unit, which is what \S\ref{sec:whysat}\,v asserts. Reversing the declared coarser
-level changes the statistic and not the decision, so the rule adjudicates whether the declared
-level is adequate, never which level is right.
+\artv{at_passes}{\num{272}} passes ($+\num{59}$ dropped for having no successor, totalling the
+\num{331}). Grouped by generating element set, \rulename{L4.7} \textsc{halts} at
+$\hat{\rho}=\artv{at_icc_d1}{0.501}$, permutation $p=\artv{at_p}{0.0025}$, one-sided $95\%$
+\emph{lower} bound $\artv{at_icc_d1_lo}{0.376}$; grouped by object, $0.241$; element sets within
+objects, $\artv{at_icc_d3}{0.284}$. All three reach the smallest $p$ the reference admits at
+$B=\num{400}$. The registered prediction held here. Two limits: this is an \emph{update increment}
+between consecutive fits sharing most of their observation arc, not an error against truth---which
+is why its median is only \qty{0.22}{\kilo\metre}---and its \qty{559}{\kilo\metre} tail is
+manoeuvre-scale, unscreened. What it establishes is narrower than \S\ref{sec:whysat}\,v: for a
+pass-row dataset whose target derives from the generating element set, pass rows within an element
+set are not exchangeable. Reversing the declared coarser level changes the statistic and not the
+decision, so the rule adjudicates whether the declared level is adequate, never which is right.
 
 \emph{The unmodified contract on a third-party artifact.} We fixed inclusion criteria, selected one
 public learning-assisted satellite artifact---a spacecraft-telemetry \textsc{lstm} from another
@@ -364,12 +366,16 @@ incomplete we record that the artifact does not expose enough, never that its au
 hash, then corrected only the partition: carving the validation block chronologically and dropping
 the \num{259} windows that make source-timestep overlap impossible takes overlap from
 \qty{\artv{cons_overlap_pct}{100}}{\percent} of the validation support to zero and
-\rulename{L4.1} from halt to pass. Over \artv{cons_seeds}{\num{5}} paired seeds it changed which
-model early stopping selected \artv{cons_sel_changed}{\num{5}} times out of five, every checkpoint
-differing. The reported detection metric moved on three seeds but \emph{in both directions},
-median zero, so we report a selection consequence and not a stable downstream one---and this
-channel could not show one, its target taking a single value in training and two in test. We claim
-nothing about the upstream paper's validity or about improving anomaly detection.
+\rulename{L4.1} from halt to pass. Over \artv{cons_seeds}{\num{5}} paired seeds it changed which model
+early stopping selected \artv{cons_sel_changed}{\num{5}} times out of five, every checkpoint
+differing---and re-running one seed under identical conditions reproduces its checkpoint bit for
+bit, so that is the intervention and not training noise. The reported detection metric moved on
+three seeds in \emph{both} directions. We do not call that a null: with five paired seeds the
+smallest attainable two-sided $p$ is $\artv{cons_minp}{0.0625}$, above $\alpha$, so by the same
+attainability argument that makes \rulename{L4.7} abstain this endpoint is \emph{not observable}
+---and the channel compounds it, its target taking one value in training and two in test. So:
+selection consequence demonstrated, downstream consequence undecidable, and nothing claimed about
+the upstream paper's validity or about improving anomaly detection.
 
 Two retrospective case studies from the stopped programme are in the artifact: both predate the
 contract, so no halt was ever run, and the fixtures of \S\ref{sec:eval} were modelled on them.

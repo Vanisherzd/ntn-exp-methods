@@ -1,4 +1,14 @@
 {
+ "downstream_attainability": {
+  "n_paired_seeds": 5,
+  "reference": "two-sided paired randomisation over sign flips",
+  "min_attainable_p": 0.0625,
+  "min_p_conditional_on_3_discordant_pairs": 0.25,
+  "alpha": 0.05,
+  "attainable": false,
+  "consequence": "The downstream endpoint could not have reached the nominal level in either direction. It is reported as NOT OBSERVABLE rather than as a null.",
+  "comparison": "L4.7 abstains at 3 coarser groups of 2 because min p = 0.0667 > alpha. The same arithmetic applies here and the same answer follows."
+ },
  "protocol": "evaluation/external_consequence/PREREGISTRATION.md",
  "upstream_frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
  "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
