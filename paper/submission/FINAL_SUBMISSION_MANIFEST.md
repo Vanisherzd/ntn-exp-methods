@@ -1,0 +1,155 @@
+# Final submission manifest
+
+Scientific and experimental loops are closed. No further experiments, channel selection, model
+training, detector changes, fault additions, statistical redesign, or reviewer-driven scientific
+extensions are authorized for this submission.
+
+## Identity
+
+| | |
+|---|---|
+| **title** | Orbit-Evidence: Relational Validity Checks for Learning-Assisted Satellite Communication Experiments |
+| **pages** | 6 |
+| **branch** | `submission/orbit-evidence-workshop` |
+| **scientific content frozen at** | `8734f780aadd5f88ca0264749ca74ae6155b76d2` |
+| **submission tag** | `paper/orbit-evidence-workshop-submission-2026-07` |
+
+The tag points one commit later — at the commit that adds this manifest — because a manifest
+cannot contain its own commit's SHA. That commit changes no scientific content: it adds this file
+and nothing else, and every hash in the table below is unchanged by it. The tag's own SHA and the
+final branch SHA are reported in the freeze return alongside this file.
+
+`paper/icc_main.pdf` is byte-reproducible: rebuilding from the same source yields the same sha256,
+verified before recording it here.
+
+## Hashes (sha256)
+
+| artifact | hash |
+|---|---|
+| `paper/icc_main.tex` | `d00d6c50f8a67ea15e726bf696a5259901c46e787702934cdc75896d7d027d9e` |
+| `paper/icc_main.pdf` | `157d581d1db1d6664293316b158e3e4f1540339f069efdd7c2e0655c833c0197` |
+| `paper/refs.bib` | `713a3b9400dc438a5c7318b372877e09f558b09940bdccca5d49e3bf3c48655a` |
+| `evaluation/results/final_summary.json` | `5567b6aafe30300726d25dd86a7c4b99077d4b0f8d59a58aa8749e06d1864f9c` |
+| **detector** `evaluation/scripts/contract_layers.py` | `07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b` |
+| `matrix_sha256` (field) | `cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2` |
+| 11-object L4.7 application | `d450461f64aa9c3263bd758c3790dd86f8c6878fb4d1be2e2e2d2bad8beea7ff` |
+| along-track analysis | `d4bac2f5b7b21d6219ce38e2242a7e4950b0daf0ee542b1bdec9b76570d34974` |
+| external consequence, paired runs | `0dd189e93f729901899b5fc9ce2d87c6c0912d4ed727389f39fa9a118bbf3c4f` |
+| external consequence, mechanical | `f11576a6fa8539e7b9003365f69133be50a1a86280c82fb18b793478312ae9cb` |
+| external data gate | `5d0b145aa8b9f2ee35ab5d4b86759545177d90e0e6fbf5ea294d59a1e20e8730` |
+
+The detector hash is identical to the hash recorded in **both** pre-registrations, and appears
+unchanged in the summary, the real-data application, the along-track analysis, and the external
+study. No detector was modified after any outcome was inspected.
+
+## External evidence
+
+| | |
+|---|---|
+| pre-registration tag | `external-consequence-preregistered-v1` (`3f9ec3d`) |
+| third-party repository | `https://github.com/khundman/telemanom` |
+| frozen commit | `2e6c5b6c3558e7835601519b7bdef37c649bdbdc` |
+| channel | `A-1`, fixed by pre-registered rule B before any training |
+| paired seeds | `0, 1, 2, 3, 4` — all five completed, none replaced |
+| data provenance | `CHECKSUM_VERIFIED_MIRROR` (per-file sha256 matched against checksums published independently by two unrelated repositories) |
+
+## Build and verification
+
+```
+make paper        # builds paper/icc_main.pdf
+make gate         # tests, matrix, L4.7 calibration, claim gate, six-page invariants
+make gate-twice   # runs the gate twice and asserts the summary artifact reproduces
+```
+
+Verified from a clean `git archive HEAD` checkout:
+
+| requirement | result |
+|---|---|
+| tests | **61 passed, 1 skipped** |
+| pages | **6** |
+| LaTeX errors | **0** |
+| undefined references | **0** |
+| undefined citations | **0** |
+| overfull hboxes / vboxes | **0 / 0.0 pt** |
+| minimum author-set glyph | **≥ 6.4 pt** (191 class-set spans at 5.98 / 6.38 pt, IEEEtran and LaTeX math defaults, exempted by exact value) |
+| banlist | **clean** — 11 banned + 17 withdrawn patterns, 6 permitted mentions |
+| named numeric claim sites bound | **38** |
+| external consequence manifest | reproduced |
+| Telemanom frozen commit | recorded and asserted |
+| detector hash | unchanged |
+| paired five-seed results | reproduced |
+| 11-object L4.7 artifact | reproduced |
+| `gate-twice` | **PASS TWICE**, 31 summary fields identical including `matrix_sha256` |
+
+`make gate` regenerates the fault matrix and the L4.7 calibration. It does **not** regenerate the
+two external studies, whose inputs do not ship: the real-data analysis needs `dataraw/` (untracked
+Space-Track records) and the third-party study needs a network clone at a frozen commit. Their
+artifacts are committed and the gate reads them, refusing to build if the detector hash or the
+frozen commit differ from the registered ones. That is weaker than regeneration and is stated as
+such in the manuscript.
+
+## Final claim freeze
+
+### Allowed
+
+- Chronological splitting does not establish every deployment-validity property.
+- Some validity obligations are relational across executions or aggregation levels.
+- Orbit-Evidence implements `PASS` / `HALT` / `INDETERMINATE` semantics.
+- On the real 11-object orbital analysis, the frozen `L4.7` rule **halts** for the reported
+  along-track grouping analyses.
+- On the frozen telemanom artifact, the original train/validation partition triggers `L4.1` and the
+  pre-registered corrected partition clears it.
+- Correcting that partition changes selected epochs and checkpoints in **all five** paired
+  deterministic runs.
+- The downstream endpoint is **not observable** at the available paired-run resolution.
+- Curated fault results are represented-fault regression coverage only.
+
+### Prohibited
+
+The following claims are **prohibited** for this submission and are named here only so the
+prohibition is explicit and machine-checkable:
+- That the correction improves telemanom detection performance.
+- That telemanom's published result is invalid.
+- That Orbit-Evidence detects arbitrary or unseen faults.
+- That the 11-object along-track quantity is orbital truth error. It is an **update increment**
+  between consecutive fits sharing most of their observation arc.
+- That `CREATION_DATE` equals exact API availability time. It is an optimistic **lower bound** on
+  retrievability.
+- That all satellite-learning experiments require the same statistical unit.
+- That external validation proves universal generalisation.
+
+## Final reviewer verdicts
+
+Three fresh reviewers on the final PDF and artifact summary.
+
+| | R-C1 satellite methodology | R-C2 ML validity | R-C3 reject advocate |
+|---|---|---|---|
+| verdict | WEAK ACCEPT | WEAK ACCEPT | WEAK REJECT |
+| novelty | 2 | 3 | 2 |
+| evidence | 3 | 3 | 2 |
+| significance | 3 | 3 | 2 |
+| technical | 3 | 3 | 3 |
+| evidence still primarily internal? | yes | yes | yes |
+| third-party intervention establishes practical consequence? | no | no | no |
+| 11-object result establishes satellite relevance? | partially | partially | partially |
+
+R-C1's verdict was explicitly conditional on the along-track halts reporting the permutation
+statistic that defines the rule. They now do (`p = 0.0025`, the smallest value the reference admits
+at `B = 400`), so that condition is discharged.
+
+Five findings raised by these reviewers were fixed before this freeze, all reporting-faithfulness
+defects rather than new experiments: the missing permutation `p` on the headline halts; a one-sided
+bound reported on the wrong side for a `HALT`; a downstream negative asserted below this paper's own
+attainability floor, now relabelled **not observable**; a missing determinism control for the 5/5
+selection claim, which was then run and passed bit-for-bit; and a pass denominator that did not
+reconcile, now `272 + 59 + 0 = 331` exactly.
+
+## Post-tag immutability
+
+Once the submission tag exists, the tagged commit must never be rewritten. Scientific changes
+require a new post-submission branch.
+
+Permitted pre-upload edits: venue name, submission ID, anonymisation fields, mandatory
+copyright/footer metadata, exact workshop template requirements. Any such edit must leave all
+scientific text and numbers unchanged, rerun `make gate` and `make gate-twice`, and land as a
+separate metadata-only commit.
