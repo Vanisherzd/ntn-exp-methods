@@ -155,3 +155,106 @@ change; recording it because the question was asked and answered against the con
 - The manuscript's R3F prose fixes were committed inside `3899f63`, which is labelled `docs:`.
   That mislabels 241 lines of manuscript change. History is not rewritten, so it is recorded
   here rather than hidden.
+
+---
+
+# Novelty-rebalance cycle — R-N1 to R-N4
+
+Four fresh reviewers, none from any earlier loop. R-N1 and R-N2 read the implementation;
+R-N3 and R-N4 received only the PDF and the artifact summary a real reviewer would get.
+
+| reviewer | scope | verdict | N | S | T | E | C |
+|---|---|---|---|---|---|---|---|
+| R-N1 | novelty and positioning, code-reading | WEAK ACCEPT | 2 | 3 | 3 | 4 | 3 |
+| R-N2 | statistics and experimental methodology | WEAK ACCEPT | 3 | 3 | 4 | 2 | 4 |
+| R-N3 | satellite / NTN | *dispatched* | — | — | — | — | — |
+| R-N4 | flagship-workshop reject advocate | *dispatched* | — | — | — | — | — |
+
+## R-N2 verified the core statistics line by line and found them correct
+
+Worth recording because it is the load-bearing part of the paper and it was checked rather
+than trusted. R-N2 reproduced both headline numbers from a clean `git archive HEAD`, and
+independently confirmed:
+
+- ICC(1) from variance components is correctly derived; the null expectation is 0 at every
+  group size; truncation at 0 is conservative (a point mass at p = 1 in 53.6% of clean
+  replicates, never a manufactured rejection);
+- repeated in-place `rng.shuffle` *looks* like a random walk over permutations but is not —
+  composing a fresh uniform permutation onto any prior arrangement is uniform and
+  independent of the history, so the B draws are i.i.d.;
+- the finite-B p-value is exactly valid: attainable size at B = 400, alpha = 0.05 is
+  20/401 = 0.04988;
+- the whole lower tail is calibrated, not just the reported point:
+  P(p ≤ alpha) = 0.0067, 0.0244, 0.0422, 0.0800, 0.1822 at alpha = 0.010, 0.025, 0.050,
+  0.100, 0.200 — uniformly mildly conservative;
+- the 450 replicates are **not** pseudoreplicated: per-seed halt counts [136, 14, 0, 0]
+  against Binom(3, p) expectation [136.4, 13.1, 0.4, 0.0], and the ICC of the halt indicator
+  grouped by seed is 0.0, so the Wilson interval's independence assumption holds;
+- Wilson (uncorrected) for 19/450 is [0.0272, 0.0650], matching what the paper quoted.
+
+## The most serious finding: neither headline error rate was inside the gate
+
+Verified and reproduced. `make_final_summary.py` carried the calibration as hand-typed
+literals, so `check_banlist.py` compared the manuscript against a transcription. R-N2
+observed the consequence live: an uncommitted edit rederiving the permutation stream moved
+the measured false-halt rate from 19/450 = 0.042 to 14/450 = 0.031, and `make gate` still
+reported `SUBMISSION GATE: PASS` with 0.042.
+
+That edit was mine, made earlier in this same cycle to fix a platform-dependent seed. So the
+defect and its demonstration both belong to this cycle.
+
+**Worse than reported.** Fixing the transcription was not sufficient. The gate's binding was
+required-*presence*: it asked whether the artifact's value appeared anywhere in the sources.
+Two independent bypasses, both confirmed by direct attack after the artifact was bound:
+
+1. the count 17 was satisfied by the seventeen fault classes, whatever the field had drifted
+   to;
+2. with the artifact carrying 0.038, the check *still passed* — Fig. 2 contains the ICC
+   coordinate `(0.038,0.05)`.
+
+Required-presence also cannot express the opposite direction at all: a correct artifact and
+a wrong manuscript. Replaced with `\artv{key}{rendered}` claim sites and per-claim agreement.
+Eleven attacks now fire, four of which the previous gate accepted.
+
+**Consequence for the paper.** The 19/450 = 0.042, its Wilson interval, and Fig. 2's power
+points were all stale. Corrected everywhere to 14/450 = 0.031, Wilson [0.018, 0.052]. Both
+values lie inside the interval and both are at or below nominal 0.05, so no conclusion moved
+— but the paper now claims the interval, and `CLAIMS.md` records the count as
+implementation-conditional.
+
+## R-N2's other confirmed findings
+
+| finding | status |
+|---|---|
+| §II specified the 1-alpha quantile rule the code explicitly discards, and never named the +1/(B+1) correction | fixed — the required camera-ready item |
+| Fig. 2 plotted at x = 5·ICC while ticking in ICC: "0.5" at ICC 0.4, "0.8" at ICC 0.6; curve ran past its axis; `\clip` issued after `\draw`; the headline ICC 0.8 point had no marker | fixed — the second required item; x is now ICC itself |
+| "estimator and reference distribution are both load-bearing" is wrong for size — under the permutation null the two estimators are monotone transforms and give identical p-values | fixed |
+| the abstention floor counted labelled coarser groups; `within_group_icc` drops groups with fewer than 2 members, so 4 labels including 2 singletons cleared a floor of 4 and reported `n_coarser_groups: 4` on an ICC estimated from 2 | fixed, with a regression test on the reviewer's exact case |
+| `coarse_of.setdefault` silently accepted a unit assigned to two coarser groups | now raises, with a test |
+| exchangeability named but its failure modes not: unequal replicate counts per unit, heteroscedastic coarser groups — both inflate size with no unit error present, both surface as the same misdiagnosis, neither can appear in the balanced fixture | documented in the docstring |
+| the floor is a power precondition, not a validity one — the test is size-valid at k = 2 | corrected in §II |
+| §VI implied the six multi-consumer faults catch a defect in a working pipeline; in all six the second consumer is another check, never a reported number | fixed |
+| `CLAIMS.md` named runtime as the only non-bit-reproducible figure | fixed — the false-halt count is implementation-conditional |
+| "measured rather than assumed" overstates what was measured: the clean fixture satisfies the permutation null by construction, so the measurement checks the implementation | Fig. 2 caption and §II both rewritten |
+| power is n = 40 per point, one synthetic Gaussian design, no intervals, while the size point carries a Wilson interval in the same figure | disclosed in the caption ("one synthetic design", "each over 40 seeds"); intervals on the power points would need page budget the six-page limit does not have |
+| `m̄ = n/k` is the plain mean, not the standard unbalanced `m₀` | harmless for the decision (any permutation-invariant statistic gives a valid test); the balance caveat is in the code comment |
+| the fixture's injected point sits at ICC ≈ 0.956, not the ≈ 0.8 the artifact note claimed | the paper's claim is that 150/150 is saturated, which is if anything understated; noted here rather than adding a number to the manuscript |
+
+## Declined, with reasons
+
+**L4.3 should be wired to the permutation null 60 lines below it (R-N2 §5).** R-N2 is right
+that the repair is small and that a gate halting one correct design in six will be switched
+off. Declined under the explicit governing instruction for this cycle: *"Do not repair it
+now. Repairing it after seeing its behaviour would open another detector-design cycle."*
+L4.3 is classified as a cheap self-reported guard, its 0.17 null size is disclosed in the
+manuscript and in Table I's caption, and L4.7 is the calibrated decision. This is a deferral
+on process grounds, not a disagreement on the statistics.
+
+**Reporting the full lower tail (five alpha levels) instead of the single 0.042.** R-N2 is
+right that it is stronger evidence. It would need regenerating under the current seeding and
+would cost prose in a paper already at exactly six pages. Not done; the measured tail is
+recorded above so it is not lost.
+
+**Adding size under mild exchangeability violations, or a second (k, m̄).** This is new
+measurement, forbidden this cycle. The gap is now stated in the manuscript rather than left
+for a reader to find.
