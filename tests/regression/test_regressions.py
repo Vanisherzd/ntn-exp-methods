@@ -22,6 +22,7 @@ import pytest
 
 SRC = Path(__file__).resolve().parents[2] / "src"
 sys.path.insert(0, str(SRC))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "evaluation" / "scripts"))
 
 from orbit_evidence.experiment_contract import experiment_contract as EC          # noqa: E402
 from orbit_evidence.label_ensemble import reference_ensemble as RE           # noqa: E402
@@ -580,3 +581,52 @@ def test_generator_matches_declared_physics():
         X, y2, tr, te,
         lambda A: np.column_stack([np.ones(A.shape[0]), A[:, 1], A[:, 1] * A[:, 0]]))
     assert m2["classification"] == "not calibration-classified"
+
+
+# ---------------------------------------------------------------- 21
+
+def _nested(units_per_group, reps=6, seed=0):
+    """Build a balanced (values, unit_ids, coarser_ids) design from a group->units map."""
+    rng = np.random.default_rng(seed)
+    v, u, g = [], [], []
+    uid = 0
+    for gname, n_units in units_per_group.items():
+        for _ in range(n_units):
+            v += list(rng.normal(size=reps)); u += [f"u{uid}"] * reps; g += [gname] * reps
+            uid += 1
+    return v, u, g
+
+
+def test_l47_group_floor_counts_estimable_groups_not_labels():
+    """L4.7's abstention floor counted LABELLED coarser groups, including singletons,
+    while within_group_icc drops any group with fewer than two units. A design with two
+    real groups and two singletons therefore cleared a floor of four and returned PASS
+    with n_coarser_groups=4 -- an ICC estimated from two groups, reported as four."""
+    import contract_layers as CL
+
+    # broken shape: 4 labels, 2 estimable, 8 units -- used to clear the floor
+    v, u, g = _nested({"g0": 3, "g1": 3, "g2": 1, "g3": 1})
+    out = CL.check_statistical_unit(v, u, g)
+    assert out["verdict"] == "INDETERMINATE", out
+    assert out["n_coarser_groups"] == 2, out
+    assert out["n_labelled_groups"] == 4, out
+
+    # fixed shape: 4 estimable groups of 2 units each still decides
+    v, u, g = _nested({"g0": 2, "g1": 2, "g2": 2, "g3": 2}, seed=1)
+    ok = CL.check_statistical_unit(v, u, g)
+    assert ok["verdict"] == "PASS", ok
+    assert ok["n_coarser_groups"] == 4, ok
+
+
+def test_l47_rejects_a_unit_in_two_coarser_groups():
+    """coarse_of.setdefault kept whichever coarser label it saw first, so a unit whose
+    replicates disagreed about their group -- a nesting error -- was silently assigned to
+    one of them and the design passed."""
+    import contract_layers as CL
+
+    v, u, g = _nested({"g0": 3, "g1": 3, "g2": 2}, seed=2)
+    CL.check_statistical_unit(v, u, g)          # well-nested: decides
+
+    bad = list(g); bad[0] = "gX"                # one replicate of u0 relabelled
+    with pytest.raises(CL.ContractViolation, match="more than one coarser group"):
+        CL.check_statistical_unit(v, u, bad)

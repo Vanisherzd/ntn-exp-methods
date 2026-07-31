@@ -348,6 +348,14 @@ def check_seed_hygiene(registry: EC.SeedRegistry,
 
 
 def check_provenance_hashes(manifest: Mapping[str, Any]) -> None:
+    """L4.5 -- manifest PRESENCE, not hash verification. Read the limit before relying on it.
+
+    This checks that a manifest exists, covers at least one artifact, and carries a self-hash.
+    It does NOT recompute any digest, so it cannot detect a wrong or stale hash -- only a
+    missing one. The rule name promised more than the detector delivers, which is why the
+    statement is narrowed here rather than the check quietly widened: widening it after seeing
+    its behaviour is the detector-design cycle this contract exists to avoid.
+    """
     if "files" not in manifest or "manifest_sha256" not in manifest:
         raise ContractViolation("L4.5", "manifest lacks files or its own hash")
     if not manifest["files"]:
@@ -449,8 +457,20 @@ def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
     the null MEAN and not the null TAIL -- measured null size was 0.17 at eight groups
     of three, so the rule halted on roughly one correct design in six and a clean-path
     pass was a property of the seed. Permuting unit values across coarser groups gives
-    an exchangeability-based critical value at the observed group count and balance,
-    so the size is alpha by construction.
+    a permutation reference at the observed group count and balance, so the size is at
+    most alpha for any number of permutations.
+
+    WHAT EXCHANGEABILITY EXCLUDES. The permutation null assumes the aggregated per-unit
+    values are exchangeable across coarser groups under H0. Two realistic designs break
+    that and inflate the halt rate without any unit error being present:
+      * unequal replicate counts per unit -- aggregate_repeated_measures takes unweighted
+        means, so units with fewer replicates have higher-variance means. If replicate
+        count correlates with the coarser group (one satellite with fewer passes per
+        episode, which is normal) the reference distribution is wrong;
+      * heteroscedastic coarser groups -- equal means with unequal within-group spread
+        leaves E[ICC] near 0 but inflates Var(MSB) above what the pooled null represents.
+    Both surface as the same message about the unit being too fine, which is a
+    misdiagnosis. The calibration fixture is balanced, so neither appears in it.
 
     Returns a verdict dict so a caller can distinguish PASS from INDETERMINATE.
     """
@@ -458,11 +478,23 @@ def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
     ui, ci = np.asarray(unit_ids), np.asarray(coarser_ids)
     coarse_of: dict[Any, Any] = {}
     for a, b in zip(ui.tolist(), ci.tolist()):
-        coarse_of.setdefault(a, b)
+        # setdefault here silently accepted a unit whose replicates disagreed about their
+        # coarser group -- a nesting error -- by keeping whichever label came first. A
+        # validity checker must not paper over a malformed design.
+        if coarse_of.setdefault(a, b) != b:
+            raise ContractViolation(
+                "L4.7", f"unit {a!r} is assigned to more than one coarser group "
+                        f"({coarse_of[a]!r} and {b!r}); the nesting is not well defined")
     grp = np.array([coarse_of[k] for k in u.tolist()])
-    n_groups = len(set(grp.tolist()))
+    labelled = sorted({str(g) for g in grp.tolist()})
+    # within_group_icc drops groups with fewer than two units, so the count that matters for
+    # estimability is the EFFECTIVE one. Counting labelled groups let a design with two real
+    # groups and two singletons clear a floor of four and report n_coarser_groups=4.
+    counts = {g: int(np.sum(grp.astype(str) == g)) for g in labelled}
+    n_groups = sum(1 for c in counts.values() if c >= 2)
     if n_groups < min_coarser_groups or agg.size < 2 * min_coarser_groups:
         return {"verdict": "INDETERMINATE", "n_coarser_groups": n_groups,
+                "n_labelled_groups": len(labelled),
                 "icc": None, "critical": None,
                 "reason": "too few coarser groups or units for an exchangeability test"}
     icc = EC.within_group_icc(agg, grp)
@@ -473,10 +505,12 @@ def check_statistical_unit(values: np.ndarray, unit_ids: np.ndarray,
     # of the critical value identical across every calibration design, coupling replicates
     # that are supposed to be independent. Derived deterministically from the design, so
     # reproducibility is preserved without the coupling.
-    design_key = (int(seed), int(n_groups), int(agg.size),
-                  int(np.round(float(np.sum(agg)) * 1e6)))
-    pv, crit = _icc_permutation_pvalue(
-        icc, agg, grp, n_perm, np.random.default_rng(abs(hash(design_key)) % (2**32)))
+    # Stable digest, not builtins.hash: CPython's tuple hash is an implementation detail and
+    # a seed derivation should not depend on one.
+    design_key = f"{int(seed)}|{n_groups}|{agg.size}|{np.round(float(np.sum(agg)) * 1e6):.0f}"
+    stream = int.from_bytes(hashlib.sha256(design_key.encode()).digest()[:4], "big")
+    pv, crit = _icc_permutation_pvalue(icc, agg, grp, n_perm,
+                                       np.random.default_rng(stream))
     if pv <= alpha:
         raise ContractViolation(
             "L4.7", f"unit-level ICC {icc:.3f} gives permutation p={pv:.4f} <= "
