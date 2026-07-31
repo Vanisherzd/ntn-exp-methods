@@ -1,0 +1,113 @@
+% Fig. 1 -- Orbit-Evidence architecture. Included by paper/icc_main.tex via \input.
+%
+% Replaces a timeline-only figure (kept as fig_contract_TIMELINE_ARCHIVED.tex) that showed the
+% experiment's time axis and its prohibited paths but not the contract, the layers, or the decision
+% semantics -- so a reviewer could not understand the method from Fig. 1 alone.
+%
+% SIZING, and it is load-bearing. There is deliberately NO \resizebox here. The unit vectors are set
+% so the picture is naturally about \textwidth, which means every declared font size reaches the
+% page unscaled: \small is 9 pt and \scriptsize is 7 pt, both above the 6.4 pt floor that
+% paper/scripts/check_glyphs.py enforces. A first version of this figure drew on a 25 cm canvas and
+% let \resizebox squeeze it into \textwidth, a 0.71 factor that put a subscript at 3.56 pt. If this
+% figure needs more room, MOVE NODES CLOSER or cut content -- do not add \resizebox back.
+%
+% STYLE. IEEE conventions: rectangular grouping, one arrow weight for normal flow, academic
+% blue/grey, restrained red for prohibited flow only, white background. No gradients, shadows,
+% icons or dashboard cards.
+\begin{figure*}[!t]
+\centering
+\begin{tikzpicture}[
+  x=6.75mm, y=6.75mm,
+  font=\small,
+  >={Latex[length=1.9mm]},
+  stage/.style={draw=black!65,line width=0.6pt,align=center,minimum height=6.5mm,
+                text width=17.5mm,inner sep=1.5pt,fill=blue!4,font=\scriptsize},
+  layer/.style={draw=black!55,line width=0.6pt,align=left,text width=25mm,
+                inner sep=2.5pt,fill=black!3,font=\scriptsize},
+  rel/.style={draw=black!60,line width=0.6pt,align=left,text width=38mm,
+              inner sep=2.5pt,fill=blue!3,font=\scriptsize},
+  dec/.style={draw=black!65,line width=0.6pt,align=center,text width=20mm,
+              minimum height=4.2mm,inner sep=1pt,fill=white,font=\scriptsize},
+  grp/.style={draw=black!30,line width=0.5pt,dash pattern=on 2pt off 1.5pt,inner sep=4pt},
+  ok/.style={->,line width=0.7pt,black!70},
+  obs/.style={->,line width=0.5pt,black!35},
+  no/.style={->,line width=0.7pt,red!60!black,dashed},
+  noord/.style={->,line width=0.7pt,blue!50!black,densely dotted},
+  tie/.style={<->,line width=0.6pt,black!55},
+  lab/.style={font=\scriptsize,fill=white,inner sep=1.2pt},
+  hdr/.style={font=\scriptsize\bfseries,text=black!75,anchor=west}]
+
+% ---------------------------------------------------------------- top: the experiment
+\node[hdr] at (0,3.35) {Learning-assisted satellite experiment};
+\node[stage] (pub) at ( 1.6,1.6) {published\\orbital state};
+\node[stage] (vis) at ( 5.4,1.6) {predicted\\visibility};
+\node[stage] (reg) at ( 9.2,1.6) {frozen\\registry};
+\node[stage] (mod) at (13.0,1.6) {model, tracker,\\selection, gate};
+\node[stage] (dep) at (16.8,1.6) {deployment};
+\node[stage] (lab) at (20.6,1.6) {label\\closure};
+\foreach \a/\b in {pub/vis, vis/reg, reg/mod, mod/dep, dep/lab} \draw[ok] (\a) -- (\b);
+
+\draw[black!55,line width=0.6pt] (7.3,0.85) -- (7.3,2.35);
+\node[font=\scriptsize,text=black!65,anchor=south] at (7.3,2.4) {decision};
+\draw[black!55,line width=0.6pt] (14.9,0.85) -- (14.9,2.35);
+\node[font=\scriptsize,text=black!65,anchor=south] at (14.9,2.4) {freeze};
+
+% Prohibited paths: three red dashed, one blue dotted contrast. Deliberately FLAT arcs. A first
+% version used out=95/in=85, which swept the L1.1 arc far above the flow and let the violations
+% occupy roughly half the figure's height -- the architecture has to dominate, not the violations.
+\draw[no] (lab.north) to[out=140,in=40] node[lab,pos=0.5,above,inner sep=1pt]
+  {\rulename{L1.1} future publication $\rightarrow$ deployment feature} (pub.north);
+\draw[no] (lab.north) to[out=125,in=55] node[lab,pos=0.5,above,inner sep=1pt]
+  {\rulename{L1.4} later reference $\rightarrow$ frozen row membership} (reg.north);
+\draw[no] (dep.south) to[out=-145,in=-35] node[lab,pos=0.5,below,inner sep=1pt,yshift=-0.4mm]
+  {\rulename{L3.1} post-freeze observation $\rightarrow$ model state} (mod.south);
+% L1.3 is the contrast: a label consumed at a decision before its closure time. It runs from the
+% label stage back to deployment. An earlier version drew it from `lab` to `lab`, a degenerate
+% self-loop whose label floated free of any path.
+\draw[noord] (lab.south) to[out=-150,in=-30] node[lab,pos=0.5,below,inner sep=1pt]
+  {\rulename{L1.3} label used before closure} (dep.south east);
+
+% ---------------------------------------------------------------- middle: the contract
+\node[hdr] at (0,-0.95) {Orbit-Evidence contract};
+\node[layer] (l1) at ( 2.3,-2.65) {\textbf{\rulename{L1}} availability and membership\\[0.5pt]
+  publication clock, row membership, label closure};
+\node[layer] (l2) at ( 6.6,-2.65) {\textbf{\rulename{L2}} physical and scheduling validity\\[0.5pt]
+  predicted visibility, physical bounds};
+\node[layer] (l3) at (10.9,-2.65) {\textbf{\rulename{L3}} model-state causality\\[0.5pt]
+  state canaries, probe effectiveness, control};
+\node[layer] (l4) at (15.2,-2.65) {\textbf{\rulename{L4}} independence and reproducibility\\[0.5pt]
+  fold chronology, provenance, unit};
+\node[grp,fit=(l1)(l2)(l3)(l4)] {};
+
+% One observation arrow per layer, so none crosses another.
+\foreach \s/\l in {pub/l1, vis/l2, mod/l3, dep/l4}
+  \draw[obs] (\s.south) -- (\l.north);
+
+% ---------------------------------------------------------------- bottom: relational validity
+\node[hdr] at (0,-4.55) {Relational validity} ;
+\node[rel] (r1) at (3.4,-5.65) {\textbf{run A} $\leftrightarrow$ \textbf{run B}\\[0.5pt]
+  provenance completeness (\rulename{L4.6}), registry invariance (\rulename{L1.4})};
+\node[rel] (r2) at (10.4,-5.65) {\textbf{declared unit} $\leftrightarrow$ \textbf{coarser level}\\[0.5pt]
+  $\mathrm{ICC}(1)$ against a permutation reference (\rulename{L4.7})};
+\draw[tie] (r1.east) -- (r2.west);
+\draw[obs] (l1.south) -- (r1.north);
+\draw[obs] (l4.south) -- (r2.north);
+
+% ---------------------------------------------------------------- right: decision
+\node[hdr,anchor=west] at (16.4,-4.55) {Decision};
+\node[dec] (dp) at (18.6,-5.15) {PASS};
+\node[dec] (dh) at (18.6,-5.75) {HALT};
+\node[dec] (di) at (18.6,-6.35) {INDETERMINATE};
+\node[grp,fit=(dp)(dh)(di)] (decbox) {};
+\draw[ok] (r2.east) -- (decbox.west);
+\end{tikzpicture}
+\caption{Orbit-Evidence architecture. A learning-assisted satellite experiment acts from state
+available at the decision instant $t_d$, freezes row and model state before deployment, and closes
+retrospective labels later. Four executable validity layers run alongside it. Most rules inspect a
+single execution; relational rules compare executions or aggregation levels. Applicable checks
+resolve to \textsc{pass} or \textsc{halt}, while statistically unsupported decisions return
+\textsc{indeterminate} rather than \textsc{pass}. Red dashed paths are prohibited and each is
+\emph{chronologically consistent}, so an ordering check cannot express it; the blue dotted path is
+one of the two classes ordering does catch.}
+\label{fig:contract}
+\end{figure*}

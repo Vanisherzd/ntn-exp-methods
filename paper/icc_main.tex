@@ -4,6 +4,7 @@
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{siunitx}
 \sisetup{detect-all,group-separator={,}}
+\usepackage{array}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
 \usepackage[hidelinks]{hyperref}
@@ -58,6 +59,7 @@ learning-assisted communication, regression testing
 \end{IEEEkeywords}
 
 \section{Introduction}
+\input{figures/fig_architecture.tex}
 
 Learning components are increasingly proposed as assistants to physical models in satellite
 and non-terrestrial communication software: correcting a propagated orbital prediction,
@@ -150,6 +152,7 @@ build refuses if the contract's hash or the frozen third-party commit differ fro
 ones. Throughout it is a regression guard, not a proof of correctness.
 
 \section{Threat Model and Experiment Contract}
+\input{tables/contract_rules.tex}
 
 \subsection{Decision time and the six protected objects}
 
@@ -157,7 +160,7 @@ Let $t_d$ be the \emph{decision instant}: the moment a deployed system must act 
 state it already holds---for an open-loop satellite endpoint, when a transmission is
 committed from the element set on board. A deployment claim is interpretable only if every
 quantity entering the decision was obtainable before $t_d$. Six objects are therefore
-\emph{protected}; Fig.~\ref{fig:contract} shows their relationship in time.
+\emph{protected}; Fig.~\ref{fig:contract} places them against the experiment and the layers that check them.
 
 Each object is the obligation one domain property of
 \S\ref{sec:whysat} imposes; the parenthetical names which. \emph{Feature availability} and the
@@ -178,16 +181,14 @@ object.
 
 \subsection{Four layers}
 
-The six objects do not partition the nineteen rules, and we do not claim they do. Six protect one
+Fig.~\ref{fig:contract} places the layers against the experiment they observe and
+Table~\ref{tab:rules} gives their targets and decision semantics; two points remain. The six
+objects do not partition the nineteen rules and we do not claim they do: six protect one
 directly---\rulename{L1.1}--\rulename{L1.4}, \rulename{L3.1}, \rulename{L4.7}---and the rest are
-the layers those obligations need to be checkable at all (Table~\ref{tab:rules}): domain sanity,
-the canary-effectiveness precondition without which an inert probe reads as an absent leak, and
-reproducibility hygiene, which is independent of the causal model rather than derived from it.
-
-Two design commitments make the contract usable. Every violation raises an exception carrying its
-\emph{rule identifier}, so a finding names what it broke instead of surfacing a bare assertion
-failure. And a detector is trusted only once demonstrated to fail on a deliberately broken
-fixture: a check that cannot go red is not evidence.
+what those obligations need to be checkable at all. And a detector is trusted only once
+demonstrated to fail on a deliberately broken fixture, since a check that cannot go red is not
+evidence; every violation raises an exception carrying its \emph{rule identifier}, so a finding
+names what it broke.
 
 \subsection{Relation to existing practice}
 
@@ -210,9 +211,7 @@ literate computing~\cite{knuth1984literate}, which makes disagreement impossible
 detected; we detect because the manuscript and the evaluation are separate artifacts. Our evaluation is fault injection in the mutation-testing
 tradition~\cite{jia2011mutation}; manifests follow the discipline urged for datasets~\cite{gebru2021datasheets}, and element conventions are standard~\cite{vallado2006revisiting}.
 
-\input{figures/fig_contract.tex}
 
-\input{tables/contract_rules.tex}
 
 
 \section{Orbit-Evidence Toolkit}
@@ -253,7 +252,7 @@ times, $\artv{l47_rate}{0.031}$, Wilson~\cite{wilson1927}
 $\artv{l47_wilson}{[0.018,0.052]}$---consistent with the nominal $\artv{l47_alpha}{0.05}$, not
 better---and detects the injected fault \num{150} of \num{150} times. All \num{450} replicates sit
 at one design whose clean fixture satisfies the null by construction, so this measures the
-\emph{implementation}, and the interval rather than the point is the claim. Finally the rule \emph{declines to judge} below four coarser groups holding two or more units
+\emph{implementation}, and the interval rather than the point is the claim. A gate needs both halves of that characteristic: specificity alone would hide that the rule finds gross unit errors and misses subtle ones. Finally the rule \emph{declines to judge} below four coarser groups holding two or more units
 each. That floor is an \emph{attainability} precondition, not a power one: three groups of two
 admit only $6!/(2!^{3}3!)=15$ distinct assignments, so the smallest reachable $p$ is
 $1/15=0.067>\alpha$ and no design that small can reject at the nominal level at all, whereas four
@@ -311,10 +310,12 @@ We repaired the fixture, changed no detector, and preserved both records. The se
 matters: adjusting the rule instead would have bought the clean-path rate by weakening the
 contract.
 
+\input{tables/external_evidence.tex}
+
 \section{Evidence From Outside This Project}
 \label{sec:external}
 
-Everything to this point was produced here; this section is not. Table~\ref{tab:rules} collects it.
+Everything to this point was produced here; this section is not. Table~\ref{tab:external} collects it.
 
 \emph{Real orbital data.} Applying the frozen \rulename{L4.7} rule to real Space-Track records
 gives a clear result on the claim-relevant along-track observable. Pass rows grouped by their
@@ -349,13 +350,11 @@ $P(\ge 1)$ under the global null across those fourteen decisions is $0.51$.
 
 \emph{Third-party artifact.} On a public spacecraft-telemetry \textsc{lstm}
 artifact~\cite{hundman2018telemanom} frozen at a commit chosen before any inspection, the unchanged
-nineteen-rule contract returns \artv{ext_pass}{\num{5}} \textsc{pass}, \artv{ext_halt}{\num{3}}
-\textsc{halt}, \artv{ext_indet}{\num{1}} \textsc{indeterminate}, \artv{ext_na}{\num{5}} not
-applicable and \artv{ext_nobs}{\num{5}} \emph{not observable}. That fifth value is what keeps an
-external audit honest: the obligation applies but the artifact does not expose enough to decide, and
-it is never scored as compliance. Selection criteria were fixed before searching, and no detector
-was touched---the contract's \texttt{sha256} is identical before and after, and equal to the
-pre-registration hash.
+nineteen-rule contract returns the five-valued outcome of Table~\ref{tab:external}. The fifth value
+is what keeps an external audit honest: \emph{not observable} means the obligation applies but the
+artifact does not expose enough to decide, and it is never scored as compliance. Selection criteria
+were fixed before searching, and no detector was touched---the contract's \texttt{sha256} is
+identical before and after, and equal to the pre-registration hash.
 
 The halt with methodological weight is \rulename{L4.1}: overlapping windows sharing \num{259} of
 \num{260} samples are shuffled and then split by fraction, so the early-stopping validation set is

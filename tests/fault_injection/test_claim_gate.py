@@ -47,7 +47,7 @@ def _gate(repo: Path) -> subprocess.CompletedProcess:
 # Only the files a test actually mutates need restoring, so ONE copy serves the module.
 # Copying per test cost ~25 s x 17 = seven minutes, which made `make gate` too slow to be
 # the per-commit gate this paper claims it is.
-_MUTABLE = ("paper/icc_main.tex", "paper/figures/fig_contract.tex", SUMMARY,
+_MUTABLE = ("paper/icc_main.tex", "paper/figures/fig_architecture.tex", SUMMARY,
             "README.md", "paper/submission/CLAIMS.md", "paper/submission/README.md")
 
 
@@ -137,7 +137,7 @@ def test_rejects_a_claim_planted_in_a_figure_block(repo):
     prohibition context. Anchored on the environment, not on any particular label, so
     redrawing the figure cannot silently disarm this test.
     """
-    p = repo / "paper/figures/fig_contract.tex"
+    p = repo / "paper/figures/fig_architecture.tex"
     t = p.read_text()
     assert "\\end{tikzpicture}" in t, "figure source no longer holds a tikzpicture"
     p.write_text(t.replace("\\end{tikzpicture}",
