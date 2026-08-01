@@ -64,6 +64,9 @@ WITHDRAWN_CLAIMS: list[tuple[str, str]] = [
     (r"\b1095 lines\b|\b812 lines\b|\b710 lines\b|\b739 lines\b",
      "W6 stale source line count"),
     (r"0\.31\s*(\\,)?s\b|qty\{0\.31\}\{\\second\}", "W6 stale runtime"),
+    # The repository README and the submission README both shipped the pre-correction
+    # 0.042 for months. The artifact says 0.031, and no scan covered Markdown numbers.
+    (r"0\.042\s+false\s+halts", "W7 stale L4.7 false-halt rate"),
     (r"nineteen conditions", "W7 undefined condition denominator"),
 ]
 
@@ -192,7 +195,13 @@ def artifact_values() -> dict[str, str]:
         # The manuscript therefore quotes the LOWER bound (at_icc_d1_lo). Both remain in the
         # artifact under icc_{lower,upper}_95_one_sided. Recorded rather than left to a diff,
         # because dropping a key is otherwise how a number silently stops being claimed.
+        "at_icc_d2": str(s["real_l47_alongtrack"]["D2_pass_in_object"]["icc"]),
         "at_icc_d3": str(s["real_l47_alongtrack"]["D3_elementset_in_object"]["icc"]),
+        # Count ledger, derived in make_final_summary.py from the frozen detector rather
+        # than typed. The manuscript said "six protected objects" while Sec. II-A named
+        # five, and nothing in the gate could tell which was wrong.
+        "protected_objects": str(s["protected_object_count"]),
+        "state_channels": str(s["state_channel_count"]),
         "real_halt": str(rl["B_per_object_n_halt"]),
         "ext_classified": str(ex["n_rules_classified"]),
         "ext_pass": str(ex["pass"]),
@@ -390,8 +399,16 @@ def main() -> int:
     # Required-presence applies to the MANUSCRIPT only; a doc need not restate every
     # number, but nothing anywhere may contradict the artifact (handled by the pattern
     # scans above plus the runtime bound).
-    manuscript = "\n".join(p.read_text() for p in srcs
-                           if p.suffix == ".tex" or p.suffix == ".bib")
+    #
+    # And "the manuscript" means what the DOCUMENT includes, not every .tex under paper/.
+    # Globbing tables/*.tex let two keys (real_pass, real_halt) be satisfied by an archived
+    # table icc_main.tex does not \input: the gate reported them bound while they appeared
+    # nowhere in the six pages, and the live sentence that makes the claim was plain prose.
+    # A dead file must never discharge a claim obligation.
+    inc = re.findall(r"\\input\{([^}]+)\}", (PAPER / "icc_main.tex").read_text())
+    doc = ([PAPER / "icc_main.tex"] + [PAPER / f for f in inc]
+           + sorted(PAPER.glob("*.bib")))
+    manuscript = "\n".join(p.read_text() for p in doc if p.exists())
     bad += check_artifact_sites(manuscript)
 
     if bad:

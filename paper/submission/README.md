@@ -35,14 +35,14 @@ disagrees with the summary artifact.
   the contract detects **17 of 17** across three deterministic environments (51 injected
   cells).
 - Clean reference paths are accepted and clean verdicts are identical across environments.
-  For L4.7 the specificity claim is a **measured rate**: 0.042 false halts over 450 clean
+  For L4.7 the specificity claim is a **measured rate**: 0.031 false halts over 450 clean
   paths against a nominal α = 0.05.
 - **16 of 19** rules have a demonstrated broken fixture; L2.2, L2.3 and L4.5 are exercised
   only on the clean path, and the paper says so.
 - Two case-study pipelines were halted by a contract rule before any conclusion was drawn,
   and in the second case the pre-registered blind evaluation seeds were never executed.
 - The toolkit is 833 lines across four modules plus a 655-line test suite, `numpy` only.
-- The sweep runs in under 3 s, cheap enough for a per-commit gate.
+- The full sweep takes about 1.5 s on a quiet laptop core and about 3.5 s on a loaded machine; the 3 s / 60 ms figures in `make claims` are this repository's regression thresholds, not portable performance bounds.
 
 ## Prohibited claims
 

@@ -2,6 +2,32 @@
  "generated_by": "evaluation/scripts/make_final_summary.py",
  "source_artifact": "evaluation/results/matrix_result.json",
  "rule_count": 19,
+ "protected_objects": [
+  "availability clock",
+  "feature availability",
+  "label closure",
+  "row membership",
+  "state channels",
+  "statistical unit"
+ ],
+ "protected_object_count": 6,
+ "direct_enforcing_rules": [
+  "L1.1",
+  "L1.2",
+  "L1.3",
+  "L1.4",
+  "L3.1",
+  "L4.7"
+ ],
+ "state_channels": [
+  "feature_tensor",
+  "scaler",
+  "model_coefficients",
+  "tracker_state",
+  "selected_model_metadata",
+  "gate_state"
+ ],
+ "state_channel_count": 6,
  "fault_class_count": 17,
  "development_fault_count": 13,
  "late_specified_fault_count": 4,
@@ -17,8 +43,8 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.545,
- "runtime_ms_per_condition": 28.6,
+ "runtime_seconds": 1.534,
+ "runtime_ms_per_condition": 28.4,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
@@ -213,5 +239,5 @@
   "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two in test), so the endpoint has about two attainable states. With 5 paired seeds the minimum attainable two-sided p is 0.0625 > alpha, below this paper's own attainability floor, so the downstream endpoint is NOT OBSERVABLE rather than null."
  },
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "04124cdb9b363e4e46d966397cf667352ecea6f5"
+ "commit": "13ea573940a2f5d5070201d78e78ba45991708ef"
 }

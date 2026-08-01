@@ -414,10 +414,25 @@ def main() -> int:
     tst = sorted((ROOT / "tests" / "regression").rglob("*.py")) + \
         sorted((ROOT / "tests" / "fault_injection").rglob("*.py"))
 
+    # COUNT LEDGER. Derived from the frozen detector, never typed here. The manuscript said
+    # "six protected objects" while Sec. II-A enumerated five, and a reviewer could not tell
+    # which was wrong. Both counts now come from the contract itself and are bound to the
+    # sentences that state them, so a prose count that drifts fails the gate.
+    direct = ("L1.1", "L1.2", "L1.3", "L1.4", "L3.1", "L4.7")
+    absent = [r for r in direct if r not in CL.RULES]
+    if absent:
+        raise SystemExit(f"count ledger names rules absent from the detector: {absent}")
+    protected = sorted({CL.RULES[r].protected_object for r in direct})
+
     s = {
         "generated_by": "evaluation/scripts/make_final_summary.py",
         "source_artifact": "evaluation/results/matrix_result.json",
         "rule_count": len(CL.RULES),
+        "protected_objects": protected,
+        "protected_object_count": len(protected),
+        "direct_enforcing_rules": list(direct),
+        "state_channels": list(CL.EC.STATE_CHANNELS),
+        "state_channel_count": len(CL.EC.STATE_CHANNELS),
         "fault_class_count": n_fault,
         "development_fault_count": d["n_development_faults"],
         "late_specified_fault_count": d["n_late_specified"],

@@ -56,11 +56,11 @@ archive/                stopped research lines, retired manuscript, invalid resu
 - On the curated suite: chronological protocol checks detect **2 of 17** fault classes;
   the contract detects **17 of 17** across three deterministic environments (51 injected
   cells). Clean reference paths are accepted.
-- For the statistical-unit rule, specificity is a **measured rate**: 0.042 false halts
+- For the statistical-unit rule, specificity is a **measured rate**: 0.031 false halts
   over 450 clean paths against a nominal α = 0.05.
 - **16 of 19** rules have a demonstrated broken fixture. L2.2, L2.3 and L4.5 are exercised
   only on the clean path, and the paper says so rather than claiming otherwise.
-- The full sweep runs in under 3 s, cheap enough for a per-commit gate.
+- The full sweep takes about 1.5 s on a quiet laptop core and about 3.5 s on a loaded machine; the 3 s / 60 ms figures in `make claims` are this repository's regression thresholds, not portable performance bounds.
 
 ## What it does not claim
 

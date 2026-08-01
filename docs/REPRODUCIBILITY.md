@@ -9,13 +9,15 @@ pip install -e '.[test]'    # numpy + pytest; numpy is the only runtime dependen
 make gate                   # tests, fault matrix, claim gate, six-page paper build
 ```
 
-`make gate` runs in this order — evidence first, then the claims that quote it, then the
-document:
+`make gate` runs in this order — evidence first, then the tests and claims that read it, then the
+document. `make test` and `make claims` both consume matrix output, so `matrix` must run before
+either; it did not until this was corrected, and a stale runtime could then fail the gate in a way
+no re-run could clear.
 
 | step | what it does |
 |---|---|
-| `make test` | 30 tests: `tests/regression` (two-sided, one per historical defect) + `tests/fault_injection` |
-| `make matrix` | re-runs the 17-class fault matrix, regenerates `evaluation/results/final_summary.json`, `EVALUATION_RESULT.md` and `fig2_data.json` |
+| `make matrix` | re-runs the 17-class fault matrix, regenerates `evaluation/results/final_summary.json`, `EVALUATION_RESULT.md`, `fig2_data.json` and the generated table in `paper/submission/CLAIMS.md` |
+| `make test` | `tests/regression` (two-sided, one per historical defect) + `tests/fault_injection`; the collected count is recorded as `test_count` in the summary artifact, never copied here |
 | `make claims` | banned invalid results, withdrawn claims, and every headline number checked against the summary artifact |
 | `make verify` | builds `paper/icc_main.pdf` and asserts 6 pages, 0 errors, 0 undefined refs/cites, 0 overfull boxes |
 
@@ -43,10 +45,12 @@ Every seed is derived by SHA-256 from a declared string, so results reproduce wi
 random state. The evaluation runs three environments differing only in pseudo-random generator
 family (PCG64, SFC64, Philox) and asserts identical clean-path verdicts across all three.
 
-**Runtime is the only quantity that does not reproduce bit-for-bit.** Observed 1.39–1.55 s for
-the full sweep on a commodity laptop (≈26–29 ms per condition), dominated by L4.7's
-400-permutation null. The manuscript therefore states a *bound* — under 3 s — and `make claims`
-asserts the artifact still satisfies that bound rather than matching a string. `make gate-twice`
+**Runtime is the only quantity that does not reproduce bit-for-bit, and it is not portable.**
+About 1.5 s for the full sweep on a quiet laptop core (≈28 ms per condition), dominated by L4.7's
+400-permutation null; on a loaded or shared machine we have measured 3.5 s (≈66 ms). The 3 s and
+60 ms figures are this repository's *regression thresholds*, not performance claims, and a loaded
+machine will trip them — if `make claims` reports `RUNTIME:`, re-run on an idle machine before
+treating it as a failure. `make gate-twice`
 prints the volatile fields explicitly instead of hiding them; `scripts/compare_summaries.py`
 records exactly which fields are excluded and why.
 

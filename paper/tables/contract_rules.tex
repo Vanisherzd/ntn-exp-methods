@@ -24,7 +24,7 @@ publication-time availability; truncate-and-recompute; frozen-registry compariso
 core & HALT\\
 \rulename{L2} & Physical and scheduling validity &
 predicted-visibility check; physical bounds; declared-vs-implemented relation &
-support & HALT / LABEL\\
+support & HALT\\
 \rulename{L3} & Model-state causality &
 six-channel state canary; mutation effectiveness; negative control &
 core & HALT\\
@@ -37,5 +37,6 @@ mixed & PASS / HALT / INDET.\\
 \vspace{2pt}
 {\scriptsize The complete nineteen-rule specification and per-rule red-fixture status are in the
 anonymous artifact; \artv{red_fixture}{16} of \artv{rule_count}{19} rules have demonstrated failing
-fixtures.}
+fixtures. \emph{Role} is core where a layer enforces a protected object directly, support where it
+makes another layer's obligation checkable, and mixed where it does both.}
 \end{table}

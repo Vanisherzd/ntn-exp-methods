@@ -31,8 +31,12 @@ SUMMARY := evaluation/results/final_summary.json
 all: paper
 
 # ---------------------------------------------------------------- gate
-# Order matters: evidence first, then the claims that quote it, then the document.
-gate: test matrix claims verify
+# Order matters: evidence FIRST, then the tests and claims that read it, then the document.
+# `test` runs check_banlist against the committed tree, and `claims` reads the summary, so both
+# consume matrix output. With `test` first they read whatever the previous run left behind: a
+# runtime measured on a loaded machine kept failing the gate here, and re-running could not clear
+# it because the stale artifact was re-read before `matrix` ever regenerated it.
+gate: matrix test claims verify
 	@echo ""
 	@echo "SUBMISSION GATE: PASS"
 
