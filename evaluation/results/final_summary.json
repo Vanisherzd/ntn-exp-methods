@@ -100,6 +100,18 @@
   ],
   "n_objects_with_any_epoch_after_creation": 1
  },
+ "real_station": {
+  "lat_deg": 24.7961,
+  "lon_deg": 120.9967,
+  "alt_m": 100.0,
+  "elev_mask_deg": 10.0,
+  "sample_interval_s": 30,
+  "horizon_h": 24,
+  "window_epoch": [
+   "2026-07-22",
+   "2026-07-27"
+  ]
+ },
  "real_l47_application": {
   "protocol": "evaluation/real_data/PREREGISTRATION.md",
   "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
@@ -206,6 +218,36 @@
    "L4.5"
   ]
  },
+ "external_data_provenance": {
+  "original_endpoint_available": false,
+  "mirror": "https://huggingface.co/datasets/appleparan/telemanom",
+  "mirror_download_utc": "2026-07-31T12:04:38+00:00",
+  "verified_against_original_publisher": false,
+  "independent_checksum_sources": [
+   "github.com/Monisha325 (LSTM-Autoencoders), git-lfs pointer",
+   "github.com/Nagarohit29 (Satellite-Telemetry), git-lfs pointer"
+  ],
+  "n_independent_checksum_sources": 2,
+  "per_file": {
+   "train/A-1.npy": {
+    "sha256": "ae426533f9d4c6247a5cc1eab89438fed8bf768b0a41d60d42f3a65a7ebc80b0",
+    "bytes": 576128,
+    "matches_two_independent_lfs_oids": true
+   },
+   "test/A-1.npy": {
+    "sha256": "7509b72cd170003c3135e12d1f4c67b263dc5be58aabedf12ed14e7561fe6dc2",
+    "bytes": 1728128,
+    "matches_two_independent_lfs_oids": true
+   }
+  },
+  "upstream_expected_paths": {
+   "train/A-1.npy": "data/data/train/A-1.npy",
+   "test/A-1.npy": "data/data/test/A-1.npy"
+  },
+  "labels_byte_identical_to_frozen_commit": true,
+  "status": "CHECKSUM_VERIFIED_MIRROR",
+  "detail": "evaluation/external_consequence/DATA_PROVENANCE.md"
+ },
  "external_consequence": {
   "upstream_frozen_commit": "2e6c5b6c3558e7835601519b7bdef37c649bdbdc",
   "contract_layers_sha256": "07baad27026ebc2242706dd5f542609b80ccb8ab706cba12c0fb2ce15521e58b",
@@ -216,6 +258,7 @@
   "overlap_original_pct_of_validation_support": 100.0,
   "overlap_corrected_shared_timesteps": 0,
   "boundary_windows_dropped": 259,
+  "window_span": 260,
   "l41_original": "HALT",
   "l41_corrected": "PASS",
   "n_seeds_selection_changed": 5,
@@ -238,6 +281,8 @@
   "downstream_attainable": false,
   "probe_limitation": "A-1's regression target is near-degenerate (one value in train, two in test), so the endpoint has about two attainable states. With 5 paired seeds the minimum attainable two-sided p is 0.0625 > alpha, below this paper's own attainability floor, so the downstream endpoint is NOT OBSERVABLE rather than null."
  },
+ "runtime_threshold_s": 3.0,
+ "runtime_threshold_ms_per_condition": 60.0,
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "13ea573940a2f5d5070201d78e78ba45991708ef"
+ "commit": "250bebbf6fb3125edaa1b178f1f8a591795d9493"
 }

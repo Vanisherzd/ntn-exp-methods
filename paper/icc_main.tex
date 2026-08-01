@@ -48,8 +48,8 @@ better, and is then applied unchanged to real catalogue records for
 separately frozen third-party spacecraft-telemetry artifact the unmodified contract identifies
 \artv{ext_halt}{three} violations and \artv{ext_indet}{one} indeterminate condition; correcting one
 pre-registered validation-overlap violation changes the selected model in all
-\artv{cons_seeds}{five} paired runs, while the downstream endpoint is \emph{not observable} at that
-design. A curated \artv{fault_class_count}{seventeen}-fault suite supplies regression coverage
+\artv{cons_seeds}{five} paired runs, while the downstream endpoint is not estimable at the available
+paired-run resolution. A curated \artv{fault_class_count}{seventeen}-fault suite supplies regression coverage
 of the represented violations. We claim no completeness, no radio-frequency result, and no
 improvement in learned-method accuracy.
 \end{abstract}
@@ -152,7 +152,8 @@ characteristic (Fig.~\ref{fig:opcurve}), apply the frozen rule to real orbital r
 spacecraft-telemetry artifact, where \artv{ext_halt}{three} rules halt and
 \artv{ext_nobs}{\num{5}} of \artv{ext_classified}{\num{19}} are recorded \emph{not observable}
 rather than passed. A pre-registered correction of one detected violation changes model selection in
-all five paired runs; the downstream endpoint is reported \emph{not observable}.
+all five paired runs; the downstream endpoint is not estimable at the available paired-run
+resolution.
 \end{enumerate}
 
 We claim nothing about radio-frequency or packet-level performance. The object of study is the
@@ -262,7 +263,7 @@ $\hat{\rho}$ and gives the same $p$. We calibrate the operating characteristic d
 \artv{l47_clean_paths}{\num{450}} clean evaluations it halts \artv{l47_false_halts}{\num{14}}
 times, $\artv{l47_rate}{0.031}$, Wilson~\cite{wilson1927}
 $\artv{l47_wilson}{[0.018,0.052]}$---consistent with the nominal $\artv{l47_alpha}{0.05}$, not
-better---and detects the injected fault \num{150} of \num{150} times. All \num{450} replicates sit
+better---and detects the injected fault \artv{l47_injected}{\num{150}} of \artv{l47_injected}{\num{150}} times. All \artv{l47_clean_paths}{\num{450}} replicates sit
 at one design whose clean fixture satisfies the null by construction, so this measures the
 \emph{implementation}, and the interval rather than the point is the claim. Specificity alone would
 hide that the rule finds gross unit errors and misses subtle ones. Finally the rule \emph{declines to judge} below four coarser groups of two or more units, or
@@ -271,7 +272,7 @@ admit only $6!/(2!^{3}3!)=15$ distinct assignments, so the smallest reachable $p
 $1/15=0.067>\alpha$ and no design that small can reject at all, whereas four groups of two admit
 $105$, whose exhaustive reference reaches $0.0095$. The rule is therefore three-valued:
 \textsc{halt}, the condition is violated; \textsc{indeterminate}, the design cannot support the
-decision; and \textsc{pass}, which means \emph{not rejected}, not verified---at power $0.25$ for
+decision; and \textsc{pass}, which means \emph{not rejected}, not verified---at power $\artv{l47_power_02}{0.25}$ for
 $\rho=0.2$ three genuinely dependent designs in four also pass. Collapsing \textsc{indeterminate}
 into \textsc{pass} is how a design that could not have rejected comes to look like one that did not. No condition in our own suite reaches
 the floor; the third-party artifact of \S\ref{sec:external} does.
@@ -287,7 +288,7 @@ learning-and-gating chain; neither carries a physical claim. The suite holds
 \artv{fault_class_count}{\num{17}} \emph{curated} fault classes drawn from the defects that
 motivated the rules, each injected in three environments differing in generator family, plus a clean
 path per environment. Three denominators are easily conflated, so we fix them:
-\artv{rule_count}{\num{19}} \emph{rules}, \num{17} fault \emph{classes}, \num{18}
+\artv{rule_count}{\num{19}} \emph{rules}, \artv{fault_class_count}{\num{17}} fault \emph{classes}, \artv{conditions}{\num{18}}
 \emph{conditions} per environment; rules and classes are not in bijection.
 
 The chronological baseline is \emph{implemented and executed}, not reasoned about: three checks
@@ -296,10 +297,10 @@ at a decision postdating it, run in the same sweep over the same fixtures. It is
 competing tool, so this measures its coverage of the curated suite. It detects
 $\artv{chronological}{2/17}$ classes---precisely the two that \emph{are} ordering
 properties---and fires on no clean path; the contract detects $\artv{contract}{17/17}$ identically
-in all three environments. We report \num{17} computations, not $51$: the
-detector's input is bit-identical across environments for fourteen classes, so
+in all three environments. We report \artv{fault_class_count}{\num{17}} computations, not $51$: for most
+classes the mutated object is bit-identical across environments, so
 $\artv{injected_cells}{51/51}$ states \emph{determinism}. Clean paths were accepted identically, and \artv{red_fixture}{sixteen} of nineteen rules are demonstrated red by a
-fixture. The sweep completes inside the repository's \qty{3}{\second} and \qty{60}{\milli\second}-per-condition regression guards---thresholds for one environment, not portable guarantees---with \texttt{numpy} the only dependency; but that figure is the
+fixture. The sweep completes inside the repository's \qty{\artv{rt_s}{3}}{\second} and \qty{\artv{rt_ms}{60}}{\milli\second}-per-condition regression guards---thresholds for one environment, not portable guarantees---with \texttt{numpy} the only dependency; but that figure is the
 \emph{checker}: \rulename{L1.1}, \rulename{L1.4} and \rulename{L4.6} each re-execute the pipeline
 per variation, so their true cost is a multiple of pipeline runtime and is excluded.
 
@@ -330,28 +331,33 @@ here is. For this pass-row construction, exchangeability of samples sharing a
 generating element set is rejected---which is what \S\ref{sec:whysat}\,iv asserts.
 
 The analysis covers \artv{real_objects}{\num{11}} objects, \artv{real_elsets}{\num{109}} element
-sets and \artv{real_passes}{\num{331}} visible passes over one declared ground station at
-\ang{24.80}\,N, \ang{120.997}\,E above a \ang{10} mask, sampled at \qty{30}{\second} over
-\qty{24}{\hour} from each element set's epoch, with \textsc{sgp4} supplying geometry only. Unit
-counts are \num{101} and \num{305} rather than \num{109} and \num{331}: an element set republished
-under a new catalogue identifier keeps its epoch, so eight records and the \num{26} passes they
-generate collapse onto units already present. Of the \artv{real_passes}{\num{331}} passes, \num{59} are dropped for having no successor element
-set, leaving \artv{at_passes}{\num{272}} over \num{90} element sets for the along-track analysis.
+sets and \artv{real_passes}{\num{331}} visible passes over one declared \textsc{wgs}-84 ground station at
+\ang{\artv{st_lat}{24.7961}}\,N, \ang{\artv{st_lon}{120.9967}}\,E above a
+\ang{\artv{st_mask}{10}} mask, sampled at \qty{\artv{st_dt}{30}}{\second} over
+\qty{\artv{st_horizon}{24}}{\hour} from each element set's epoch, with \textsc{sgp4} supplying geometry only. Unit
+counts are \artv{real_units_a}{\num{101}} and \artv{real_units_b}{\num{305}} rather than
+\artv{real_elsets}{\num{109}} and \artv{real_passes}{\num{331}}: an element set republished
+under a new catalogue identifier keeps its epoch, so the republished records and the passes they
+generate collapse onto units already present. Of the \artv{real_passes}{\num{331}} passes,
+\artv{at_dropped}{\num{59}} are dropped for having no successor element set, leaving
+\artv{at_passes}{\num{272}} over \artv{at_elsets}{\num{90}} element sets for the along-track
+analysis.
 
 Two limits bound this. The differenced quantity is an \emph{update increment}---the in-track
 component of the difference between consecutive fits both propagated to the pass midpoint---not an
-error against truth, hence its median of only \qty{0.226}{\kilo\metre}; its
-\qty{559}{\kilo\metre} tail is manoeuvre-scale and unscreened. And reversing the declared coarser
+error against truth, hence its median of only
+\qty{\artv{at_median_km}{0.226}}{\kilo\metre}; its \qty{\artv{at_max_km}{559.022}}{\kilo\metre} tail is manoeuvre-scale and unscreened. And reversing the declared coarser
 level changes the statistic but not the decision, so the rule adjudicates whether a declared level
 is adequate, never which is right.
 
 \emph{The observable determines what the rule can say.} Grouping element sets by object on
 publication lag, and passes by element set on mean elevation, both passed at
-$\hat{\rho}=0.000,\ p=1.000$ against our registered halts---a ties signature, the estimator
+$\hat{\rho}=\artv{real_icc_ab}{0.000},\ p=\artv{real_p_ab}{1.000}$ against our registered halts---a ties signature, the estimator
 truncating at zero, so not an effect size. Mean elevation is near-invariant to which element set propagated a
 pass, and publication lag is a catalogue property; neither carries the fit-update signature. \artv{real_halt}{One} of eleven per-object tests halted and
-\artv{real_pass}{10} passed, but $P(\ge 1)$ under the global null across those fourteen
-decisions---eleven per object and three pooled---is $0.51$.
+\artv{real_pass}{10} passed, but $P(\ge 1)$ under the global null across those
+\artv{at_decisions}{fourteen} decisions---eleven per object and three pooled---is
+$\artv{at_p_any}{0.512}$.
 
 \emph{Can the frozen contract operate outside the project that built it?} Yes. On a public
 spacecraft-telemetry \textsc{lstm} artifact~\cite{hundman2018telemanom} frozen at a commit chosen
@@ -359,13 +365,16 @@ before any inspection, the unchanged contract returns the outcomes of
 Table~\ref{tab:external}. A \emph{rule verdict} is
 three-valued and is what a rule returns once its obligation applies; auditing adds two
 \emph{dispositions} preceding any verdict---\emph{not applicable}, the obligation does not arise,
-and \emph{not observable}, it arises but the artifact does not expose enough, or the design cannot
-attain the nominal level. The second is never scored as compliance. Selection criteria were fixed
+and \emph{not observable}, it arises but the inspected artifact does not expose the inputs the rule
+needs. The second is never scored as compliance. Selection criteria were fixed
 before searching and no detector was touched: the contract's \texttt{sha256} is identical before
-and after, and equal to the pre-registration hash.
+and after, and equal to the pre-registration hash. The telemetry arrays were obtained from a
+checksum-verified mirror after the upstream endpoint became unavailable; per-file hashes matched two
+independently published checksum sources. That is mirror concordance, not verification by the
+original publisher.
 
-The halt with methodological weight is \rulename{L4.1}: overlapping windows sharing \num{259} of
-\num{260} samples are shuffled and then split by fraction, so the early-stopping validation set is
+The halt with methodological weight is \rulename{L4.1}: overlapping windows sharing \artv{cons_windows}{\num{259}} of
+\artv{cons_span}{\num{260}} samples are shuffled and then split by fraction, so the early-stopping validation set is
 drawn from the training window's own time span. We scope it to that signal rather than to the
 reported test results. The other two are provenance
 obligations research code is not generally written to satisfy---a declared configuration value the
@@ -387,9 +396,10 @@ intervention and not training noise. The reported detection metric moved on thre
 \emph{both} directions: an anomaly was flagged in \artv{cons_det_orig}{3} of five seeds before the
 correction and \artv{cons_det_corr}{4} after, one seed losing a detection and two gaining one. We do not call that a null: with five paired seeds the smallest attainable
 two-sided $p$ is $\artv{cons_minp}{0.0625}$, above $\alpha$, so by the same attainability argument
-that makes \rulename{L4.7} abstain, this endpoint is \emph{not observable}---and the channel
-compounds it, its target taking one value in training and two in test. Selection consequence
-demonstrated; downstream consequence not observable at this design size. We claim nothing about the upstream paper's
+that makes \rulename{L4.7} abstain, this endpoint is \emph{not estimable at the available paired-run
+resolution}---a disposition of this study's evidence, not a rule verdict---and the channel compounds
+it, its target taking one value in training and two in test. Selection consequence demonstrated;
+downstream consequence not estimable. We claim nothing about the upstream paper's
 validity or about improving anomaly detection.
 
 Two retrospective case studies from the stopped programme are in the artifact; both predate the
@@ -401,8 +411,8 @@ contract.
 \emph{Evaluation scope.} The curated fault suite is primarily regression evidence. Faults and rules largely share an
 origin---one programme, mostly one hand---so $17/17$ measures detector
 \emph{reachability}~\cite{jia2011mutation}, and hand-authored mutants overstate suite
-strength~\cite{just2014mutants}. Eleven of the seventeen mutated objects are consumed only by
-another check, never by a computation producing a reported number---the sharpest limit here; \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} fire in no curated
+strength~\cite{just2014mutants}. Most mutated objects are consumed only by another check, never by
+a computation producing a reported number---the sharpest limit here; \rulename{L2.2}, \rulename{L2.3} and \rulename{L4.5} fire in no curated
 condition, though \rulename{L4.5} did halt on the third-party artifact. Only one fault was specified
 before any detector existed. We therefore make no unseen-fault sensitivity claim: represented
 violations, once fixed, do not silently return in the form the suite injects. The third-party study partially breaks the loop but remains one artifact and one channel,

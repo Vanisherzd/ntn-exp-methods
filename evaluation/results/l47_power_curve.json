@@ -1,5 +1,6 @@
 {
  "design": "8 coarser groups of 3 units, unit noise SD 1.0, alpha 0.05, 400 permutations, finite-B corrected p=(1+#{T*>=T})/(B+1)",
+ "n_seeds_per_point": 40,
  "abstention_boundary": "n_coarser_groups < 4 or n_units < 8 -> INDETERMINATE (deterministic precondition, asserted not derived)",
  "curve": [
   {

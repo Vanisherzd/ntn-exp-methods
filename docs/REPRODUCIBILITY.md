@@ -89,3 +89,21 @@ pipelines and fault injectors in `tests/fixtures`. `testpaths` in `pyproject.tom
 so a bare `pytest` collects the right thing. Legacy tests from the stopped programme (which
 import `torch` and other dependencies the active artifact does not use) live under
 `archive/stopped_research/tests/` and are not collected.
+
+### External studies
+
+`make gate` does **not** regenerate the two external studies; their inputs do not ship.
+
+| command | what it does |
+|---|---|
+| `make external TELEMANOM=/path/to/clone` | re-runs the nineteen-rule audit against a clone at `2e6c5b6c` |
+| `make external-consequence-verify` | checks the committed consequence artifacts against the frozen commit, the frozen detector hash and the recorded per-file data hashes. **Trains nothing.** |
+| `make external-consequence-run TELEMANOM=... DATA_ROOT=...` | reproduces the full paired experiment: five seeds x two arms. Fails closed if the clone is not at the frozen commit, if the detector hash differs from the pre-registration, or if either data file is absent. It never substitutes synthetic data. |
+
+**The consequence experiment's telemetry arrays came from a mirror**, not the original endpoint:
+`https://huggingface.co/datasets/appleparan/telemanom`, downloaded 2026-07-31. Per-file `sha256`
+matched two independently published checksum sources, and `labeled_anomalies.csv` is byte-identical
+to the frozen upstream commit. That is mirror concordance, **not** verification by the original
+publisher. Hashes, the two sources and the mapping to upstream paths are in
+`evaluation/external_consequence/results/data_gate.json`, the summary artifact's
+`external_data_provenance` block, and `evaluation/external_consequence/DATA_PROVENANCE.md`.

@@ -26,7 +26,8 @@
 PY      := python3
 SUMMARY := evaluation/results/final_summary.json
 
-.PHONY: all gate gate-twice test matrix summary claims paper verify clean realdata external
+.PHONY: all gate gate-twice test matrix summary claims paper verify clean realdata external \
+        external-consequence-verify external-consequence-run
 
 all: paper
 
@@ -93,6 +94,24 @@ external:
 	@test -n "$(TELEMANOM)" || { echo "   set TELEMANOM=/path/to/clone; see evaluation/external/SELECTION.md"; exit 1; }
 	@$(PY) evaluation/scripts/external_artifact_study.py --repo "$(TELEMANOM)"
 	@$(MAKE) --no-print-directory summary
+
+# The consequence experiment could be neither checked nor re-run by an artifact evaluator: its
+# scripts had no target, its inputs do not ship, and re-running it trains five paired seeds twice.
+# Two entry points now exist. VERIFY checks the committed artifacts against the frozen commit, the
+# frozen detector and the recorded data hashes, and trains nothing. RUN reproduces the experiment
+# and fails closed if any of those is absent -- it never substitutes synthetic data.
+external-consequence-verify:
+	@echo "== external consequence: verify committed artifacts (no training)"
+	@$(PY) evaluation/scripts/external_consequence_verify.py
+
+external-consequence-run:
+	@echo "== external consequence: full paired run (trains 5 seeds x 2 arms)"
+	@test -n "$(TELEMANOM)" || { echo "   set TELEMANOM=/path/to/clone at 2e6c5b6c; see evaluation/external/SELECTION.md"; exit 1; }
+	@test -n "$(DATA_ROOT)" || { echo "   set DATA_ROOT=/path/to/telemanom/data/data (must contain train/A-1.npy and test/A-1.npy)"; exit 1; }
+	@test -f "$(DATA_ROOT)/train/A-1.npy" || { echo "   $(DATA_ROOT)/train/A-1.npy absent -- refusing to run"; exit 1; }
+	@test -f "$(DATA_ROOT)/test/A-1.npy" || { echo "   $(DATA_ROOT)/test/A-1.npy absent -- refusing to run"; exit 1; }
+	@$(PY) evaluation/scripts/external_consequence.py --repo "$(TELEMANOM)" --data "$(DATA_ROOT)"
+	@$(MAKE) --no-print-directory external-consequence-verify
 
 clean:
 	@$(MAKE) --no-print-directory -C paper clean

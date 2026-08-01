@@ -60,6 +60,11 @@ archive/                stopped research lines, retired manuscript, invalid resu
   over 450 clean paths against a nominal α = 0.05.
 - **16 of 19** rules have a demonstrated broken fixture. L2.2, L2.3 and L4.5 are exercised
   only on the clean path, and the paper says so rather than claiming otherwise.
+- `make external-consequence-verify` checks the third-party consequence artifacts against the
+  frozen commit, detector hash and recorded data hashes without training anything;
+  `make external-consequence-run TELEMANOM=... DATA_ROOT=...` reproduces it and fails closed.
+  Its telemetry arrays came from a checksum-verified mirror, not the original endpoint --
+  see `evaluation/external_consequence/DATA_PROVENANCE.md`.
 - The full sweep takes about 1.5 s on a quiet laptop core and about 3.5 s on a loaded machine; the 3 s / 60 ms figures in `make claims` are this repository's regression thresholds, not portable performance bounds.
 
 ## What it does not claim

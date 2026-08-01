@@ -155,6 +155,29 @@ def _alongtrack() -> dict:
 CONSEQ_DIR = ROOT / "evaluation" / "external_consequence" / "results"
 
 
+def _data_provenance() -> dict:
+    g = json.loads((CONSEQ_DIR / "data_gate.json").read_text())
+    return {
+        "original_endpoint_available": False,
+        "mirror": g["mirror"],
+        "mirror_download_utc": g["download_utc"],
+        "verified_against_original_publisher": False,
+        "independent_checksum_sources": [
+            "github.com/Monisha325 (LSTM-Autoencoders), git-lfs pointer",
+            "github.com/Nagarohit29 (Satellite-Telemetry), git-lfs pointer"],
+        "n_independent_checksum_sources": 2,
+        "per_file": {k: {"sha256": v["sha256"], "bytes": v["bytes"],
+                         "matches_two_independent_lfs_oids":
+                             v["matches_two_independent_lfs_oids"]}
+                     for k, v in g["files"].items()},
+        "upstream_expected_paths": {k: f"data/data/{k}" for k in g["files"]},
+        "labels_byte_identical_to_frozen_commit":
+            g["labels"]["whole_file_byte_identical_to_frozen_commit"],
+        "status": g["DATA_SOURCE_STATUS"],
+        "detail": "evaluation/external_consequence/DATA_PROVENANCE.md",
+    }
+
+
 def _external_consequence() -> dict:
     """Terminal experiment: does the external L4.1 halt change a reported quantity when fixed?"""
     mech = json.loads((CONSEQ_DIR / "mechanical.json").read_text())
@@ -174,6 +197,7 @@ def _external_consequence() -> dict:
             o["shared_fraction_of_validation_support"] * 100, 1),
         "overlap_corrected_shared_timesteps": c["shared_source_timesteps"],
         "boundary_windows_dropped": c["exclusion_boundary_windows_dropped"],
+        "window_span": mech["overlap"]["window_span"],
         "l41_original": mech["l41_verdict"]["original"]["verdict"],
         "l41_corrected": mech["l41_verdict"]["corrected"]["verdict"],
         "n_seeds_selection_changed": pair["n_seeds_selection_changed"],
@@ -277,8 +301,11 @@ def _write_claims_table(s: dict) -> None:
          f"{s['detectors_with_red_fixture']} of {s['rule_count']}", "detectors_with_red_fixture"),
         ("rules with no red fixture", ", ".join(s["detectors_without_red_fixture"]),
          "detectors_without_red_fixture"),
-        ("sweep runtime", "**under 3 s**; under 60 ms per condition (both bounds, both gated)",
-         "runtime_seconds"),
+        ("sweep runtime",
+         f"**{s['runtime_seconds']} s / {s['runtime_ms_per_condition']} ms per condition** on "
+         f"the generating machine; repository regression guards {s['runtime_threshold_s']} s "
+         f"and {s['runtime_threshold_ms_per_condition']} ms, environment-dependent, not "
+         "portable bounds", "runtime_seconds"),
         ("toolkit size", f"{s['source_loc']} lines", "source_loc"),
         ("test suite size", f"{s['test_suite_loc']} lines", "test_suite_loc"),
         ("tests", f"{s['test_count']} passing", "test_count"),
@@ -339,7 +366,7 @@ so they are not independent systems or populations.
 | clean verdicts identical across environments | **{s["deterministic_across_environments"]}** |
 | rules with a demonstrated red fixture | **{s["detectors_with_red_fixture"]}/{s["rule_count"]}** |
 | rules with no red fixture | {no_red} |
-| total runtime | {s["runtime_seconds"]} s (claim: under 3 s) |
+| total runtime | {s["runtime_seconds"]} s (regression guard {s["runtime_threshold_s"]} s, environment-dependent) |
 | per-condition runtime | {s["runtime_ms_per_condition"]} ms |
 | toolkit source lines | {s["source_loc"]} |
 | test suite lines | {s["test_suite_loc"]} |
@@ -397,6 +424,15 @@ def _collected_test_count() -> int:
                        cwd=ROOT, capture_output=True, text=True)
     m = re.search(r"(\d+) tests? collected", r.stdout)
     return int(m.group(1)) if m else -1
+
+
+def _real_station() -> dict:
+    m = json.loads((ROOT / "evaluation" / "real_data" /
+                    "l47_real_application.json").read_text())["manifest"]
+    st = m["station"]
+    return {"lat_deg": st["lat_deg"], "lon_deg": st["lon_deg"], "alt_m": st["alt_m"],
+            "elev_mask_deg": st["elev_mask_deg"], "sample_interval_s": m["sample_interval_s"],
+            "horizon_h": m["horizon_h"], "window_epoch": m["window_epoch"]}
 
 
 def main() -> int:
@@ -459,13 +495,25 @@ def main() -> int:
         "l47_calibration": _l47_calibration(),
         "publication_lag": _publication_lag(),
         "object_level_timing": _object_timing(),
+        # The manuscript states the station geometry, the sampling interval and the horizon;
+        # all three come from the real-data manifest so none is a hand-typed literal.
+        "real_station": _real_station(),
         "real_l47_application": _real_l47(),
         "real_l47_alongtrack": _alongtrack(),
         "external_artifact_study": _external_evidence(),
+        # Mirror provenance, surfaced into the summary so an artifact evaluator does not have to
+        # open DATA_PROVENANCE.md to learn that the telemetry arrays are not from the original
+        # endpoint. Two independently published per-file checksums agree; that is mirror
+        # concordance, NOT verification by the original publisher, and the field names say so.
+        "external_data_provenance": _data_provenance(),
         "external_consequence": _external_consequence(),
         # Hash the RESULTS, not the wall clock. Hashing the file whole embedded per-row
         # runtime_s, so this anchor could never match between two runs of the same tree --
         # an integrity checksum that is always different is not an integrity checksum.
+        # The 3 s / 60 ms figures are quoted in the manuscript AND enforced in
+        # check_banlist.py. Recorded once here so the two cannot drift apart.
+        "runtime_threshold_s": 3.0,
+        "runtime_threshold_ms_per_condition": 60.0,
         "matrix_sha256": _results_digest(d),
         "commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
                                  capture_output=True, text=True).stdout.strip(),

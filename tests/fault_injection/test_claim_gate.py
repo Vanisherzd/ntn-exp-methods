@@ -242,7 +242,7 @@ def test_rejects_dropping_a_claim_site(repo):
 
 
 def test_rejects_a_runtime_that_breaks_the_stated_bound(repo):
-    """The manuscript claims the sweep runs in under 3 s. That is a claim about the
+    """The repository guards the sweep at 3 s. That is a threshold on the
     artifact, so the artifact must still satisfy it."""
     _drift(repo, "runtime_seconds", 7.5)
     r = _gate(repo)

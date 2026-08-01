@@ -29,7 +29,7 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 | L4.7 injected detection | 150/150 | `l47_calibration` |
 | rules with a demonstrated red fixture | 16 of 19 | `detectors_with_red_fixture` |
 | rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` |
-| sweep runtime | **under 3 s**; under 60 ms per condition (both bounds, both gated) | `runtime_seconds` |
+| sweep runtime | **1.534 s / 28.4 ms per condition** on the generating machine; repository regression guards 3.0 s and 60.0 ms, environment-dependent, not portable bounds | `runtime_seconds` |
 | toolkit size | 833 lines | `source_loc` |
 | test suite size | 988 lines | `test_suite_loc` |
 | tests | 62 passing | `test_count` |
@@ -38,7 +38,7 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 ### What reproduces, and what only reproduces conditionally
 
 Runtime does **not** reproduce bit-for-bit: it varies by a few percent between runs and
-machines. The manuscript therefore states a *bound* (under 3 s), and the claim gate asserts
+machines. The manuscript therefore states a repository *regression guard* (3 s), and the claim gate asserts
 the artifact still satisfies that bound rather than matching a string. `make gate-twice`
 reports the volatile fields explicitly instead of hiding them.
 
