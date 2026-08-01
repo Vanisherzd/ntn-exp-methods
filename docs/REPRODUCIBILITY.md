@@ -100,6 +100,11 @@ import `torch` and other dependencies the active artifact does not use) live und
 | `make external-consequence-verify` | checks the committed consequence artifacts against the frozen commit, the frozen detector hash and the recorded per-file data hashes. **Trains nothing.** |
 | `make external-consequence-run TELEMANOM=... DATA_ROOT=...` | reproduces the full paired experiment: five seeds x two arms. Fails closed if the clone is not at the frozen commit, if the detector hash differs from the pre-registration, or if either data file is absent. It never substitutes synthetic data. |
 
+The committed external results and all frozen inputs, hashes, seeds, interventions and reported
+outcomes are mechanically verified by `make external-consequence-verify`; a fail-closed command is
+provided for full retraining when the required upstream clone and mirrored arrays are supplied.
+End-to-end retraining has not been re-executed here.
+
 **The consequence experiment's telemetry arrays came from a mirror**, not the original endpoint:
 `https://huggingface.co/datasets/appleparan/telemanom`, downloaded 2026-07-31. Per-file `sha256`
 matched two independently published checksum sources, and `labeled_anomalies.csv` is byte-identical
