@@ -43,7 +43,7 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.541,
+ "runtime_seconds": 1.539,
  "runtime_ms_per_condition": 28.5,
  "conditions_per_environment": 18,
  "source_loc": 833,
@@ -284,5 +284,5 @@
  "runtime_threshold_s": 3.0,
  "runtime_threshold_ms_per_condition": 60.0,
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "76f53d3fa31051ecaa6ff139be700de88a0aa249"
+ "commit": "9f862d023cc1911a08567d0c4510303a63654821"
 }

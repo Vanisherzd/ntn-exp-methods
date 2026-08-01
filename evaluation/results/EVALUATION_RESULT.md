@@ -33,7 +33,7 @@ so they are not independent systems or populations.
 | clean verdicts identical across environments | **True** |
 | rules with a demonstrated red fixture | **16/19** |
 | rules with no red fixture | L2.2, L2.3, L4.5 |
-| total runtime | 1.541 s (regression guard 3.0 s, environment-dependent) |
+| total runtime | 1.539 s (regression guard 3.0 s, environment-dependent) |
 | per-condition runtime | 28.5 ms |
 | toolkit source lines | 833 |
 | test suite lines | 988 |
