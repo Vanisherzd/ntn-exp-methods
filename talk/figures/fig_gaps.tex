@@ -1,0 +1,33 @@
+% Slide 3 -- what a chronological split does and does not constrain.
+%
+% The paper argues this in prose (Sec. I). On a slide the argument has to be seen in one look:
+% the split is a line drawn INSIDE one table, and the four gaps are things that live outside it.
+% Everything inside the table frame is what ordering can adjudicate; everything outside is not.
+\begin{tikzpicture}[
+  x=1mm, y=1mm, font=\footnotesize,
+  >={Latex[length=1.6mm]},
+  row/.style={draw=black!25,line width=0.4pt,fill=black!4,minimum height=3.6mm,
+              minimum width=44mm,inner sep=0pt},
+  gap/.style={draw=orange!70!black,line width=0.7pt,fill=orange!8,align=left,
+              text width=34mm,inner sep=1.6mm,rounded corners=0.4mm,font=\scriptsize},
+  lead/.style={->,line width=0.6pt,orange!70!black}]
+
+% ---- the one realised dataset
+\node[font=\scriptsize\bfseries,text=black!70,anchor=west] at (0,29) {one realised dataset};
+\foreach \i in {0,...,5}
+  \node[row] at (22, 20 - 4.2*\i) {};
+\draw[black!55,line width=1.1pt,dash pattern=on 2pt off 1.4pt] (24,23) -- (24,-4);
+\node[font=\scriptsize,text=black!65,anchor=south] at (12,23.4) {train};
+\node[font=\scriptsize,text=black!65,anchor=south] at (36,23.4) {test};
+\node[font=\scriptsize\itshape,text=black!60,anchor=north,align=center]
+  at (22,-5.5) {a chronological split is a\\predicate over \emph{these rows}};
+
+% ---- the four obligations the predicate cannot reach
+\node[gap] (g1) at (78, 20) {\textbf{Availability}\\past-dated but unpublished};
+\node[gap] (g2) at (78, 8) {\textbf{Row membership}\\which rows exist at all};
+\node[gap] (g3) at (124, 20) {\textbf{Hidden state}\\what is not a column};
+\node[gap] (g4) at (124, 8) {\textbf{Statistical unit}\\is the unit exchangeable};
+
+\draw[lead] (46,14) -- (56,14);
+\node[font=\scriptsize,text=orange!60!black,anchor=south] at (51,14.6) {outside};
+\end{tikzpicture}

@@ -1,0 +1,54 @@
+% Slide 7 -- the L4.7 operating characteristic, at slide scale.
+%
+% Same data as paper/figures/fig_operating_curve.tex, read from the same artifact: every x is the
+% icc field of a curve entry in evaluation/results/l47_power_curve.json and every y its halt_prob.
+% The paper's version is one column wide and carries a null callout, a low-power bracket and an
+% alpha label in about 45 mm of height. Here there is room, so the annotations sit apart from the
+% curve instead of negotiating with it.
+%
+% INDETERMINATE is deliberately absent from this plot: it depends on the design's grouping
+% geometry, not on rho, and shading a low-ICC region would say the opposite. It is a separate
+% strip below the axis.
+\begin{tikzpicture}[
+  x=125mm, y=34mm, font=\scriptsize,
+  >={Latex[length=1.5mm]}]
+
+% ---- axes
+\draw[->,black!70,line width=0.5pt] (0,0) -- (0.90,0);
+\draw[->,black!70,line width=0.5pt] (0,0) -- (0,1.18);
+\foreach \x/\lab in {0/{0}, 0.2/{0.2}, 0.4/{0.4}, 0.6/{0.6}, 0.8/{0.8}}
+  {\draw[black!70] (\x,0) -- (\x,-0.022); \node[below,font=\scriptsize] at (\x,-0.03) {\lab};}
+\foreach \y/\lab in {0/{0}, 0.5/{0.5}, 1/{1.0}}
+  {\draw[black!70] (0,\y) -- (-0.005,\y); \node[left,font=\scriptsize] at (-0.007,\y) {\lab};}
+\node[below,font=\scriptsize,text=black!75] at (0.50,-0.15)
+  {intraclass correlation at the declared coarser level};
+\node[rotate=90,font=\scriptsize,text=black!75] at (-0.062,0.6) {P(HALT)};
+
+% ---- nominal alpha
+\draw[dashed,black!45,line width=0.5pt] (0,0.05) -- (0.90,0.05);
+\node[font=\scriptsize,text=black!60,anchor=south east] at (0.90,0.065)
+  {nominal $\alpha=\Nalpha$};
+
+% ---- the power curve: the only heavy stroke
+\draw[line width=1.3pt,black!88]
+  (0.002,0.05) -- (0.010,0.05) -- (0.038,0.05) -- (0.083,0.05)
+  -- (0.200,0.25) -- (0.500,0.80) -- (0.800,1.00);
+\foreach \x/\y in {0.002/0.05, 0.010/0.05, 0.038/0.05, 0.083/0.05,
+                   0.200/0.25, 0.500/0.80, 0.800/1.00}
+  {\fill[black!88] (\x,\y) circle (0.9pt);}
+
+% ---- the three readings, placed off the curve
+\node[font=\scriptsize,text=red!65!black,anchor=west,align=left] at (0.085,0.86)
+  {\textbf{clean / null} $\Nrate$\\Wilson $[\Nwlo,\Nwhi]$\\at nominal $\alpha$, not better};
+\draw[red!65!black,line width=0.4pt] (0.080,0.80) -- (0.030,0.10);
+
+\node[font=\scriptsize,text=black!70,anchor=west,align=left] at (0.545,0.60)
+  {power $\to \Npowerhi$\\at $\rho=0.8$};
+% one line, tucked just under its own marker: two lines placed up-left read as a y-axis label
+\node[font=\scriptsize,text=black!70,anchor=west] at (0.222,0.155)
+  {only $\Npowerlo$ at $\rho=0.2$};
+
+% ---- low-power regime: a bracket under the tick row, never a shaded ICC band
+\draw[black!45,line width=0.5pt] (0.002,-0.148) -- (0.002,-0.128) -- (0.083,-0.128) -- (0.083,-0.148);
+\node[font=\scriptsize,text=black!55,anchor=north] at (0.043,-0.151) {low-power regime};
+\end{tikzpicture}

@@ -1,0 +1,39 @@
+% Slide 4 -- the conceptual pivot, as three relations rather than three bullets.
+%
+% The paper's foundation sentence: a chronological split is a predicate over the rows of ONE
+% realised dataset, and the four gaps are not. Each has a counterexample that exists only in
+% another execution, another source state, or another aggregation level. Those are the three
+% panels below, in that order, and the caption names what they have in common.
+%
+% WIDTH. Must stay inside ~140mm: the first version ran to 191mm and the third panel was simply
+% off the slide. Rendering caught it; the source looked fine.
+\begin{tikzpicture}[
+  x=1mm, y=1mm, font=\footnotesize,
+  box/.style={draw=black!55,line width=0.7pt,fill=blue!5,minimum width=17mm,
+              minimum height=11mm,align=center,inner sep=1mm,font=\small},
+  rel/.style={<->,line width=1.1pt,black!75},
+  note/.style={font=\scriptsize,text=black!65,align=center,text width=40mm},
+  hdr/.style={font=\small\bfseries,text=black!80,align=center}]
+
+\node[hdr] at ( 21.5,30) {across executions};
+\node[box] (a1) at (  8.5,20) {run A};
+\node[box] (a2) at ( 34.5,20) {run B};
+\draw[rel] (a1) -- (a2);
+\node[note] at ( 21.5,7) {same manifest, different output\\$\Rightarrow$ the manifest is incomplete};
+
+\draw[black!15,line width=0.5pt] (46,32) -- (46,4);
+
+\node[hdr] at ( 70.5,30) {across source states};
+\node[box] (b1) at ( 57.5,20) {source\\at $t_d$};
+\node[box] (b2) at ( 83.5,20) {source\\later};
+\draw[rel] (b1) -- (b2);
+\node[note] at ( 70.5,7) {a feature past-dated here was\\not yet retrievable there};
+
+\draw[black!15,line width=0.5pt] (95,32) -- (95,4);
+
+\node[hdr] at (119.5,30) {across aggregation levels};
+\node[box] (c1) at (106.5,20) {declared\\unit};
+\node[box] (c2) at (132.5,20) {coarser\\level};
+\draw[rel] (c1) -- (c2);
+\node[note] at (119.5,7) {dependence at the coarser level\\$\Rightarrow$ the unit is too fine};
+\end{tikzpicture}

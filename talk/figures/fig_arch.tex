@@ -1,0 +1,75 @@
+% Slide 5 -- the architecture, built in four overlays.
+%
+% Adapted from paper/figures/fig_architecture.tex, not cropped from it. The paper's version is a
+% full-width figure* carrying three violation rails and nineteen-rule detail at 6.4 pt; projected,
+% that is unreadable and says four things at once. Here the same four bands appear one at a time
+% -- experiment, contract, relational validity, decision -- and the violation rails are dropped
+% because the slide before this one already made that point.
+%
+% ROUTING. Same rule as the paper: every connector is orthogonal, no curves, no crossings. Layer
+% boxes sit at the x of the stage they observe, so each observation connector is one vertical drop.
+\begin{tikzpicture}[
+  x=1mm, y=1mm, font=\scriptsize,
+  >={Latex[length=1.5mm]},
+  stage/.style={draw=black!60,line width=0.6pt,fill=blue!5,align=center,
+                text width=19mm,minimum height=8mm,inner sep=0.8mm},
+  layer/.style={draw=black!50,line width=0.6pt,fill=black!4,align=left,
+                text width=22mm,minimum height=12mm,inner sep=1mm},
+  rel/.style={draw=black!60,line width=0.8pt,fill=blue!8,align=center,
+              text width=44mm,minimum height=11mm,inner sep=1mm},
+  dec/.style={draw=black!65,line width=0.6pt,fill=white,align=center,
+              text width=24mm,minimum height=5.4mm,inner sep=0.6mm},
+  grp/.style={draw=black!30,line width=0.5pt,dash pattern=on 1.6pt off 1.2pt,inner sep=1.8mm},
+  ok/.style={->,line width=0.7pt,black!70},
+  obs/.style={->,line width=0.5pt,black!45},
+  bus/.style={line width=0.5pt,black!45},
+  hdr/.style={font=\scriptsize\bfseries,text=black!75,anchor=west,fill=white,inner sep=0.6mm}]
+
+% ---------------------------------------------------------------- band 1: the experiment
+\node[stage] (s1) at ( 11,46) {published\\state};
+\node[stage] (s2) at ( 35,46) {predicted\\visibility};
+\node[stage] (s3) at ( 59,46) {frozen\\registry};
+\node[stage] (s4) at ( 83,46) {model,\\selection, gate};
+\node[stage] (s5) at (107,46) {deployment};
+\node[stage] (s6) at (131,46) {label\\closure};
+\foreach \a/\b in {s1/s2, s2/s3, s3/s4, s4/s5, s5/s6} \draw[ok] (\a) -- (\b);
+\draw[black!55,line width=0.6pt] (47,41.5) -- (47,50.5);
+\node[font=\tiny,text=black!60,anchor=north] at (47,41.2) {decision $t_d$};
+\draw[black!55,line width=0.6pt] (95,41.5) -- (95,50.5);
+\node[font=\tiny,text=black!60,anchor=north] at (95,41.2) {freeze};
+\node[hdr] at (0,52.5) {a learning-assisted satellite experiment};
+
+% ---------------------------------------------------------------- band 2: the contract
+\onslide<2->{
+\node[layer] (l1) at ( 11,27) {\textbf{L1} availability, membership};
+\node[layer] (l2) at ( 35,27) {\textbf{L2} physical, scheduling};
+\node[layer] (l3) at ( 83,27) {\textbf{L3} model-state causality};
+\node[layer] (l4) at (107,27) {\textbf{L4} independence,\\reproducibility};
+\node[grp,fit=(l1)(l2)(l3)(l4)] (contract) {};
+\draw[obs] ( 11,41.5) -- (l1.north);
+\draw[obs] ( 35,41.5) -- (l2.north);
+\draw[obs] ( 83,41.5) -- (l3.north);
+\draw[obs] (107,41.5) -- (l4.north);
+}
+
+% ---------------------------------------------------------------- band 3: relational validity
+\onslide<3->{
+\node[rel] (r1) at ( 26,7) {\textbf{run A} $\leftrightarrow$ \textbf{run B}\\[0.3mm]
+  provenance completeness (L4.6)};
+\node[rel] (r2) at ( 84,7) {\textbf{unit} $\leftrightarrow$ \textbf{coarser level}\\[0.3mm]
+  statistical-unit adequacy (L4.7)};
+\draw[bus] (55,19.2) -- (55,15.2) -- (26,15.2);
+\draw[bus] (55,15.2) -- (84,15.2);
+\draw[obs] (26,15.2) -- (26,12.6);
+\draw[obs] (84,15.2) -- (84,12.6);
+}
+
+% ---------------------------------------------------------------- band 4: the verdict
+\onslide<4->{
+\node[dec] (d1) at (130,12.2) {PASS};
+\node[dec] (d2) at (130, 6.6) {HALT};
+\node[dec] (d3) at (130, 1.0) {INDETERMINATE};
+\node[grp,fit=(d1)(d2)(d3)] (decbox) {};
+\draw[ok] (r2.east) -- (decbox.west);
+}
+\end{tikzpicture}
