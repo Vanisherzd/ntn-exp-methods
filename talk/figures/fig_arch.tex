@@ -66,9 +66,13 @@
 
 % ---------------------------------------------------------------- band 4: the verdict
 \onslide<4->{
-\node[dec] (d1) at (130,12.2) {PASS};
-\node[dec] (d2) at (130, 6.6) {HALT};
-\node[dec] (d3) at (130, 1.0) {INDETERMINATE};
+\node[dec] (d1) at (130,12.6) {PASS};
+\node[dec] (d2) at (130, 7.0) {HALT};
+\node[dec] (d3) at (130, 1.4) {INDETERMINATE};
+% Glossed at first appearance: PASS otherwise went seven slides unqualified, and slide 9 was
+% carrying the taxonomy lesson inside an empirical slide.
+\node[font=\tiny,text=black!60,anchor=north east,align=right] at (142,-2.6)
+  {PASS = not rejected\\HALT = obligation violated\\INDETERMINATE = design cannot decide};
 \node[grp,fit=(d1)(d2)(d3)] (decbox) {};
 \draw[ok] (r2.east) -- (decbox.west);
 }

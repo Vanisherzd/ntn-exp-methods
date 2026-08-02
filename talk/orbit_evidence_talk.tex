@@ -15,11 +15,17 @@
 \usetheme[progressbar=frametitle, numbering=fraction, block=fill]{metropolis}
 \usefonttheme{professionalfonts}
 
+% Makes \inserttotalframenumber stop at \appendix, so the main denominator is derived from
+% the frame count rather than hard-coded -- and backup frames stay out of it.
+\usepackage{appendixnumberbeamer}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
 \usepackage{booktabs}
 \usepackage{xcolor}
+
+% The paper's \rulename lives in its own preamble; the deck needs its own.
+\newcommand{\rulename}[1]{\textsf{#1}}
 
 \input{numbers.tex}
 
@@ -58,7 +64,7 @@ Satellite Communication Experiments\\[0.9em]
 \end{frame}}
 
 % ============================================================ 2. motivation
-\begin{frame}{Ordering is not deployment validity}
+\begin{frame}{Ordering alone is not deployment validity}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
       Learning components now sit inside satellite communication software:
@@ -81,7 +87,7 @@ Satellite Communication Experiments\\[0.9em]
 \end{frame}
 
 % ============================================================ 3. the actual problem
-\begin{frame}{Four obligations a split cannot reach}
+\begin{frame}{Four obligations a split cannot establish}
   \vspace{-0.3em}
   \begin{center}\input{figures/fig_gaps.tex}\end{center}
   \msg{Each of the four has a counterexample that is not in the table the split examines.}
@@ -118,19 +124,18 @@ Satellite Communication Experiments\\[0.9em]
       \end{block}
       \vspace{0.3em}
       \small
-      Falsifies incompleteness \emph{without enumerating} the dependencies a manifest might omit.
-      One-sided by construction: failure is a counterexample, success is not a certificate.
+      Refutes a claim of completeness \emph{without enumerating} the dependencies a manifest
+      might omit. One-sided by construction: failure is evidence, success is not certification.
     \end{column}
     \begin{column}{0.48\textwidth}
       \begin{block}{L4.7 --- statistical-unit adequacy}
         Does dependence survive \alert{one declared level coarser}?
-        Referenced to a permutation null.
+        Null: unit values exchangeable across the declared groups.
       \end{block}
       \vspace{0.3em}
       \small
-      And it \emph{abstains}: below four coarser groups the smallest reachable
-      $p$ is $1/15 = 0.067 > \alpha$, so no such design could reject at all.
-      That is an \emph{attainability} floor, not a power floor.
+      And it \emph{abstains}: designs below the registered resolution floor return
+      \textsc{indeterminate}. That floor is an \emph{attainability} property, not a power one.
     \end{column}
   \end{columns}
   \msg{One judgement generates both: neither obligation can be certified,
@@ -147,93 +152,146 @@ Satellite Communication Experiments\\[0.9em]
 \end{frame}
 
 % ============================================================ 8. real satellite evidence
-\begin{frame}{Does the unit problem exist in real catalogue data?}
+% H3: the cohort and the primary in-track analysis have DIFFERENT denominators. The first
+% version stacked 331 / 109 / 11 next to rho-hat = 0.501 and so implied all 331 passes entered
+% the ICC. They did not: 59 have no successor element set, leaving 272 in 90 element sets.
+\begin{frame}{Does the unit problem appear in real orbital data?}
+  \vspace{-0.2em}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.46\textwidth}
+    \begin{column}{0.52\textwidth}
       \centering
-      \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,>={Latex[length=1.4mm]},
-        n/.style={draw=black!55,line width=0.6pt,fill=blue!5,minimum width=24mm,
-                  minimum height=6.5mm,align=center,inner sep=0.6mm}]
-        \node[n] (p) at (0,26) {\Npasses{} visible passes};
-        \node[n] (e) at (0,13) {\Nelsets{} element sets};
-        \node[n] (o) at (0, 0) {\Nobjects{} objects};
-        \draw[->,line width=0.7pt,black!70] (p) -- (e);
-        \draw[->,line width=0.7pt,black!70] (e) -- (o);
-        \node[font=\scriptsize,text=oewarn,anchor=west,align=left] at (15,19.5)
-          {$\hat{\rho}=\Naticc$\\$p=\Natp$\\\textbf{HALT}};
-        \node[font=\scriptsize,text=black!60,anchor=west,align=left] at (15,6.5)
-          {$\hat{\rho}=\Naticcelset$\\\textbf{HALT}};
+      \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+        c/.style={draw=black!45,line width=0.5pt,fill=black!3,align=center,inner sep=1mm,
+                  text width=30mm,minimum height=6mm},
+        a/.style={draw=black!60,line width=0.7pt,fill=blue!6,align=center,inner sep=1mm,
+                  text width=30mm,minimum height=6mm},
+        h/.style={font=\scriptsize\bfseries,text=black!70,anchor=west}]
+        \node[h] at (0,30) {source cohort};
+        \node[c] at (18,24) {\Npasses{} predicted visible passes};
+        \node[c] at (18,17) {\Nelsets{} element-set records};
+        \node[c] at (18,10) {\Nobjects{} objects};
+        \draw[->,line width=0.7pt,black!60] (18,6.5) -- (18,2.5);
+        \node[font=\tiny,text=black!55,anchor=west,align=left] at (22,4.5)
+          {$-\Natdropped$ passes lack a\\successor element set};
+        \node[h] at (0,0) {primary in-track analysis};
+        \node[a] at (18,-6) {\Natused{} passes};
+        \node[a] at (18,-13) {in \Natgroups{} successor-paired\\element sets};
       \end{tikzpicture}
-      \vspace{0.2em}
-
-      {\scriptsize Observable: the \emph{in-track update increment} between consecutive fits.}
     \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{What this means}\\[0.2em]
-      \small Exchangeability of samples sharing a generating element set is
-      \alert{rejected} --- one-sided lower bound $\Natlo$. The element set is not exchangeable
-      either: \emph{no level tested here is}.\normalsize
-
-      \vspace{0.5em}
-      \textbf{What it does not mean}\\[0.2em]
+    \begin{column}{0.44\textwidth}
       \small
-      \begin{itemize}\setlength\itemsep{0.1em}
-        \item Not truth error --- an \emph{update increment} between fits sharing an
-              observation arc, median $\Natmedian$\,km.
-        \item Not a universal unit: the rule adjudicates the level it is \emph{given}.
-        \item Not every observable: on elevation the same rule returned $\hat{\rho}=0.000$.
-      \end{itemize}
+      \begin{tabular}{@{}l l@{}}
+        \toprule
+        \textbf{grouping} & \textbf{verdict}\\
+        \midrule
+        pass $\to$ element set & $\hat{\rho}=\Naticc$\\
+        \Natused{} in \Natgroups{} & $p=\Natp$ at $B=400$\\
+                                   & lower bound $\Natlo$\\
+                                   & \textbf{HALT}\\
+        \addlinespace
+        element set $\to$ object & $\hat{\rho}=\Naticcelset$\\
+        \Natelsetunits{} in \Natelsetgroups{} & \textbf{HALT}\\
+        \bottomrule
+      \end{tabular}
+
+      \vspace{0.4em}
+      {\scriptsize Observable: the \emph{in-track update increment} between consecutive fits
+      sharing an observation arc --- \textbf{not truth error}. Exchangeability is rejected at
+      \emph{every} level tested here; the rule adjudicates the level it is \emph{given}, never
+      which level is right. On elevation the same rule returned $\hat{\rho}=\Nrealiccab$.}
     \end{column}
   \end{columns}
 \end{frame}
 
-% ============================================================ 9. third-party artifact
-\begin{frame}{Does the frozen contract work outside this project?}
+% ============================================================ 9. external applicability
+\begin{frame}{Can the frozen contract be applied outside this project?}
+  \vspace{-0.2em}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.44\textwidth}
-      {\small A public spacecraft-telemetry LSTM artifact, frozen at a commit chosen
-      \emph{before} inspection. Detector \texttt{sha256} unchanged throughout.}
-
-      \vspace{0.6em}
-      \centering
-      \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
-        c/.style={draw=black!45,line width=0.6pt,minimum width=8mm,minimum height=7mm,
-                  align=center,inner sep=0.4mm}]
-        \node[c,fill=black!4]      (a) at ( 0,0) {\Nextpass\\\tiny PASS};
-        \node[c,fill=oewarn!18]    (b) at (10,0) {\Nexthalt\\\tiny HALT};
-        \node[c,fill=black!8]      (c) at (20,0) {\Nextindet\\\tiny INDET};
-        \node[c,fill=white]        (d) at (31,0) {\Nextna\\\tiny N/A};
-        \node[c,fill=white]        (e) at (41,0) {\Nextnobs\\\tiny N/OBS};
-        \draw[black!40,line width=0.4pt] (25.5,-5) -- (25.5,5);
-        \node[font=\tiny,text=black!60,anchor=north,align=center] at (10,-5.5)
-          {rule verdicts};
-        \node[font=\tiny,text=black!60,anchor=north,align=center] at (36,-5.5)
-          {applicability\\dispositions};
-      \end{tikzpicture}
+    \begin{column}{0.46\textwidth}
+      \small A public spacecraft-telemetry LSTM artifact, frozen at a commit chosen
+      \emph{before} inspection. The detector \texttt{sha256} is unchanged throughout ---
+      equal to the pre-registration hash.
 
       \vspace{0.8em}
-      {\scriptsize \Nextnobs{} of \Nextrules{} recorded \emph{not observable} rather than
-      passed --- never scored as compliance.}
+      {\scriptsize \Nextnobs{} of \Nextrules{} rules are recorded \emph{not observable} rather
+      than passed. Non-observability is never scored as compliance.}
     \end{column}
-    \begin{column}{0.52\textwidth}
-      \begin{block}{Pre-registered intervention on the L4.1 halt}
-        {\small Correcting \emph{only} the overlap: \textbf{HALT $\rightarrow$ PASS}, and the
-        selected checkpoint changes in \alert{\Nconschanged{} of \Nconsseeds{}} paired seeds ---
-        reproducible bit-for-bit.}
-      \end{block}
-      \vspace{0.25em}
-      \small The downstream metric moved on three seeds, \emph{in both directions}. Not a null:
-      the smallest attainable two-sided $p$ is $\Nconsminp > \alpha$.
+    \begin{column}{0.5\textwidth}
+      \centering
+      \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+        c/.style={draw=black!45,line width=0.6pt,minimum width=9mm,minimum height=8mm,
+                  align=center,inner sep=0.4mm}]
+        \node[c,fill=black!4]   at ( 0,0) {\Nextpass\\\tiny PASS};
+        \node[c,fill=oewarn!18] at (11,0) {\Nexthalt\\\tiny HALT};
+        \node[c,fill=black!8]   at (22,0) {\Nextindet\\\tiny INDET};
+        \node[c,fill=white]     at (35,0) {\Nextna\\\tiny N/A};
+        \node[c,fill=white]     at (46,0) {\Nextnobs\\\tiny N/OBS};
+        \draw[black!40,line width=0.5pt,dash pattern=on 1.5pt off 1.2pt] (28.5,-7) -- (28.5,7);
+        \node[font=\scriptsize\bfseries,text=black!70,anchor=north,align=center] at (11,-7.5)
+          {rule verdicts};
+        \node[font=\scriptsize\bfseries,text=black!70,anchor=north,align=center] at (40.5,-7.5)
+          {applicability\\dispositions};
+      \end{tikzpicture}
+      \vspace{0.9em}
 
-      \vspace{0.3em}
-      $\Rightarrow$ \textbf{not estimable} at the available paired-run resolution --- a
-      disposition of \emph{this study's} evidence, not a rule verdict.
-
-      \vspace{0.3em}
-      {\scriptsize\color{black!60} No claim about the upstream paper's validity,
-      nor about improving anomaly detection.}
+      \begin{minipage}{\linewidth}\raggedright\scriptsize
+      A \emph{disposition} precedes any verdict: the obligation does not arise, or the artifact
+      does not expose the inputs the rule needs. \textbf{\Nexthalt{} HALT is a verdict on the
+      recorded experiment, not on the published result.}
+      \end{minipage}
     \end{column}
   \end{columns}
+  \msg{The contract runs unchanged on an artifact nobody here produced.}
+\end{frame}
+
+% ============================================================ 10. does the violation matter
+% R-T5 measured the first version at 22 projected lines of continuous prose carrying four
+% negations. The evidence is a before/after, so it is drawn as one; the two "no claim"
+% sentences move to the speaker, where the outline already mandates them.
+\begin{frame}{Does correcting a detected violation change the experiment?}
+  \vspace{-0.1em}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.53\textwidth}
+      \centering
+      \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+        h/.style={font=\scriptsize\bfseries,text=black!70},
+        o/.style={draw=oewarn!55,line width=0.6pt,fill=oewarn!8,align=center,
+                  text width=22mm,minimum height=6.5mm,inner sep=0.6mm},
+        c/.style={draw=black!55,line width=0.6pt,fill=blue!6,align=center,
+                  text width=22mm,minimum height=6.5mm,inner sep=0.6mm}]
+        \node[h] at ( 2,26) {};
+        \node[h] at (20,26) {original};
+        \node[h] at (48,26) {corrected};
+        \node[font=\scriptsize,text=black!70,anchor=east] at (10,18) {overlap};
+        \node[o] at (24,18) {\Nconsoverlap\% of val.\ support};
+        \node[c] at (52,18) {\Nconsoverlapcorr{}};
+        \node[font=\scriptsize,text=black!70,anchor=east] at (10,9) {\rulename{L4.1}};
+        \node[o] at (24,9) {HALT};
+        \node[c] at (52,9) {PASS};
+        \node[font=\scriptsize,text=black!70,anchor=east] at (10,0) {checkpoint};
+        \node[o,text width=50mm,minimum width=50mm] at (38,0)
+          {changed in \Nconschanged{} of \Nconsseeds{} paired seeds};
+        \draw[->,line width=0.7pt,black!55] (36,18) -- (40,18);
+        \draw[->,line width=0.7pt,black!55] (36,9) -- (40,9);
+      \end{tikzpicture}
+
+      \vspace{0.6em}
+      {\scriptsize Re-running one seed reproduces its checkpoint \textbf{bit for bit} ---
+      the intervention, not training noise.}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \small The reported detection metric moved on three seeds, \emph{in both directions}.
+
+      \vspace{0.5em}
+      Not a null: at \Nconsseeds{} paired seeds the smallest attainable two-sided $p$ is
+      $\Nconsminp > \alpha$.
+
+      \vspace{0.5em}
+      $\Rightarrow$ \textbf{not estimable} at the available paired-run resolution --- an
+      evidentiary limit of \emph{this study}, not a rule verdict and not a null result.
+    \end{column}
+  \end{columns}
+  \msg{Model selection changed; the downstream endpoint is not estimable at this resolution.}
 \end{frame}
 
 % ============================================================ 10. what is new
@@ -262,9 +320,10 @@ Satellite Communication Experiments\\[0.9em]
       \end{block}
       \vspace{0.2em}
       {\small A permutation reference is ordinarily an analysis step. Here it calibrates a
-      \emph{gate} --- with an operating characteristic, and an abstention state.}
+      \emph{gate} --- with an operating characteristic and an abstention state.}
     \end{column}
   \end{columns}
+  \msg{Change what is tested, not how much.}
 \end{frame}
 
 % ============================================================ 11. limitations
@@ -285,19 +344,22 @@ Satellite Communication Experiments\\[0.9em]
     \begin{column}{0.48\textwidth}
       {\small
       \begin{itemize}\setlength\itemsep{0.5em}
-        \item \textbf{Curated faults are regression evidence.} Faults and rules largely share an
-              origin, so $\Nfaults/\Nfaults$ measures \emph{reachability};
-              \Nred{} of \Nrules{} rules have a demonstrated red fixture.
+        \item \textbf{Represented-fault regression coverage only.} Faults and rules largely
+              share an origin, so curated coverage measures \emph{reachability}, not
+              fault-finding power.
         \item \textbf{One third-party artifact, one channel.} It partially breaks the loop.
               It does not close it.
         \item \textbf{PASS means not rejected}, never verified.
       \end{itemize}}
     \end{column}
   \end{columns}
-  \msg{Stated because a validity paper that overstates its own evidence has refuted itself.}
+  \msg{A validity method must apply the same evidence discipline to its own claims.}
 \end{frame}
 
 % ============================================================ 12. takeaway
+% metropolis's standout frames do not step the frame counter, so without this the deck
+% advertised 12 main frames while containing 13. Verified in talk/check_numbers.py.
+\addtocounter{framenumber}{1}
 \begin{frame}[standout]
   Chronological separation remains necessary.\\
   It is not sufficient.
@@ -310,17 +372,22 @@ Satellite Communication Experiments\\[0.9em]
 
 % ============================================================ backup
 \appendix
+% Backup frames carry no main-deck number: they are excluded from the 13-frame denominator,
+% and a fraction here only invites the reader to add them to it.
+\setbeamertemplate{frame numbering}[none]
 
 \begin{frame}{Backup --- why the abstention floor is not a power floor}
   % NOT {\small ...}: beamer reads a brace group at the start of a frame body as the SUBTITLE
   % argument, so the whole slide silently vanished. Set the size without a group.
   \small
-  Three coarser groups of two units admit only $6!/(2!^{3}3!) = 15$ distinct assignments.
-  The smallest reachable $p$ is $1/15 = 0.067 > \alpha$: \emph{no} design that small can reject
-  at the nominal level, at any effect size.
+  Take the specific construction of \emph{three coarser groups of two units}: it admits
+  $6!/(2!^{3}3!) = 15$ distinct assignments, so the smallest attainable $p$ is
+  $1/15 = 0.067 > \alpha$. That design cannot reject at the nominal level at any effect size.
 
-  \vspace{0.6em}
-  Four groups of two admit $105$, whose exhaustive reference reaches $0.0095$.
+  \vspace{0.5em}
+  \emph{Four} groups of two admit $105$ assignments, whose exhaustive reference reaches $0.0095$.
+  The general rule is stated at the rule level, not by extrapolating $1/15$: designs below the
+  registered resolution floor return \textsc{indeterminate}.
 
   \vspace{0.8em}
   So \textsc{indeterminate} is a statement about the \emph{design's resolution}, not about the
@@ -333,9 +400,10 @@ Satellite Communication Experiments\\[0.9em]
   \begin{itemize}\setlength\itemsep{0.4em}
     \item \texttt{make gate} regenerates the fault matrix and L4.7's operating characteristic,
           and \emph{refuses to build} if a headline number disagrees with the artifact at the
-          sentence claiming it. 64 numbers are bound this way --- including every number on
-          these slides.
-    \item The two external studies are hash-verified rather than regenerated: their inputs do
+          sentence claiming it. The manuscript contains \Nclaimsites{} artifact-bound claim
+          sites; every numerical value shown in this deck is generated from that same summary
+          artifact.
+    \item The two external studies are hash-matched rather than regenerated: their inputs do
           not ship.
     \item \texttt{make external-consequence-verify} checks the committed third-party results
           against the frozen commit, the frozen detector hash and the recorded data hashes ---

@@ -38,6 +38,42 @@ def main() -> int:
         print(f"talk/check: FAIL -- slides use undefined artifact macros {missing}")
         return 1
 
+    # Checking that every macro USED is defined does not stop someone hard-coding a number over
+    # a macro: the macro simply disappears and nothing complains. These must stay on the slides.
+    REQUIRED = {
+        "Nrate", "Nwlo", "Nwhi", "Nalpha", "Ncleanpaths", "Ncleanhalts", "Nseeds",
+        "Npowerlo", "Nobjects", "Nelsets", "Npasses", "Naticc", "Natp", "Natlo",
+        "Naticcelset", "Natused", "Natgroups", "Natdropped", "Natelsetunits", "Natelsetgroups",
+        "Nextpass", "Nexthalt", "Nextindet", "Nextna", "Nextnobs", "Nextrules",
+        "Nconsseeds", "Nconschanged", "Nconsminp", "Nrules", "Nclaimsites",
+        "Nconsoverlap", "Nconsoverlapcorr", "Nrealiccab",
+    }
+    # Deliberately NOT required, each for a recorded reason -- so a future reader does not
+    # reinstate them as literals thinking the guard simply missed them:
+    #   Nfaults, Nred  -- the curated fault matrix is never introduced on a main slide, so its
+    #                     17/17 and 16/19 were a limitation on a claim the audience never heard.
+    #   Npowerhi       -- "power -> 1.0" is now stated as the count it is, 40/40 via Nseeds.
+    dropped = sorted(REQUIRED - used)
+    if dropped:
+        print(f"talk/check: FAIL -- artifact macro(s) no longer used on any slide: {dropped}\n"
+              "   a literal was probably hard-coded over one of them")
+        return 1
+
+    # And the converse: the denominators most likely to be mistyped must never appear as bare
+    # literals in the deck body. They come from the artifact or not at all.
+    body = re.sub(r"(?m)^\s*%.*$", "", (HERE / "orbit_evidence_talk.tex").read_text())
+    body = re.sub(r"\\newcommand\{[^}]*\}(\[\d\])?\{[^}]*\}", "", body)
+    art = json.loads(SUMMARY.read_text())
+    guarded = {str(art["real_l47_alongtrack"]["n_passes_used"]),
+               str(art["real_l47_alongtrack"]["n_elsets"]),
+               str(art["real_l47_application"]["n_passes"]),
+               str(art["real_l47_application"]["n_element_sets"]),
+               str(art["rule_count"])}
+    bare = sorted(n for n in guarded if re.search(rf"(?<![\w.\\{{]){n}(?![\w.}}])", body))
+    if bare:
+        print(f"talk/check: FAIL -- bare literal(s) {bare} in the deck; use the bound macro")
+        return 1
+
     a = json.loads(SUMMARY.read_text())
     d1 = a["real_l47_alongtrack"]["D1_pass_in_elementset"]
     must = {
@@ -55,8 +91,81 @@ def main() -> int:
         print(f"talk/check: FAIL -- SPEAKER_OUTLINE.md has drifted from the artifact: {absent}")
         return 1
 
+    # ---- semantic lint over BOTH claim surfaces -------------------------------------------
+    # Each pattern is a defect this campaign made or nearly made. Wording, not style.
+    #
+    # The outline's "Never say" block quotes the prohibited claims verbatim, which is the point
+    # of having it. Excise that declared block before linting -- and require it to exist, so the
+    # exemption cannot be obtained by simply deleting the list.
+    if "## Never say" not in out:
+        print("talk/check: FAIL -- SPEAKER_OUTLINE.md has no '## Never say' block")
+        return 1
+    lint_out = re.sub(r"## Never say.*?(?=\n## )", "", out, flags=re.S)
+
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("gen_ledger", HERE / "gen_ledger.py")
+    gl = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gl)
+    # A prohibited phrase is legitimate when the surrounding clause NEGATES or PROHIBITS it --
+    # the outline's do-not-say list and the deck's "no claim that ..." sentences are the whole
+    # point. Same distinction the manuscript's banlist draws between a claim and a withdrawal.
+    # BEFORE: any negating or prohibiting clause. "without" is deliberately absent -- "falsifies
+    # incompleteness without enumerating..." must still fail, and an earlier version exempted it.
+    NEG = re.compile(r"\b(never|no claim|not\b|prohibit\w*|do not|must not|rather than|"
+                     r"is not|are not|nor\b|refut\w*|textbf\{not\})", re.I)
+    # AFTER: only an IMMEDIATE strong negator, for the Q&A shape "...truth error? | No. It is..."
+    NEG_AFTER = re.compile(r"^[\s?|.,:;—-]{0,6}(no|not|never)\b", re.I)
+    surfaces = {"deck": src, "outline": lint_out}
+    hits, permitted = [], 0
+    for name, text in surfaces.items():
+        flat = " ".join(text.split())
+        for rule in gl.SEMANTIC_LINT:
+            pat, why = rule[0], rule[1]
+            for m in re.finditer(pat, flat, re.I):
+                # Look both ways: a Q&A row negates AFTER the phrase ("...measure orbit truth
+                # error? | No. It is an update increment..."), a slide negates before it.
+                before = flat[max(0, m.start() - 90):m.start()]
+                after = flat[m.end():m.end() + 60]
+                if NEG.search(before) or NEG_AFTER.search(after):
+                    permitted += 1
+                    continue
+                ctx = flat[max(0, m.start() - 60):m.end() + 30]
+                hits.append(f"{name}: {m.group(0)!r} -- {why}\n        ...{ctx}...")
+    if hits:
+        print("talk/check: FAIL -- semantic lint")
+        for h in hits:
+            print("   " + h)
+        return 1
+
+    # ---- required qualifiers: dropping one is how a talk quietly widens a claim ------------
+    required = {
+        "not truth error": "the along-track quantity must be scoped",
+        "not estimable": "the downstream endpoint's disposition",
+        "rule verdict": "verdicts must be distinguished from dispositions",
+        "represented-fault": "curated coverage must be scoped",
+    }
+    # strip LaTeX markup before looking for a phrase: "\\textbf{not} truth error" renders as
+    # the qualifier but does not contain it as a literal substring.
+    plain = re.sub(r"\\\\[a-zA-Z]+\\*?(\\{[^{}]*\\})?", " ", src + " " + out)
+    plain = " ".join(plain.replace("{", " ").replace("}", " ").lower().split())
+    gone = sorted(k for k in required if k not in plain)
+    if gone:
+        print(f"talk/check: FAIL -- required qualifier(s) missing: {gone}")
+        return 1
+
+    # ---- main-frame count is derived, never hard-coded -------------------------------------
+    # Anchor to line start: a preamble COMMENT mentioning \appendix split the file at the
+    # comment and reported zero main frames.
+    deck = (HERE / "orbit_evidence_talk.tex").read_text()
+    main_src = re.split(r"^\\appendix\s*$", deck, flags=re.M)[0]
+    n_main = len(re.findall(r"^\\begin\{frame\}", main_src, flags=re.M))
+    if n_main != 13:
+        print(f"talk/check: FAIL -- {n_main} main frames, deck is specified at 13")
+        return 1
+
     print(f"talk/check: PASS -- {len(used)} artifact-bound values in the deck, "
-          f"{len(must)} verified in the outline, none stale")
+          f"{len(must)} verified in the outline, {n_main} main frames, "
+          f"{len(gl.SEMANTIC_LINT)} lint rules clean ({permitted} negated mention(s))")
     return 0
 
 

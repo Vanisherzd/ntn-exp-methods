@@ -27,7 +27,7 @@
 \node[box] (b1) at ( 57.5,20) {source\\at $t_d$};
 \node[box] (b2) at ( 83.5,20) {source\\later};
 \draw[rel] (b1) -- (b2);
-\node[note] at ( 70.5,7) {a feature past-dated here was\\not yet retrievable there};
+\node[note] at ( 70.5,7) {present in the later source,\\past-dated, yet unavailable\\at the decision time};
 
 \draw[black!15,line width=0.5pt] (95,32) -- (95,4);
 
@@ -35,5 +35,5 @@
 \node[box] (c1) at (106.5,20) {declared\\unit};
 \node[box] (c2) at (132.5,20) {coarser\\level};
 \draw[rel] (c1) -- (c2);
-\node[note] at (119.5,7) {dependence at the coarser level\\$\Rightarrow$ the unit is too fine};
+\node[note] at (119.5,7) {dependence at the coarser level\\$\Rightarrow$ the \emph{declared} unit is too fine};
 \end{tikzpicture}

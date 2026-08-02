@@ -30,20 +30,25 @@
   {nominal $\alpha=\Nalpha$};
 
 % ---- the power curve: the only heavy stroke
-\draw[line width=1.3pt,black!88]
+% H4: these are seven EVALUATED design points, not a fitted power function. The connecting
+% stroke is lighter than the markers so it reads as a guide, and the caption says so. Nothing
+% between two markers has been estimated -- do not let the line imply interpolation.
+\draw[line width=0.9pt,black!55]
   (0.002,0.05) -- (0.010,0.05) -- (0.038,0.05) -- (0.083,0.05)
   -- (0.200,0.25) -- (0.500,0.80) -- (0.800,1.00);
 \foreach \x/\y in {0.002/0.05, 0.010/0.05, 0.038/0.05, 0.083/0.05,
                    0.200/0.25, 0.500/0.80, 0.800/1.00}
-  {\fill[black!88] (\x,\y) circle (0.9pt);}
+  {\draw[fill=white,draw=black!88,line width=1.0pt] (\x,\y) circle (1.5pt);}
+\node[font=\scriptsize,text=black!55,anchor=south west] at (0.30,1.02)
+  {markers: \Nseeds{} seeds per evaluated point; line guides the eye};
 
 % ---- the three readings, placed off the curve
 \node[font=\scriptsize,text=red!65!black,anchor=west,align=left] at (0.085,0.86)
-  {\textbf{clean / null} $\Nrate$\\Wilson $[\Nwlo,\Nwhi]$\\at nominal $\alpha$, not better};
+  {\textbf{clean / null} $\Nrate$ (\Ncleanhalts/\Ncleanpaths)\\Wilson $[\Nwlo,\Nwhi]$\\at nominal $\alpha$, not better};
 \draw[red!65!black,line width=0.4pt] (0.080,0.80) -- (0.030,0.10);
 
 \node[font=\scriptsize,text=black!70,anchor=west,align=left] at (0.545,0.60)
-  {power $\to \Npowerhi$\\at $\rho=0.8$};
+  {$\Nseeds/\Nseeds$ halts\\at $\rho=0.8$};
 % one line, tucked just under its own marker: two lines placed up-left read as a y-axis label
 \node[font=\scriptsize,text=black!70,anchor=west] at (0.222,0.155)
   {only $\Npowerlo$ at $\rho=0.2$};
