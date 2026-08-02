@@ -21,6 +21,24 @@ Every number on a slide is generated from `evaluation/results/final_summary.json
 
 **Budget 9:15** (sum of the column; slides 4--6 hold the most conceptual time). These are budgets checked by summation, not stopwatch rehearsals. Running long? Cut slide 2 to one sentence and slide 11 to its three verbs. **Never cut** slide 8's limits, slide 12, or slide 13.
 
+## Delivery emphasis — answering the scope objection live
+
+A reject advocate who hears only HALT, refusal, not-estimable and no-improvement will summarise
+the talk as *a discipline for refusing claims, demonstrated once, at a resolution that could not
+detect its own effect*. That reading is available from correct sentences, so it is a delivery
+problem, not a content one. Lead with what was **completed**:
+
+1. **Assumptions that lived only in prose are now executable and refutable.** A reader could not
+   previously tell an argued assumption from a tested one.
+2. **The statistical-unit problem is real outside a synthetic fixture** — it appears in real
+   catalogue data, on an observable nobody constructed for the purpose.
+3. **Correcting a violation in a frozen third-party artifact changed model selection in 5 of 5
+   paired seeds**, reproducible bit for bit.
+
+*Then* the boundary: downstream performance is not estimable at this resolution. Say it as the
+method working — the gate refusing a claim the design cannot support — not as a missing result.
+The abstention is the contribution behaving as specified, and slide 5 has already promised it.
+
 ## Required spoken qualifiers
 
 Each of these must be said aloud at least once; the first four are also on the slides.
@@ -64,4 +82,21 @@ Each of these must be said aloud at least once; the first four are also on the s
 ```
 make -C talk          # regenerates numbers from the artifact, then builds the PDF
 make -C talk check    # numbers, semantic lint, required qualifiers, 13-frame count
+make -C talk rehearse # time one live run; records to talk/rehearsal_log.json
+make -C talk rehearsal-gate   # judge the recorded runs
 ```
+
+## Live timing — not yet measured
+
+The per-slide figures above are **budgets checked by summation, 9:15 total**. They are not
+rehearsal times, and no rehearsal has been run. Three uninterrupted timed runs are still
+required before the talk can be called presentation-ready:
+
+1. speak it straight through, correcting nothing;
+2. compress against what run 1 showed;
+3. run it as the real thing, including slide transitions.
+
+`make -C talk rehearsal-gate` judges the recorded runs against the acceptance criteria: three
+runs, none over 10:00, median 8:30-9:30, slides 4-6 not hurried, and none of slides 8, 10, 12
+or 13 taken below 55% of budget -- the real-data limits, the intervention, the limitations and
+the takeaway are the four that must never be compressed away.

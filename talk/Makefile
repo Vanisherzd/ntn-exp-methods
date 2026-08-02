@@ -4,7 +4,7 @@ PY  ?= python3
 TEX := orbit_evidence_talk.tex
 PDF := orbit_evidence_talk.pdf
 
-.PHONY: all clean check
+.PHONY: all clean check rehearse rehearsal-gate
 
 all: $(PDF)
 
@@ -19,6 +19,13 @@ numbers.tex: gen_numbers.py ../evaluation/results/final_summary.json
 # Refuse a deck whose numbers have drifted from the artifact.
 check: numbers.tex
 	@$(PY) check_numbers.py
+
+# Live timing. The outline's figures are budgets; only these produce rehearsal times.
+rehearse:
+	@$(PY) rehearse.py
+
+rehearsal-gate:
+	@$(PY) rehearse.py --report
 
 clean:
 	@latexmk -C >/dev/null 2>&1 || true
