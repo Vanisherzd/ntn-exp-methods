@@ -12,13 +12,13 @@
   x=1mm, y=1mm, font=\scriptsize,
   >={Latex[length=1.5mm]},
   stage/.style={draw=black!60,line width=0.6pt,fill=blue!5,align=center,
-                text width=18mm,minimum height=8mm,inner sep=0.8mm},
+                text width=16mm,minimum height=8mm,inner sep=0.8mm},
   layer/.style={draw=black!50,line width=0.6pt,fill=black!4,align=left,
                 text width=22mm,minimum height=12mm,inner sep=1mm},
   rel/.style={draw=black!60,line width=0.8pt,fill=blue!8,align=center,
               text width=44mm,minimum height=11mm,inner sep=1mm},
   dec/.style={draw=black!65,line width=0.6pt,fill=white,align=center,
-              text width=27mm,minimum height=5.4mm,inner sep=0.6mm},
+              text width=25mm,minimum height=5.4mm,inner sep=0.6mm},
   grp/.style={draw=black!30,line width=0.5pt,dash pattern=on 1.6pt off 1.2pt,inner sep=1.8mm},
   ok/.style={->,line width=0.7pt,black!70},
   obs/.style={->,line width=0.5pt,black!45},
@@ -29,9 +29,9 @@
 \node[stage] (s1) at ( 11,46) {published\\state};
 \node[stage] (s2) at ( 35,46) {predicted\\visibility};
 \node[stage] (s3) at ( 59,46) {frozen\\registry};
-\node[stage] (s4) at ( 83,46) {model,\\selection, gate};
+\node[stage] (s4) at ( 83,46) {model,\\selection};
 \node[stage] (s5) at (107,46) {deployment};
-\node[stage] (s6) at (131,46) {label\\closure};
+\node[stage] (s6) at (128,46) {label\\closure};
 \foreach \a/\b in {s1/s2, s2/s3, s3/s4, s4/s5, s5/s6} \draw[ok] (\a) -- (\b);
 \draw[black!55,line width=0.6pt] (47,41.5) -- (47,50.5);
 \node[font=\scriptsize,text=black!60,anchor=north] at (47,41.2) {decision};
@@ -66,12 +66,12 @@
 
 % ---------------------------------------------------------------- band 4: the verdict
 \onslide<4->{
-\node[dec] (d1) at (123,12.6) {PASS};
-\node[dec] (d2) at (123, 7.0) {HALT};
-\node[dec] (d3) at (123, 1.4) {INDETERMINATE};
+\node[dec] (d1) at (125,12.6) {PASS};
+\node[dec] (d2) at (125, 7.0) {HALT};
+\node[dec] (d3) at (125, 1.4) {INDETERMINATE};
 % Glossed at first appearance: PASS otherwise went seven slides unqualified, and slide 9 was
 % carrying the taxonomy lesson inside an empirical slide.
-\node[font=\scriptsize,text=black!60,anchor=north east,align=right] at (139,-2.4)
+\node[font=\scriptsize,text=black!60,anchor=north east,align=right] at (138,-2.4)
   {PASS = not rejected \quad HALT = obligation violated\\INDETERMINATE = the design cannot decide};
 \node[grp,fit=(d1)(d2)(d3)] (decbox) {};
 \draw[ok] (r2.east) -- (decbox.west);
