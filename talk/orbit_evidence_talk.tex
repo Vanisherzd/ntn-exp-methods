@@ -36,8 +36,17 @@
 \setbeamercolor{alerted text}{fg=oewarn}
 
 % One message per slide: this is where it goes.
+% \vfill first: without it the content clumps under the title and every kicker floated above a
+% band of dead space. Pushing the kicker to the bottom puts the whitespace BETWEEN content and
+% conclusion, where it reads as separation. On a full slide the \vfill collapses harmlessly.
+% \msgflush: same kicker with no \vfill, for slides whose content already fills the frame.
+\newcommand{\msgflush}[1]{%
+  \vspace{0.4em}%
+  \begin{center}\begin{minipage}{0.92\textwidth}\centering
+  \small\itshape\color{black!70}#1
+  \end{minipage}\end{center}}
 \newcommand{\msg}[1]{%
-  \vspace{0.6em}%
+  \vfill\vspace{0.2em}%
   \begin{center}\begin{minipage}{0.92\textwidth}\centering
   \small\itshape\color{black!70}#1
   \end{minipage}\end{center}}
@@ -67,12 +76,12 @@ Satellite Communication Experiments\\[0.9em]
 \begin{frame}{Ordering alone is not deployment validity}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
-      Learning components now sit inside satellite communication software:
+      Learning components now sit inside satellite communication software ---
       correcting a propagated orbit, adapting a link parameter, gating a learned branch.
 
-      \vspace{0.8em}
-      Because these systems are temporal, we evaluate with a chronological split.
-      That is necessary, and the conditions under which it is valid are well established.
+      \vspace{0.9em}
+      These systems are temporal, so we evaluate with a chronological split.
+      That is \emph{necessary}, and well established.
     \end{column}
     \begin{column}{0.44\textwidth}
       \begin{block}{The claim of this paper}
@@ -83,7 +92,8 @@ Satellite Communication Experiments\\[0.9em]
       from the data in hand.
     \end{column}
   \end{columns}
-  \msg{Train on the past, test on the future --- and still be unable to say the experiment was valid.}
+  \msg{Train on the past, test on the future --- and still not be able to say the
+       experiment was valid.}
 \end{frame}
 
 % ============================================================ 3. the actual problem
@@ -108,10 +118,10 @@ Satellite Communication Experiments\\[0.9em]
   \vspace{-0.4em}
   \begin{center}\input{figures/fig_arch.tex}\end{center}
   \vspace{-0.2em}
-  \only<1>{\msg{The experiment acts at $t_d$ from state it already holds.}}
-  \only<2>{\msg{\Nrules{} executable rules in four layers observe it --- most inspect a single execution.}}
-  \only<3>{\msg{Two cannot: the relational checks compare executions, or aggregation levels.}}
-  \only<4>{\msg{A design that cannot support a decision returns \textsc{indeterminate} --- never \textsc{pass}.}}
+  \only<1>{\msgflush{The experiment acts at $t_d$ from state it already holds.}}
+  \only<2>{\msgflush{\Nrules{} executable rules in four layers observe it --- most inspect a single execution.}}
+  \only<3>{\msgflush{Two cannot: the relational checks compare executions, or aggregation levels.}}
+  \only<4>{\msgflush{A design that cannot support a decision returns \textsc{indeterminate} --- never \textsc{pass}.}}
 \end{frame}
 
 % ============================================================ 6. two key ideas
@@ -130,7 +140,7 @@ Satellite Communication Experiments\\[0.9em]
     \begin{column}{0.48\textwidth}
       \begin{block}{L4.7 --- statistical-unit adequacy}
         Does dependence survive \alert{one declared level coarser}?
-        Null: unit values exchangeable across the declared groups.
+        Null: exchangeability across those groups.
       \end{block}
       \vspace{0.3em}
       \small
@@ -171,7 +181,7 @@ Satellite Communication Experiments\\[0.9em]
         \node[c] at (18,17) {\Nelsets{} element-set records};
         \node[c] at (18,10) {\Nobjects{} objects};
         \draw[->,line width=0.7pt,black!60] (18,6.5) -- (18,2.5);
-        \node[font=\tiny,text=black!55,anchor=west,align=left] at (22,4.5)
+        \node[font=\scriptsize,text=black!55,anchor=west,align=left] at (22,4.5)
           {$-\Natdropped$ passes lack a\\successor element set};
         \node[h] at (0,0) {primary in-track analysis};
         \node[a] at (18,-6) {\Natused{} passes};
@@ -185,7 +195,7 @@ Satellite Communication Experiments\\[0.9em]
         \textbf{grouping} & \textbf{verdict}\\
         \midrule
         pass $\to$ element set & $\hat{\rho}=\Naticc$\\
-        \Natused{} in \Natgroups{} & $p=\Natp$ at $B=400$\\
+        \Natused{} in \Natgroups{} & $p=\Natp$\\
                                    & lower bound $\Natlo$\\
                                    & \textbf{HALT}\\
         \addlinespace
@@ -195,10 +205,11 @@ Satellite Communication Experiments\\[0.9em]
       \end{tabular}
 
       \vspace{0.4em}
-      {\scriptsize Observable: the \emph{in-track update increment} between consecutive fits
-      sharing an observation arc --- \textbf{not truth error}. Exchangeability is rejected at
-      \emph{every} level tested here; the rule adjudicates the level it is \emph{given}, never
-      which level is right. On elevation the same rule returned $\hat{\rho}=\Nrealiccab$.}
+      {\scriptsize Both $p$ at $B=400$, the smallest the reference admits. Observable: the
+      \emph{in-track update increment} between consecutive fits sharing an observation arc
+      --- \textbf{not truth error}. Exchangeability is rejected at \emph{every} level tested
+      here; the rule adjudicates the level it is \emph{given}. On elevation the same rule
+      returned $\hat{\rho}=\Nrealiccab$.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -221,11 +232,11 @@ Satellite Communication Experiments\\[0.9em]
       \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
         c/.style={draw=black!45,line width=0.6pt,minimum width=9mm,minimum height=8mm,
                   align=center,inner sep=0.4mm}]
-        \node[c,fill=black!4]   at ( 0,0) {\Nextpass\\\tiny PASS};
-        \node[c,fill=oewarn!18] at (11,0) {\Nexthalt\\\tiny HALT};
-        \node[c,fill=black!8]   at (22,0) {\Nextindet\\\tiny INDET};
-        \node[c,fill=white]     at (35,0) {\Nextna\\\tiny N/A};
-        \node[c,fill=white]     at (46,0) {\Nextnobs\\\tiny N/OBS};
+        \node[c,fill=black!4]   at ( 0,0) {\Nextpass\\\scriptsize PASS};
+        \node[c,fill=oewarn!18] at (11,0) {\Nexthalt\\\scriptsize HALT};
+        \node[c,fill=black!8]   at (22,0) {\Nextindet\\\scriptsize INDET};
+        \node[c,fill=white]     at (35,0) {\Nextna\\\scriptsize N/A};
+        \node[c,fill=white]     at (46,0) {\Nextnobs\\\scriptsize N/OBS};
         \draw[black!40,line width=0.5pt,dash pattern=on 1.5pt off 1.2pt] (28.5,-7) -- (28.5,7);
         \node[font=\scriptsize\bfseries,text=black!70,anchor=north,align=center] at (11,-7.5)
           {rule verdicts};

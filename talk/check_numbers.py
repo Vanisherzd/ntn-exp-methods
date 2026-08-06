@@ -153,6 +153,26 @@ def main() -> int:
         print(f"talk/check: FAIL -- required qualifier(s) missing: {gone}")
         return 1
 
+    # ---- projected legibility ---------------------------------------------------------------
+    # A slide is read from the back of a room, not at arm's length, so the paper's 6.4 pt print
+    # floor is far too low here. \tiny at an 11 pt base renders 6 pt: the deck carried 38 such
+    # spans, including the verdict gloss and the pipeline markers, before this check existed.
+    # Floor is 8 pt (\scriptsize); math sub/superscripts are exempt by exact size, as in the
+    # manuscript's own glyph gate.
+    SLIDE_FLOOR, MATH_CLASS = 8.0, {7.0}
+    pdf = HERE / "orbit_evidence_talk.pdf"
+    if pdf.exists():
+        sys.path.insert(0, str(HERE.parent / "paper" / "scripts"))
+        import check_glyphs as G
+        tiny = [(p, round(sz, 1), t) for p, sz, t in G.spans(str(pdf))
+                if sz < SLIDE_FLOOR - 0.05 and round(sz, 1) not in MATH_CLASS]
+        if tiny:
+            print(f"talk/check: FAIL -- {len(tiny)} span(s) below the {SLIDE_FLOOR} pt slide "
+                  "floor; \\tiny is never legible projected")
+            for p, sz, t in tiny[:6]:
+                print(f"    {sz} pt  p{p}  {t[:40]!r}")
+            return 1
+
     # ---- main-frame count is derived, never hard-coded -------------------------------------
     # Anchor to line start: a preamble COMMENT mentioning \appendix split the file at the
     # comment and reported zero main frames.
