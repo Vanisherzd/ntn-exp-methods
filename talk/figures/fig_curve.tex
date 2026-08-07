@@ -21,8 +21,8 @@
 \foreach \y/\lab in {0/{0}, 0.5/{0.5}, 1/{1.0}}
   {\draw[black!70] (0,\y) -- (-0.005,\y); \node[left,font=\scriptsize] at (-0.007,\y) {\lab};}
 \node[below,font=\scriptsize,text=black!75] at (0.50,-0.15)
-  {intraclass correlation at the declared coarser level};
-\node[rotate=90,font=\scriptsize,text=black!75] at (-0.062,0.6) {P(HALT)};
+  {how strongly rows from the same group resemble each other (ICC)};
+\node[rotate=90,font=\scriptsize,text=black!75] at (-0.062,0.6) {P(HALT) --- gate refuses};
 
 % ---- nominal alpha
 \draw[dashed,black!45,line width=0.5pt] (0,0.05) -- (0.90,0.05);
@@ -55,5 +55,5 @@
 
 % ---- low-power regime: a bracket under the tick row, never a shaded ICC band
 \draw[black!45,line width=0.5pt] (0.002,-0.148) -- (0.002,-0.128) -- (0.083,-0.128) -- (0.083,-0.148);
-\node[font=\scriptsize,text=black!55,anchor=north] at (0.043,-0.151) {low-power regime};
+\node[font=\scriptsize,text=black!55,anchor=north east] at (0.115,-0.151) {weak dependence: usually missed};
 \end{tikzpicture}

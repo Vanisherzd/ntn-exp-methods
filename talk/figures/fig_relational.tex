@@ -19,7 +19,7 @@
 \node[box] (a1) at (  8.5,20) {run A};
 \node[box] (a2) at ( 34.5,20) {run B};
 \draw[rel] (a1) -- (a2);
-\node[note] at ( 21.5,11) {same manifest, different output\\$\Rightarrow$ the manifest is incomplete};
+\node[note] at ( 21.5,11) {same recorded inputs,\\different result $\Rightarrow$ something\\unrecorded changed it};
 
 \draw[black!15,line width=0.5pt] (44.5,32) -- (44.5,4);
 
@@ -35,5 +35,5 @@
 \node[box] (c1) at (100.5,20) {declared\\unit};
 \node[box] (c2) at (126.5,20) {coarser\\level};
 \draw[rel] (c1) -- (c2);
-\node[note] at (113.5,11) {dependence at the coarser level\\$\Rightarrow$ the \emph{declared} unit is too fine};
+\node[note] at (113.5,11) {rows sharing a parent still\\resemble each other $\Rightarrow$ they are\\not independent samples};
 \end{tikzpicture}

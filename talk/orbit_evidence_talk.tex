@@ -100,7 +100,7 @@ Satellite Communication Experiments\\[0.9em]
 \begin{frame}{Four obligations a split cannot establish}
   \vspace{-0.3em}
   \begin{center}\input{figures/fig_gaps.tex}\end{center}
-  \msg{Each of the four has a counterexample that is not in the table the split examines.}
+  \msg{To check any of the four you have to look at something that is \emph{not} in this table.}
 \end{frame}
 
 % ============================================================ 4. core insight
@@ -119,7 +119,7 @@ Satellite Communication Experiments\\[0.9em]
   \begin{center}\input{figures/fig_arch.tex}\end{center}
   \vspace{-0.2em}
   \only<1>{\msgflush{The experiment acts at $t_d$ from state it already holds.}}
-  \only<2>{\msgflush{\Nrules{} executable rules in four layers observe it --- most inspect a single execution.}}
+  \only<2>{\msgflush{A \texttt{numpy}-only checker, run like a test suite: \Nrules{} rules in four layers.}}
   \only<3>{\msgflush{Two cannot: the relational checks compare executions, or aggregation levels.}}
   \only<4>{\msgflush{A design that cannot support a decision returns \textsc{indeterminate} --- never \textsc{pass}.}}
 \end{frame}
@@ -129,8 +129,8 @@ Satellite Communication Experiments\\[0.9em]
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
       \begin{block}{L4.6 --- differential provenance}
-        Two runs, identical manifest hash, \alert{different output}
-        $\Rightarrow$ the manifest is incomplete.
+        Two runs, same \emph{manifest} --- the record of everything a run declared it
+        depended on --- but \alert{different output} $\Rightarrow$ the record is incomplete.
       \end{block}
       \vspace{0.3em}
       \small
@@ -140,12 +140,14 @@ Satellite Communication Experiments\\[0.9em]
     \begin{column}{0.48\textwidth}
       \begin{block}{L4.7 --- statistical-unit adequacy}
         Does dependence survive \alert{one declared level coarser}?
-        Null: exchangeability across those groups.
+        Null: shuffling the group labels changes nothing.
       \end{block}
       \vspace{0.3em}
       \small
-      And it \emph{abstains}: designs below the registered resolution floor return
-      \textsc{indeterminate}. That floor is an \emph{attainability} property, not a power one.
+      And it \emph{abstains}. With too few groups, the smallest $p$ the test can
+      \emph{possibly} produce already exceeds $\alpha$ --- that design could not have rejected at
+      any effect size. Not weak evidence: no evidence either way. It returns
+      \textsc{indeterminate}.
     \end{column}
   \end{columns}
   \msg{One judgement generates both: neither obligation can be certified,
@@ -157,8 +159,9 @@ Satellite Communication Experiments\\[0.9em]
   \vspace{-0.5em}
   \begin{center}\input{figures/fig_curve.tex}\end{center}
   \vspace{-0.4em}
-  \msg{\Ncleanhalts{} halts in \Ncleanpaths{} clean evaluations. The interval, not the point,
-       is the claim --- and it contains $\alpha$.}
+  \msg{On data built with \emph{no} real dependence the gate still halts
+       \Ncleanhalts{} times in \Ncleanpaths{} --- against the \Nalpha{} false-alarm budget we
+       allow it. The interval, not the point, is the claim, and it contains that budget.}
 \end{frame}
 
 % ============================================================ 8. real satellite evidence
@@ -172,20 +175,20 @@ Satellite Communication Experiments\\[0.9em]
       \centering
       \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
         c/.style={draw=black!45,line width=0.5pt,fill=black!3,align=center,inner sep=1mm,
-                  text width=30mm,minimum height=6mm},
+                  text width=44mm,minimum height=6mm},
         a/.style={draw=black!60,line width=0.7pt,fill=blue!6,align=center,inner sep=1mm,
-                  text width=30mm,minimum height=6mm},
+                  text width=44mm,minimum height=6mm},
         h/.style={font=\scriptsize\bfseries,text=black!70,anchor=west}]
-        \node[h] at (0,30) {source cohort};
-        \node[c] at (18,24) {\Npasses{} predicted visible passes};
-        \node[c] at (18,17) {\Nelsets{} element-set records};
-        \node[c] at (18,10) {\Nobjects{} objects};
-        \draw[->,line width=0.7pt,black!60] (18,6.5) -- (18,2.5);
-        \node[font=\scriptsize,text=black!55,anchor=west,align=left] at (22,4.5)
-          {$-\Natdropped$ passes lack a\\successor element set};
-        \node[h] at (0,0) {primary in-track analysis};
-        \node[a] at (18,-6) {\Natused{} passes};
-        \node[a] at (18,-13) {in \Natgroups{} successor-paired\\element sets};
+        \node[h] at (0,27) {source cohort};
+        \node[c] at (20,21) {\Npasses{} predicted visible passes};
+        \node[c] at (20,14) {\Nelsets{} element sets (orbit solutions)};
+        \node[c] at (20, 7) {\Nobjects{} objects};
+        \draw[->,line width=0.7pt,black!60] (20,2.8) -- (20,-1.5);
+        \node[font=\scriptsize,text=black!55,anchor=north,align=center] at (20,-3.0)
+          {$-\Natdropped$ passes: no later orbit solution to compare};
+        \node[h] at (0,-11) {primary in-track analysis};
+        \node[a] at (20,-17) {\Natused{} passes};
+        \node[a] at (20,-24) {from \Natgroups{} element sets that have a later one};
       \end{tikzpicture}
     \end{column}
     \begin{column}{0.44\textwidth}
@@ -205,11 +208,10 @@ Satellite Communication Experiments\\[0.9em]
       \end{tabular}
 
       \vspace{0.4em}
-      {\scriptsize Both $p$ at $B=400$, the smallest the reference admits. Observable: the
-      \emph{in-track update increment} between consecutive fits sharing an observation arc
-      --- \textbf{not truth error}. Exchangeability is rejected at \emph{every} level tested
-      here; the rule adjudicates the level it is \emph{given}. On elevation the same rule
-      returned $\hat{\rho}=\Nrealiccab$.}
+      {\scriptsize Both $p$ at $1/400$ --- the floor of a 400-permutation test. Measured: how far
+      an orbit solution moves \emph{along its own track} when the next one replaces it ---
+      \textbf{not truth error}. On a purely \emph{geometric} quantity the same rule returned
+      $\hat{\rho}=\Nrealiccab$: the observable decides.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -291,7 +293,7 @@ Satellite Communication Experiments\\[0.9em]
       the intervention, not training noise.}
     \end{column}
     \begin{column}{0.42\textwidth}
-      \small The reported detection metric moved on three seeds, \emph{in both directions}.
+      \small The \emph{third-party model's} detection metric moved on three seeds, \emph{in both directions}.
 
       \vspace{0.5em}
       Not a null: at \Nconsseeds{} paired seeds the smallest attainable two-sided $p$ is
@@ -358,8 +360,8 @@ Satellite Communication Experiments\\[0.9em]
         \item \textbf{Represented-fault regression coverage only.} Faults and rules largely
               share an origin, so curated coverage measures \emph{reachability}, not
               fault-finding power.
-        \item \textbf{One third-party artifact, one channel.} It partially breaks the loop.
-              It does not close it.
+        \item \textbf{One outside dataset, one outside model.} One step away from marking
+              our own homework --- not zero.
         \item \textbf{PASS means not rejected}, never verified.
       \end{itemize}}
     \end{column}

@@ -9,7 +9,7 @@
   row/.style={draw=black!25,line width=0.4pt,fill=black!4,minimum height=3.6mm,
               minimum width=44mm,inner sep=0pt},
   gap/.style={draw=orange!70!black,line width=0.7pt,fill=orange!8,align=left,
-              text width=34mm,inner sep=1.6mm,rounded corners=0.4mm,font=\scriptsize},
+              text width=34mm,minimum height=13mm,inner sep=1.6mm,rounded corners=0.4mm,font=\scriptsize},
   lead/.style={->,line width=0.6pt,orange!70!black}]
 
 % ---- the one realised dataset
@@ -23,10 +23,10 @@
   at (22,-5.5) {a chronological split is a\\predicate over \emph{these rows}};
 
 % ---- the four obligations the predicate cannot reach
-\node[gap] (g1) at (78, 20) {\textbf{Availability}\\past-dated but unpublished};
-\node[gap] (g2) at (78, 8) {\textbf{Row membership}\\which rows exist at all};
-\node[gap] (g3) at (120, 20) {\textbf{Hidden state}\\what is not a column};
-\node[gap] (g4) at (120, 8) {\textbf{Statistical unit}\\is the unit exchangeable};
+\node[gap] (g1) at (78, 22) {\textbf{Availability}\\it existed --- but could\\anyone fetch it yet?};
+\node[gap] (g2) at (78, 6) {\textbf{Row membership}\\which rows exist at all,\\and who decided};
+\node[gap] (g3) at (120, 22) {\textbf{Hidden state}\\information that is not\\a column};
+\node[gap] (g4) at (120, 6) {\textbf{Statistical unit}\\are two rows really\\independent?};
 
 \draw[lead] (46,14) -- (56,14);
 \node[font=\scriptsize,text=orange!60!black,anchor=south] at (51,14.6) {outside};
