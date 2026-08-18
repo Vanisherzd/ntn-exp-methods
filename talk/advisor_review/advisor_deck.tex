@@ -283,13 +283,17 @@
 % 8 ---------------------------------------------------------------- method as a procedure
 \begin{frame}{The method is a procedure, not a taxonomy}
   \small
-  \begin{enumerate}\itemsep0.55em
-    \item \textbf{Classify} the validity obligation: is it row-local, or relational?
-    \item \textbf{Choose} the comparison that makes a relational obligation falsifiable ---
-          another execution, another source state, or one declared level coarser.
-    \item \textbf{Encode} the necessary invariant and adjudicate
-          \textbf{PASS} / \textbf{HALT} / \textbf{INDETERMINATE}.
-    \item \textbf{Bind} the verdict and the manuscript claim to reproducible evidence.
+  % Step 1 was missing. The deck went straight to "classify", but none of the later steps is
+  % well-posed until the boundary is declared: "was it available?" has no answer without a decision
+  % instant, and "is the unit exchangeable?" has none without a declared hierarchy.
+  \begin{enumerate}\itemsep0.45em
+    \item \textbf{Define the claim boundary}: the decision instant, the freeze, the label-closure
+          time, and the declared unit hierarchy.
+    \item \textbf{Classify} the obligation: row-local, or relational?
+    \item \textbf{Construct} the relational counterexample --- another execution, another source
+          state, or one declared level coarser.
+    \item \textbf{Adjudicate and bind}: \textbf{PASS} / \textbf{HALT} /
+          \textbf{INDETERMINATE}, tied to reproducible evidence.
   \end{enumerate}
   \msg{An advisor should be able to reproduce the method from this slide alone.}
 \end{frame}
