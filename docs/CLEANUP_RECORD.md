@@ -138,6 +138,7 @@ references to now-removed paths. They are declared here rather than edited:
 |---|---|
 | `archive/KNOWN_INVALID_RESULTS.md` | `archive/real_tle_causality_audit/audits/E4_walk_forward_r1500.json`, `S2_analysis_r1500.json`, the phase-2 screening sweep, `docs/FAILURE_TAXONOMY.md`, `docs/FUTURE_MEASUREMENT_PROTOCOL.md` |
 | `submission_finalization/CLAIM_LEDGER.md` | `docs/FAILURE_TAXONOMY.md` §1–2 and §12 |
+| `submission_finalization/INVALID_RESULT_BANLIST.md` | rule **B7** bans "any number traceable to `archive/retired_manuscript/`". That tree is no longer in the checkout, and the rule is deliberately left as written: it prohibits a *class of numbers* by their origin, and that prohibition does not weaken because the directory moved into history. Deleting the rule would be the only way to make it stop working. |
 
 **A fourth, added by the 2026-08-18 data archiving.**
 `evaluation/real_data/PREREGISTRATION.md` line 19 describes its input as
