@@ -206,6 +206,13 @@ def main() -> int:
         "Nelevunits": app["B_pass_in_elementset_pooled"]["n_units"],
         "Nelevgroups": app["B_pass_in_elementset_pooled"]["n_coarser_groups"],
         "Natmedian": alo["intrack_abs_km"]["median"],
+        # ---- the two clocks, for the availability teaching slide. The advisor deck previously
+        # asserted that a past-dated element set can still be unpublished without ever showing the
+        # measured gap, so the claim rested on the audience's trust rather than on the artifact.
+        # Object-level, not record-pooled: one object supplies most records, which is the same
+        # statistical-unit error the paper's own L4.7 is about.
+        "Nlagmedian": fmt(s["publication_lag"]["median_lag_h_object_level"], 2),
+        "Nlagobjects": s["publication_lag"]["n_objects"],
         # ---- the frozen third-party artifact
         "Nextrules": ext["n_rules_classified"],
         "Nextpass": ext["pass"], "Nexthalt": ext["halt"], "Nextindet": ext["indeterminate"],

@@ -44,16 +44,32 @@ table." Pause. "What if the counterexample is not a row in this table?"
 Three of our four obligations concern information that is not in the dataset at all."
 **Prohibited.** Do not imply the split is unsound.
 
-### Slide 4 — Four obligations outside one realised dataset
-**Purpose.** Give the four concrete satellite instances.
-**Say.** Walk them in order. Land the closing line: these are not four unrelated bugs; they share
-one structure.
+### Slide 4 — Past-dated does not mean available at deployment
+**Purpose.** One concrete failure BEFORE any abstraction. The advisor should see the problem with
+their own eyes and only then be asked to generalise; the four obligations used to arrive as a
+demand for agreement rather than as a generalisation of something already shown.
+**Say.** "The element set describes the orbit at twelve. The decision happens at thirteen. So
+chronologically this is past information and every ordering test passes." Pause. "But the catalogue
+does not publish that record until twenty-one hundred. No system could have held it at thirteen."
+Then: "Chronological ordering passes; deployment availability fails."
+**Likely question.** *Is the gap real or a corner case?*
+**Answer.** "Object-level median of about six and a third hours across eleven objects, with a tail
+to days. And CREATION_DATE is a lower bound on retrievability, not the retrieval instant, so the
+real gap is at least that."
+**Prohibited.** Do not call the timeline a measured result — the three clock times are illustrative;
+only the median lag comes from the artifact. Do not say the catalogue is wrong.
+
+### Slide 5 — Four obligations outside one realised dataset
+**Purpose.** Generalise the slide before into four questions a split cannot answer.
+**Say.** "That was one instance. Here is the general shape." Walk the four as questions. Land the
+closing line: these look different, but in every case the counterexample lies outside the realised
+table.
 **Likely question.** *Is the list of four complete?*
 **Answer.** "No, and we do not claim it is. These are the four we encountered and could make
 falsifiable."
 **Prohibited.** Never present the four as exhaustive.
 
-### Slide 5 — The pivot: row-local versus relational
+### Slide 6 — The pivot: row-local versus relational
 **Purpose.** The paper's foundation. Spend time here.
 **Say.** Row-local validity is decidable from one realised run. Relational validity has a
 counterexample that exists only in another execution, another source state, or another aggregation
@@ -63,7 +79,7 @@ level. "The contribution begins by changing the object of validation."
 thing you must obtain before the property can be tested at all. Every rule in L4 follows from it."
 **Prohibited.** Do not claim all validity is relational.
 
-### Slide 6 — Why the obvious fixes fail
+### Slide 7 — Why the obvious fixes fail
 **Purpose.** Make the method necessary rather than merely convenient.
 **Say.** Each failed response fails the same way: one realised run cannot supply the comparison.
 **Likely question.** *Couldn't better logging fix most of this?*
@@ -75,7 +91,7 @@ that is the asymmetry L4.6 exploits."
 
 ## ACT II — the method
 
-### Slide 7 — Where the checks attach
+### Slide 8 — Where the checks attach
 **Purpose.** One architectural pass, no rule-level detail.
 **Say.** Six pipeline stages, four obligation layers, two relational checks in L4, three verdicts.
 **Likely question.** *Why nineteen rules?*
@@ -83,21 +99,21 @@ that is the asymmetry L4.6 exploits."
 contribution and we do not claim it is complete."
 **Prohibited.** Do not defend the count as principled.
 
-### Slide 8 — The method is a procedure
+### Slide 9 — The method is a procedure
 **Purpose.** The advisor should be able to reproduce the method from this slide alone.
 **Say.** Classify, choose the comparison, encode and adjudicate, bind to evidence. Four steps.
 **Likely question.** *What generalises beyond satellites?*
 **Answer.** "The four steps. The rules are the instantiation; the procedure is the claim."
 **Prohibited.** Do not present the procedure as automated — step 2 is a modelling decision.
 
-### Slide 9 — The four-layer contract
+### Slide 10 — The four-layer contract
 **Purpose.** Show the shape of the contract without a dense paper table.
 **Say.** Four layers, marked core / support / mixed. The layers are instantiation.
 **Likely question.** *Which rules actually carry the paper?*
 **Answer.** "L4.6 and L4.7. The rest is the surrounding contract that makes them meaningful."
 **Prohibited.** Do not claim per-rule novelty.
 
-### Slide 10 — L4.6: the impossible-looking problem
+### Slide 11 — L4.6: the impossible-looking problem
 **Purpose.** Establish why enumeration cannot work, before showing the trick.
 **Say.** A manifest cannot prove it contains every behaviour-changing dependency, because the
 omitted dependency is exactly what is absent from it. Enumeration cannot certify its own coverage.
@@ -106,7 +122,7 @@ omitted dependency is exactly what is absent from it. Enumeration cannot certify
 use is behaviourally complete. Different target." (Appendix A9.)
 **Prohibited.** Do not say the manifest is complete, or that L4.6 verifies completeness.
 
-### Slide 11 — L4.6: the relational solution
+### Slide 12 — L4.6: the relational solution
 **Purpose.** The intellectual core of the first check.
 **Say.** Same manifest hash, different output, therefore something outside the manifest mattered.
 Failure is a constructive counterexample; success is not a certificate. "Do not enumerate all
@@ -120,7 +136,7 @@ complete."
 if execution is deterministic given the manifest. Without that, a HALT is a disjunction --
 incomplete manifest OR nondeterministic execution. If asked, point to the byte-identical rerun.
 
-### Slide 12 — L4.7: the modelling problem
+### Slide 13 — L4.7: the modelling problem
 **Purpose.** Show that choosing a unit is an assumption, not a fix.
 **Say.** If passes are dependent and we aggregate to element sets, why would element sets be
 exchangeable? Physical nesting is real but is not a single chain — deployment episodes cross-cut.
@@ -130,7 +146,7 @@ on our own data the element-set-to-object grouping halts too. There is no unique
 level."
 **Prohibited.** Do not say we found the correct statistical unit.
 
-### Slide 13 — L4.7: the statistical-unit gate
+### Slide 14 — L4.7: the statistical-unit gate
 **Purpose.** State the mechanism exactly, and disown the primitives.
 **Say.** ICC(1) as an effect statistic; the decision referenced to a permutation null over the
 declared grouping; finite-B corrected p. ICC is not new, permutation inference is not new. The
@@ -141,7 +157,7 @@ gate — with an operating characteristic and an abstention state — rather tha
 analysis."
 **Prohibited.** Do not claim ICC or permutation inference as our statistical contribution.
 
-### Slide 14 — Why the gate may abstain
+### Slide 15 — Why the gate may abstain
 **Purpose.** The distinction most likely to be misread.
 **Say.** With three coarser groups of two units the smallest attainable p exceeds α, so that
 design cannot reject at any effect size. The rule returns INDETERMINATE rather than PASS.
@@ -154,7 +170,7 @@ can attain regardless of ρ — an attainability floor, evaluated before any dat
 
 ## ACT III — does the method behave correctly?
 
-### Slide 15 — Controlled regression evaluation
+### Slide 16 — Controlled regression evaluation
 **Purpose.** Show the rules fire mechanically, and bound the claim immediately.
 **Say.** The chronological baseline catches the ordering faults and is blind to the rest. The
 contract catches every represented fault. Then the boundary, in the same breath: this is
@@ -164,7 +180,7 @@ represented-fault regression reachability, not unseen-fault sensitivity.
 outside what we measured."
 **Prohibited.** Never present the curated ratio as detector accuracy or as all-faults detection.
 
-### Slide 16 — Calibrating L4.7 before trusting it
+### Slide 17 — L4.7 operating characteristic at one registered synthetic geometry
 **Purpose.** Establish the gate is calibrated before any real-data verdict is shown.
 **Say.** On data built with no real dependence the gate still halts sometimes; the Wilson interval
 contains the nominal α. The interval, not the point, is the claim. Markers are evaluated design
@@ -177,7 +193,7 @@ points; the line only guides the eye.
 
 ## ACT IV — evidence outside the synthetic fixtures
 
-### Slide 17 — Real orbital data: setup
+### Slide 18 — Real orbital data: setup
 **Purpose.** Separate the cohort from the analysis denominator, out loud, before any result.
 **Say.** Name both denominators. Then define the observable precisely: the in-track component of
 the position difference between consecutive orbital fits, propagated to the same pass midpoint.
@@ -186,7 +202,7 @@ the position difference between consecutive orbital fits, propagated to the same
 cannot form one." (Appendix A4 has the arithmetic.)
 **Prohibited.** Never call the increment truth error, and never merge the two denominators.
 
-### Slide 18 — Real orbital data: result
+### Slide 19 — Real orbital data: result
 **Purpose.** The empirical centre, with its scope attached.
 **Say.** Exchangeability is rejected at both levels tested, for this observable and this declared
 hierarchy. The elevation row is a control on what the rule can SAY, not on effect size: it is a
@@ -201,7 +217,7 @@ resemble each other — which is exactly the exchangeability assumption."
 the ICC is orbit prediction error, that elevation "shows none", or that the effect is
 "observable-dependent" -- a ties readout at the truncation boundary licenses none of those.
 
-### Slide 19 — The external frozen artifact
+### Slide 20 — The external frozen artifact
 **Purpose.** Show the contract runs unmodified outside its own project.
 **Say.** Commit chosen before inspection; detector hash unchanged. Then be precise: three rule
 verdicts and two applicability dispositions. N/OBS is never scored as compliance.
@@ -211,7 +227,7 @@ nobody here wrote. It does not establish broad external generalisation, and we d
 **Prohibited.** Do not call the mirror publisher-verified; it is checksum concordance with two
 independently published sources. Do not claim hashing proves correctness.
 
-### Slide 20 — The pre-registered intervention
+### Slide 21 — The pre-registered intervention
 **Purpose.** Show a detected violation has a real decision consequence — and stop exactly there.
 **Say.** Sliding windows share almost all their samples, so a shuffle-then-split contaminates the
 early-stopping support. The correction changed only the partition. Selection changed in every
@@ -228,7 +244,7 @@ upstream published paper is invalid.
 
 ## ACT V — what is new, what is not, where this sits
 
-### Slide 21 — What is actually new
+### Slide 22 — What is actually new
 **Purpose.** Disown the primitives explicitly, then state the method.
 **Say.** Read the left column briskly — none of it is claimed. The method is the four-step
 conversion. "The contribution is the conversion of prose-level deployment assumptions into
@@ -239,7 +255,7 @@ deciding which obligations are relational, and what comparison would falsify eac
 are a consequence."
 **Prohibited.** Do not claim any listed primitive as ours.
 
-### Slide 22 — The design wisdom
+### Slide 23 — The design wisdom
 **Purpose.** Pre-empt "old method plus a parameter change". Required for advisor review.
 **Say.** For both checks the naive move is an unbounded search — enumerate every dependency, or
 pick a unit and hope. Both are replaced by a bounded falsifiable comparison. "Change the object
@@ -249,7 +265,7 @@ being tested instead of adding more checks to the same object."
 the cleaner idea but its evidence is one-sided by construction."
 **Prohibited.** Do not oversell either as a general solution.
 
-### Slide 23 — What the paper does not establish
+### Slide 24 — What the paper does not establish
 **Purpose.** Apply the paper's own discipline to itself. Read briskly; do not soften.
 **Say.** Ten boundaries, then: a validity method must apply the same evidence discipline to its own
 claims.
@@ -258,7 +274,7 @@ claims.
 paper that overclaimed would refute itself."
 **Prohibited.** Do not hedge any item into something softer than it is.
 
-### Slide 24 — Positioning and the decisions I need
+### Slide 25 — Positioning and the decisions I need
 **Purpose.** Convert the review into concrete guidance. **Never shown publicly.**
 **Say.** Target, current strengths, and the honest rejection risk: the communications contribution
 is indirect and may read as software methodology. Then ask the five questions and stop talking.
