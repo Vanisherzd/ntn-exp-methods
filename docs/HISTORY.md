@@ -34,11 +34,23 @@ the current project's raw evidence. Archiving them is a custody decision, not a 
 
 ## The repository's own name was part of the lineage
 
-Until 2026-08-18 this repository was called `PGRL-LRFHSS-D2S`, then `LEO-PGRL`. Both names
-identified the stopped line. It is now **`orbit-evidence`**. The rename changed no commit, no tag
-and no history; only the GitHub repository name and the local `origin` URL moved. Older clones
-still resolve through GitHub's redirect, but their remote should be updated:
+The repository has been renamed twice, for two different reasons.
+
+| Until | Name | Why it changed |
+|---|---|---|
+| 2026-08-18 | `PGRL-LRFHSS-D2S` | named for the stopped line |
+| 2026-08-18 | `LEO-PGRL` | still named for the stopped line |
+| 2026-08-19 | `orbit-evidence` | named for the paper, which dates the repository to one submission |
+| current | **`ntn-exp-methods`** | names the research area, not a paper or a stopped programme |
+
+`orbit-evidence` was accurate but too tightly coupled to one paper title: a repository that outlives
+a submission should not be named after it. `ntn-exp-methods` describes the subject — experimental
+methodology for non-terrestrial networks — and needs no renaming when the next paper differs.
+
+Neither rename changed a commit, a tag, or any history; only the GitHub repository name and the
+local `origin` URL moved. Older clones still resolve through GitHub's redirect, but their remote
+should be updated:
 
 ```
-git remote set-url origin https://github.com/Vanisherzd/orbit-evidence.git
+git remote set-url origin https://github.com/Vanisherzd/ntn-exp-methods.git
 ```
