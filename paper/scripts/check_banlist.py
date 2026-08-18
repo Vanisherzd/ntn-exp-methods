@@ -18,11 +18,20 @@ Run before every compile.
 """
 import json
 import re
+import sys
+import tempfile
 from pathlib import Path
 
 PAPER = Path(__file__).resolve().parent.parent
 ROOT = PAPER.parent
 SUMMARY = ROOT / "evaluation" / "results" / "final_summary.json"
+CLAIMS = PAPER / "submission" / "CLAIMS.md"
+
+# The generator itself, not a copy of its rendering logic. check_generated_claims() regenerates
+# CLAIMS.md into a temp file and diffs it, so a second implementation here would be one more
+# surface that can drift from the artifact -- the exact defect this gate exists to catch.
+sys.path.insert(0, str(ROOT / "evaluation" / "scripts"))
+import make_final_summary as MFS        # noqa: E402
 
 # B1 withdrawn headline; B2 old cell tallies; B3 old screening opening;
 # B4 EXP16 probe rates; B5 endpoint budget; B6 validated-gate claims.
@@ -344,6 +353,62 @@ def check_artifact_sites(manuscript: str) -> list[str]:
     return bad
 
 
+def _claims_block(text: str) -> str | None:
+    """The marker-delimited generated block, or None if the markers are gone."""
+    b, e = MFS.CLAIMS_BEGIN, MFS.CLAIMS_END
+    if b not in text or e not in text:
+        return None
+    return text[text.index(b):text.index(e) + len(e)]
+
+
+def check_generated_claims(s: dict) -> list[str]:
+    """CLAIMS.md is GENERATED, and nothing checked that the checked-in block still matches.
+
+    `make matrix` rewrites the table, but the gate only ever scanned CLAIMS.md for banned words.
+    So a table generated before a number moved -- committed, then never regenerated -- passed
+    every gate while contradicting the artifact in the one file that calls itself the single
+    source of truth. A stale sweep-runtime row was the concrete instance.
+
+    The invariant here is not a per-row rule but an equality: regenerate the whole block from
+    the artifact into a temporary copy, and require the checked-in block to equal it. The ONLY
+    permitted difference is at a field listed in make_final_summary.VOLATILE_CLAIM_FIELDS, each
+    with a written reason. Everything else -- a row's value, its name, its artifact field, the
+    row order, the row count, the generator's own header comment -- is semantic and must match.
+
+    Deliberately NOT a runtime-row special case. The runtime row mixes two volatile measurements
+    with two non-volatile regression guards, so exempting the row would have left 3 s -> 2 s
+    unguarded; the exemption is per FIELD, at the character offsets that field occupies.
+    """
+    if not CLAIMS.exists():
+        return [f"GENERATED CLAIMS: {CLAIMS.relative_to(ROOT)} is missing, so the generated "
+                "claims table cannot be verified"]
+    actual = _claims_block(CLAIMS.read_text())
+    if actual is None:
+        return [f"GENERATED CLAIMS: the table markers are absent from "
+                f"{CLAIMS.relative_to(ROOT)} -- deleting them would silently disable this check"]
+    with tempfile.TemporaryDirectory() as d:
+        tmp = Path(d) / "CLAIMS.md"
+        tmp.write_text(CLAIMS.read_text())
+        MFS._write_claims_table(s, tmp)
+        expected = _claims_block(tmp.read_text())
+    if expected is None:
+        return ["GENERATED CLAIMS: regeneration produced no marked block -- the generator and "
+                "this gate disagree about the file format"]
+    # The verdict is one whole-block match, so nothing in the block escapes it. The line walk
+    # below only produces a readable message once that match has already failed.
+    if re.fullmatch(MFS.claims_block_pattern(s), actual):
+        return []
+    only = "/".join(MFS.VOLATILE_CLAIM_FIELDS)
+    exp, act = expected.splitlines(), actual.splitlines()
+    for n, (e, a) in enumerate(zip(exp, act), start=1):
+        if e != a:
+            return [f"GENERATED CLAIMS: line {n} of the generated block in "
+                    f"{CLAIMS.relative_to(ROOT)} reads {a.strip()!r}, but the artifact generates "
+                    f"{e.strip()!r} -- run `make matrix` (only {only} may differ)"]
+    return [f"GENERATED CLAIMS: the checked-in block has {len(act)} line(s), the regeneration "
+            f"from the artifact has {len(exp)} -- run `make matrix` (only {only} may differ)"]
+
+
 def main() -> int:
     # The manuscript is not the only claim surface. paper/submission/*.md and the root
     # README restate every headline number, and paper/submission/README.md advertises this
@@ -446,6 +511,7 @@ def main() -> int:
            + sorted(PAPER.glob("*.bib")))
     manuscript = "\n".join(p.read_text() for p in doc if p.exists())
     bad += check_artifact_sites(manuscript)
+    bad += check_generated_claims(s)
 
     if bad:
         print("BANLIST / CLAIM GATE VIOLATION -- build refused:")

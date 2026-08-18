@@ -19,6 +19,7 @@ paper's central mechanical claim is false.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -281,3 +282,163 @@ def test_refuses_to_run_without_the_artifact(repo):
     (repo / SUMMARY).unlink()
     r = _gate(repo)
     assert r.returncode != 0 and "missing" in r.stdout.lower()
+
+
+# ------------------------------------------------- the GENERATED claims table
+#
+# CLAIMS.md is written by `make matrix`, yet the gate only ever grepped it for banned words. So a
+# block generated before a number moved -- committed, then never regenerated -- passed every gate
+# while contradicting the artifact in the one file that calls itself the single source of truth.
+# The fix is an equality: regenerate the block from the artifact into a temp copy and require the
+# checked-in block to match, with per-FIELD exemptions for the two declared volatile measurements.
+#
+# The pair that matters most is 3 s -> 2 s and 60 ms -> 30 ms. Both sit in the SAME table row as
+# those volatile measurements, so any row-level exemption -- the obvious implementation -- would
+# leave them unguarded. That is why these are not one test but the anchor of the whole section.
+
+CLAIMS = "paper/submission/CLAIMS.md"
+RUNTIME_ROW_GUARDS = "repository regression guards 3.0 s and 60.0 ms"
+
+
+def _edit_claims(repo: Path, old: str, new: str) -> None:
+    p = repo / CLAIMS
+    t = p.read_text()
+    assert old in t, f"{old!r} not in CLAIMS.md; the generator changed, update the test"
+    p.write_text(t.replace(old, new, 1))
+
+
+@pytest.mark.parametrize("old,new,what", [
+    ("guards 3.0 s", "guards 2.0 s", "the sweep guard"),
+    ("and 60.0 ms", "and 30.0 ms", "the per-condition guard"),
+])
+def test_rejects_a_weakened_regression_guard_in_the_generated_table(repo, old, new, what):
+    """3 s -> 2 s and 60 ms -> 30 ms must fail, in the row whose neighbours may legally move.
+
+    The guards are promises the repository makes, not measurements, so they are semantic. They
+    are rendered from runtime_threshold_s / runtime_threshold_ms_per_condition, which are
+    deliberately absent from VOLATILE_CLAIM_FIELDS.
+    """
+    assert RUNTIME_ROW_GUARDS in (repo / CLAIMS).read_text(), "runtime row no longer states both guards"
+    _edit_claims(repo, old, new)
+    r = _gate(repo)
+    assert r.returncode != 0, f"{what} weakened without failing:\n{r.stdout}"
+    assert "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+@pytest.mark.parametrize("field,value", [
+    ("runtime_threshold_s", 2.0),
+    ("runtime_threshold_ms_per_condition", 30.0),
+])
+def test_rejects_a_guard_moved_in_the_artifact_without_regenerating(repo, field, value):
+    """The same drift from the other side: the artifact changes and CLAIMS.md is left stale."""
+    _drift(repo, field, value)
+    r = _gate(repo)
+    assert r.returncode != 0, f"{field}={value} accepted:\n{r.stdout}"
+    assert "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+def _row(repo: Path, claim: str) -> str:
+    """The generated row for `claim`, read from the file rather than hardcoded.
+
+    Hardcoding these rows made three tests fail the moment the suite grew: `test_count` and
+    `test_suite_loc` count THIS file, so any test added here moves two of the very numbers the
+    table reports. A test that has to be edited whenever it is added to is not a gate.
+    """
+    for line in (repo / CLAIMS).read_text().splitlines():
+        if line.startswith(f"| {claim} |"):
+            return line
+    raise AssertionError(f"no {claim!r} row in CLAIMS.md; the generator changed, update the test")
+
+
+def _bump_first_number(line: str) -> str:
+    return re.sub(r"\d+", lambda m: str(int(m.group()) + 9), line, count=1)
+
+
+@pytest.mark.parametrize("claim,mutate", [
+    ("contract coverage", lambda l: l.replace("17/17", "16/17")),
+    ("contract rules", _bump_first_number),
+    ("tests", _bump_first_number),
+    ("clean-path rule firings", _bump_first_number),
+    # The artifact-field column is part of the claim: it says which field backs the number. Both
+    # fields hold 3, so a check scoped to the value cell exempted this -- a negative test caught it.
+    ("clean reference paths", lambda l: l.replace("`clean_path_count`", "`environment_count`")),
+])
+def test_rejects_an_altered_evidence_backed_claim(repo, claim, mutate):
+    line = _row(repo, claim)
+    new = mutate(line)
+    assert new != line, f"mutation did not apply to {line!r}; the test proves nothing"
+    _edit_claims(repo, line, new)
+    r = _gate(repo)
+    assert r.returncode != 0, f"{line!r} -> {new!r} accepted:\n{r.stdout}"
+    assert "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+def test_rejects_dropping_a_generated_row(repo):
+    """A row cannot be quietly deleted to make its claim unverifiable."""
+    line = _row(repo, "rules with no red fixture")
+    _edit_claims(repo, line + "\n", "")
+    r = _gate(repo)
+    assert r.returncode != 0 and "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+def test_rejects_removing_the_generated_table_markers(repo):
+    """Deleting the markers would make the regeneration a no-op and silently disable the check --
+    the same shape of hole as a check that cannot go red."""
+    _edit_claims(repo, "<!-- END GENERATED CLAIMS TABLE -->", "")
+    r = _gate(repo)
+    assert r.returncode != 0 and "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+def test_rejects_a_non_numeric_value_in_a_volatile_slot(repo):
+    """The volatile exemption frees a NUMBER at a fixed offset, not the text around it."""
+    line = _row(repo, "sweep runtime")
+    new = re.sub(r"\*\*[\d.]+ s", "**fast s", line, count=1)
+    assert new != line, "runtime row no longer opens with a measurement; update the test"
+    _edit_claims(repo, line, new)
+    r = _gate(repo)
+    assert r.returncode != 0 and "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+# ------------------------------------------------- the documented volatile path
+
+def test_allows_a_declared_volatile_measurement_to_move(repo):
+    """The one permitted difference, and the reason the check is field-level rather than a plain
+    file comparison: wall-clock timings vary a few percent between runs and machines, so requiring
+    byte equality would make `make gate` fail on a busy machine.
+
+    Both values stay inside their regression guards, so the separate RUNTIME bound still holds --
+    this exempts the table from re-rendering, not the artifact from its promises. There is no
+    timestamp in the generated block, so these two declared fields are the whole volatile surface.
+    """
+    before = _row(repo, "sweep runtime")
+    _drift(repo, "runtime_seconds", 2.220)
+    _drift(repo, "runtime_ms_per_condition", 41.1)
+    # The pass must come from the exemption, not from the block happening to agree, so assert the
+    # checked-in row really is stale now: it still carries the pre-drift measurements.
+    assert _row(repo, "sweep runtime") == before, "row changed by itself; test is vacuous"
+    assert "**2.22 s" not in before and "41.1 ms" not in before, \
+        "the artifact already carried the drifted values; test is vacuous"
+    r = _gate(repo)
+    assert r.returncode == 0, f"volatile-only drift refused:\n{r.stdout}{r.stderr}"
+
+
+def test_rejects_an_edit_to_the_generators_header_comment(repo):
+    """The whole block is compared, not only its data rows -- the comment is what tells a reader
+    the file is generated, so weakening it is a semantic change to the claim surface."""
+    _edit_claims(repo, "Do not hand-edit", "Feel free to hand-edit")
+    r = _gate(repo)
+    assert r.returncode != 0 and "GENERATED CLAIMS" in r.stdout, r.stdout
+
+
+def test_the_volatile_declaration_excludes_the_guards(repo):
+    """Guards against the fix regressing into the hole it closed: if a future edit adds a
+    threshold field to VOLATILE_CLAIM_FIELDS, the tests above would still pass for the wrong
+    reason, so assert the declaration's contents directly."""
+    sys.path.insert(0, str(repo / "evaluation" / "scripts"))
+    try:
+        import make_final_summary as mfs
+        vol = set(mfs.VOLATILE_CLAIM_FIELDS)
+    finally:
+        sys.path.pop(0)
+    assert vol == {"runtime_seconds", "runtime_ms_per_condition"}, vol
+    assert all(mfs.VOLATILE_CLAIM_FIELDS.values()), "every volatile field needs a written reason"

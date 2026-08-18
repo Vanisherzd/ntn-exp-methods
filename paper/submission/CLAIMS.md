@@ -29,10 +29,10 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 | L4.7 injected detection | 150/150 | `l47_calibration` |
 | rules with a demonstrated red fixture | 16 of 19 | `detectors_with_red_fixture` |
 | rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` |
-| sweep runtime | **1.539 s / 28.5 ms per condition** on the generating machine; repository regression guards 3.0 s and 60.0 ms, environment-dependent, not portable bounds | `runtime_seconds` |
+| sweep runtime | **1.557 s / 28.8 ms per condition** on the generating machine; repository regression guards 3.0 s and 60.0 ms, environment-dependent, not portable bounds | `runtime_seconds` |
 | toolkit size | 833 lines | `source_loc` |
-| test suite size | 988 lines | `test_suite_loc` |
-| tests | 62 passing | `test_count` |
+| test suite size | 1149 lines | `test_suite_loc` |
+| tests | 77 passing | `test_count` |
 <!-- END GENERATED CLAIMS TABLE -->
 
 ### What reproduces, and what only reproduces conditionally
@@ -41,6 +41,17 @@ Runtime does **not** reproduce bit-for-bit: it varies by a few percent between r
 machines. The manuscript therefore states a repository *regression guard* (3 s), and the claim gate asserts
 the artifact still satisfies that bound rather than matching a string. `make gate-twice`
 reports the volatile fields explicitly instead of hiding them.
+
+The table above is **generated**, and the claim gate now regenerates it from the artifact into a
+temporary file and requires the checked-in block to match — every claim name, every value, every
+artifact-field reference, the row order and the row count. Exactly two fields may differ, declared
+with their reasons in `make_final_summary.VOLATILE_CLAIM_FIELDS`: `runtime_seconds` and
+`runtime_ms_per_condition`, the two wall-clock measurements. The exemption is per *field*, at the
+character offsets that field occupies — **not** per row. The runtime row is why: it carries those
+two measurements alongside the 3 s and 60 ms regression guards, which are promises rather than
+measurements, so moving 3 s to 2 s or 60 ms to 30 ms fails the build even though it edits the same
+line. Adding any field to that declaration is a reviewable act that requires writing down why the
+value cannot be reproduced.
 
 The **L4.7 false-halt count is bit-reproducible but implementation-conditional**, and this is
 a stronger caveat than it sounds. The permutation stream is seeded from a SHA-256 digest of a

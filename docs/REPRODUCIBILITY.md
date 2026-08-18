@@ -65,13 +65,21 @@ each regenerable:
 | `paper/build/` | LaTeX intermediates | `make paper` |
 | `**/__pycache__/`, `*.pyc` | Python bytecode | automatic |
 | `.pytest_cache/` | pytest state | automatic |
-| `tmp/`, `outputs/`, `build/`, `logs/`, `local_archive/`, `dataraw/`, `hardware/`, `validation_runs/` | scratch from the stopped programme; **no tracked files** | not needed by the active paper |
-| `archive/stopped_research/experiments/exp15_causal_recovery/causal_dataset/` | derived arrays, ~10 MB | archived; not used by the active paper |
-| `archive/stopped_research/experiments/exp15_visible_causal/{registry,labels}/` | derived arrays, ~50 MB | archived; not used by the active paper |
+| `dataraw/` | **local Space-Track records — current raw evidence, not scratch** | absent from this checkout; archived to `../orbit-evidence-raw-archive-2026-08-18/`. `make realdata` re-derives from it; `make gate` does not need it |
+| `tmp/`, `outputs/`, `build/`, `logs/`, `local_archive/`, `hardware/`, `validation_runs/`, `archive/stopped_research/**` | scratch and raw captures from the stopped programme; **no tracked files** | absent from this checkout; archived to `../stopped-research-raw-archive-2026-08-18/` and `../orbit-evidence-historical-output-2026-08-18/` |
 
-The archived entries belong to the stopped research programme. They are regenerable, not
-required by the active paper, and their scientific status is governed by
+These ignore rules are kept even though the paths are now empty: they are what stops the material
+from being re-tracked if any of it is ever restored.
+
+`dataraw/` is listed first and separately because an earlier version of this table filed it under
+"scratch from the stopped programme", which was wrong — it is the raw input behind the committed
+real-data artifacts, and the only copy. Everything else in the second row belongs to the stopped
+research programme; it is not required by the active paper, and its scientific status is governed by
 `archive/KNOWN_INVALID_RESULTS.md`.
+
+None of the archives is needed by `make gate`, `make gate-twice`, `make test`, `make claims`,
+`make verify` or `make external-consequence-verify` — all six were re-run from a clean clone after
+the material was removed. See [CLEANUP_RECORD.md](CLEANUP_RECORD.md) §4.
 
 ## Tracked artifacts that are NOT regenerable in place
 

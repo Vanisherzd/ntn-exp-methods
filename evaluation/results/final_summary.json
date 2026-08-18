@@ -43,13 +43,13 @@
  ],
  "contract_detected_count": 17,
  "clean_false_halt_count": 0,
- "runtime_seconds": 1.539,
- "runtime_ms_per_condition": 28.5,
+ "runtime_seconds": 1.557,
+ "runtime_ms_per_condition": 28.8,
  "conditions_per_environment": 18,
  "source_loc": 833,
  "source_loc_excluding_init": 819,
- "test_suite_loc": 988,
- "test_count": 62,
+ "test_suite_loc": 1149,
+ "test_count": 77,
  "detectors_with_red_fixture": 16,
  "detectors_without_red_fixture": [
   "L2.2",
@@ -284,5 +284,5 @@
  "runtime_threshold_s": 3.0,
  "runtime_threshold_ms_per_condition": 60.0,
  "matrix_sha256": "cb3e9aedd0e5c74a3721c0e8f21642945b7fb79288d591618ffcae6b790bd6a2",
- "commit": "9f862d023cc1911a08567d0c4510303a63654821"
+ "commit": "eab31d49dcffdd2bf624d0c4dc154dee6f55248d"
 }

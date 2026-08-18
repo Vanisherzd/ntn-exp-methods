@@ -63,30 +63,48 @@ not be rewritten:
 `figures/`, `tables/`, `sections/`, `submission/*.md` and `README.md`. The banlist patterns live in
 the script itself.
 
-## 4. Deliberately NOT deleted — irrecoverable untracked material
+## 4. Untracked material — archived outside the repository, then removed
 
-≈ **17.9 GB** of untracked, gitignored material remains on disk. None of it is in the bundle,
-because none of it was ever committed. Deleting it would be permanent loss with no recovery path,
-so the cleanup left it in place pending an explicit decision.
+The first pass left ≈ 18 GB of untracked, gitignored material in place: none of it was ever
+committed, so **none of it is in the bundle**, and deleting it would have been permanent loss.
+A second pass on 2026-08-18 archived it outside the repository, verified every copied byte by
+hash, and only then removed the originals. The working directory went from **18 GB to 767 MB**.
 
-| Path | Size | What it is | Why retained |
-|---|---|---|---|
-| `archive/hardware_validation/` | 12 GB | 28 raw `.npy` conducted-IQ captures + campaign records | never committed; not in bundle |
-| `hardware/` | 5.5 GB | OTA IQ replay runs, bench captures, capture tooling | never committed; not in bundle |
-| `outputs/` | 305 MB | model outputs from the stopped line | never committed; not in bundle |
-| `dataraw/` | 77 MB | **local Space-Track records** | never committed **and an active evidence input** — see below |
-| `local_archive/` | 4.4 MB | stopped-line validation runs | never committed; not in bundle |
-| `output/` | 1.9 MB | stopped-line decks; `output/pdf/slides_overview.pdf` is the **only** copy, its LaTeX source already gone | never committed; not in bundle |
-| `advisor_package/`, `logs/`, `loop_engineering/`, `semtech_validation/` | < 1 MB | local packages and process scratch | never committed; not in bundle |
+Three archives, kept separate by research line and by class. Each carries a `README.md` recording
+original path, source, dependent artifact, file count, byte count, archive date and manifest hash,
+plus a `MANIFEST.sha256` covering every file.
 
-**`dataraw/` is a special case.** The Makefile documents that `make gate` does *not* regenerate from
-it — the real-data artifacts are committed and the gate reads them, verifying contract hashes
-against the pre-registration. `make realdata` skips gracefully when `dataraw/spacetrack` is absent,
-so **the gates pass without it**. But it is the only copy of the raw input behind committed
-evidence, and `evaluation/real_data/PREREGISTRATION.md`, `evaluation/results/publication_lag.json`,
-`evaluation/scripts/measure_publication_lag.py` and
-`paper/submission/FINAL_SUBMISSION_MANIFEST.md` all name it. It must not be deleted without a
-decision about archiving it elsewhere first.
+| Archive (sibling of this repository) | Class | Files | Bytes | Manifest sha256 |
+|---|---|---|---|---|
+| `../orbit-evidence-raw-archive-2026-08-18/` | **current raw evidence** | 46 | 81,119,459 | `1745619d651d03ae41136167f3b27329df3d6add8711e86d9b0651c2b37a4911` |
+| `../stopped-research-raw-archive-2026-08-18/` | stopped-research raw data | 263 | 18,685,011,478 | `aa11bbae2dd653c93579e99aa9be0c0f88c7f6980a163f52a7a71221602ff04b` |
+| `../orbit-evidence-historical-output-2026-08-18/` | unique historical output | 164 | 4,684,522 | `4585a976ac077a691ce6eab948b9b3fe8c1e212da5af6c11f39c22f1ad52c991` |
+
+Verification was hash-for-hash in both directions: every source file was hashed **before** the
+copy, the destination was checked against those hashes, and deletion followed only after a clean
+result — 46 OK / 263 OK / 164 OK, **0 FAILED** in each. The current-evidence archive has a second,
+independent witness: 33 of its 46 files carry a `sha256` recorded by the fetch script in July 2026,
+and all 33 agree.
+
+**`dataraw/` was the case that mattered**, and it is now the whole content of the current-evidence
+archive. `make gate` does not regenerate from it — the real-data artifacts are committed and the
+gate reads them, verifying contract hashes against the pre-registration — and `make realdata` skips
+gracefully when `dataraw/spacetrack` is absent, so **the submission gates pass without it and were
+re-verified from a clean clone after its removal**. Restoring it is
+`rsync -a dataraw <repo-root>/` from the archive, followed by `make realdata`.
+
+Deleted **without** archiving, as reproducible: `local_archive/build_artifacts/` (15 files,
+3,204,071 B of LaTeX build products from tracked, tagged sources), `.ruff_cache/` (29 files),
+`.pytest_cache/`, and the empty directories `logs/`, `loop_engineering/`, `.codegraph/`,
+`archive/retired_manuscript/`, `local_archive/{notes,raw_iq,rx_logs}`.
+
+Retained in the working directory: `.venv/` (669 MB — the toolchain the gates run in, reproducible
+from `uv.lock`), `.git/` (94 MB), `.claude/`, `uv.lock`, and `.env.spacetrack` — the Space-Track
+credential file, deliberately **not** copied into any archive.
+
+`hardware/README.md` was removed from the tracked tree in this pass: it existed only to explain why
+the 5.5 GB `hardware/` tree was being left in place, and that tree is now archived and gone. It was
+the sole remaining file under `hardware/`, so the directory went with it.
 
 ## 5. Generated files removed — all provably regenerable
 
@@ -108,6 +126,16 @@ references to now-removed paths. They are declared here rather than edited:
 |---|---|
 | `archive/KNOWN_INVALID_RESULTS.md` | `archive/real_tle_causality_audit/audits/E4_walk_forward_r1500.json`, `S2_analysis_r1500.json`, the phase-2 screening sweep, `docs/FAILURE_TAXONOMY.md`, `docs/FUTURE_MEASUREMENT_PROTOCOL.md` |
 | `submission_finalization/CLAIM_LEDGER.md` | `docs/FAILURE_TAXONOMY.md` §1–2 and §12 |
+
+**A fourth, added by the 2026-08-18 data archiving.**
+`evaluation/real_data/PREREGISTRATION.md` line 19 describes its input as
+"`dataraw/spacetrack/` — Space-Track GP_HISTORY records **already present in this repository**".
+That was true when the pre-registration was written and is no longer true: the records are now in
+`../orbit-evidence-raw-archive-2026-08-18/`. **A pre-registration is a dated record and is never
+rewritten**, so the correction is declared here instead. The data itself is unchanged and hash-
+verified; only its location moved. The same wording is accurate as written in
+`paper/submission/FINAL_SUBMISSION_MANIFEST.md` and `evaluation/results/publication_lag.json`, which
+both describe `dataraw/` as untracked local data that does not ship — those needed no correction.
 
 `talk/SPEAKER_OUTLINE.md` names `talk/orbit_evidence_talk.pdf`, which is no longer tracked but is
 produced on disk by `make -C talk`, so that reference resolves after a build.

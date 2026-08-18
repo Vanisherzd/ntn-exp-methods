@@ -82,12 +82,26 @@ verify:
 
 # Re-derivable only where the inputs are present. Both print what they need rather than
 # failing obscurely, and both refuse to run against a different contract than the registered one.
+# dataraw/ is NOT in this checkout: it was never committed, so it is not in Git history or the
+# pre-cleanup bundle either. It is archived outside the repository, with a SHA-256 manifest, at
+# ../orbit-evidence-raw-archive-2026-08-18/ -- restore with `rsync -a dataraw <repo-root>/`.
+# This target is the only one that wants it; every submission gate reads the committed artifacts
+# instead and is independent of the archive.
+# ONE recipe line, deliberately. Each line of a recipe is its own shell, so the `exit 0` that used
+# to guard this target ended only that line and make ran the scripts anyway -- the "skips
+# gracefully" behaviour documented since July was never true, and nothing noticed because
+# dataraw/ was always present until it was archived out on 2026-08-18.
 realdata:
-	@echo "== real-catalogue L4.7 application (needs dataraw/)"
-	@test -d dataraw/spacetrack || { echo "   dataraw/spacetrack absent -- untracked local data, skipping"; exit 0; }
-	@$(PY) evaluation/scripts/real_l47_application.py
-	@$(PY) evaluation/scripts/object_level_timing.py
-	@$(MAKE) --no-print-directory summary
+	@if [ ! -d dataraw/spacetrack ]; then \
+	  echo "== real-catalogue L4.7 application (needs dataraw/)"; \
+	  echo "   dataraw/spacetrack absent -- external raw archive not restored, skipping"; \
+	  echo "   restore: rsync -a ../orbit-evidence-raw-archive-2026-08-18/dataraw ."; \
+	  exit 0; \
+	fi; \
+	echo "== real-catalogue L4.7 application"; \
+	$(PY) evaluation/scripts/real_l47_application.py && \
+	$(PY) evaluation/scripts/object_level_timing.py && \
+	$(MAKE) --no-print-directory summary
 
 external:
 	@echo "== third-party artifact study (needs a clone at the frozen commit)"

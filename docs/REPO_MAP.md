@@ -4,7 +4,7 @@ This tree contains **only** the current Orbit-Evidence project. Historical mater
 from the active checkout on 2026-08-18 and is recoverable from Git history and the verified
 pre-cleanup bundle — see [CLEANUP_RECORD.md](CLEANUP_RECORD.md).
 
-118 tracked files, down from 828.
+133 tracked files, down from 828.
 
 ---
 
@@ -64,13 +64,25 @@ without changing `matrix_sha256`. That is a property of the artifact format, not
 Their role is current; their origin is historical. They contain references to paths that now exist
 only in Git history — declared in [CLEANUP_RECORD.md](CLEANUP_RECORD.md) §6 rather than edited.
 
-## 3. Untracked, on disk, **not in the bundle**
+## 3. Untracked data — archived outside the repository
 
-≈ 17.9 GB of gitignored material was never committed and therefore cannot be recovered if deleted.
-The cleanup left it in place. `archive/hardware_validation/` (12 GB), `hardware/` (5.5 GB),
-`outputs/`, `dataraw/`, `local_archive/`, `output/`, `advisor_package/`. See
-[CLEANUP_RECORD.md](CLEANUP_RECORD.md) §4 — `dataraw/` in particular is the only copy of the raw
-input behind committed evidence.
+The working directory holds **no multi-GB research payload**. The ≈ 18 GB of gitignored material
+that was never committed — and so was never in the bundle — was copied out, verified hash-for-hash,
+and removed on 2026-08-18. Working directory: 18 GB → **767 MB**.
+
+| Archive (sibling directory) | Contents |
+|---|---|
+| `../orbit-evidence-raw-archive-2026-08-18/` | `dataraw/` — the Space-Track records behind the committed real-data artifacts |
+| `../stopped-research-raw-archive-2026-08-18/` | the stopped line's IQ captures, bench sweeps and HIL captures |
+| `../orbit-evidence-historical-output-2026-08-18/` | generated output whose source is gone: two decks, a superseded build, stopped-line runs |
+
+Each has a `README.md` and a `MANIFEST.sha256`; see [CLEANUP_RECORD.md](CLEANUP_RECORD.md) §4 for
+counts, byte totals and manifest hashes. **The submission gates do not read any of them** — that was
+re-verified from a clean clone after removal. Only `make realdata` needs the current-evidence
+archive, and it skips gracefully without it.
+
+What remains untracked in the tree: `.venv/` (the toolchain, reproducible from `uv.lock`), `.git/`,
+`.claude/`, `uv.lock`, and `.env.spacetrack` (credentials — never archived, never committed).
 
 ## 4. Build command map
 
