@@ -1,3 +1,0 @@
-# ls /dev serial candidates
-/dev/tty.usbmodem1303
-/dev/cu.usbmodem1303

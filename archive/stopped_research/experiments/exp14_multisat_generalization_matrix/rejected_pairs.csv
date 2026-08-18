@@ -1,1 +1,0 @@
-pair_id,satellite,satellite_name,stale_epoch_utc,ref_epoch_utc,actual_staleness_h,band_h,reject_reason,max_abs_residual_hz,reject_threshold_hz

@@ -1,9 +1,0 @@
-peak_id,frequency_hz,offset_from_center_hz,relative_power_db,txon_power_db,txoff_power_db,txon_minus_txoff_db,visible_in_txoff,artifact_masked,note
-0,922679492.188,-520507.812,47.942,-22.855,-70.796,47.942,False,False,~-20.5 grid steps from center; hop-center proxy candidate
-1,922654101.562,-545898.438,47.88,-22.862,-70.742,47.88,False,False,~-21.5 grid steps from center; hop-center proxy candidate
-2,922831835.938,-368164.062,47.829,-22.825,-70.655,47.829,False,False,~-14.5 grid steps from center; hop-center proxy candidate
-3,923669726.562,469726.562,47.809,-22.866,-70.675,47.809,False,False,~18.5 grid steps from center; hop-center proxy candidate
-4,923542773.438,342773.438,47.644,-22.854,-70.498,47.644,False,False,~13.5 grid steps from center; hop-center proxy candidate
-5,923466601.562,266601.562,47.632,-22.797,-70.429,47.632,False,False,~10.5 grid steps from center; hop-center proxy candidate
-6,922984179.688,-215820.312,47.454,-22.818,-70.272,47.454,False,False,~-8.5 grid steps from center; hop-center proxy candidate
-7,923238085.938,38085.938,45.652,-22.575,-68.227,45.652,False,False,~1.5 grid steps from center; hop-center proxy candidate

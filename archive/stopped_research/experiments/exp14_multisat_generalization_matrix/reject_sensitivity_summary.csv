@@ -1,1 +1,0 @@
-satellite,satellite_name,staleness_h,reject_hz,accepted_pairs,rejected_pairs,reject_rate_pct,residual_mae_hz,residual_p99_hz,status,selected_model,gate_decision,degradation_pct,pair_win_rate,top_rejected_max_abs_hz
