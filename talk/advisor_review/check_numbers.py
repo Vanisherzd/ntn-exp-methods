@@ -36,7 +36,7 @@ DECK = HERE / "advisor_deck.tex"
 NUMS = HERE / "numbers.tex"
 PDF = HERE / "advisor_deck.pdf"
 
-MAIN_FRAMES, APPENDIX_FRAMES = 24, 10
+MAIN_FRAMES, APPENDIX_FRAMES = 25, 11
 
 # Every number the review brief requires the deck to bind.
 REQUIRED = {
@@ -407,7 +407,15 @@ def main() -> int:
         pdftxt = subprocess.run(["pdftotext", "-layout", str(PDF), "-"],
                                 capture_output=True, text=True).stdout
         norm = lambda t: re.sub(r"[^a-z0-9]+", " ", t.lower()).strip()
-        hay_words = set(norm(pdftxt).split())
+        # LaTeX hyphenates across line breaks, so a word can reach the PDF as "conse-" + "quence".
+        # Under -layout those halves are NOT adjacent -- the neighbouring table column sits between
+        # them -- so no amount of de-hyphenating that stream recovers the word, and A8 was reported
+        # as dropping text that was fully present. pdftotext WITHOUT -layout emits reading order and
+        # rejoins hyphenation, so both streams are read and their vocabularies unioned. Strictly
+        # additive: this can only retract a false positive, never pass text that is truly absent.
+        flowtxt = subprocess.run(["pdftotext", str(PDF), "-"],
+                                 capture_output=True, text=True).stdout
+        hay_words = set(norm(pdftxt).split()) | set(norm(flowtxt).split())
         missing = []
         for fm in re.finditer(r"\\begin\{frame\}(?:\[[^\]]*\])?(?:\{.*?\})?(.*?)\\end\{frame\}",
                               body, re.S):
