@@ -171,3 +171,11 @@ htmlcov/
 # NOTE: *.json, *.csv and *.npz are deliberately NOT ignored -- several are
 # scientific artifacts. Individually ignored regenerable artifacts are listed with
 # their regeneration commands in docs/REPRODUCIBILITY.md.
+
+# ---- deck build products (regenerable: make -C talk, make -C talk/advisor_review) ----
+talk/*.pdf
+talk/advisor_review/*.pdf
+talk/advisor_review/pg-*.png
+talk/pptx/*.pptx
+talk/pptx/*.pdf
+talk/pptx/pg-*.png
