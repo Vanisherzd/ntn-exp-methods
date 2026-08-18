@@ -81,8 +81,10 @@ counts, byte totals and manifest hashes. **The submission gates do not read any 
 re-verified from a clean clone after removal. Only `make realdata` needs the current-evidence
 archive, and it skips gracefully without it.
 
-What remains untracked in the tree: `.venv/` (the toolchain, reproducible from `uv.lock`), `.git/`,
-`.claude/`, `uv.lock`, and `.env.spacetrack` (credentials — never archived, never committed).
+What remains untracked in the tree: `.venv/` (the toolchain — rebuilt from the tracked
+`pyproject.toml`; `uv.lock` itself is gitignored, so a fresh clone re-resolves), `.git/`,
+`.claude/`, the two built deck PDFs, and `.env.spacetrack` (credentials — never archived, never
+committed). Excluding `.venv/`, the whole ignored payload is **1.3 MB**.
 
 ## 4. Build command map
 

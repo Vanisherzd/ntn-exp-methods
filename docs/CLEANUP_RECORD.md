@@ -98,9 +98,21 @@ Deleted **without** archiving, as reproducible: `local_archive/build_artifacts/`
 `.pytest_cache/`, and the empty directories `logs/`, `loop_engineering/`, `.codegraph/`,
 `archive/retired_manuscript/`, `local_archive/{notes,raw_iq,rx_logs}`.
 
-Retained in the working directory: `.venv/` (669 MB — the toolchain the gates run in, reproducible
-from `uv.lock`), `.git/` (94 MB), `.claude/`, `uv.lock`, and `.env.spacetrack` — the Space-Track
+Retained in the working directory: `.venv/` (640 MB — the toolchain the gates run in), `.git/`
+(94 MB), `.claude/`, `uv.lock`, the two built deck PDFs, and `.env.spacetrack` — the Space-Track
 credential file, deliberately **not** copied into any archive.
+
+The environment is rebuilt from `pyproject.toml`, which is tracked. `uv.lock` is **not**: it is
+gitignored at `.gitignore:40`, so a fresh clone re-resolves rather than restoring pinned versions.
+That is a pre-existing choice this pass did not change, but it is worth stating plainly, because it
+is the one place the toolchain is not byte-reproducible from the repository alone. It matters less
+than it sounds: `make gate-twice` re-derives and compares the evidence artifacts, so a resolver
+difference that changed a result would surface as a `matrix_sha256` mismatch rather than passing
+silently.
+
+After the final verification the working directory is **759 MB**: `.venv/` and `.git/` account for
+734 MB of it, and the remaining ignored content is two deck PDFs, `uv.lock`, `.claude/` and the
+credential file. Total ignored payload excluding `.venv/`: **1.3 MB**.
 
 `hardware/README.md` was removed from the tracked tree in this pass: it existed only to explain why
 the 5.5 GB `hardware/` tree was being left in place, and that tree is now archived and gone. It was
