@@ -296,7 +296,7 @@ _ARTV = re.compile(r"\\artv\{([a-z0-9_]+)\}\{((?:[^{}]|\{[^{}]*\})*)\}")
 
 
 def _strip_tex_comments(tex: str) -> str:
-    """Drop % comments, keeping escaped \% intact."""
+    r"""Drop % comments, keeping escaped \% intact."""
     out = []
     for line in tex.splitlines():
         i, n = 0, len(line)
