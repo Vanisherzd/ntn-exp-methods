@@ -44,7 +44,7 @@ retrospectively closing labels, state persisting across a freeze, and pass-level
 calibrated unit check has a measured false-halt rate of $\artv{l47_rate}{0.031}$, Wilson
 $\artv{l47_wilson}{[0.018,0.052]}$, consistent with a nominal $\artv{l47_alpha}{0.05}$ rather than
 better, and is then applied unchanged to real catalogue records for
-\artv{real_objects}{\num{11}} objects, where a fit-update observable shows within-group dependence and a geometric one shows none. On a
+\artv{real_objects}{\num{11}} objects, where a fit-update observable shows within-group dependence and a geometric one does not reject. On a
 separately frozen third-party spacecraft-telemetry artifact the unmodified contract identifies
 \artv{ext_halt}{three} violations and \artv{ext_indet}{one} indeterminate condition; correcting one
 pre-registered validation-overlap violation changes the selected model in all
@@ -270,7 +270,8 @@ hide that the rule finds gross unit errors and misses subtle ones. Finally the r
 eight units in all. That floor is an \emph{attainability} precondition, not a power one: three groups of two
 admit only $6!/(2!^{3}3!)=15$ distinct assignments, so the smallest reachable $p$ is
 $1/15=0.067>\alpha$ and no design that small can reject at all, whereas four groups of two admit
-$105$, whose exhaustive reference reaches $0.0095$. The rule is therefore three-valued:
+$105$ and so reach $1/105=0.0095$. Those are the designs' \emph{exact} resolutions; the rule never
+enumerates them, always drawing the same $B$. The rule is therefore three-valued:
 \textsc{halt}, the condition is violated; \textsc{indeterminate}, the design cannot support the
 decision; and \textsc{pass}, which means \emph{not rejected}, not verified---at power $\artv{l47_power_02}{0.25}$ for
 $\rho=0.2$ three genuinely dependent designs in four also pass. Collapsing \textsc{indeterminate}
@@ -310,8 +311,7 @@ For the one rule with a stochastic reference the single clean run is not the
 evidence---the interval $\artv{l47_wilson}{[0.018,0.052]}$ of Fig.~\ref{fig:opcurve} is.
 
 An initial clean-path run produced three \rulename{L4.4} halts because the fixture itself violated
-seed hygiene. We repaired the fixture, changed no detector, and preserved both records: adjusting
-the rule instead would have bought the clean-path rate by weakening the contract.
+seed hygiene; we repaired the fixture, changed no detector, and retained both records.
 
 \input{tables/external_evidence.tex}
 
