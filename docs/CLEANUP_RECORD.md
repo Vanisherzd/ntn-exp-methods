@@ -125,3 +125,71 @@ produced on disk by `make -C talk`, so that reference resolves after a build.
 | `import orbit_evidence` | OK |
 | `make -n gate` | resolves |
 | `make -C talk` / `make -C talk/advisor_review` | both rebuild; advisor deck's 14 gates green |
+
+## 8. Branch cleanup
+
+Local: **5 → 1**.
+
+| Branch | Tip | Disposition |
+|---|---|---|
+| `main` | `9e3380c` → `255d387` | **kept**, fast-forwarded to the cleaned commit (ancestor check passed; no force) |
+| `post-freeze/writing-polish` | `255d387` | deleted (`-d`, merged — it was the cleanup branch) |
+| `submission/orbit-evidence-workshop` | `b39755e` | deleted (`-d`, reachable from main) |
+| `archive/residual-learning-stop-2026-07` | `964e04f` | deleted (`-D`; tip proven present in the bundle) |
+| `exp15-visible-causal-rebuild` | `4bc5c46` | deleted (`-D`; tip in the bundle and tagged `stop/exp15-visible-causal-rebuild-2026-07`) |
+
+Remote: **6 → 1**. Deleted `archive/residual-learning-stop-2026-07`,
+`claude/leo-dtf-experiment-prep-ksnesg`, `exp15-visible-causal-rebuild`,
+`post-freeze/writing-polish`, `submission/orbit-evidence-workshop`. All five tips are in the bundle.
+
+## 9. Tag cleanup
+
+**36 → 7 local, 35 → 7 remote.** No tag was moved. Every deleted tag's commit was verified present
+in the bundle before deletion.
+
+### Retained
+
+| Tag | Commit | Why |
+|---|---|---|
+| `paper/orbit-evidence-workshop-submission-ready-2026-08` | `76f53d3` | canonical manuscript |
+| `artifact/orbit-evidence-workshop-2026-08` | `f751a3b` | canonical frozen artifact |
+| `talk/orbit-evidence-reviewer-proof-2026-08` | `ff0c58b` | reviewer-ready workshop deck |
+| `external-consequence-preregistered-v1` | `9745c14` | **pre-registration** behind the paper's pre-registered intervention |
+| `exp15-visible-causal-preregistered-v1` | `a97dab4` | **pre-registration** |
+| `evidence/formal-seeds-never-executed-2026-07` | `4f18073` | formal evidence freeze |
+| `stop/exp15-visible-causal-rebuild-2026-07` | `4bc5c46` | the stop record paired with a retained pre-registration |
+
+### Deleted (29 local, 28 remote — `paper1-preRewrite-2026-07-27` was never pushed)
+
+Nine `archive/*` historical repository states · nine `paper/orbit-evidence-*` candidate-progression
+tags (polish, visual, narrative, geometry, review-ready, submission, submittable-baseline,
+final-candidate, hardened-final, pre-external-validation) · eight unprefixed legacy tags
+(`globecom-prehw-2026-05`, `legacy-full-research-state`, `paper-final-6page-204a053`,
+`paper-hardening-safe-20260604`, `paper1-preRewrite-2026-07-27`,
+`pre-finalization/orbit-evidence-workshop-2026-07`, `stage3e-uncertainty-calibrated`,
+`submission-clean-main-31da77b`) · two redundant `stop/*` pointers
+(`stop/exp16-qualification-2026-07` and `stop/real-tle-line-2026-07`, both duplicates of
+`evidence/formal-seeds-never-executed-2026-07` at `4f18073`).
+
+`paper-hardening-safe-20260604` was a duplicate pointer to `archive/paper-hardening-vtc-icc`
+(`8f17485`); both were deleted.
+
+## 10. Clean-checkout verification
+
+Cloned into a separate empty directory at `255d387` and run there:
+
+| Command | Result |
+|---|---|
+| `make matrix` | artifacts written |
+| `make test` | 61 passed, 1 skipped |
+| `make claims` | 16 files clean, 64 claim sites bound |
+| `make gate` | **SUBMISSION GATE: PASS** |
+| `make gate-twice` | **PASS TWICE** — summary reproduced, 40 fields identical including `matrix_sha256` and `commit` |
+| `make external-consequence-verify` | PASS, 16 checks, no training |
+| `make -C talk` / `check` | built; 34 artifact-bound values, 13 main frames, 14 lint rules clean |
+| `make -C talk/advisor_review` / `check` / `render` | built; 14 gates green; 34 page images |
+
+After full verification the only dirty tracked files are the artifacts that embed wall-clock
+timings and the generating commit (`runtime_seconds`, `runtime_ms_per_condition`, `commit`) plus the
+two docs generated from them. `matrix_sha256` is identical. That is a property of the artifact
+format — `make gate-twice` itself compares 40 fields and reports the summary as reproduced.
