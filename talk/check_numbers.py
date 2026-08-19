@@ -174,6 +174,41 @@ def main() -> int:
                 print(f"    {sz} pt  p{p}  {t[:40]!r}")
             return 1
 
+    # ---- content presence: beamer DROPS an overflowing line with no overfull-box warning ------
+    # Twice in one session a footnote on the real-data slide was silently truncated mid-sentence:
+    # the source was correct, the gate was green, and the sentence simply never reached the PDF.
+    # Geometry checks cannot see this and the glyph check cannot either -- absent text has no size.
+    # The advisor deck has carried this check for a while; the talk did not, which is why it took a
+    # human reading the rendered page to notice. Both pdftotext modes are read and their
+    # vocabularies unioned, because -layout leaves hyphenated words split across column text.
+    if pdf.exists():
+        import subprocess as _sp
+        lay = _sp.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True).stdout
+        flow = _sp.run(["pdftotext", str(pdf), "-"], capture_output=True, text=True).stdout
+        _n = lambda s: re.sub(r"[^a-z0-9]+", " ", s.lower())
+        seen = set(_n(lay).split()) | set(_n(flow).split())
+        dropped = []
+        deck_src = (HERE / "orbit_evidence_talk.tex").read_text()
+        for fm in re.finditer(r"\\begin\{frame\}(?:\[[^\]]*\])?(?:\{.*?\})?(.*?)\\end\{frame\}",
+                              deck_src, re.S):
+            inner = fm.group(1)
+            inner = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", " ", inner, flags=re.S)
+            inner = re.sub(r"\$[^$]*\$", " ", inner)
+            inner = re.sub(r"\\(?:begin|end)\{[^}]*\}\s*(\{[lrcp@|!<>.\d\s{}]*\})?", " ", inner)
+            inner = re.sub(r"\\[a-zA-Z]+\*?(\[[^\]]*\])?", " ", inner)
+            words = [w for w in _n(inner).split() if len(w) >= 5]
+            if len(words) < 6:
+                continue
+            absent = [w for w in words[-4:] if w not in seen]
+            if absent:
+                dropped.append(f"{' '.join(words[-4:])}  (absent: {', '.join(absent)})")
+        if dropped:
+            print(f"talk/check: FAIL -- {len(dropped)} frame(s) whose closing words never reached "
+                  "the PDF; content was dropped, not merely tight:")
+            for d in dropped[:6]:
+                print("   ..." + d)
+            return 1
+
     # ---- main-frame count is derived, never hard-coded -------------------------------------
     # Anchor to line start: a preamble COMMENT mentioning \appendix split the file at the
     # comment and reported zero main frames.

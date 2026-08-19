@@ -144,14 +144,13 @@ Satellite Communication Experiments\\[0.9em]
       \end{block}
       \vspace{0.3em}
       \small
-      Unit values are permuted across the \emph{fixed} coarser-group structure, so every draw
-      keeps the observed group count and balance.
+      Values are permuted across the \emph{fixed} group structure, so each draw keeps the
+      observed group count and balance.
       \vspace{0.3em}
 
-      And it \emph{abstains}. With too few groups, the smallest $p$ the test can
-      \emph{possibly} produce already exceeds $\alpha$ --- that design could not have rejected at
-      any effect size. Not weak evidence: no evidence either way. It returns
-      \textsc{indeterminate}.
+      And it \emph{abstains}: with too few groups an \emph{exact} reference cannot reach
+      $\alpha$ at any effect size, so the rule returns \textsc{indeterminate} --- not weak
+      evidence, no evidence either way.
     \end{column}
   \end{columns}
   \msg{One judgement generates both: neither obligation can be certified,
@@ -214,11 +213,11 @@ Satellite Communication Experiments\\[0.9em]
 
       \vspace{0.4em}
       \vspace{0.3em}
-      {\scriptsize \textbf{All three} sit at the Monte-Carlo floor $1/(\NpermB{+}1)=\Natp$;
-      equal $p$ there is not equal evidence. The quantity is how far an orbit solution moves
-      \emph{along its own track} when the next replaces it --- \textbf{not truth error}.
-      A \emph{geometric} quantity returned $\hat{\rho}=\Nrealiccab$: a \emph{ties signature}
-      at the truncation boundary, licensing only ``did not reject''.}
+      {\scriptsize \textbf{All three} at the Monte-Carlo floor $1/(\NpermB{+}1)=\Natp$; equal $p$
+      there is not equal evidence. $\hat{\rho}$ is a \textbf{clustering statistic}, not a variance
+      share; the three are not an additive decomposition. The observable is an along-track update
+      increment --- \textbf{not truth error}. A geometric control gave $\hat{\rho}=\Nrealiccab$,
+      a \emph{ties signature}.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -369,6 +368,8 @@ Satellite Communication Experiments\\[0.9em]
               fault-finding power.
         \item \textbf{One outside dataset, one outside model.} One step away from marking
               our own homework --- not zero.
+        \item \textbf{No universal correct unit.} \rulename{L4.7} adjudicates only the grouping
+              it is given.
         \item \textbf{PASS means not rejected}, never verified.
       \end{itemize}}
     \end{column}

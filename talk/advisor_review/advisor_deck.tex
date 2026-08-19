@@ -490,7 +490,9 @@
      \qquad B = \NpermB. \]
   \vspace{-0.5em}
   \begin{itemize}\small\itemsep0.2em
-    \item $\hat{\rho}$ is a one-way ICC(1) \srcref{Shrout \& Fleiss 1979} used as an \emph{effect statistic}.
+    \item $\hat{\rho}$ is a one-way ICC(1) \srcref{Shrout \& Fleiss 1979} used as a
+          \emph{clustering test statistic} --- not a variance share, and the three reported
+          values are not an additive decomposition.
     \item The \emph{decision} is referenced to a permutation null \srcref{Winkler et al.\ 2014} over the declared grouping.
   \end{itemize}
   \vspace{0.3em}
@@ -643,9 +645,10 @@
 
   {\footnotesize The elevation row controls what the rule can \emph{say}: a \textbf{ties
    signature}, the estimator truncating at zero. It licenses only ``the rule did not reject''.}
-  \notclaim{that elevation shows no dependence; that the effect is observable-dependent; that
-   $\Nelevicc$ is a measured near-zero correlation; that we found the correct unit; that
-   $\Naticc$ is orbit prediction error.}
+  \notclaim{a variance decomposition across orbital levels --- passes sharing an element set also
+   share an object, so this one-way statistic does not isolate an element-set-specific component.
+   Nor: that elevation shows no dependence; that $\Nelevicc$ is a measured near-zero correlation;
+   that we found the correct unit; that $\Naticc$ is orbit prediction error.}
 \end{frame}
 
 % 19 --------------------------------------------------------------- external artifact

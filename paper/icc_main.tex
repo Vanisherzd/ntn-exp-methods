@@ -36,21 +36,21 @@ every condition a valid deployment claim requires. Some such conditions are not 
 single run at all: they are relations across executions or across aggregation levels. We introduce
 \emph{Orbit-Evidence}, an executable validity framework for learning-assisted satellite
 communication experiments. Its two central relational checks make provenance
-incompleteness differentially falsifiable, and test for residual dependence at the next coarser
-physical level---the latter against a permutation reference admitting a third outcome,
-\textsc{indeterminate}, when the design cannot support a decision. Satellite software makes these
-obligations concrete: element epoch versus catalogue publication time, predicted visibility,
-retrospectively closing labels, state persisting across a freeze, and pass-level dependence. The
-calibrated unit check has a measured false-halt rate of $\artv{l47_rate}{0.031}$, Wilson
+incompleteness differentially falsifiable, and test for within-group dependence at the declared
+coarser physical grouping---the latter against a permutation reference admitting a third outcome,
+\textsc{indeterminate}, when the design cannot support a decision. Satellite software makes these obligations
+concrete: element epoch versus catalogue creation time, predicted visibility, retrospective label
+closure, state crossing a freeze, and pass-level dependence. The unit check's measured false-halt
+rate is $\artv{l47_rate}{0.031}$, Wilson
 $\artv{l47_wilson}{[0.018,0.052]}$, consistent with a nominal $\artv{l47_alpha}{0.05}$ rather than
-better, and is then applied unchanged to real catalogue records for
-\artv{real_objects}{\num{11}} objects, where a fit-update observable shows within-group dependence and a geometric one does not reject. On a
+better; applied unchanged to real catalogue records for \artv{real_objects}{\num{11}} objects, a
+fit-update observable shows within-group dependence and a geometric one does not reject. On a
 separately frozen third-party spacecraft-telemetry artifact the unmodified contract identifies
 \artv{ext_halt}{three} violations and \artv{ext_indet}{one} indeterminate condition; correcting one
 pre-registered validation-overlap violation changes the selected model in all
-\artv{cons_seeds}{five} paired runs, while the downstream endpoint is not estimable at the available
-paired-run resolution. A curated \artv{fault_class_count}{seventeen}-fault suite supplies regression coverage
-of the represented violations. We claim no completeness, no radio-frequency result, and no
+\artv{cons_seeds}{five} paired runs, while the downstream endpoint is not estimable at that
+resolution. A curated \artv{fault_class_count}{seventeen}-fault suite supplies regression coverage of the
+represented violations. We claim no completeness, no radio-frequency result, and no
 improvement in learned-method accuracy.
 \end{abstract}
 
@@ -136,9 +136,9 @@ in output under an identical manifest hash constitute a counterexample. Failure 
 incompleteness; success does not prove completeness, and that asymmetry is what makes the property
 falsifiable without enumerating the input space. \emph{Statistical-unit adequacy}
 (\rulename{L4.7}): choosing an aggregation level does not establish that it is exchangeable, so we
-test whether dependence survives one declared physical level coarser, calibrated against a
-permutation reference under the realised grouping geometry, and \emph{abstain} when that geometry
-cannot attain the nominal level. Insufficient resolution is not evidence of validity.
+test whether dependence survives one declared physical level coarser against a permutation
+reference, and \emph{abstain} when the realised geometry cannot attain the nominal level.
+Insufficient resolution is not evidence of validity.
 \item \textbf{A satellite experiment contract that instantiates them.} The two checks sit among
 nineteen executable rules in four layers (Fig.~\ref{fig:contract},
 Table~\ref{tab:rules}) that map the two clocks, row membership, label closure, persistent state and the
@@ -162,9 +162,9 @@ experiment, not the model.
 \emph{Availability.} The toolkit, fixtures, fault suite and summary artifact accompany this
 submission anonymously. \texttt{make gate} regenerates the matrix and \rulename{L4.7}'s operating
 characteristic, and refuses to build if a headline number \emph{disagrees} with the artifact at the
-sentence claiming it, if such a sentence is missing, or if a retracted claim reappears. The two
-studies of \S\ref{sec:external} are hash-verified rather than regenerated, their inputs not being
-distributable anonymously. It is a regression guard, not a proof of correctness.
+sentence claiming it, if that sentence is missing, or if a retracted claim reappears. The two
+studies of \S\ref{sec:external} are hash-verified, their inputs not distributable anonymously---a
+regression guard, not a proof of correctness.
 
 \section{Threat Model and Experiment Contract}
 \input{tables/contract_rules.tex}
@@ -183,11 +183,11 @@ that check them.
 epoch. \emph{Row membership} may have its label status,
 value, uncertainty or closure time changed by later information, but never its existence; violations
 run both ways---rows dropped when a later reference fails to appear, rows created when a schedule
-takes its extent from the data on hand. \emph{Label closure} makes a retrospective label usable only
-from $t_c$, and use before it is one of the two ordering violations a split does catch. The harder failure is when the \emph{probability} that a label exists depends
-on the covariate under study. \emph{State channels} carry information that is not a column---feature tensor, scaler,
-coefficients, a tracker's latent state, selected-model metadata~\cite{cawley2010selection}, the gate
-bit---six probed channels, an operational enumeration rather than a completeness claim. And the
+takes its extent from the data at hand. \emph{Label closure} makes a retrospective label usable only
+from $t_c$; use before it is one of the two ordering violations a split does catch. The harder
+failure is when the \emph{probability} that a label exists depends on the covariate under study. \emph{State channels} carry information that is not a column---feature tensor, scaler,
+coefficients, tracker state, selected-model metadata~\cite{cawley2010selection}, the gate bit---six
+probed channels, an operational enumeration, not a completeness claim. And the
 \emph{statistical unit} must be a level at which replicates of one physical event are exchangeable,
 which aggregating somewhere does not establish.
 
@@ -196,19 +196,19 @@ which aggregating somewhere does not establish.
 Fig.~\ref{fig:contract} places the layers against the experiment they observe and
 Table~\ref{tab:rules} gives their targets and decision semantics. Two commitments make the
 catalogue usable. The protected objects do not partition the rules: six enforce one
-directly---\rulename{L1.1}--\rulename{L1.4}, \rulename{L3.1}, \rulename{L4.7}---and the rest are
-what those obligations need to be checkable at all. And a rule is trusted only once demonstrated to
-fail on a deliberately broken fixture, since a check that cannot go red is not evidence.
+directly---\rulename{L1.1}--\rulename{L1.4}, \rulename{L3.1}, \rulename{L4.7}---and the rest make
+those obligations checkable at all. And a rule is trusted only once demonstrated to fail on a
+deliberately broken fixture, since a check that cannot go red is not evidence.
 
 \subsection{Primitives, prior art, and what is method}
 
-We propose none of the primitives: $\mathrm{ICC}(1)$~\cite{shrout1979icc},
-permutation inference over exchangeability blocks~\cite{winkler2014permutation}, metamorphic
-relations over runs~\cite{chen2018metamorphic}, hermetic dependency
-closure~\cite{mokhov2018buildsystems}, mutation testing~\cite{jia2011mutation}, hashing, and
-point-in-time correctness in feature stores. Nor is the territory: executable
-production-readiness rubrics~\cite{breck2017mltestscore,polyzotis2019datavalidation}, hidden-state
-leakage as configuration coupling~\cite{sculley2015debt},
+We propose none of the primitives: $\mathrm{ICC}(1)$~\cite{shrout1979icc}, permutation inference
+over exchangeability blocks~\cite{winkler2014permutation}, metamorphic relations over
+runs~\cite{chen2018metamorphic}, hermetic dependency closure~\cite{mokhov2018buildsystems},
+mutation testing~\cite{jia2011mutation}, hashing, and point-in-time correctness in feature stores.
+Nor is the territory: production-readiness
+rubrics~\cite{breck2017mltestscore,polyzotis2019datavalidation}, hidden-state leakage as
+configuration coupling~\cite{sculley2015debt},
 pseudoreplication~\cite{hurlbert1984pseudoreplication}, boundary-value analysis, leakage
 taxonomies~\cite{kaufman2012leakage} with prevalence surveys~\cite{kapoor2023leakage}, and
 time-series results on when ordered splitting is valid~\cite{bergmeir2012crossval} all predate us.
@@ -247,30 +247,31 @@ redundant rather than erroneous, and that one-sided implication is the whole mec
 
 \emph{Statistical-unit adequacy} (\rulename{L4.7}). Given values $y$, unit identifiers $u$ and a
 declared coarser grouping $g$, we aggregate to $\bar{y}_u$ and measure its intraclass correlation
-\emph{within} $g$: residual correlation there means the chosen unit shares state with its
-neighbours, so intervals over it are optimistic.
+\emph{within} $g$: within-group correlation there means the chosen unit shares state with its
+neighbours, so intervals over it are optimistic. The ICC is used here as a \emph{clustering test
+statistic}, not as a hierarchical variance decomposition; the permutation gate asks whether the
+aggregated unit values are exchangeable across the fixed declared grouping.
 
 The estimator is the one-way $\mathrm{ICC}(1)$ from variance
 components~\cite{shrout1979icc}, whose numerator subtracts the within-group mean square and so has
 expectation $0$ under independence at every group size, reported truncated at zero, and the
-decision is referenced to a \emph{permutation null}: unit values are permuted across coarser
-groups---the exchangeability hypothesis under test---giving
+decision is referenced to a \emph{permutation null}: the aggregated unit values are permuted across
+coarser groups---the exchangeability hypothesis under test---giving
 $p=(1+\#\{\hat{\rho}^{*}\ge\hat{\rho}\})/(B+1)$ over $B=\num{400}$ permutations, halting at
-$p\le\alpha=0.05$. The $+1$ is what makes the test valid: without it the empirical $1-\alpha$ quantile is anticonservative
-by $1/(B+1)$, this form valid for any $B$. The reference distribution, not the estimator,
-calibrates the decision: under that null a raw scatter ratio is a monotone transform of
-$\hat{\rho}$ and gives the same $p$. We calibrate the operating characteristic directly: over
+$p\le\alpha=0.05$. The $+1$ is what makes the test valid: without it the empirical $1-\alpha$
+quantile is anticonservative by $1/(B+1)$, this form valid for any $B$. The reference
+distribution calibrates the decision: under that null a raw scatter ratio is a monotone transform
+of $\hat{\rho}$ and gives the same $p$. We calibrate the operating characteristic directly: over
 \artv{l47_clean_paths}{\num{450}} clean evaluations it halts \artv{l47_false_halts}{\num{14}}
 times, $\artv{l47_rate}{0.031}$, Wilson~\cite{wilson1927}
 $\artv{l47_wilson}{[0.018,0.052]}$, rounded outward---consistent with the nominal $\artv{l47_alpha}{0.05}$, not
 better---and detects the injected fault \artv{l47_injected}{\num{150}} of \artv{l47_injected}{\num{150}} times. All \artv{l47_clean_paths}{\num{450}} replicates sit
 at one design whose clean fixture satisfies the null by construction, so this measures the
-\emph{implementation}, and the interval rather than the point is the claim. Specificity alone would
-hide that the rule finds gross unit errors and misses subtle ones. Finally the rule \emph{declines to judge} below four coarser groups of two or more units, or
+\emph{implementation}, and the interval rather than the point is the claim. Finally the rule \emph{declines to judge} below four coarser groups of two or more units, or
 eight units in all. That floor is an \emph{attainability} precondition, not a power one: three groups of two
-admit only $6!/(2!^{3}3!)=15$ distinct assignments, so the smallest reachable $p$ is
-$1/15=0.067>\alpha$ and no design that small can reject at all, whereas four groups of two admit
-$105$ and so reach $1/105=0.0095$. Those are the designs' \emph{exact} resolutions; the rule never
+admit only $6!/(2!^{3}3!)=15$ distinct assignments, so an exact reference reaches no lower than
+$1/15=0.067>\alpha$ and the rule abstains there rather than sample it, whereas four groups of two
+admit $105$ and reach $1/105=0.0095$. Those are the designs' \emph{exact} resolutions; the rule never
 enumerates them, always drawing the same $B$. The rule is therefore three-valued:
 \textsc{halt}, the condition is violated; \textsc{indeterminate}, the design cannot support the
 decision; and \textsc{pass}, which means \emph{not rejected}, not verified---at power $\artv{l47_power_02}{0.25}$ for
@@ -278,7 +279,7 @@ $\rho=0.2$ three genuinely dependent designs in four also pass. Collapsing \text
 into \textsc{pass} is how a design that could not have rejected comes to look like one that did not. No condition in our own suite reaches
 the floor; the third-party artifact of \S\ref{sec:external} does.
 
-\emph{Canaries and seeds.} The probed state channels separate whether a channel is \emph{guarded} from whether the probe was \emph{effective}, since an inert mutation reads as an undetectable leak (\rulename{L3.2}). Seeds live in three disjoint namespaces, one whose outcomes have been inspected is burned, and compared conditions draw one seed per invariant cell, pairing asserted on the realised arrays.
+\emph{Canaries and seeds.} Probes separate whether a channel is \emph{guarded} from whether the probe was \emph{effective}, since an inert mutation reads as an undetectable leak (\rulename{L3.2}). Seeds live in three disjoint namespaces; an inspected seed is burned, and compared conditions draw one per invariant cell with pairing asserted on the realised arrays.
 
 \section{Curated Regression Evaluation}
 \label{sec:eval}
@@ -307,9 +308,6 @@ per variation, so their true cost is a multiple of pipeline runtime and is exclu
 
 \input{figures/fig_operating_curve.tex}
 
-For the one rule with a stochastic reference the single clean run is not the
-evidence---the interval $\artv{l47_wilson}{[0.018,0.052]}$ of Fig.~\ref{fig:opcurve} is.
-
 An initial clean-path run produced three \rulename{L4.4} halts because the fixture itself violated
 seed hygiene; we repaired the fixture, changed no detector, and retained both records.
 
@@ -323,12 +321,13 @@ Everything to this point was produced here; the records and the artifact below w
 \emph{Does the unit problem exist in real satellite data?} Yes. Applying the frozen
 \rulename{L4.7} rule to real Space-Track records, pass rows carrying the in-track update increment,
 grouped by their generating element set, yield $\hat{\rho}=\artv{at_icc_d1}{0.501}$, permutation
-$p=\artv{at_p}{0.0025}$, one-sided $95\%$ lower bound $\artv{at_icc_d1_lo}{0.376}$, and the rule
-\textsc{halts}. Grouping this increment by object gives $\artv{at_icc_d2}{0.241}$; grouping element sets within
-objects gives $\artv{at_icc_d3}{0.284}$. Both also halt, all three at the smallest $p$ the
-reference admits at $B=\num{400}$, so the element set is not exchangeable either and no level tested
-here is. For this pass-row construction, exchangeability of samples sharing a
-generating element set is rejected---which is what \S\ref{sec:whysat}\,iv asserts.
+$p=1/(B+1)\approx\artv{at_p}{0.0025}$ (no exceedance), one-sided $95\%$ lower bound $\artv{at_icc_d1_lo}{0.376}$, and the rule
+\textsc{halts}. Grouping this increment by object gives $\artv{at_icc_d2}{0.241}$; element-set means grouped by
+object give $\artv{at_icc_d3}{0.284}$. Both also halt, all three at that same Monte-Carlo
+floor, so no level tested here is exchangeable. Because passes sharing an element set also share
+an object, this one-way statistic does not isolate an element-set-specific variance component:
+the \textsc{halt} establishes non-exchangeability under the declared grouping---which is what
+\S\ref{sec:whysat}\,iv asserts---not a variance decomposition across orbital levels.
 
 The analysis covers \artv{real_objects}{\num{11}} objects, \artv{real_elsets}{\num{109}} element
 sets and \artv{real_passes}{\num{331}} visible passes over one declared \textsc{wgs}-84 ground station at
@@ -353,8 +352,9 @@ is adequate, never which is right.
 \emph{The observable determines what the rule can say.} Grouping element sets by object on
 publication lag, and passes by element set on mean elevation, both passed at
 $\hat{\rho}=\artv{real_icc_ab}{0.000},\ p=\artv{real_p_ab}{1.000}$ against our registered halts---a ties signature, the estimator
-truncating at zero, so not an effect size. Mean elevation is near-invariant to which element set propagated a
-pass, and publication lag is a catalogue property; neither carries the fit-update signature. \artv{real_halt}{One} of eleven per-object tests halted and
+truncating at zero, so not an effect size. Mean elevation is near-invariant to which element set
+propagated a pass and publication lag is a catalogue property, so neither carries the fit-update
+signature. \artv{real_halt}{One} of eleven per-object tests halted and
 \artv{real_pass}{10} passed, but $P(\ge 1)$ under the global null across those
 \artv{at_decisions}{fourteen} decisions---eleven per object and three pooled---is
 $\artv{at_p_any}{0.512}$.
@@ -423,7 +423,8 @@ and the curated environments differ in generator family alone.
 from the sweep by construction. \rulename{L4.3} is a heuristic guard on a self-reported flag,
 its fixed threshold halting about one correct design in six at eight groups. \rulename{L4.5} checks
 that a manifest and self-hash exist, not that either is correct. \rulename{L4.7} adjudicates only
-the grouping supplied to it, has power against gross unit errors, and presumes a \emph{unique} next
+the grouping supplied to it; a within-object permutation would test element-set structure
+more specifically, a stronger question than the present unit-adequacy claim. It has power against gross unit errors, and presumes a \emph{unique} next
 coarser level that orbital data does not supply, since element sets and deployment episodes
 cross-cut. Four obligations remain outside the contract: $t_d$ is declared rather than
 checked; covariate-coupled label availability has no rule, found by an \emph{ad hoc} diagnostic and
@@ -439,14 +440,12 @@ operational enumerations, not completeness claims.
 \emph{Conclusion.} Chronological separation remains necessary, but it cannot establish validity
 properties whose counterexamples live outside one realised dataset. Orbit-Evidence therefore changes the
 object of validation: instead of more row-level checks, it encodes relational invariants across
-executions and aggregation levels. Differential provenance makes an omitted
-dependency falsifiable without enumerating the candidates; the unit gate asks whether dependence
-survives aggregation and returns \textsc{indeterminate} when the design cannot decide. The unit gate fires on
-real orbital structure, and the contract containing both operates unchanged on a frozen
-third-party artifact, where a pre-registered correction changed model selection. Without such checks these obligations stay in prose, where a
-reader cannot tell an argued assumption from a tested one---and satellite software is where we found
-them because it separates the clock a state describes from the clock a record is stamped with, and
-both from the publisher that decides when either becomes visible. What the evidence establishes is not completeness or improved accuracy,
+executions and aggregation levels. Differential provenance makes an omitted dependency falsifiable
+without enumerating the candidates; the unit gate asks whether dependence survives aggregation and
+returns \textsc{indeterminate} when the design cannot decide. It fires on real orbital structure,
+and the contract containing both operates unchanged on a frozen third-party artifact, where a
+pre-registered correction changed model selection. Without such checks these obligations stay in
+prose, where a reader cannot tell an argued assumption from a tested one. What the evidence establishes is not completeness or improved accuracy,
 but that assumptions normally asserted can be made executable, falsifiable, and able to refuse an
 unsupported claim. The next step is broader independent replication across faults and pipelines
 authored outside this work.
