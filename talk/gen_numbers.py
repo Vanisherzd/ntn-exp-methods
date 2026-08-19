@@ -36,6 +36,26 @@ def _claim_sites() -> int:
     return len(mod.artifact_values())
 
 
+def _permutation_count(curve: dict) -> int:
+    """B, parsed from the curve artifact and cross-checked against the frozen detector.
+
+    The talk previously said "the floor of a 400-permutation test" as a typed literal, and got the
+    floor wrong as well (1/400 rather than 1/(B+1)). Binding B here means the deck cannot restate
+    a permutation count that neither the artifact nor the detector agrees with.
+    """
+    import re as _re
+    m = _re.search(r"(\d+)\s+permutations", curve["design"])
+    if not m:
+        raise SystemExit("gen_numbers: curve artifact no longer states a permutation count")
+    b = int(m.group(1))
+    det = ROOT / "evaluation" / "scripts" / "contract_layers.py"
+    if not det.exists():
+        raise SystemExit(f"gen_numbers: detector missing, cannot cross-check B: {det}")
+    if not _re.search(rf"\b{b}\b", det.read_text()):
+        raise SystemExit(f"gen_numbers: artifact says B={b} but the detector lacks that literal")
+    return b
+
+
 def main() -> int:
     s = json.loads(SUMMARY.read_text())
     at = json.loads(ALONGTRACK.read_text())
@@ -60,6 +80,7 @@ def main() -> int:
         "Naticc": a["D1_pass_in_elementset"]["icc"],
         "Natp": d1["p_value"], "Natlo": d1["icc_lower_95_one_sided"],
         "Naticcobj": a["D2_pass_in_object"]["icc"],
+        "NpermB": _permutation_count(json.loads(CURVE.read_text())),
         "Naticcelset": a["D3_elementset_in_object"]["icc"],
         "Natused": a["n_passes_used"], "Natelsets": a["n_elsets"],
         "Natmedian": a["intrack_abs_km"]["median"], "Natmax": a["intrack_abs_km"]["max"],

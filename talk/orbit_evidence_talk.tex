@@ -140,10 +140,14 @@ Satellite Communication Experiments\\[0.9em]
     \begin{column}{0.48\textwidth}
       \begin{block}{L4.7 --- statistical-unit adequacy}
         Does dependence survive \alert{one declared level coarser}?
-        Null: shuffling the group labels changes nothing.
+        Null: unit values are \emph{exchangeable} across the declared coarser groups.
       \end{block}
       \vspace{0.3em}
       \small
+      Unit values are permuted across the \emph{fixed} coarser-group structure, so every draw
+      keeps the observed group count and balance.
+      \vspace{0.3em}
+
       And it \emph{abstains}. With too few groups, the smallest $p$ the test can
       \emph{possibly} produce already exceeds $\alpha$ --- that design could not have rejected at
       any effect size. Not weak evidence: no evidence either way. It returns
@@ -155,13 +159,14 @@ Satellite Communication Experiments\\[0.9em]
 \end{frame}
 
 % ============================================================ 7. calibration
-\begin{frame}{Calibrating the gate before trusting it}
+\begin{frame}{L4.7 operating characteristic at one registered synthetic design}
   \vspace{-0.5em}
   \begin{center}\input{figures/fig_curve.tex}\end{center}
   \vspace{-0.4em}
-  \msg{On data built with \emph{no} real dependence the gate still halts
+  \msg{One registered design. On data built with \emph{no} real dependence the gate still halts
        \Ncleanhalts{} times in \Ncleanpaths{} --- against the \Nalpha{} false-alarm budget we
-       allow it. The interval, not the point, is the claim, and it contains that budget.}
+       allow it. The interval, not the point, is the claim, and it contains that budget.
+       \textbf{Design-specific: it does not estimate behaviour for the real-data geometries.}}
 \end{frame}
 
 % ============================================================ 8. real satellite evidence
@@ -198,8 +203,10 @@ Satellite Communication Experiments\\[0.9em]
         \textbf{grouping} & \textbf{verdict}\\
         \midrule
         pass $\to$ element set & $\hat{\rho}=\Naticc$\\
-        \Natused{} in \Natgroups{} & $p=\Natp$\\
-                                   & lower bound $\Natlo$\\
+        \Natused{} in \Natgroups{} & $p=\Natp$, lower bound $\Natlo$\\
+                                   & \textbf{HALT}\\
+        \addlinespace
+        pass $\to$ object & $\hat{\rho}=\Naticcobj$\\
                                    & \textbf{HALT}\\
         \addlinespace
         element set $\to$ object & $\hat{\rho}=\Naticcelset$\\
@@ -208,10 +215,12 @@ Satellite Communication Experiments\\[0.9em]
       \end{tabular}
 
       \vspace{0.4em}
-      {\scriptsize Both $p$ at $1/400$ --- the floor of a 400-permutation test. Measured: how far
+      {\scriptsize \textbf{All three} at the minimum Monte-Carlo reference value
+      $1/(\NpermB{+}1)=\Natp$; equal $p$ at the floor is not equal evidence. Measured: how far
       an orbit solution moves \emph{along its own track} when the next one replaces it ---
       \textbf{not truth error}. On a purely \emph{geometric} quantity the same rule returned
-      $\hat{\rho}=\Nrealiccab$: the observable decides.}
+      $\hat{\rho}=\Nrealiccab$ --- a \emph{ties signature} at the estimator's truncation
+      boundary, licensing only ``did not reject''. The observable decides what the rule can say.}
     \end{column}
   \end{columns}
 \end{frame}
@@ -398,9 +407,15 @@ Satellite Communication Experiments\\[0.9em]
   $1/15 = 0.067 > \alpha$. That design cannot reject at the nominal level at any effect size.
 
   \vspace{0.5em}
-  \emph{Four} groups of two admit $105$ assignments, whose exhaustive reference reaches $0.0095$.
-  The general rule is stated at the rule level, not by extrapolating $1/15$: designs below the
-  registered resolution floor return \textsc{indeterminate}.
+  \emph{Four} groups of two have $105$ distinct \emph{exact} assignments, giving an exact
+  resolution of $1/105 = 0.0095$. The implementation does \textbf{not} enumerate this space:
+  eligible designs are tested with $B=\NpermB$ Monte-Carlo permutation draws and
+  $p=(1+\#\{\hat{\rho}^{*}\ge\hat{\rho}\})/(B+1)$, whose minimum is $1/(\NpermB{+}1)$.
+  \vspace{0.5em}
+
+  \textbf{Exact combinatorics determine whether the design can support the decision;
+  $B=\NpermB$ is the Monte-Carlo reference used once the design is eligible.}
+  Designs below the registered resolution floor return \textsc{indeterminate}.
 
   \vspace{0.8em}
   So \textsc{indeterminate} is a statement about the \emph{design's resolution}, not about the

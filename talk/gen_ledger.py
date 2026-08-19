@@ -119,6 +119,21 @@ SEMANTIC_LINT = [
     (r"19 rules are complete", "no completeness claim"),
     (r"verified by the original publisher", "mirror concordance only"),
     (r"below four coarser groups the smallest", "H2: 1/15 is one construction, not a rule"),
+    # --- cross-deliverable statistical wording. Each of these was true of the workshop talk
+    # while the manuscript and the advisor deck said something else, which is the drift a
+    # single-surface check cannot see.
+    (r"shuffl\w*\s+the\s+group\s+labels",
+     "L4.7 permutes unit VALUES across a fixed group structure; it does not shuffle group labels"),
+    (r"1\s*/\s*400\b",
+     "p = (1 + exceedances)/(B+1), so the Monte-Carlo floor is 1/(400+1), never 1/400"),
+    (r"exhaustive reference",
+     "the rule ALWAYS draws B permutations; no enumeration exists in project code"),
+    # Narrow on purpose: "in both directions" is legitimate prose. The defect was reporting the
+    # three along-track groupings as two.
+    (r"[Bb]oth\s+\$?p\$?\s+(at|are|values)|[Bb]oth\s+(also\s+)?[Hh]alt",
+     "there are THREE along-track groupings (0.501 / 0.241 / 0.284), not two"),
+    (r"accuracy (improved|improves|was improved)",
+     "the intervention changed model SELECTION; no accuracy claim is licensed"),
 ]
 
 

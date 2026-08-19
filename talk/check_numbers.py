@@ -43,7 +43,8 @@ def main() -> int:
     REQUIRED = {
         "Nrate", "Nwlo", "Nwhi", "Nalpha", "Ncleanpaths", "Ncleanhalts", "Nseeds",
         "Npowerlo", "Nobjects", "Nelsets", "Npasses", "Naticc", "Natp", "Natlo",
-        "Naticcelset", "Natused", "Natgroups", "Natdropped", "Natelsetunits", "Natelsetgroups",
+        "Naticcobj", "Naticcelset", "Natused", "Natgroups", "Natdropped",
+        "Natelsetunits", "Natelsetgroups", "NpermB",
         "Nextpass", "Nexthalt", "Nextindet", "Nextna", "Nextnobs", "Nextrules",
         "Nconsseeds", "Nconschanged", "Nconsminp", "Nrules", "Nclaimsites",
         "Nconsoverlap", "Nconsoverlapcorr", "Nrealiccab",
