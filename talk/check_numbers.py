@@ -42,7 +42,10 @@ def main() -> int:
     # a macro: the macro simply disappears and nothing complains. These must stay on the slides.
     REQUIRED = {
         "Nrate", "Nwlo", "Nwhi", "Nalpha", "Ncleanpaths", "Ncleanhalts", "Nseeds",
-        "Npowerlo", "Nobjects", "Nelsets", "Npasses", "Naticc", "Natp", "Natlo",
+        "Npowerlo", "Nobjects", "Nelsets", "Npasses", "Naticc", "Natp",
+        # Natlo retired from the main deck 2026-08: the model-based lower bound is not a
+        # decision input and mixing it with the permutation p invited a variance-component
+        # reading. It stays in the artifact and in the advisor appendix, labelled.
         "Naticcobj", "Naticcelset", "Natused", "Natgroups", "Natdropped",
         "Natelsetunits", "Natelsetgroups", "NpermB",
         "Nextpass", "Nexthalt", "Nextindet", "Nextna", "Nextnobs", "Nextrules",

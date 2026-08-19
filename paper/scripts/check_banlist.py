@@ -261,9 +261,13 @@ def artifact_values() -> dict[str, str]:
         "at_p": str(json.loads((ROOT / "evaluation" / "real_data" /
                                "l47_alongtrack.json").read_text())
                     ["analyses"]["D1_pass_in_elementset"]["p_value"]),
-        "at_icc_d1_lo": str(json.loads((ROOT / "evaluation" / "real_data" /
-                                        "l47_alongtrack.json").read_text())
-                            ["analyses"]["D1_pass_in_elementset"]["icc_lower_95_one_sided"]),
+        # DELIBERATELY NOT REQUIRED (retired 2026-08): the one-sided LOWER bound on the D1 ICC.
+        # The nested-hierarchy audit settled that L4.7 uses the ICC as a clustering test
+        # statistic with the permutation reference as the decision mechanism. A normal-theory
+        # bound printed beside a permutation p mixes two inferential framings and invites the
+        # variance-component reading the audit ruled out, and it is not needed for a HALT.
+        # It remains in the artifact under icc_lower_95_one_sided and in the advisor appendix,
+        # labelled as a model-based descriptive bound. Recorded rather than left to a diff.
         "lag_records": str(g["n_records"]),
         "lag_object_median_h": str(g["median_lag_h_object_level"]),
         # DELIBERATELY NOT REQUIRED: the record-pooled epoch-ahead percentage, the largest

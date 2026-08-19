@@ -639,9 +639,8 @@
   \end{tabular}
   \vspace{0.5em}
 
-  {\footnotesize Bounds on the \emph{pass $\to$ element set} row: $\Natlo$ / $\Natupper$, a
-   group-level bootstrap --- \textbf{each one-sided 95\%, so not a 95\% interval}. All three
-   in-track $p$ values are censored at $1/(\NpermB+1)$; equal $p$ is not equal evidence.}
+  {\footnotesize All three in-track $p$ values are censored at $1/(\NpermB+1)$; equal $p$ is not
+   equal evidence. The decision rests on the permutation reference alone (A2).}
 
   {\footnotesize The elevation row controls what the rule can \emph{say}: a \textbf{ties
    signature}, the estimator truncating at zero. It licenses only ``the rule did not reject''.}
@@ -881,18 +880,19 @@
   fixed --- so each draw keeps the observed group count and balance.
   \vspace{0.3em}
 
-  {\footnotesize Permuting \emph{within} a group would be a no-op --- composition unchanged,
-   ICC(1) invariant, every draw equal to $\hat{\rho}$.}
+  {\footnotesize Permuting \emph{within} a group is a no-op: composition unchanged, every draw
+   equal to $\hat{\rho}$.}
   \[ p = \frac{1 + \#\{\hat{\rho}^{*} \ge \hat{\rho}\}}{B+1}, \qquad B = \NpermB. \]
-  {\footnotesize The $+1$ on both sides is the finite-$B$ correction: it counts the observed
-   statistic as one of its own reference draws, so the test is valid at any $B$ and the smallest
-   reportable $p$ is $1/(\NpermB+1)$ rather than $0$. \emph{Every} real-data HALT sits exactly there.
+  {\footnotesize The $+1$ counts the observed statistic as one of its own reference draws, so the
+   test is valid at any $B$ and the smallest reportable $p$ is $1/(\NpermB+1)$, not $0$. Every
+   real-data HALT sits there.
    \vspace{0.25em}
 
    The numerator is unbiased, so the estimate can go negative and is reported truncated at zero.
    It uses the \emph{mean} group size, so on unbalanced data (\Natused{} units in \Natelsets{}
    groups) the estimate is a balanced-design approximation --- permutation referencing keeps the
-   \emph{decision} size-valid either way.}
+   \emph{decision} size-valid either way. The one-sided bootstrap bounds $\Natlo$/$\Natupper$ are
+   likewise \textbf{descriptive, not decision inputs}.}
 \end{frame}
 
 \begin{frame}{A3 --- Attainability versus power}
