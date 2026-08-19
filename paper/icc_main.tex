@@ -184,7 +184,7 @@ epoch. \emph{Row membership} may have its label status,
 value, uncertainty or closure time changed by later information, but never its existence; violations
 run both ways---rows dropped when a later reference fails to appear, rows created when a schedule
 takes its extent from the data on hand. \emph{Label closure} makes a retrospective label usable only
-from $t_c$, and use before it is the one ordering violation a split does catch. The harder failure is when the \emph{probability} that a label exists depends
+from $t_c$, and use before it is one of the two ordering violations a split does catch. The harder failure is when the \emph{probability} that a label exists depends
 on the covariate under study. \emph{State channels} carry information that is not a column---feature tensor, scaler,
 coefficients, a tracker's latent state, selected-model metadata~\cite{cawley2010selection}, the gate
 bit---six probed channels, an operational enumeration rather than a completeness claim. And the
@@ -256,13 +256,13 @@ expectation $0$ under independence at every group size, reported truncated at ze
 decision is referenced to a \emph{permutation null}: unit values are permuted across coarser
 groups---the exchangeability hypothesis under test---giving
 $p=(1+\#\{\hat{\rho}^{*}\ge\hat{\rho}\})/(B+1)$ over $B=\num{400}$ permutations, halting at
-$p\le\alpha=0.05$. The $+1$ is not cosmetic: the empirical $1-\alpha$ quantile is anticonservative
+$p\le\alpha=0.05$. The $+1$ is what makes the test valid: without it the empirical $1-\alpha$ quantile is anticonservative
 by $1/(B+1)$, this form valid for any $B$. The reference distribution, not the estimator,
 calibrates the decision: under that null a raw scatter ratio is a monotone transform of
 $\hat{\rho}$ and gives the same $p$. We calibrate the operating characteristic directly: over
 \artv{l47_clean_paths}{\num{450}} clean evaluations it halts \artv{l47_false_halts}{\num{14}}
 times, $\artv{l47_rate}{0.031}$, Wilson~\cite{wilson1927}
-$\artv{l47_wilson}{[0.018,0.052]}$---consistent with the nominal $\artv{l47_alpha}{0.05}$, not
+$\artv{l47_wilson}{[0.018,0.052]}$, rounded outward---consistent with the nominal $\artv{l47_alpha}{0.05}$, not
 better---and detects the injected fault \artv{l47_injected}{\num{150}} of \artv{l47_injected}{\num{150}} times. All \artv{l47_clean_paths}{\num{450}} replicates sit
 at one design whose clean fixture satisfies the null by construction, so this measures the
 \emph{implementation}, and the interval rather than the point is the claim. Specificity alone would

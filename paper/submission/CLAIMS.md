@@ -29,7 +29,7 @@ make gate-twice  # runs the gate twice and asserts the summary reproduces
 | L4.7 injected detection | 150/150 | `l47_calibration` |
 | rules with a demonstrated red fixture | 16 of 19 | `detectors_with_red_fixture` |
 | rules with no red fixture | L2.2, L2.3, L4.5 | `detectors_without_red_fixture` |
-| sweep runtime | **1.589 s / 29.4 ms per condition** on the generating machine; repository regression guards 3.0 s and 60.0 ms, environment-dependent, not portable bounds | `runtime_seconds` |
+| sweep runtime | **2.758 s / 51.1 ms per condition** on the generating machine; repository regression guards 3.0 s and 60.0 ms, environment-dependent, not portable bounds | `runtime_seconds` |
 | toolkit size | 833 lines | `source_loc` |
 | test suite size | 1149 lines | `test_suite_loc` |
 | tests | 77 passing | `test_count` |

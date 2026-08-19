@@ -196,31 +196,29 @@ Satellite Communication Experiments\\[0.9em]
         \node[a] at (20,-24) {from \Natgroups{} element sets that have a later one};
       \end{tikzpicture}
     \end{column}
-    \begin{column}{0.44\textwidth}
-      \small\setlength{\tabcolsep}{2pt}
-      \begin{tabular}{@{}l l@{}}
+    \begin{column}{0.46\textwidth}
+      \small\setlength{\tabcolsep}{3pt}
+      \begin{tabular}{@{}lcl@{}}
         \toprule
-        \textbf{grouping} & \textbf{verdict}\\
+        \textbf{grouping} & $\hat{\rho}$ & \textbf{verdict}\\
         \midrule
-        pass $\to$ element set & $\hat{\rho}=\Naticc$\\
-        \Natused{} in \Natgroups{} & $p=\Natp$, lower bound $\Natlo$\\
-                                   & \textbf{HALT}\\
-        \addlinespace
-        pass $\to$ object & $\hat{\rho}=\Naticcobj$\\
-                                   & \textbf{HALT}\\
-        \addlinespace
-        element set $\to$ object & $\hat{\rho}=\Naticcelset$\\
-        \Natelsetunits{} in \Natelsetgroups{} & \textbf{HALT}\\
+        pass $\to$ element set   & \Naticc      & \textbf{HALT}\\
+        pass $\to$ object        & \Naticcobj   & \textbf{HALT}\\
+        element set $\to$ object & \Naticcelset & \textbf{HALT}\\
         \bottomrule
       \end{tabular}
 
+      \vspace{0.3em}
+      {\scriptsize \Natused{} in \Natgroups{}; \Natelsetunits{} in \Natelsetgroups{}.
+       $p=\Natp$, lower bound $\Natlo$.}
+
       \vspace{0.4em}
-      {\scriptsize \textbf{All three} at the minimum Monte-Carlo reference value
-      $1/(\NpermB{+}1)=\Natp$; equal $p$ at the floor is not equal evidence. Measured: how far
-      an orbit solution moves \emph{along its own track} when the next one replaces it ---
-      \textbf{not truth error}. On a purely \emph{geometric} quantity the same rule returned
-      $\hat{\rho}=\Nrealiccab$ --- a \emph{ties signature} at the estimator's truncation
-      boundary, licensing only ``did not reject''. The observable decides what the rule can say.}
+      \vspace{0.3em}
+      {\scriptsize \textbf{All three} sit at the Monte-Carlo floor $1/(\NpermB{+}1)=\Natp$;
+      equal $p$ there is not equal evidence. The quantity is how far an orbit solution moves
+      \emph{along its own track} when the next replaces it --- \textbf{not truth error}.
+      A \emph{geometric} quantity returned $\hat{\rho}=\Nrealiccab$: a \emph{ties signature}
+      at the truncation boundary, licensing only ``did not reject''.}
     \end{column}
   \end{columns}
 \end{frame}
