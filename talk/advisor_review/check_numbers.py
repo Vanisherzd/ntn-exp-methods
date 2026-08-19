@@ -36,7 +36,7 @@ DECK = HERE / "advisor_deck.tex"
 NUMS = HERE / "numbers.tex"
 PDF = HERE / "advisor_deck.pdf"
 
-MAIN_FRAMES, APPENDIX_FRAMES = 25, 11
+MAIN_FRAMES, APPENDIX_FRAMES = 28, 11
 
 # Every number the review brief requires the deck to bind.
 REQUIRED = {
