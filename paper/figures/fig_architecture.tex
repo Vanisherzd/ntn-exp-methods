@@ -133,10 +133,11 @@
 \node[hdr,anchor=west] at (18.3,-5.28) {Decision};
 \draw[ok] (r2.east) -- (decbox.west);
 \end{tikzpicture}
-\caption{Orbit-Evidence architecture. A learning-assisted satellite experiment acts from state
+\caption{Orbit-Evidence architecture and the \emph{class} of experiment it audits; no learned
+model is proposed here. Such an experiment acts from state
 available at the decision instant $t_d$, freezes row and model state before deployment, and closes
-retrospective labels later. Four executable validity layers observe it. Most rules inspect a single
-execution; the relational rules compare executions or aggregation levels. Applicable checks resolve
+retrospective labels later. Four executable validity layers observe it. Most rules inspect one execution; relational rules compare
+executions or levels. Applicable checks resolve
 to \textsc{pass} or \textsc{halt}, while statistically unsupported decisions return
 \textsc{indeterminate} rather than \textsc{pass}. Red dashed rails are prohibited paths, each
 \emph{chronologically consistent} so an ordering check cannot express it; the blue dotted rail is

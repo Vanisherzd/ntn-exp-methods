@@ -21,7 +21,7 @@ $(PDF): $(TEX) numbers.tex
 	@echo "   $(PDF): $$(pdfinfo $(PDF) | awk '/^Pages/{print $$2}') pages"
 	@if grep -q Overfull advisor_deck.log; then \
 	  echo "   WARNING: overfull boxes remain:"; \
-	  grep -oE 'Overfull \\[hv]box \([0-9.]+pt too (high|wide)\) detected at line [0-9]+' \
+	  grep -oE 'Overfull \\[hv]box \([0-9.]+pt too (high|wide)\) (detected at line [0-9]+|in paragraph at lines [0-9]+--[0-9]+)' \
 	    advisor_deck.log | sed 's/^/     /'; \
 	fi
 

@@ -11,6 +11,7 @@ all: $(PDF)
 $(PDF): $(TEX) numbers.tex figures/*.tex
 	@latexmk -pdf -halt-on-error -interaction=nonstopmode $(TEX) >/dev/null 2>&1 || \
 	  { latexmk -pdf -halt-on-error -interaction=nonstopmode $(TEX); exit 1; }
+	@touch $(PDF)
 	@echo "   $(PDF): $$(pdfinfo $(PDF) | awk '/^Pages/{print $$2}') pages"
 
 numbers.tex: gen_numbers.py ../evaluation/results/final_summary.json

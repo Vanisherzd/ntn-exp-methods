@@ -117,44 +117,84 @@ Satellite Communication Experiments\\[0.9em]
 \begin{frame}{Orbit-Evidence: validity as an executable contract}
   \vspace{-0.4em}
   \begin{center}\input{figures/fig_arch.tex}\end{center}
-  \vspace{-0.2em}
-  \only<1>{\msgflush{The experiment acts at $t_d$ from state it already holds.}}
-  \only<2>{\msgflush{A \texttt{numpy}-only checker, run like a test suite: \Nrules{} rules in four layers.}}
-  \only<3>{\msgflush{Two cannot: the relational checks compare executions, or aggregation levels.}}
-  \only<4>{\msgflush{A design that cannot support a decision returns \textsc{indeterminate} --- never \textsc{pass}.}}
+
 \end{frame}
 
 % ============================================================ 6. two key ideas
-\begin{frame}{The two relational checks}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{L4.6 --- differential provenance}
-        Two runs, same \emph{manifest} --- the record of everything a run declared it
-        depended on --- but \alert{different output} $\Rightarrow$ the record is incomplete.
-      \end{block}
-      \vspace{0.3em}
-      \small
-      Refutes a claim of completeness \emph{without enumerating} the dependencies a manifest
-      might omit. One-sided by construction: failure is evidence, success is not certification.
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{L4.7 --- statistical-unit adequacy}
-        Does dependence survive \alert{one declared level coarser}?
-        Null: unit values are \emph{exchangeable} across the declared coarser groups.
-      \end{block}
-      \vspace{0.3em}
-      \small
-      Values are permuted across the \emph{fixed} group structure, so each draw keeps the
-      observed group count and balance.
-      \vspace{0.3em}
+% ---- L4.6 as a picture: same declaration, different behaviour
+\begin{frame}{\rulename{L4.6}: the same declaration, a different result}
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+    b/.style={draw=oeaccent,line width=0.6pt,fill=oeaccent!8,align=center,inner sep=1.4mm,
+              rounded corners=1pt,text width=30mm,minimum height=11mm},
+    ar/.style={-{Latex[length=1.6mm]},line width=0.7pt,draw=black!55}]
+    \node[b] (ra) at (0,20)  {\textbf{run A}\\ manifest $H$\\ output $X$};
+    \node[b] (rb) at (0,2)   {\textbf{run B}\\ manifest $H$\\ output $Y$};
+    \node[font=\scriptsize\itshape,text=black!55,anchor=west] at (20,16) {same declaration};
+    \draw[ar] (ra.east) -- (44,11);
+    \draw[ar] (rb.east) -- (44,11);
+    \node[draw=oewarn,line width=0.8pt,fill=oewarn!8,rounded corners=1pt,align=center,
+          inner sep=1.6mm,text width=44mm] at (70,11)
+      {same $H$, but $X \neq Y$\\[0.2em]\textbf{the declaration is incomplete}};
+  \end{tikzpicture}
+  \msg{No enumeration of what a manifest might omit. Failure is a counterexample; success is
+       \textbf{not} certification.}
+\end{frame}
 
-      And it \emph{abstains}: with too few groups an \emph{exact} reference cannot reach
-      $\alpha$ at any effect size, so the rule returns \textsc{indeterminate} --- not weak
-      evidence, no evidence either way.
-    \end{column}
-  \end{columns}
-  \msg{One judgement generates both: neither obligation can be certified,
-       so we accept checks that can only \emph{refuse}.}
+% ---- L4.7 as a picture: where the dependence comes from, then the permutation
+\begin{frame}{\rulename{L4.7}: are these independent samples?}
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+    n/.style={draw=black!50,line width=0.5pt,fill=black!4,align=center,inner sep=1mm,
+              rounded corners=1pt,minimum height=5.5mm},
+    ar/.style={-{Latex[length=1.2mm]},line width=0.5pt,draw=black!55}]
+    \node[n,text width=20mm] (o) at (22,26) {object};
+    \node[n,text width=22mm] (e1) at (6,15) {element set};
+    \node[n,text width=22mm] (e2) at (40,15) {element set};
+    \draw[ar] (o) -- (e1); \draw[ar] (o) -- (e2);
+    \foreach \x in {-4,6,16} \node[n,text width=8mm,fill=oewarn!12,draw=oewarn!55] at (\x,4) {pass};
+    \foreach \x in {33,45} \node[n,text width=8mm,fill=oeaccent!10,draw=oeaccent!50] at (\x,4) {pass};
+    \foreach \x in {-4,6,16} \draw[ar] (e1) -- (\x,6.8);
+    \foreach \x in {33,45} \draw[ar] (e2) -- (\x,6.8);
+    \node[font=\scriptsize,text=oewarn,anchor=north,align=center,text width=42mm] at (6,-1)
+      {propagated from one record: they inherit its error};
+    % the permutation, to the right
+    \draw[black!25,line width=0.4pt] (58,30) -- (58,-4);
+    \node[font=\scriptsize\bfseries,text=black!70,anchor=west] at (62,27) {observed};
+    \foreach \g in {0,1}{\draw[draw=black!45] (62+15*\g,20) rectangle (74+15*\g,26);}
+    \foreach \x in {65,71} \node[font=\scriptsize,text=oeaccent] at (\x,23) {$\bullet$};
+    \foreach \x in {80,86} \node[font=\scriptsize,text=oewarn] at (\x,23) {$\blacktriangle$};
+    \node[font=\scriptsize\bfseries,text=black!70,anchor=west] at (62,14) {values permuted};
+    \foreach \g in {0,1}{\draw[draw=black!45] (62+15*\g,6) rectangle (74+15*\g,12);}
+    \node[font=\scriptsize,text=oewarn] at (65,9) {$\blacktriangle$};
+    \node[font=\scriptsize,text=oeaccent] at (71,9) {$\bullet$};
+    \node[font=\scriptsize,text=oeaccent] at (80,9) {$\bullet$};
+    \node[font=\scriptsize,text=oewarn] at (86,9) {$\blacktriangle$};
+    \node[font=\scriptsize\itshape,text=black!55,anchor=north,align=center,text width=40mm] at (77,3)
+      {the group boxes never move};
+  \end{tikzpicture}
+  \msg{Null: the unit values are \emph{exchangeable} across the declared coarser groups. The
+       statistic is a clustering statistic, not a variance share.}
+\end{frame}
+
+% ---- why the third verdict exists
+\begin{frame}{Why a third verdict exists}
+  \centering
+  \begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+    bad/.style={draw=oewarn,line width=0.7pt,fill=oewarn!7,rounded corners=1pt,align=center,
+                inner sep=1.6mm,text width=42mm,minimum height=22mm},
+    ok/.style={draw=oeaccent,line width=0.7pt,fill=oeaccent!7,rounded corners=1pt,align=center,
+               inner sep=1.6mm,text width=42mm,minimum height=22mm}]
+    \node[bad] (l) at (0,0)
+      {\textbf{3 groups of 2}\\[0.3em]$15$ exact assignments\\ finest exact $p=0.067>\alpha$\\[0.3em]
+       \textbf{\textsc{indeterminate}}};
+    \node[ok] (r) at (58,0)
+      {\textbf{eligible design}\\[0.3em]$B=\NpermB$ draws\\ minimum $p=1/(\NpermB{+}1)$\\[0.3em]
+       \textbf{\textsc{pass} / \textsc{halt}}};
+    \node[font=\Large\bfseries,text=black!45] at (29,0) {vs};
+  \end{tikzpicture}
+  \msg{\textbf{Exact combinatorics decide eligibility; $B=\NpermB$ Monte-Carlo draws decide once
+       eligible.} A design that could not have rejected must not look like one that did not.}
 \end{frame}
 
 % ============================================================ 7. calibration
@@ -199,7 +239,7 @@ Satellite Communication Experiments\\[0.9em]
       \small\setlength{\tabcolsep}{3pt}
       \begin{tabular}{@{}lcl@{}}
         \toprule
-        \textbf{grouping} & $\hat{\rho}$ & \textbf{verdict}\\
+        \textbf{pooled grouping} & $\hat{\rho}$ & \textbf{verdict}\\
         \midrule
         pass $\to$ element set   & \Naticc      & \textbf{HALT}\\
         pass $\to$ object        & \Naticcobj   & \textbf{HALT}\\
@@ -209,7 +249,8 @@ Satellite Communication Experiments\\[0.9em]
 
       \vspace{0.3em}
       {\scriptsize \Natused{} in \Natgroups{}; \Natelsetunits{} in \Natelsetgroups{}.
-       $p=\Natp$.}
+       $p=\Natp$. \textbf{Pooled across objects}; per object,
+       \Nperobjhalt{} halted and \Nperobjpass{} passed.}
 
       \vspace{0.4em}
       \vspace{0.3em}
@@ -314,67 +355,32 @@ Satellite Communication Experiments\\[0.9em]
 \end{frame}
 
 % ============================================================ 10. what is new
-\begin{frame}{What is actually new}
+\begin{frame}{What is new --- and what it does not establish}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.46\textwidth}
-      \textbf{Not the primitives.}\\[0.3em]
-      \small ICC(1), permutation inference, metamorphic relations, hermetic build closure,
-      mutation testing --- all established, none proposed here.\normalsize
-
-      \vspace{0.6em}
-      \textbf{Not a checklist.}\\[0.3em]
-      \small The \Nrules{} rules are the satellite \emph{instantiation}, not the
-      contribution.\normalsize
-    \end{column}
     \begin{column}{0.5\textwidth}
       \begin{block}{The method is the conversion}
-        {\small
-        \begin{enumerate}\setlength\itemsep{0.25em}
-          \item Identify which validity obligations are \emph{relational}.
-          \item Choose the counterfactual execution or coarser level that makes each
-                \emph{falsifiable}.
-          \item Encode the invariant as a contract --- and let an undecidable case return
-                \textsc{indeterminate} rather than pass.
-        \end{enumerate}}
+        {\small Identify which obligations are \emph{relational}; choose the comparison that makes
+        each \emph{falsifiable}; encode it as a contract, and let an undecidable case return
+        \textsc{indeterminate} rather than pass.}
       \end{block}
-      \vspace{0.2em}
-      {\small A permutation reference is ordinarily an analysis step. Here it calibrates a
-      \emph{gate} --- with an operating characteristic and an abstention state.}
+      {\small \textbf{Not the primitives}: ICC(1), permutation inference, metamorphic relations,
+      hermetic closure, mutation testing --- none proposed here. The \Nrules{} rules are the
+      satellite \emph{instantiation}.}
     \end{column}
-  \end{columns}
-  \msg{Change what is tested, not how much.}
-\end{frame}
-
-% ============================================================ 11. limitations
-\begin{frame}{What this does not establish}
-  \vspace{0.2em}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.46\textwidth}
       {\small
-      \begin{itemize}\setlength\itemsep{0.5em}
-        \item \textbf{No completeness claim.} L4.6 is bounded by the caller's variation set;
-              the input nobody thought of is absent by construction.
-        \item \textbf{No RF or packet-level result.} The object of study is the experiment,
-              not the link.
-        \item \textbf{No improvement in learned accuracy.} The contract refuses claims;
-              it does not make models better.
-      \end{itemize}}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      {\small
-      \begin{itemize}\setlength\itemsep{0.5em}
-        \item \textbf{Represented-fault regression coverage only.} Faults and rules largely
-              share an origin, so curated coverage measures \emph{reachability}, not
-              fault-finding power.
-        \item \textbf{One outside dataset, one outside model.} One step away from marking
-              our own homework --- not zero.
-        \item \textbf{No universal correct unit.} \rulename{L4.7} adjudicates only the grouping
-              it is given.
-        \item \textbf{PASS means not rejected}, never verified.
+      \begin{itemize}\setlength\itemsep{0.35em}
+        \item \textbf{No completeness claim} --- \rulename{L4.6} is bounded by the caller's
+              variation set.
+        \item \textbf{No improvement in learned accuracy}, and no RF or packet-level result.
+        \item \textbf{Represented-fault regression coverage only} --- curated coverage measures
+              reachability.
+        \item \textbf{One outside dataset, one outside model.}
+        \item \textbf{No universal correct unit.}
       \end{itemize}}
     \end{column}
   \end{columns}
-  \msg{A validity method must apply the same evidence discipline to its own claims.}
+  \msg{Change what is tested, not how much. \textbf{\textsc{pass} means not rejected}.}
 \end{frame}
 
 % ============================================================ 12. takeaway

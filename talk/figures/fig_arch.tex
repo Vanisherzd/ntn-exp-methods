@@ -40,7 +40,7 @@
 \node[hdr] at (0,52.5) {a learning-assisted satellite experiment};
 
 % ---------------------------------------------------------------- band 2: the contract
-\onslide<2->{
+{
 \node[layer] (l1) at ( 11,27) {\textbf{L1} availability, membership};
 \node[layer] (l2) at ( 35,27) {\textbf{L2} physical, scheduling};
 \node[layer] (l3) at ( 83,27) {\textbf{L3} model-state causality};
@@ -53,7 +53,7 @@
 }
 
 % ---------------------------------------------------------------- band 3: relational validity
-\onslide<3->{
+{
 \node[rel] (r1) at ( 26,7) {\textbf{run A} $\leftrightarrow$ \textbf{run B}\\[0.3mm]
   provenance completeness (L4.6)};
 \node[rel] (r2) at ( 84,7) {\textbf{unit} $\leftrightarrow$ \textbf{coarser level}\\[0.3mm]
@@ -65,7 +65,7 @@
 }
 
 % ---------------------------------------------------------------- band 4: the verdict
-\onslide<4->{
+{
 \node[dec] (d1) at (125,12.6) {PASS};
 \node[dec] (d2) at (125, 7.0) {HALT};
 \node[dec] (d3) at (125, 1.4) {INDETERMINATE};

@@ -205,6 +205,9 @@ def main() -> int:
         # show it rather than leave it off the slide
         "Nelevunits": app["B_pass_in_elementset_pooled"]["n_units"],
         "Nelevgroups": app["B_pass_in_elementset_pooled"]["n_coarser_groups"],
+        # the pooled result is the headline; the per-object split is what stops it reading as
+        # "all 11 objects show the effect".
+        "Nperobjhalt": app["B_per_object_n_halt"], "Nperobjpass": app["B_per_object_n_pass"],
         "Natmedian": alo["intrack_abs_km"]["median"],
         # ---- the two clocks, for the availability teaching slide. The advisor deck previously
         # asserted that a past-dated element set can still be unpublished without ever showing the

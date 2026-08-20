@@ -22,6 +22,22 @@ SUMMARY = HERE.parent / "evaluation" / "results" / "final_summary.json"
 
 
 def main() -> int:
+    # ---- the built PDF must exist and be newer than its sources ---------------------------------
+    # This gate read the PDF for content presence but never checked its age, so an 18-page PDF built
+    # 21 hours before the source edits passed cleanly while still showing 1/400, 0.376 and an
+    # "exhaustive reference" the manuscript had already retired. A stale deliverable is the one
+    # failure a reader cannot detect from the source.
+    tex = HERE / "orbit_evidence_talk.tex"
+    built = HERE / "orbit_evidence_talk.pdf"
+    if not built.exists():
+        print("talk/check: FAIL -- orbit_evidence_talk.pdf is missing; the build never ran")
+        return 1
+    if built.stat().st_mtime < tex.stat().st_mtime:
+        print("talk/check: FAIL -- orbit_evidence_talk.pdf is older than "
+              "orbit_evidence_talk.tex; the rendered deck is stale, rebuild before trusting any "
+              "check below")
+        return 1
+
     before = (HERE / "numbers.tex").read_text() if (HERE / "numbers.tex").exists() else ""
     subprocess.run([sys.executable, str(HERE / "gen_numbers.py")], capture_output=True)
     after = (HERE / "numbers.tex").read_text()
@@ -218,8 +234,9 @@ def main() -> int:
     deck = (HERE / "orbit_evidence_talk.tex").read_text()
     main_src = re.split(r"^\\appendix\s*$", deck, flags=re.M)[0]
     n_main = len(re.findall(r"^\\begin\{frame\}", main_src, flags=re.M))
-    if n_main != 13:
-        print(f"talk/check: FAIL -- {n_main} main frames, deck is specified at 13")
+    if n_main != 14:
+        print(f"talk/check: FAIL -- {n_main} main frames, deck is specified at 14 "
+              f"(12 content slides + title + closing standout)")
         return 1
 
     print(f"talk/check: PASS -- {len(used)} artifact-bound values in the deck, "

@@ -36,7 +36,7 @@ DECK = HERE / "advisor_deck.tex"
 NUMS = HERE / "numbers.tex"
 PDF = HERE / "advisor_deck.pdf"
 
-MAIN_FRAMES, APPENDIX_FRAMES = 28, 11
+MAIN_FRAMES, APPENDIX_FRAMES = 27, 12
 
 # Every number the review brief requires the deck to bind.
 REQUIRED = {
@@ -115,13 +115,127 @@ STOPPED_RESULTS = [
     (r"packet\s+error|\blink\s+budget\b", "no link-layer result is claimed"),
 ]
 
-
 def fail(msg: str) -> None:
     print("advisor/check: FAIL -- " + msg)
 
-
 def main() -> int:
     problems = 0
+
+    # ---- 0b. appendix labels ascend ----------------------------------------------------------
+    # A frame appended during a redesign landed before the references frame, so the appendix ran
+    # A10, A12, A11 -- an advisor turning to A11 met A12 first. The labels must be 1..N in page
+    # order, which also pins References last because it carries the highest number.
+    ap = [int(m.group(1)) for m in
+          re.finditer(r"\\begin\{frame\}(?:\[[^\]]*\])?\{A(\d+)\s*-+", DECK.read_text())]
+    if ap != list(range(1, len(ap) + 1)):
+        fail(f"appendix labels are out of order in page order: {ap} -- expected "
+             f"{list(range(1, len(ap) + 1))}")
+        problems += 1
+
+    # ---- 0c. the speaker notes describe THIS deck --------------------------------------------
+    # The notes drifted to a stale deck shape ("24 main + 10 appendix") and a stale slide map while
+    # the deck grew, so the file that gets read aloud disagreed with the file on screen. Both the
+    # declared shape and the slide numbering are checked here.
+    nt = (HERE / "SPEAKER_NOTES.md")
+    if nt.exists():
+        ntx = nt.read_text()
+        want = f"{MAIN_FRAMES} main + {APPENDIX_FRAMES} appendix"
+        if want not in ntx:
+            fail(f"SPEAKER_NOTES.md does not declare the deck shape {want!r}")
+            problems += 1
+        want_pages = f"{MAIN_FRAMES + APPENDIX_FRAMES} pages"
+        if want_pages not in ntx:
+            fail(f"SPEAKER_NOTES.md does not declare {want_pages!r}")
+            problems += 1
+        nums = [int(m.group(1)) for m in re.finditer(r"^### Slide (\d+)", ntx, re.M)]
+        if nums != list(range(1, MAIN_FRAMES + 1)):
+            fail(f"SPEAKER_NOTES.md slide map is {nums[:3]}..{nums[-3:] if nums else []} "
+                 f"({len(nums)} entries) -- expected one entry per main slide, 1..{MAIN_FRAMES}")
+            problems += 1
+
+    # ---- 0a. every multi-line node declares align= --------------------------------------------
+    # `\\` inside a \node whose options omit align= aborts pdflatex with "Not allowed in LR mode",
+    # which names neither the node nor the line. This class of typo cost two build failures, so it
+    # is checked at the source where the message can point at the offending node.
+    src = DECK.read_text()
+    ALIGNED_STYLES, STYLE_BODY = set(), {}
+    for sm in re.finditer(r"(\w+)/\.style=\{", src):
+        i0 = sm.end(); dd = 1; jj = i0
+        while jj < len(src) and dd:
+            if src[jj] == "{": dd += 1
+            elif src[jj] == "}": dd -= 1
+            jj += 1
+        STYLE_BODY[sm.group(1)] = src[i0:jj-1]
+        if "align=" in src[i0:jj-1]:
+            ALIGNED_STYLES.add(sm.group(1))
+    # styles inherit: cardbad/.style={card, ...} is aligned because card is. Close transitively or
+    # the lint reports every derived style as a defect.
+    grew = True
+    while grew:
+        grew = False
+        for nm, bd in STYLE_BODY.items():
+            if nm in ALIGNED_STYLES:
+                continue
+            if any(re.search(rf"(?<![\w.]){a}(?![\w.])", bd) for a in ALIGNED_STYLES):
+                ALIGNED_STYLES.add(nm); grew = True
+    for m in re.finditer(r"\\node\[", src):
+        i = m.end(); d = 1; j = i
+        while j < len(src) and d:
+            if src[j] == "[": d += 1
+            elif src[j] == "]": d -= 1
+            j += 1
+        opts = src[i:j-1]
+        k = src.find("{", j-1)
+        if k < 0:
+            continue
+        d2 = 1; e = k + 1
+        while e < len(src) and d2:
+            if src[e] == "{": d2 += 1
+            elif src[e] == "}": d2 -= 1
+            e += 1
+        body = src[k:e]
+        if ("\\\\" in body and "align=" not in opts
+                and not any(re.search(rf"(?<![\w.]){s}(?![\w.])", opts) for s in ALIGNED_STYLES)):
+            fail(f"line {src[:m.start()].count(chr(10)) + 1}: a \\node with a line break (\\\\) "
+                 f"declares no align= -- pdflatex will abort with \"Not allowed in LR mode\"")
+            problems += 1
+
+    # ---- 0. the build actually produced a current PDF ----------------------------------------
+    # Three of the strongest gates below (overdraw geometry, overlay count, content presence) were
+    # each written as `if PDF.exists():` with no else, so a FAILED BUILD silently removed all three
+    # and the run still printed OK. That happened: an undefined colour aborted pdflatex, latexmk
+    # latched the error and then reported "Nothing to do", make exited 0, and this script reported
+    # "35 PDF pages" with no PDF on disk at all -- the page count came from the frame count, not
+    # from the file. A stale PDF is the same failure one step quieter: the page images then show a
+    # previous edit, so a visual review passes a slide that no longer exists. Both are hard fails.
+    pdf_pages = -1
+    if not PDF.exists():
+        fail(f"{PDF.name} is missing -- the build failed or was never run; every PDF-dependent "
+             f"gate below would silently skip")
+        problems += 1
+    else:
+        if PDF.stat().st_mtime < DECK.stat().st_mtime:
+            fail(f"{PDF.name} is older than {DECK.name} -- the PDF is stale, so the geometry and "
+                 f"presence gates would score a previous revision")
+            problems += 1
+        # The page images are what a human actually reviews. If they predate the PDF, the review
+        # scores a previous revision -- which happened: a slide edit was judged "unchanged" from a
+        # 7-minute-old PNG. `make render` deletes them first, so any that survive older than the
+        # PDF mean render did not run.
+        pngs = sorted(HERE.glob("pg-*.png"))
+        if pngs:
+            oldest = min(q.stat().st_mtime for q in pngs)
+            if oldest < PDF.stat().st_mtime:
+                fail(f"{len(pngs)} page image(s) are older than {PDF.name} -- run `make render`; "
+                     f"a visual review would score a previous revision")
+                problems += 1
+        info = subprocess.run(["pdfinfo", str(PDF)], capture_output=True, text=True).stdout
+        mp = re.search(r"^Pages:\s+(\d+)", info, re.M)
+        if not mp:
+            fail(f"pdfinfo could not read a page count from {PDF.name}")
+            problems += 1
+        else:
+            pdf_pages = int(mp.group(1))
 
     # ---- 1. currency ------------------------------------------------------------------------
     before = NUMS.read_text() if NUMS.exists() else ""
@@ -167,7 +281,31 @@ def main() -> int:
     stripped = re.sub(r"\[[^\[\]]*\]", " ", stripped)                    # [style=...] options
     # coordinate components may be macros inside a \foreach body: (-0.8,\y)
     stripped = re.sub(r"\((?:[-+0-9.,*\s]|\\[a-zA-Z]+)+\)", " ", stripped)   # (0,16) (-0.8,\y)
+    # A \foreach list often spans SEVERAL lines and the line-based strip above only removes the
+    # first. Continuation lines carry loop values -- coordinates and labels -- and two of them
+    # collided with \Nobjects and \Nhaltslo, reporting a y-coordinate as a stale figure. Strip the
+    # whole `in { ... }` list, brace-counted so nested groups survive.
+    def _strip_foreach_lists(s: str) -> str:
+        out, i = [], 0
+        pat = re.compile(r"\\foreach\b[^{]*?\bin\s*\{")
+        while True:
+            m = pat.search(s, i)
+            if not m:
+                out.append(s[i:])
+                return "".join(out)
+            out.append(s[i:m.start()])
+            depth, j = 1, m.end()
+            while j < len(s) and depth:
+                if s[j] == "{":
+                    depth += 1
+                elif s[j] == "}":
+                    depth -= 1
+                j += 1
+            out.append(" ")
+            i = j
+    stripped = _strip_foreach_lists(stripped)
     stripped = re.sub(r"(?m)^\s*\\(draw|foreach|fill|path|clip)\b.*$", " ", stripped)
+
     literals = []
     for k, val in macros.items():
         v = str(val)
@@ -386,16 +524,10 @@ def main() -> int:
         problems += 1
 
     # ---- 9. no overlays ----------------------------------------------------------------------
-    if PDF.exists():
-        out = subprocess.run(["pdfinfo", str(PDF)], capture_output=True, text=True).stdout
-        m = re.search(r"^Pages:\s+(\d+)", out, re.M)
-        pages = int(m.group(1)) if m else -1
-        if pages != n_main + n_app:
-            fail(f"PDF has {pages} pages but the deck has {n_main + n_app} frames -- overlays "
-                 f"are inflating the advisor's static PDF")
-            problems += 1
-    else:
-        print("advisor/check: note -- no PDF yet; the overlay check needs a build")
+    if pdf_pages >= 0 and pdf_pages != n_main + n_app:
+        fail(f"PDF has {pdf_pages} pages but the deck has {n_main + n_app} frames -- overlays "
+             f"are inflating the advisor's static PDF")
+        problems += 1
 
     # ---- 12. nothing DROPPED off a frame ---------------------------------------------------
     # A10's closing sentence vanished from the PDF: beamer overflowed the frame and simply did not
@@ -430,6 +562,10 @@ def main() -> int:
             inner = re.sub(r"\\(?:definecolor|usebeamercolor)\b(\[[^\]]*\])?(\{[^}]*\})*",
                            " ", inner)
             inner = re.sub(r"\\textcolor\{[^}]*\}", " ", inner)
+            # {\color{oeaccent}...} leaves the colour NAME in the text stream; it is a
+            # structural argument, not prose, and it produced two false "content dropped"
+            # reports in the visual-first redesign.
+            inner = re.sub(r"\\color\{[^}]*\}", " ", inner)
             inner = re.sub(r"\\fcolorbox\{[^}]*\}\{[^}]*\}", " ", inner)
             inner = re.sub(r"\\(?:begin|end)\{[^}]*\}\s*(\{[lrcp@|!<>.\d\s{}]*\})?",
                            " ", inner)                                     # env + column spec
@@ -457,13 +593,12 @@ def main() -> int:
     if problems:
         return 1
     print(f"advisor/check: OK -- {n_main} main + {n_app} appendix frames, "
-          f"{n_main + n_app} PDF pages (no overlays); {len(macros)} macros all bound and shown; "
+          f"{pdf_pages} PDF pages measured (no overlays); {len(macros)} macros all bound and shown; "
           f"{len(REQUIRED)} required numbers present; no bare literals; "
           f"{len(gl.SEMANTIC_LINT)} lint rules clean ({permitted} negated mention(s)); "
           f"all {len(REQUIRED_QUALIFIERS)} qualifiers present; "
           f"stopped-research vocabulary confined to A10")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

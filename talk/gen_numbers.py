@@ -80,6 +80,9 @@ def main() -> int:
         "Naticc": a["D1_pass_in_elementset"]["icc"],
         "Natp": d1["p_value"], "Natlo": d1["icc_lower_95_one_sided"],
         "Naticcobj": a["D2_pass_in_object"]["icc"],
+        # the headline three are POOLED; the per-object split is what stops the talk reading as
+        # "every object shows the effect".
+        "Nperobjhalt": r["B_per_object_n_halt"], "Nperobjpass": r["B_per_object_n_pass"],
         "NpermB": _permutation_count(json.loads(CURVE.read_text())),
         "Naticcelset": a["D3_elementset_in_object"]["icc"],
         "Natused": a["n_passes_used"], "Natelsets": a["n_elsets"],
